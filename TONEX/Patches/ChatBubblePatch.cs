@@ -11,6 +11,7 @@ public static class ChatBubblePatch
     [HarmonyPatch(nameof(ChatBubble.SetName)), HarmonyPostfix]
     public static void SetName_Postfix(ChatBubble __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (GameStates.IsInGame && __instance.playerInfo.PlayerId == PlayerControl.LocalPlayer.PlayerId)
             __instance.NameText.color = PlayerControl.LocalPlayer.GetRoleColor();
     }

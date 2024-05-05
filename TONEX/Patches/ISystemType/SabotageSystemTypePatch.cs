@@ -79,6 +79,7 @@ public static class ElectricTaskInitializePatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Utils.MarkEveryoneDirtySettings();
         if (!GameStates.IsMeeting)
             Utils.NotifyRoles(ForceLoop: true);

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using TONEX.Modules;
 using TONEX.Roles.AddOns.Impostor;
-using TONEX.Attributes;
+using static TONEX.PlayerControlSetRolePatch;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Impostor;
@@ -18,6 +18,7 @@ using UnityEngine;
 using static TONEX.Translator;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using Rewired.Utils.Platforms.Windows;
+using TONEX.Attributes;
 
 namespace TONEX;
 
@@ -54,6 +55,8 @@ static class ExtendedPlayerControl
         writer.Write(player.PlayerId);
         writer.WritePacked((int)role);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
+        if (Options.IsAllCrew)
+            player.RpcSetRoleInGame(role.GetRoleInfo().BaseRoleType.Invoke());
     }
     public static void RpcSetCustomRole(byte PlayerId, CustomRoles role)
     {
@@ -62,6 +65,33 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCustomRole, SendOption.Reliable, -1);
         writer.Write(PlayerId);
         writer.WritePacked((int)role);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        if (Options.IsAllCrew)
+            RpcSetRoleInGame(PlayerId, role.GetRoleInfo().BaseRoleType.Invoke());
+    }
+    public static void RpcSetRoleInGame(this PlayerControl player,RoleTypes role)
+    {
+        playanima = false;
+        InGameSetRole = true;
+        player.RpcSetRole(role);
+        playanima = true;
+        InGameSetRole = false;
+    }
+
+    public static void RpcSetRoleInGame(byte PlayerId, RoleTypes role)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        playanima = false;
+        InGameSetRole = true;
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetRoleInGame, SendOption.Reliable, -1);
+        writer.Write(playanima);
+        writer.Write(InGameSetRole);
+        writer.Write(PlayerId);
+        writer.WritePacked((int)role);
+        playanima = true;
+        InGameSetRole = false;
+        writer.Write(playanima);
+        writer.Write(InGameSetRole);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
@@ -580,6 +610,32 @@ static class ExtendedPlayerControl
     public static List<byte> HasDisabledPet = new();
     public static List<byte> HasDisabledMove = new();
 
+    [PluginModuleInitializer]
+    public static void AllActInit()
+    {
+        // 禁用玩家行为的字典记录
+        DisableKill = new();
+        DisableEnterVent = new();
+        DisableExitVent = new();
+        DisableShapeshift = new();
+        DisableSabotage = new();
+        DisableReport = new();
+        DisableMeeting = new();
+        DisablePet = new();
+        DisableMove = new();
+
+        // 曾被禁用行为玩家的列表记录
+        HasDisabledKill = new();
+        HasDisabledEnterVent = new();
+        HasDisabledExitVent = new();
+        HasDisabledShapeshift = new();
+        HasDisabledSabotage = new();
+        HasDisabledReport = new();
+        HasDisabledMeeting = new();
+        HasDisabledPet = new();
+        HasDisabledMove = new();
+    }
+
     // 速度记录
     public static Dictionary<byte, float> PlayerSpeedRecord = new();
 
@@ -807,6 +863,7 @@ static class ExtendedPlayerControl
         PlayerActionInUse actionInUses = PlayerActionInUse.All, 
         bool isIntentional = false)
     {
+        if (Main.AssistivePluginMode.Value) return;
         // 瘟疫之源处理
         if (CustomRoles.Plaguebearer.IsExist() && !isIntentional)
         {

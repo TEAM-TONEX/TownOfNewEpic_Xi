@@ -113,7 +113,9 @@ internal class BanMenuSetVisiblePatch
 {
     public static bool Prefix(BanMenu __instance, bool show)
     {
-        if (!AmongUsClient.Instance.AmHost) return true;
+        if (Main.AssistivePluginMode.Value) return true;
+        
+            if (!AmongUsClient.Instance.AmHost) return true;
         show &= PlayerControl.LocalPlayer && PlayerControl.LocalPlayer.Data != null;
         __instance.BanButton.gameObject.SetActive(AmongUsClient.Instance.CanBan());
         __instance.KickButton.gameObject.SetActive(AmongUsClient.Instance.CanKick());
@@ -163,7 +165,7 @@ internal class InnerNetObjectSerializePatch
 {
     public static void Prefix()
     {
-        if (AmongUsClient.Instance.AmHost)
+        if (AmongUsClient.Instance.AmHost &&!Main.AssistivePluginMode.Value)
             GameOptionsSender.SendAllGameOptions();
     }
 }

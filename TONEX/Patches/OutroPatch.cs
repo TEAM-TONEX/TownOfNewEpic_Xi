@@ -20,10 +20,12 @@ class EndGamePatch
     public static string KillLog = "";
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ref EndGameResult endGameResult)
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         GameStates.InGame = false;
         //SetRolePatch.playanima = true;
         HudSpritePatch.IsEnd = true;
+        if (Main.AssistivePluginMode.Value) return;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         Logger.Info("-----------游戏结束-----------", "Phase");
         if (!GameStates.IsModHost) return;
         SummaryText = new();
@@ -91,6 +93,7 @@ class SetEverythingUpPatch
 
     public static void Postfix(EndGameManager __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (!Main.playerVersion.ContainsKey(0)) return;
         //#######################################
         //          ==勝利陣営表示==

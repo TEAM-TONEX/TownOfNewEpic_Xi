@@ -63,6 +63,7 @@ class StartPatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Logger.CurrentMethod();
         Logger.Info("-----------游戏开始-----------", "Phase");
 

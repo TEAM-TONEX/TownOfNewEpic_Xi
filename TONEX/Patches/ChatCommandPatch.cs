@@ -18,46 +18,49 @@ internal class ChatCommands
     public static List<string> SentHistory = new();
     public static bool Prefix(ChatController __instance)
     {
+        if (Main.AssistivePluginMode.Value) return true;
+
         // クイックチャットなら横流し
         if (__instance.quickChatField.Visible)
-        {
-            return true;
-        }
-        // 入力欄に何も書かれてなければブロック
-        if (string.IsNullOrWhiteSpace(__instance.freeChatField.textArea.text))
-        {
-            return false;
-        }
-
-        __instance.timeSinceLastMessage = 3f;
-
-        var text = __instance.freeChatField.textArea.text;
-        if (SentHistory.Count == 0 || SentHistory[^1] != text) SentHistory.Add(text);
-        ChatControllerUpdatePatch.CurrentHistorySelection = SentHistory.Count;
-
-        Logger.Info(text, "SendChat");
-        var mc = MessageControl.Create(PlayerControl.LocalPlayer, text);
-
-        if (mc.RecallMode != MsgRecallMode.None && !mc.ForceSend)
-        {
-            Logger.Info("Message Sendding Canceled", "SendChat");
-            __instance.freeChatField.textArea.Clear();
-            return false;
-        }
-        else if (SendTargetPatch.SendTarget != SendTargetPatch.SendTargets.Default)
-        {
-            switch (SendTargetPatch.SendTarget)
             {
-                case SendTargetPatch.SendTargets.All:
-                    Utils.SendMessage(text, title: $"<color=#ff0000>{GetString("MessageFromTheHost")}</color>");
-                    break;
-                case SendTargetPatch.SendTargets.Dead:
-                    Main.AllPlayerControls.Where(p => p.AmOwner || !p.IsAlive()).Do(p => Utils.SendMessage(text, p.PlayerId, $"<color=#ff0000>{GetString("MessageFromTheHost")}</color>"));
-                    break;
+                return true;
             }
-            __instance.freeChatField.textArea.Clear();
-            return false;
-        }
+            // 入力欄に何も書かれてなければブロック
+            if (string.IsNullOrWhiteSpace(__instance.freeChatField.textArea.text))
+            {
+                return false;
+            }
+
+            __instance.timeSinceLastMessage = 3f;
+
+            var text = __instance.freeChatField.textArea.text;
+            if (SentHistory.Count == 0 || SentHistory[^1] != text) SentHistory.Add(text);
+            ChatControllerUpdatePatch.CurrentHistorySelection = SentHistory.Count;
+
+            Logger.Info(text, "SendChat");
+            var mc = MessageControl.Create(PlayerControl.LocalPlayer, text);
+
+            if (mc.RecallMode != MsgRecallMode.None && !mc.ForceSend)
+            {
+                Logger.Info("Message Sendding Canceled", "SendChat");
+                __instance.freeChatField.textArea.Clear();
+                return false;
+            }
+            else if (SendTargetPatch.SendTarget != SendTargetPatch.SendTargets.Default)
+            {
+                switch (SendTargetPatch.SendTarget)
+                {
+                    case SendTargetPatch.SendTargets.All:
+                        Utils.SendMessage(text, title: $"<color=#ff0000>{GetString("MessageFromTheHost")}</color>");
+                        break;
+                    case SendTargetPatch.SendTargets.Dead:
+                        Main.AllPlayerControls.Where(p => p.AmOwner || !p.IsAlive()).Do(p => Utils.SendMessage(text, p.PlayerId, $"<color=#ff0000>{GetString("MessageFromTheHost")}</color>"));
+                        break;
+                }
+                __instance.freeChatField.textArea.Clear();
+                return false;
+            }
+        
         return true;
     }
     public static void OnReceiveChat(PlayerControl player, string text, out bool blockForLocalPlayer)
@@ -93,6 +96,7 @@ internal class ChatUpdatePatch
     public static bool DoBlockChat = false;
     public static void Postfix(ChatController __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         Active = __instance.IsOpenOrOpening;
         __instance.freeChatField.textArea.AllowPaste = true;
         __instance.chatBubblePool.Prefab.Cast<ChatBubble>().TextArea.overrideColorTags = false;
@@ -160,21 +164,24 @@ internal class RpcSendChatPatch
 {
     public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
     {
+        if (Main.AssistivePluginMode.Value) return true;
+
         if (string.IsNullOrWhiteSpace(chatText))
-        {
-            __result = false;
-            return false;
-        }
-        int return_count = PlayerControl.LocalPlayer.name.Count(x => x == '\n');
-        chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
-        if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
-            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance, chatText);
-        if (chatText.Contains("who", StringComparison.OrdinalIgnoreCase))
-            DestroyableSingleton<UnityTelemetry>.Instance.SendWho();
-        MessageWriter messageWriter = AmongUsClient.Instance.StartRpc(__instance.NetId, (byte)RpcCalls.SendChat, SendOption.None);
-        messageWriter.Write(chatText);
-        messageWriter.EndMessage();
-        __result = true;
+            {
+                __result = false;
+                return false;
+            }
+            int return_count = PlayerControl.LocalPlayer.name.Count(x => x == '\n');
+            chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
+            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance, chatText);
+            if (chatText.Contains("who", StringComparison.OrdinalIgnoreCase))
+                DestroyableSingleton<UnityTelemetry>.Instance.SendWho();
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpc(__instance.NetId, (byte)RpcCalls.SendChat, SendOption.None);
+            messageWriter.Write(chatText);
+            messageWriter.EndMessage();
+            __result = true;
+        
         return false;
     }
 }

@@ -28,6 +28,7 @@ public static class HqHudSystemTypeUpdateSystemPatch
     }
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Camouflage.CheckCamouflage();
         Utils.NotifyRoles();
     }

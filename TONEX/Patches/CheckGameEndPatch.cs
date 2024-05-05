@@ -20,7 +20,9 @@ class GameEndChecker
     private static GameEndPredicate predicate;
     public static bool Prefix()
     {
-        if (!AmongUsClient.Instance.AmHost) return true;
+        if (Main.AssistivePluginMode.Value) return true;
+        
+            if (!AmongUsClient.Instance.AmHost) return true;
 
         //ゲーム終了判定済みなら中断
         if (predicate == null) return false;

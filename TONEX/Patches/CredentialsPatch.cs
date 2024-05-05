@@ -64,14 +64,15 @@ internal class VersionShowerStartPatch
     {
         TMPTemplate.SetBase(__instance.text);
        
-        Main.CredentialsText = $"\r\n<color={Main.ModColor}>T</color><color=#FFC0CB>O</color><color={Main.ModColor}>N</color><color=#fffcbe>E</color><color={Main.ModColor}>X</color> - <color=#ffff00>v{Main.PluginShowVersion}</color>";
+        //Main.CredentialsText = $"\r\n<color={Main.ModColor}>T</color><color=#FFC0CB>O</color><color={Main.ModColor}>N</color><color=#fffcbe>E</color><color={Main.ModColor}>X</color> - <color=#ffff00>v{Main.PluginShowVersion}</color>";
+        Main.CredentialsText = $"\r\n<color={Main.ModColor}>{Main.ModName}</color> - <color=#ffff00>v{Main.PluginShowVersion}</color>";
 
 #if DEBUG
         Main.CredentialsText += $"\r\n<color={Main.ModColor}>{ThisAssembly.Git.Branch}</color> - {ThisAssembly.Git.Commit}";
 #endif
 
         Main.CredentialsText += $"\r\n<size=80%><color=#FFC0CB>Town Of Next</color><color=#D77DFF> &</color><color=#FFC0CB> Town Of Host Edited</color><color=#D77DFF> By </color><color=#FFC0CB>KARPED1EM</color>";
-        Main.CredentialsText += $"\r\n <color=#fffcbe>Town Of Host Edited-Xi</color><color=#ffb100> By </color><color=#fffcbe>喜</color>";
+        //Main.CredentialsText += $"\r\n <color=#fffcbe>Town Of Host Edited-Xi</color><color=#ffb100> By </color><color=#fffcbe>喜</color>";
         Main.CredentialsText += $"\r\n <color=#cdfffd>Town Of New Epic_Xtreme</color><color=#ffff00> By </color><color=#cdfffd>XtremeWave</color></size>";
 #if RELEASE
         string additionalCredentials = GetString("TextBelowVersionText");

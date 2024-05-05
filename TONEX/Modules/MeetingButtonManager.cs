@@ -22,21 +22,25 @@ public class MeetingButtonManager
     [HarmonyPatch(nameof(MeetingHud.Start)), HarmonyPrefix]
     public static void Start(MeetingHud __instance)
     {
-        //提前储存赌怪游戏组件的模板
-        GuesserHelper.textTemplate = UnityEngine.Object.Instantiate(__instance.playerStates[0].NameText);
-        GuesserHelper.textTemplate.enabled = false;
-
-        // CreateMeetingButton
-        ButtonCreated = false;
-        if (PlayerControl.LocalPlayer.GetRoleClass() is IMeetingButton meetingButton && meetingButton.ShouldShowButton())
+        if (!Main.AssistivePluginMode.Value)
         {
-            CreateMeetingButton(__instance, meetingButton);
+            //提前储存赌怪游戏组件的模板
+            GuesserHelper.textTemplate = UnityEngine.Object.Instantiate(__instance.playerStates[0].NameText);
+            GuesserHelper.textTemplate.enabled = false;
+
+            // CreateMeetingButton
+            ButtonCreated = false;
+            if (PlayerControl.LocalPlayer.GetRoleClass() is IMeetingButton meetingButton && meetingButton.ShouldShowButton())
+            {
+                CreateMeetingButton(__instance, meetingButton);
+            }
         }
     }
 
     [HarmonyPatch(nameof(MeetingHud.Update)), HarmonyPostfix, HarmonyPriority(Priority.LowerThanNormal)]
     public static void Update(MeetingHud __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (__instance == null || !GameStates.IsInGame || __instance.IsDestroyedOrNull()) return;
 
         Count = Count > 20 ? 0 : ++Count;

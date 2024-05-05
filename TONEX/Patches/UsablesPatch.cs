@@ -9,7 +9,11 @@ class CanUsePatch
 {
     public static bool Prefix(ref float __result, Console __instance, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] out bool canUse, [HarmonyArgument(2)] out bool couldUse)
     {
+        
+        canUse = couldUse = default;
+        if (Main.AssistivePluginMode.Value) return true;
         canUse = couldUse = false;
+
         //こいつをfalseでreturnしても、タスク(サボ含む)以外の使用可能な物は使えるまま(ボタンなど)
         return __instance.AllowImpostor || Utils.HasTasks(PlayerControl.LocalPlayer.Data, false);
     }
@@ -29,7 +33,9 @@ class CanUseVentPatch
         [HarmonyArgument(1)] ref bool canUse,
         [HarmonyArgument(2)] ref bool couldUse,
         ref float __result)
+
     {
+        if (Main.AssistivePluginMode.Value) return true;
         PlayerControl playerControl = pc.Object;
 
         // 前半，Mod独自の処理

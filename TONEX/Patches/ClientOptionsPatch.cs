@@ -11,7 +11,7 @@ namespace TONEX;
 public static class OptionsMenuBehaviourStartPatch
 {
     private static ClientOptionItem UnlockFPS;
-    //private static ClientOptionItem CanPublic;
+    private static ClientOptionItem AssistivePluginMode;
     private static ClientOptionItem HorseMode;
     private static ClientOptionItem LongMode;
     private static ClientOptionItem AutoStartGame;
@@ -55,11 +55,11 @@ public static class OptionsMenuBehaviourStartPatch
                 Logger.SendInGame(string.Format(Translator.GetString("FPSSetTo"), Application.targetFrameRate));
             }
         }
-     /*   if (CanPublic == null || CanPublic.ToggleButton == null)
-        {
-            CanPublic = ClientOptionItem.Create("CanPublic", Main.CanPublic, __instance);
-        }*/
-       
+           if (AssistivePluginMode == null || AssistivePluginMode.ToggleButton == null)
+           {
+               AssistivePluginMode = ClientOptionItem.Create("AssistivePluginMode", Main.AssistivePluginMode, __instance);
+           }
+
         if (HorseMode == null || HorseMode.ToggleButton == null)
         {
             HorseMode = ClientOptionItem.Create("HorseMode", Main.HorseMode, __instance, SwitchHorseMode);
@@ -87,6 +87,7 @@ public static class OptionsMenuBehaviourStartPatch
             {
                 if (Main.AutoStartGame.Value == false && GameStates.IsCountDown)
                 {
+                    if (!Main.AssistivePluginMode.Value)
                     GameStartManager.Instance.ResetStartState();
                 }
             }
@@ -150,8 +151,9 @@ public static class OptionsMenuBehaviourStartPatch
             {
                 try
                 {
-                    if (!GameStates.IsNotJoined)
+                    if (!GameStates.IsNotJoined && !Main.AssistivePluginMode.Value)
                     {
+                        
                         Utils.LocalPlayerLastTp = PlayerControl.LocalPlayer.GetTruePosition();
                         Utils.LocationLocked = true;
                         PlayerControl.LocalPlayer.DisableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, ExtendedPlayerControl.PlayerActionInUse.All, true);

@@ -54,6 +54,7 @@ class OnBecomeHostPatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (GameStates.InGame)
             GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
     }
@@ -85,6 +86,7 @@ class OnPlayerJoinedPatch
 {
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
+        if (Main.AssistivePluginMode.Value) return;
         Logger.Info($"{client.PlayerName}(ClientID:{client.Id}/FriendCode:{client.FriendCode}) 加入房间", "Session");
         if (AmongUsClient.Instance.AmHost && client.FriendCode == "" && Options.KickPlayerFriendCodeNotExist.GetBool())
         {

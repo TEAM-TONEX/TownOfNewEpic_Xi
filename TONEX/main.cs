@@ -12,6 +12,7 @@ using TONEX.Attributes;
 using TONEX.Roles.Core;
 using TONEX.Modules;
 using UnityEngine;
+using xCloud;
 
 [assembly: AssemblyFileVersion(TONEX.Main.PluginVersion)]
 [assembly: AssemblyInformationalVersion(TONEX.Main.PluginVersion)]
@@ -40,7 +41,7 @@ public class Main : BasePlugin
     public const string LowestSupportedVersion = "2024.3.5";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
     public const string PluginVersion = "1.1.45.14";
-    public const string PluginShowVersion = "1.2_20240514_Preview_1";
+    public const string PluginShowVersion = "1.3_20240504_Debug_1";
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
     public static readonly bool ShowWebsiteButton = true;
@@ -68,6 +69,7 @@ public class Main : BasePlugin
     public static ConfigEntry<bool> ShowResults { get; private set; }
     public static ConfigEntry<bool> UnlockFPS { get; private set; }
     //public static ConfigEntry<bool> CanPublic { get; private set; }
+    public static ConfigEntry<bool> AssistivePluginMode { get; private set; }
     public static ConfigEntry<bool> HorseMode { get; private set; }
     public static ConfigEntry<bool> LongMode { get; private set; }
     public static ConfigEntry<bool> AutoStartGame { get; private set; }
@@ -162,6 +164,7 @@ public class Main : BasePlugin
         ShowResults = Config.Bind("Result", "Show Results", true);
         UnlockFPS = Config.Bind("Client Options", "UnlockFPS", false);
         //CanPublic = Config.Bind("Client Options", "CanPublic", true);
+        AssistivePluginMode = Config.Bind("Client Options", "AssistivePluginMode", false);
         HorseMode = Config.Bind("Client Options", "HorseMode", false);
         LongMode = Config.Bind("Client Options", "LongMode", false);
         AutoStartGame = Config.Bind("Client Options", "AutoStartGame", false);

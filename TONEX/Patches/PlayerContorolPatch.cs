@@ -30,30 +30,15 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace TONEX;
 
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckProtect))]
-class CheckProtectPatch
-{
-    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
-    {
-        if (!AmongUsClient.Instance.AmHost) return false;
-        Logger.Info("CheckProtect発生: " + __instance.GetNameWithRole() + "=>" + target.GetNameWithRole(), "CheckProtect");
-        if (__instance.Is(CustomRoles.Sheriff))
-        {
-            if (__instance.Data.IsDead)
-            {
-                Logger.Info("守護をブロックしました。", "CheckProtect");
-                return false;
-            }
-        }
-        return true;
-    }
-}
+
+#region 击杀事件
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckMurder))]
 class CheckMurderPatch
 {
     public static Dictionary<byte, float> TimeSinceLastKill = new();
     public static void Update()
     {
+
         for (byte i = 0; i < 15; i++)
         {
             if (TimeSinceLastKill.ContainsKey(i))
@@ -66,7 +51,7 @@ class CheckMurderPatch
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
         if (!AmongUsClient.Instance.AmHost) return false;
-
+        if (Main.AssistivePluginMode.Value) return true;
         // 処理は全てCustomRoleManager側で行う
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
         {
@@ -141,7 +126,8 @@ class MurderPlayerPatch
     private static readonly LogHandler logger = Logger.Handler(nameof(PlayerControl.MurderPlayer));
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] MurderResultFlags resultFlags, ref bool __state /* 成功したキルかどうか */ )
     {
-            logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
+        if (Main.AssistivePluginMode.Value) return true;
+        logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
             var isProtectedByClient = resultFlags.HasFlag(MurderResultFlags.DecisionByHost) && target.IsProtected();
             var isProtectedByHost = resultFlags.HasFlag(MurderResultFlags.FailedProtected);
             var isFailed = resultFlags.HasFlag(MurderResultFlags.FailedError);
@@ -193,6 +179,7 @@ class MurderPlayerPatch
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, bool __state)
     {
         // キルが成功していない場合，何もしない
+        if (Main.AssistivePluginMode.Value) return;
         if (!__state)
         {
             return;
@@ -216,15 +203,20 @@ class MurderPlayerPatch
             Main.FirstDied = target.PlayerId;
     }
 }
+#endregion
+
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.UseClosest))]
 class UsePatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         if ((!__instance.GetRoleClass()?.OnUse() ?? false)) return false;
         else return true;
     }
 }
+
+#region 变形事件
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckShapeshift))]
 public static class PlayerControlCheckShapeshiftPatch
 {
@@ -346,6 +338,9 @@ class ShapeshiftPatch
         }
     }
 }
+#endregion
+
+#region 会议事件
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
 class ReportDeadBodyPatch
 {
@@ -353,6 +348,7 @@ class ReportDeadBodyPatch
     public static Dictionary<byte, List<GameData.PlayerInfo>> WaitReport = new();
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         if (GameStates.IsMeeting) return false;
         Logger.Info("1", "test");
         if (Options.DisableMeeting.GetBool()) return false;
@@ -458,6 +454,7 @@ public static class PlayerControlStartMeetingPatch
 {
     public static void Prefix()
     {
+        if (!Main.AssistivePluginMode.Value)
         foreach (var kvp in PlayerState.AllPlayerStates)
         {
             var pc = Utils.GetPlayerById(kvp.Key);
@@ -465,6 +462,8 @@ public static class PlayerControlStartMeetingPatch
         }
     }
 }
+#endregion
+
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
 class FixedUpdatePatch
 {
@@ -473,7 +472,8 @@ class FixedUpdatePatch
     private static int LevelKickBufferTime = 10;
     public static void Postfix(PlayerControl __instance)
     {
-        var player = __instance;
+        if (Main.AssistivePluginMode.Value) return;
+            var player = __instance;
 
         if (player.AmOwner && player.IsEACPlayer() && (GameStates.IsLobby || GameStates.IsInGame) && GameStates.IsOnlineGame)
             AmongUsClient.Instance.ExitGame(DisconnectReasons.Error);
@@ -706,7 +706,8 @@ class SetColorPatch
         return true;
     }
 }
-#region 管道
+
+#region 管道事件
 [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent))]
 class EnterVentPatch
 {
@@ -814,6 +815,7 @@ class CoExitVentPatch
 }
 
 #endregion
+
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetName))]
 class SetNamePatch
 {
@@ -852,6 +854,8 @@ class PlayerControlCompleteTaskPatch
         Logger.Info($"TotalTaskCounts = {GameData.Instance.CompletedTasks}/{GameData.Instance.TotalTasks}", "TaskState.Update");
     }
 }
+
+#region 保护事件
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ProtectPlayer))]
 class PlayerControlProtectPlayerPatch
 {
@@ -879,11 +883,33 @@ class PlayerControlRemoveProtectionPatch
         Logger.Info($"{__instance.GetNameWithRole()}", "RemoveProtection");
     }
 }
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckProtect))]
+class CheckProtectPatch
+{
+    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
+    {
+        if (!AmongUsClient.Instance.AmHost) return false;
+        Logger.Info("CheckProtect発生: " + __instance.GetNameWithRole() + "=>" + target.GetNameWithRole(), "CheckProtect");
+        if (__instance.Is(CustomRoles.Sheriff))
+        {
+            if (__instance.Data.IsDead)
+            {
+                Logger.Info("守護をブロックしました。", "CheckProtect");
+                return false;
+            }
+        }
+        return true;
+    }
+}
+#endregion
+
+#region 设置职业 / SetRole
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetRole))]
-class PlayerControlSetRolePatch
+class PlayerControlRpcSetRolePatch
 {
     public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         var target = __instance;
         var targetName = __instance.GetNameWithRole();
         Logger.Info($"{targetName} =>{roleType}", "PlayerControl.RpcSetRole");
@@ -936,11 +962,90 @@ class PlayerControlSetRolePatch
         return true;
     }
 }
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetRole))]
+public static class PlayerControlSetRolePatch
+{
+    public static bool playanima = true;
+    public static bool InGameSetRole = false;
+
+    public static void OnGameStartAndEnd()
+    {
+        playanima = true;
+        InGameSetRole = false;
+
+    }
+
+    public static void Prefix(PlayerControl __instance, RoleTypes role)
+    {
+        if (!Main.AssistivePluginMode.Value)
+        {
+            bool flag = RoleManager.IsGhostRole(role);
+            if (!DestroyableSingleton<TutorialManager>.InstanceExists && __instance.roleAssigned && !flag || !InGameSetRole)
+            {
+                return;
+            }
+            __instance.roleAssigned = true;
+            if (flag)
+            {
+                DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
+                __instance.Data.Role.SpawnTaskHeader(__instance);
+                if (__instance.AmOwner)
+                {
+                    DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
+                    return;
+                }
+            }
+            else
+            {
+                __instance.RemainingEmergencies = GameManager.Instance.LogicOptions.GetNumEmergencyMeetings();
+                DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
+                __instance.Data.Role.SpawnTaskHeader(__instance);
+                __instance.MyPhysics.SetBodyType(__instance.BodyType);
+                if (__instance.AmOwner)
+                {
+                    if (__instance.Data.Role.IsImpostor)
+                    {
+                        StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
+                        StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
+                    }
+                    else
+                    {
+                        StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
+                        StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
+                    }
+                    DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
+                    DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);
+                    DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(true);
+                }
+                if (!DestroyableSingleton<TutorialManager>.InstanceExists)
+                {
+                    if (Enumerable.All<PlayerControl>(Main.AllPlayerControls, (PlayerControl pc) => pc.roleAssigned || pc.Data.Disconnected))
+                    {
+                        System.Action<PlayerControl> action = new(pc => PlayerNameColor.Set(pc));
+                        PlayerControl.AllPlayerControls.ForEach(action);
+                        __instance.StopAllCoroutines();
+                        if (playanima)
+                        {
+                            DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+                            DestroyableSingleton<HudManager>.Instance.HideGameLoader();
+                            playanima = false;
+                        }
+                    }
+                }
+            }
+            return;
+        }
+    }
+}
+#endregion
+
+#region 死亡事件
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
 public static class PlayerControlDiePatch
 {
     public static void Postfix(PlayerControl __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (AmongUsClient.Instance.AmHost)
         {
             __instance.RpcSetScanner(false);
@@ -1019,6 +1124,9 @@ public static class PlayerControlDiePatch
         }
     }
 }
+#endregion
+
+#region Fungle
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.MixUpOutfit))]
 public static class PlayerControlMixupOutfitPatch
 {
@@ -1051,3 +1159,4 @@ public static class PlayerControlCheckSporeTriggerPatch
         return true;
     }
 }
+#endregion
