@@ -55,10 +55,10 @@ public static class OptionsMenuBehaviourStartPatch
                 Logger.SendInGame(string.Format(Translator.GetString("FPSSetTo"), Application.targetFrameRate));
             }
         }
-           if (AssistivePluginMode == null || AssistivePluginMode.ToggleButton == null)
-           {
-               AssistivePluginMode = ClientOptionItem.Create("AssistivePluginMode", Main.AssistivePluginMode, __instance);
-           }
+        if (AssistivePluginMode == null || AssistivePluginMode.ToggleButton == null)
+        {
+            AssistivePluginMode = ClientOptionItem.Create("AssistivePluginMode", Main.AssistivePluginMode, __instance);
+        }
 
         if (HorseMode == null || HorseMode.ToggleButton == null)
         {
@@ -156,7 +156,7 @@ public static class OptionsMenuBehaviourStartPatch
                         
                         Utils.LocalPlayerLastTp = PlayerControl.LocalPlayer.GetTruePosition();
                         Utils.LocationLocked = true;
-                        PlayerControl.LocalPlayer.DisableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, ExtendedPlayerControl.PlayerActionInUse.All, true);
+                        //PlayerControl.LocalPlayer.DisableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, ExtendedPlayerControl.PlayerActionInUse.All, true);
                     }
                     SoundPanel.CustomBackground.gameObject.SetActive(true);
                     

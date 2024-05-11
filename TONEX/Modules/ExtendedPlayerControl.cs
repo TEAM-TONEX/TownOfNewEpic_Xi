@@ -688,8 +688,9 @@ static class ExtendedPlayerControl
         if (PlayerSpeedRecord.ContainsKey(pc.PlayerId))
         {
             Main.AllPlayerSpeed[pc.PlayerId] = Main.AllPlayerSpeed[pc.PlayerId] - Main.MinSpeed + PlayerSpeedRecord[pc.PlayerId];
-            PlayerSpeedRecord.Remove(pc.PlayerId);
+            
             pc.MarkDirtySettings();
+            PlayerSpeedRecord.Remove(pc.PlayerId);
         }
 
         // 发送设置动作的消息

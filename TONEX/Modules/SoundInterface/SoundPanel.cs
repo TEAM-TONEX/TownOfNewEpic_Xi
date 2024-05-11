@@ -150,13 +150,20 @@ public static class SoundPanel
             
                 var sound = soundp.Key;
                 numItems++;
-                var button = Object.Instantiate(buttonPrefab, scroller.Inner);
+            
+            var button = Object.Instantiate(buttonPrefab, scroller.Inner);
                 button.transform.localPosition = new(-1f, 1.6f - 0.6f * numItems, -11.5f);
                 button.transform.localScale = new(1.2f, 1.2f, 1.2f);
-                button.name = "Name Tag Item For " + sound;
+            Object.Destroy(button.GetComponent<Rigidbody>());
+
+            DestroyComponentsInChildren<Rigidbody>(button);
+            DestroyComponentsInChildren<Collider>(button);
+            DestroyComponentsInChildren<BoxCollider>(button);
+
+            button.name = "Name Tag Item For " + sound;
                 Object.Destroy(button.GetComponent<UIScrollbarHelper>());
                 Object.Destroy(button.GetComponent<NumberButton>());
-                button.transform.GetChild(0).GetComponent<TextMeshPro>().text = AllTONEX.ContainsKey(sound) ? GetString($"Mus.{sound}") : sound;
+            button.transform.GetChild(0).GetComponent<TextMeshPro>().text = AllTONEX.ContainsKey(sound) ? GetString($"Mus.{sound}") : sound;
                 var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
             //GetPostfix(path);
             var renderer = button.GetComponent<SpriteRenderer>();
@@ -195,5 +202,12 @@ public static class SoundPanel
         scroller.SetYBoundsMin(0f);
         scroller.SetYBoundsMax(0.6f * numItems);
     }
-
+    private static void DestroyComponentsInChildren<T>(GameObject obj) where T : Component
+    {
+        T[] components = obj.GetComponentsInChildren<T>();
+        foreach (T component in components)
+        {
+            Object.Destroy(component);
+        }
+    }
 }

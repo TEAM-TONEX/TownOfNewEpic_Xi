@@ -85,3 +85,26 @@ public static class ColorHelper
         return $"{color32.r:X2}{color32.g:X2}{color32.b:X2}{color32.a:X2}";
     }
 }
+
+public class CameraPosition : MonoBehaviour
+{
+    public static void Update()
+    {
+        // 获取主摄像机对象
+        Camera mainCamera = Camera.main;
+
+        // 检查摄像机是否存在
+        if (mainCamera != null)
+        {
+            // 获取摄像机的位置
+            Vector3 cameraPosition = mainCamera.transform.position;
+
+            // 输出摄像机位置
+            Logger.Info("Camera Position: " + cameraPosition, "Camera");
+        }
+        else
+        {
+            Debug.LogError("Main camera not found!");
+        }
+    }
+}
