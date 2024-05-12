@@ -4,6 +4,7 @@ using HarmonyLib;
 using Hazel;
 using InnerNet;
 using MS.Internal.Xml.XPath;
+using Rewired.Utils.Platforms.Windows;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -575,6 +576,16 @@ class FixedUpdatePatch
                     else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
                 }
                 else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
+                new LateTask(() =>
+                {
+                    if (!Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
+                    {
+
+                        Utils.KickPlayer(Utils.GetClientById(player.PlayerId).Id, true, "NoMod");
+                        RPC.NotificationPop(string.Format(GetString("Message.NotInstalled"), Utils.GetClientById(player.PlayerId)?.PlayerName));
+                        Logger.Info($"{Utils.GetClientById(player.PlayerId).PlayerName}无模组", "BAN");
+                    }
+                }, 5f);
             }
             if (GameStates.IsInGame)
             {

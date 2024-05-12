@@ -117,16 +117,7 @@ class OnPlayerJoinedPatch
             if (Main.SayBanwordsTimes.ContainsKey(client.Id)) Main.SayBanwordsTimes.Remove(client.Id);
             if (Main.NewLobby && Options.ShareLobby.GetBool()) Cloud.ShareLobby();
         }
-        new LateTask(() => 
-        {
-            if (Options.IsAllCrew && !player.IsModClient())
-            {
-
-                Utils.KickPlayer(client.Id, true, "NoMod");
-                RPC.NotificationPop(string.Format(GetString("Message.NotInstalled"), client.PlayerName));
-                Logger.Info($"{client.PlayerName}无模组", "BAN");
-            }
-        },5f);
+        (Utils.GetClientById(player.PlayerId)
         
     }
 }

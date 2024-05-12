@@ -55,10 +55,10 @@ public static class OptionsMenuBehaviourStartPatch
                 Logger.SendInGame(string.Format(Translator.GetString("FPSSetTo"), Application.targetFrameRate));
             }
         }
-        if (AssistivePluginMode == null || AssistivePluginMode.ToggleButton == null)
-        {
-            AssistivePluginMode = ClientOptionItem.Create("AssistivePluginMode", Main.AssistivePluginMode, __instance);
-        }
+        //if (AssistivePluginMode == null || AssistivePluginMode.ToggleButton == null)
+        //{
+        //    AssistivePluginMode = ClientOptionItem.Create("AssistivePluginMode", Main.AssistivePluginMode, __instance);
+        //}
 
         if (HorseMode == null || HorseMode.ToggleButton == null)
         {
