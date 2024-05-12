@@ -105,6 +105,8 @@ public sealed class MeteorArbiter : RoleBase, INeutralKiller, IAdditionalWinner
         if (Shield >0)
         {
             Shield--;
+            killer.RpcProtectedMurderPlayer(target);
+            killer.SetKillCooldown();
             SendRPC();
             return false;
         }
@@ -201,7 +203,7 @@ public sealed class MeteorArbiter : RoleBase, INeutralKiller, IAdditionalWinner
   
     public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
     {
-        if (Is(reporter) && target == null)
+        if (Is(reporter) && target != null)
         {
             var player = Utils.GetPlayerById(target.PlayerId);
             int lv = LOVE;

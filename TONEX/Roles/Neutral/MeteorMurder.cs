@@ -115,7 +115,7 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
   
     public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
     {
-        if (Is(reporter) && target == null)
+        if (Is(reporter) && target != null)
         {
             if (LOVE <= 16)
             {
