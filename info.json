@@ -1,13 +1,13 @@
 {
-  "version": "1.1.0",
-  "verHead": "1.1",
-  "verDate": "20240404",
+  "version": "1.2.0",
+  "verHead": "1.2",
+  "verDate": "20240521",
 
-  "versionPre": "",
-  "verDatePre": "",
+  "versionPre": "1.1.45.14",
+  "verDatePre": "20240514",
 
-  "verTestName": "",
-  "verTestNum": "",
+  "verTestName": "Preview",
+  "verTestNum": "1",
 
 
   "minVer": "latest",
@@ -16,12 +16,12 @@
   "CanUpdate": "true",
   "DebugVer": "0.0.0",
 
-  "md5Pre": "4288e783b14cc1f74d6e7da4051cfd22",
-  "md5": "cddfdeaca63f8878fcded9551a35578f",
+  "md5Pre": "c28fdc2b73b695d4c17f4ff842bf9698",
+  "md5": "",
   "announcement": {
-    "Preview": "预览版本！Preview Version!",
-    "SChinese": "清明安康",
-    "English": "Create/join public lobbies is temporarily falut\nThis change is due to a server-side update that makes modded public lobbies unavailable for vanilla.\nPrivate lobbies are not affected.\nCurrently, this change is NOT permanent."
+    "Preview": "Welcome",
+    "SChinese": "感谢一年来所有玩家的支持！",
+    "English": "Thank you to all players for your support over the past year!"
   },
 
   "url": {
