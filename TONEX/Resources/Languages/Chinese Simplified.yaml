@@ -2039,6 +2039,7 @@ DCNotify.VoluntarilyQuit: "您选择主动离开\n没事的，有些房确实很
 DCNotify.LowLevel: "您的等级未达到该房间的等级要求"
 DCNotify.NotLogin: "该房间不允许未登录的玩家加入"
 DCNotify.Andriod: "该房间不允许安卓玩家加入"
+DCNotify.NoMod: "该房间开起了[全员模组模式]，\n不允许无模组玩家加入"
 
 # 设置相关
 TabGroup.SystemSettings: "系统设置"

@@ -2013,6 +2013,7 @@ DCNotify.VoluntarilyQuit: "You have chosen to leave\nIt's ok. ik some lobbies ar
 DCNotify.LowLevel: "Your lv. does not meet to the requirement of this room"
 DCNotify.NotLogin: "Non-logged players are not allowed in this room"
 DCNotify.Andriod: "Android players are not allowed in this room"
+DCNotify.NoMod: "This room has enabled [All-Crew-Mod-Mode]，\nYou haven't installed TONEX so that join this room are not allowed "
 # 其它 / Other Things
 BaseOn: "Base: "
 TabGroup.SystemSettings: "System Settings"

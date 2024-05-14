@@ -33,7 +33,7 @@ internal class ShowDisconnectPopupPatch
                 }
 
                 if (!string.IsNullOrEmpty(ReasonByHost))
-                    SetText(string.Format(GetString("DCNotify.Describtion"), ReasonByHost));
+                    SetText(string.Format(GetString("DCNotify.Description"), ReasonByHost));
                 else switch (Reason)
                     {
                         case DisconnectReasons.Hacking:

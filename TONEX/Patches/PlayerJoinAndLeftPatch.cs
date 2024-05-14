@@ -117,7 +117,6 @@ class OnPlayerJoinedPatch
             if (Main.SayBanwordsTimes.ContainsKey(client.Id)) Main.SayBanwordsTimes.Remove(client.Id);
             if (Main.NewLobby && Options.ShareLobby.GetBool()) Cloud.ShareLobby();
         }
-        (Utils.GetClientById(player.PlayerId)
         
     }
 }
