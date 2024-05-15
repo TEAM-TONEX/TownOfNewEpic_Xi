@@ -22,7 +22,7 @@ But I believe that Cupid's arrow of love will eventually find its way to you!
 
 ## Summary of Updates
 - Fixed 50 bugs
-- Implemented 14 optimizations
+- Implemented 15 optimizations
 - Made changes to 24 elements
 - Added 35 New/Remade features (including roles, settings, etc.)
 - Temporarily removed 2 elements
@@ -156,6 +156,8 @@ But I believe that Cupid's arrow of love will eventually find its way to you!
 (Idea&Made By Slok)
 - Game start logs have been hidden to optimize loading speed
 (Idea&Made By Slok)
+- Map Button Icon Optimization
+(Idea&Made By LeZaiYa)
 - Official Website: Migrated the official website from tonex.cc to www.xtreme.net.cn
 (Idea&Made By 清风)
 
