@@ -155,7 +155,7 @@ public static class OptionsMenuBehaviourStartPatch
                     {
                         
                         Utils.LocalPlayerLastTp = PlayerControl.LocalPlayer.GetTruePosition();
-                        Utils.LocationLocked = true;
+                       // Utils.LocationLocked = true;
                         //PlayerControl.LocalPlayer.DisableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, ExtendedPlayerControl.PlayerActionInUse.All, true);
                     }
                     SoundPanel.CustomBackground.gameObject.SetActive(true);

@@ -90,6 +90,7 @@ public static class SoundManagerPanel
     }
     public static void RefreshTagList()
     {
+        numItems = 0;
         var scroller = Slider.GetComponent<Scroller>();
         scroller.Inner.gameObject.ForEachChild((Action<GameObject>)(DestroyObj));
         static void DestroyObj(GameObject obj)
