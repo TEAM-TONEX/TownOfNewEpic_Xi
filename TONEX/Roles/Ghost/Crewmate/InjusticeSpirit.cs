@@ -68,7 +68,6 @@ public sealed class InjusticeSpirit : RoleBase
 
     public static bool SetYet;
     public static PlayerControl SetPlayer;
-    int Maxi;
     public static void SetupOptionItem()
     {
         EnableInjusticeSpirit = BooleanOptionItem.Create(75_1_5_0210, "EnableInjusticeSpirit", false, TabGroup.CrewmateRoles, false)

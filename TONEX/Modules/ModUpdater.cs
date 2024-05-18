@@ -91,10 +91,10 @@ public class ModUpdater
 
         if (!isChecked && firstStart) CheckForUpdate();
         SetUpdateButtonStatus();
-        if (File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/Birthday.wav"))
-        {
-            CustomSoundsManager.Play("Birthday", 0);
-        }
+        //if (File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/Birthday.wav"))
+        //{
+        //    CustomSoundsManager.Play("Birthday", 0);
+        //}
         firstStart = false;
     }
     public static void SetUpdateButtonStatus()

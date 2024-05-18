@@ -13,9 +13,10 @@ internal class MakePublicPatch
     public static bool Prefix(GameStartManager __instance)
     {
         // 定数設定による公開ルームブロック
+        if (Main.AssistivePluginMode.Value) return true;
         //#if RELEASE
-        
-            if (!Main.AllowPublicRoom)
+
+        if (!Main.AllowPublicRoom)
             {
                 var message = GetString("DisabledByProgram");
                 Logger.Info(message, "MakePublicPatch");

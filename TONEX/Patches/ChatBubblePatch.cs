@@ -18,13 +18,16 @@ public static class ChatBubblePatch
     [HarmonyPatch(nameof(ChatBubble.SetText)), HarmonyPrefix]
     public static void SetText_Prefix(ChatBubble __instance, ref string chatText)
     {
-        bool modded = IsModdedMsg(__instance.playerInfo.PlayerName);
-        var sr = __instance.transform.FindChild("Background").GetComponent<SpriteRenderer>();
-        sr.color = modded ? new Color(0, 0, 0) : new Color(1, 1, 1);
-        if (modded)
+        if (!Main.AssistivePluginMode.Value)
         {
-            chatText = Utils.ColorString(Color.white, chatText.TrimEnd('\0'));
-            __instance.SetLeft();
+            bool modded = IsModdedMsg(__instance.playerInfo.PlayerName);
+            var sr = __instance.transform.FindChild("Background").GetComponent<SpriteRenderer>();
+            sr.color = modded ? new Color(0, 0, 0) : new Color(1, 1, 1);
+            if (modded)
+            {
+                chatText = Utils.ColorString(Color.white, chatText.TrimEnd('\0'));
+                __instance.SetLeft();
+            }
         }
     }
 }

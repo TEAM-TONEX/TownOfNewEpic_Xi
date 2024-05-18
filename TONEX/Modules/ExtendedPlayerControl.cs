@@ -1529,6 +1529,9 @@ static class ExtendedPlayerControl
     public static bool IsImpTeam(this PlayerControl player) => player.IsImp() || player.Is(CustomRoles.Madmate);
 
     public static bool IsCrew(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate);
+    public static bool IsCrewTeam(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoles.Madmate) 
+        && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate) 
+        && !player.Is(CustomRoles.Lovers) && !player.Is(CustomRoles.AdmirerLovers) && !player.Is(CustomRoles.AkujoLovers) && !player.Is(CustomRoles.CupidLovers);
     public static bool IsCrewKiller(this PlayerControl player) => player.IsCrew() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as IKiller)?.IsKiller ?? false);
     public static bool IsCrewNonKiller(this PlayerControl player) => !player.IsCrewKiller();
 

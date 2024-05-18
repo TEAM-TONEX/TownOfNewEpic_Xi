@@ -122,6 +122,10 @@ public static class CustomRoleManager
                         return false;
                     }
                 }
+                if (Madmate.FirstKill(attemptKiller, attemptTarget))
+                {
+                    return false;
+                }
             }
 
         }

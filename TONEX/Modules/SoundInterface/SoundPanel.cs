@@ -21,10 +21,10 @@ public static class SoundPanel
 
     public static int currentPage { get; private set; } = 1;
     public static int itemsPerPage { get; private set; } = 7;
-    public static int totalPageCount { get; private set; } = (AllMusic.Count + itemsPerPage - 1) / itemsPerPage;
+    public static int totalPageCount { get; private set; } = (AllMusics.Count + itemsPerPage - 1) / itemsPerPage;
 
     private static int numItems = 0;
-    static int PlayMode = 0;
+    public static int PlayMode = 0;
     public static ToggleButtonBehaviour ChangePlayMode { get; private set; }
     public static void Hide()
     {
@@ -43,7 +43,7 @@ public static class SoundPanel
             OptionsMenuBehaviourNow = optionsMenuBehaviour;
         if (CustomBackground == null)
         {
-             totalPageCount= (AllMusic.Count + itemsPerPage - 1) / itemsPerPage;
+             totalPageCount= (AllMusics.Count + itemsPerPage - 1) / itemsPerPage;
             currentPage = 1;
             numItems = 0;
             PlayMode = 0;
@@ -136,7 +136,7 @@ public static class SoundPanel
         //ChangePlayMode = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
         //ChangePlayMode.transform.localPosition = new Vector3(-1.3f, -1.33f, -16f);
         //ChangePlayMode.name = "ChangePlayMode";
-        //ChangePlayMode.Text.text = PlayMode == 0? GetString(""): GetString("");
+        //ChangePlayMode.Text.text = GetString($"PlayMode{PlayMode}");
         //ChangePlayMode.Background.color = Palette.DisabledGrey;
 
         //var nextPagePassiveButton = ChangePlayMode.GetComponent<PassiveButton>();
@@ -144,8 +144,8 @@ public static class SoundPanel
         //nextPagePassiveButton.OnClick.AddListener(new Action(() =>
         //{
 
-        //    PlayMode++; 
-        //    if (PlayMode > 1)
+        //    PlayMode++;
+        //    if (PlayMode > 3)
         //    {
         //        PlayMode = 0;
         //    }
@@ -156,7 +156,7 @@ public static class SoundPanel
     }
     public static void RefreshTagList()
     {
-        totalPageCount = (AllMusic.Count + itemsPerPage - 1) / itemsPerPage;
+        totalPageCount = (AllMusics.Count + itemsPerPage - 1) / itemsPerPage;
         Items?.Do(Object.Destroy);
         Items = new();
         numItems = 0;
@@ -166,9 +166,9 @@ public static class SoundPanel
         
         int startIndex = (currentPage - 1) * itemsPerPage; // 当前页的起始索引
 
-        // 遍历从起始索引开始的音频，直到达到本页数量上限或 AllMusic 没有更多音乐
+        // 遍历从起始索引开始的音频，直到达到本页数量上限或 AllMusics 没有更多音乐
         int count = 0;
-        foreach (var soundp in AllMusic.Skip(startIndex))
+        foreach (var soundp in AllMusics.Skip(startIndex))
         {
             if (count >= itemsPerPage)
             {
@@ -206,15 +206,20 @@ public static class SoundPanel
 
             var passiveButton = ToggleButton.GetComponent<PassiveButton>();
             passiveButton.OnClick = new();
-            passiveButton.OnClick.AddListener(new Action(() =>
+            passiveButton.OnClick.AddListener(new Action( () =>
             {
                 Logger.Info($"Play {sound}:{path}", "SoundsPanel");
                 if (File.Exists(path))
                 {
-                    //if (PlayMode == 0)
-                    //CustomSoundsManager.Play(sound, 0);
-                    //else if(PlayMode == 1)
-                    CustomSoundsManager.Play(sound, 1);
+                    if (PlayMode == 0)
+                        CustomSoundsManager.Play(sound, 0, true);
+                    else if (PlayMode == 1)
+                        CustomSoundsManager.Play(sound, 1, true);
+                    else if (PlayMode == 2 || PlayMode == 3)
+                    {
+                        CustomSoundsManager.Play(sound, 2, true);
+
+                    }
                 }
             }));
 

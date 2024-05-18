@@ -17,39 +17,52 @@ namespace TONEX;
 public static class AudioManager
 {
     public static readonly string TAGS_DIRECTORY_PATH = @"./TONEX_Data/SoundNames/";
-    private static Dictionary<string, bool> CustomMusic = new();
+
     public static IReadOnlyDictionary<string, bool> TONEXMusic => TONEXOfficialMusic;
-    public static IReadOnlyDictionary<string, bool> AllMusic => CustomMusic.Concat(TONEXOfficialMusic)
-    .ToDictionary(x => x.Key.ToString(), x => x.Value, StringComparer.OrdinalIgnoreCase);
+
+    public static IReadOnlyDictionary<string, bool> AllMusics => CustomMusic.Concat(TONEXOfficialMusic)
+        .ToDictionary(x => x.Key.ToString(), x => x.Value, StringComparer.OrdinalIgnoreCase);
     public static IReadOnlyDictionary<string, bool> AllSounds => TONEXSounds;
-    public static IReadOnlyDictionary<string, bool> AllFiles => AllSounds.Concat(AllMusic).ToDictionary(x => x.Key.ToString(), x => x.Value, StringComparer.OrdinalIgnoreCase);
-    public static IReadOnlyDictionary<string, bool> AllTONEX => AllSounds.Concat(TONEXMusic).ToDictionary(x => x.Key.ToString(), x => x.Value, StringComparer.OrdinalIgnoreCase);
+
+    public static IReadOnlyDictionary<string, bool> AllFiles => AllSounds.Concat(AllMusics)
+        .ToDictionary(x => x.Key.ToString(), x => x.Value, StringComparer.OrdinalIgnoreCase);
+    public static IReadOnlyDictionary<string, bool> AllTONEX => AllSounds.Concat(TONEXMusic)
+        .ToDictionary(x => x.Key.ToString(), x => x.Value, StringComparer.OrdinalIgnoreCase);
+
+
+    private static Dictionary<string, bool> CustomMusic = new();
+    public static Dictionary<string, bool> TONEXOfficialMusic = new();
+    public static Dictionary<string, bool> TONEXSounds = new();
+
 
     public static List<string> TONEXOfficialMusicList = new()
     {
         "GongXiFaCaiLiuDeHua",
+        "NeverGonnaGiveYouUp",
         "RejoiceThisSEASONRespectThisWORLD",
         "SpringRejoicesinParallelUniverses",
-"AFamiliarPromise",
-"GuardianandDream",
-"HeartGuidedbyLight",
-"HopeStillExists",
-"Mendax",
-"MendaxsTimeForExperiment",
-"StarfallIntoDarkness",
-"StarsFallWithDomeCrumbles",
-"TheDomeofTruth",
-"TheTruthFadesAway",
-"unavoidable",
-"NeverGonnaGiveYouUp",
+        "AFamiliarPromise",
+        "GuardianandDream",
+        "HeartGuidedbyLight",
+        "HopeStillExists",
+        "Mendax",
+        "MendaxsTimeForExperiment",
+        "StarfallIntoDarkness",
+        "StarsFallWithDomeCrumbles",
+        "TheDomeofTruth",
+        "TheTruthFadesAway",
+        "unavoidable",
+
+
 
     };
+
     public static List<string> NotUp = new()
     {
+
+
     };
 
-    public static Dictionary<string, bool> TONEXOfficialMusic = new();
-    public static Dictionary<string, bool> TONEXSounds = new();
     public static List<string> TONEXSoundList = new()
     {
         "Birthday",
@@ -104,6 +117,7 @@ public static class AudioManager
             }
         }
     }
+
     public static void Init()
     {
         CustomMusic = new();
@@ -143,29 +157,33 @@ public static class AudioManager
             Logger.Info($"Sound Loaded: {sound}", "AudioManager");
         }
     }
-    public static void GetPostfix(string path)
+    public static void getExtension(string path)
     {
         int i = 0;
         if (path == null) return;
         while (!File.Exists(path))
         {
             i++;
-            string matchingKey = formatMap.Keys.FirstOrDefault(key => path.Contains(key));
-            if (matchingKey != null)
+            string matchingKey = extensionMap.Keys.FirstOrDefault(key => path.Contains(key)) ?? "";
+            if (matchingKey != "")
             {
-                string newFormat = formatMap[matchingKey];
+                string newFormat = extensionMap[matchingKey];
                 path = path.Replace(matchingKey, newFormat);
                 Logger.Warn($"{path} Founded", "AudioManager");
                 break;
             }
-            if (i == formatMap.Count)
+            if (i == extensionMap.Count)
             {
-                Logger.Error($"{path} Cannot Be Finded", "AudioManager");
+                Logger.Error($"{path} Cannot Be Found", "AudioManager");
                 break;
             }
         }
+        if (i != extensionMap.Count)
+            Logger.Warn($"{path} Founded", "AudioManager");
+
     }
-    public static Dictionary<string, string> formatMap = new()
+
+    public static Dictionary<string, string> extensionMap = new()
     {
     { ".wav", ".flac" },
     { ".flac", ".aiff" },
