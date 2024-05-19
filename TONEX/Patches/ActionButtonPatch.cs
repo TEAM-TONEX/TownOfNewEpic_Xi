@@ -30,7 +30,7 @@ class VentButtonDoClickPatch
         if (Main.AssistivePluginMode.Value) return true;
 
         var pc = PlayerControl.LocalPlayer;
-            if (pc.inVent && pc.HasDisabledAction(PlayerActionType.ExitVent))
+            if (pc.inVent && (pc.HasDisabledAction(PlayerActionType.ExitVent)))
             {
                 pc?.MyPhysics?.RpcExitVent(__instance.currentTarget.Id);
                 return false;
