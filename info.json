@@ -6,8 +6,8 @@
   "versionPre": "1.1.45.14",
   "verDatePre": "20240514",
 
-  "verTestName": "Preview",
-  "verTestNum": "1",
+  "verTestName": "",
+  "verTestNum": "",
 
 
   "minVer": "latest",
@@ -17,7 +17,7 @@
   "DebugVer": "0.0.0",
 
   "md5Pre": "c28fdc2b73b695d4c17f4ff842bf9698",
-  "md5": "",
+  "md5": "cea868d8a0f4adf3b2bb75ff00e77a50",
   "announcement": {
     "Preview": "Welcome",
     "SChinese": "感谢一年来所有玩家的支持！",
