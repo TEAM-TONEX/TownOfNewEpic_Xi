@@ -45,7 +45,7 @@ public sealed class InjusticeSpirit : RoleBase
     private static bool CanFindCharmed;
     private static bool CanFindWolfmate;
 
-    private bool IsExposed = false;
+    //private bool IsExposed = false;
     private bool IsComplete = false;
     public override void OnGameStart()
     {

@@ -16,7 +16,7 @@ using static UnityEngine.ParticleSystem.PlaybackState;
 namespace TONEX.Roles.AddOns.CanNotOpened;
 public static class AkujoFakeLovers
 {
-    private static readonly int Id = 75_1_2_2000;
+    //private static readonly int Id = 75_1_2_2000;
     private static List<byte> playerIdList = new();
 
     [GameModuleInitializer]

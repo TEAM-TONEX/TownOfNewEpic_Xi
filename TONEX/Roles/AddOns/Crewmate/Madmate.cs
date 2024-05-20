@@ -12,7 +12,7 @@ using System;
 namespace TONEX.Roles.AddOns.Crewmate;
 public static class Madmate
 {
-    private static readonly int Id = 75_1_2_1500;
+    //private static readonly int Id = 75_1_2_1500;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Madmate);
     private static List<byte> playerIdList = new();
 

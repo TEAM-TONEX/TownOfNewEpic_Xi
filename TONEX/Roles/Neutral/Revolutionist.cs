@@ -33,8 +33,8 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
         () => HasTask.False
     )
     {
-        DouseTime = OptionDouseTime.GetFloat();
-        DouseCooldown = OptionDouseCooldown.GetFloat();
+        DouseTime = RevolutionistDrawTime.GetFloat();
+        DouseCooldown = RevolutionistCooldown.GetFloat();
 
         TargetInfo = null;
         RevolutionistTimer = new(GameData.Instance.PlayerCount);
@@ -49,7 +49,11 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
     private static float DouseTime;
     private static float DouseCooldown;
     private TimerInfo TargetInfo;
-    public Dictionary<byte, (PlayerControl, float)> RevolutionistTimer;
+    public static Dictionary<byte, bool> isDraw = new();
+    public static Dictionary<byte, (PlayerControl, float)> RevolutionistTimer = new();
+    public static Dictionary<byte, long> RevolutionistStart = new();
+    public static Dictionary<byte, long> RevolutionistLastTime = new();
+    public static Dictionary<byte, int> RevolutionistCountdown = new();
 
     public class TimerInfo
     {
@@ -91,8 +95,8 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
     {
 
     }
-    public bool CanUseKillButton() => !IsDouseDone(Player);
-    public bool CanUseImpostorVentButton() => IsDouseDone(Player) && !Player.inVent;
+    public bool CanUseKillButton() => !IsDrawDone(Player);
+    public bool CanUseImpostorVentButton() => IsDrawDone(Player) && !Player.inVent;
     public float CalculateKillCooldown() => DouseCooldown;
     public bool CanUseSabotageButton() => false;
     public override string GetProgressText(bool comms = false)
@@ -251,7 +255,7 @@ SetDousedPlayer,
     }
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
-        if (GameStates.IsInGame && IsDouseDone(Player))
+        if (GameStates.IsInGame && IsDrawDone(Player))
         {
             foreach (var pc in Main.AllAlivePlayerControls)
             {
@@ -275,7 +279,7 @@ SetDousedPlayer,
     }
     public override void OnUsePet()
     {
-                if (GameStates.IsInGame && IsDouseDone(Player))
+                if (GameStates.IsInGame && IsDrawDone(Player))
         {
             foreach (var pc in Main.AllAlivePlayerControls)
             {
@@ -323,10 +327,11 @@ SetDousedPlayer,
         //seenが省略の場合seer
         seen ??= seer;
 
-        if (IsDousedPlayer(seen.PlayerId)) //seerがtargetに既にオイルを塗っている(完了)
-            return Utils.ColorString(RoleInfo.RoleColor, "▲");
-        if (!isForMeeting && TargetInfo?.TargetId == seen.PlayerId) //オイルを塗っている対象がtarget
-            return Utils.ColorString(RoleInfo.RoleColor, "△");
+        if (IsDrawPlayer(target))
+            TargetMark.Append($"<color={GetRoleColorCode(CustomRoles.Revolutionist)}>●</color>");
+
+        if (Main.RevolutionistTimer.TryGetValue(seer.PlayerId, out var re_kvp) && re_kvp.Item1 == target)
+            TargetMark.Append($"<color={GetRoleColorCode(CustomRoles.Revolutionist)}>○</color>");
 
         return "";
     }
@@ -338,10 +343,10 @@ SetDousedPlayer,
         //seeおよびseenが自分である場合以外は関係なし
         if (!Is(seer) || !Is(seen)) return "";
 
-        return IsDouseDone(Player) ? Utils.ColorString(RoleInfo.RoleColor, GetString("EnterVentToWin")) : "";
+        return IsDrawDone(Player) ? Utils.ColorString(RoleInfo.RoleColor, GetString("EnterVentToWin")) : "";
     }
-    public bool IsDousedPlayer(byte targetId) => IsDoused.TryGetValue(targetId, out bool isDoused) && isDoused;
-    public static bool IsDouseDone(PlayerControl player)
+    public bool IsDrawPlayer(byte targetId) => isDraw.TryGetValue(targetId, out bool isDoused) && isDoused;
+    public static bool IsDrawDone( this PlayerControl player)
     {
         if (player.GetRoleClass() is not Revolutionist Revolutionist) return false;
         var count = Revolutionist.GetDousedPlayerCount();
@@ -356,11 +361,12 @@ SetDousedPlayer,
             if (pc.PlayerId == Player.PlayerId) continue; //アーソニストは除外
 
             all++;
-            if (IsDoused.TryGetValue(pc.PlayerId, out var isDoused) && isDoused)
+            if (isDraw.TryGetValue(pc.PlayerId, out var isDoused) && isDoused)
                 //塗れている場合
                 doused++;
         }
 
         return (doused, all);
     }
-}*/
+}
+//*/

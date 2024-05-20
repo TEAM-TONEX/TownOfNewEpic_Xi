@@ -13,7 +13,7 @@ using InnerNet;
 namespace TONEX.Roles.AddOns.CanNotOpened;
 public static class AdmirerLovers
 {
-    private static readonly int Id = 75_1_2_1800;
+    //private static readonly int Id = 75_1_2_1800;
     private static List<byte> playerIdList = new();
 
     public static OptionItem AdmirerLoverKnowRoles;
