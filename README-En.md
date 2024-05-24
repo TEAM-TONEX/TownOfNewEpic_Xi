@@ -1,4 +1,4 @@
-![XtremeWave & TONEX](https://cn-sy1.rains3.com/xtremewave/XtremeWave-TONEX.png)
+![XtremeWave-TONEX](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/cdeb761a-6bb7-48b9-8bc3-86ce849dfc20)
 <div align="center">
 <p>Host only mod for Among Us, forked from Town Of Next.</p>
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/badge/License/GPL3.0" alt="License"></a>
@@ -17,8 +17,8 @@ TownOfNewEpic_Xtreme拥有以下特点:
 
 TONEX v1.2PV: <https://www.bilibili.com/video/BV1Zs421c74A>
 ## UI
-![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI1.png)
-![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI2.png)
+![TONEX-UI1](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/f8119bc3-f5ab-4783-bc95-5f5606ac0658)
+![TONEX-UI2](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/2dba7d87-f081-47e5-9f0b-57358b36df3f)
 ## Download
 XtremeWave offers a variety of download options.
 - [TONEX官方网站](https://tonex.cc/download)
