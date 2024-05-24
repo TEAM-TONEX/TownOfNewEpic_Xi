@@ -5,6 +5,10 @@
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/stars/XtremeWave/TownOfNewEpic_Xtreme" alt="Stars"></a>
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/forks/XtremeWave/TownOfNewEpic_Xtreme" alt="Forks"></a>
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/release/XtremeWave/TownOfNewEpic_Xtreme" alt="Release"></a>
+<br>
+
+[简体中文] | [[English]](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/blob/TONEX/README-En.md)
+
 <hr></div>
 TownOfNewEpic_Xtreme拥有以下特点:
 
