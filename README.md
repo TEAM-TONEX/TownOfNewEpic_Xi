@@ -1,150 +1,119 @@
+![XtremeWave & TONEX](https://cn-sy1.rains3.com/xtremewave/XtremeWave-TONEX.png)
 <div align="center">
-  <img width="160" src="Assets/LOGO.png" alt="logo"></br>
-  <img width="160" src="Assets/Title.svg" alt="title"></br>
+<p>Host only mod for Among Us, forked from Town Of Next.</p>
+<a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/badge/License/GPL3.0" alt="License"></a>
+<a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/stars/XtremeWave/TownOfNewEpic_Xtreme" alt="Stars"></a>
+<a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/forks/XtremeWave/TownOfNewEpic_Xtreme" alt="Forks"></a>
+<a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/release/XtremeWave/TownOfNewEpic_Xtreme" alt="Release"></a>
+<hr></div>
+TownOfNewEpic_Xtreme拥有以下特点:
 
-  ## 语言
-[简体中文](https://github.com/XtremeWave/TownOfNewEpic_Xtreme/blob/TONEX/README-Zh.md)
- 
+- **稳定更新**: XtremeWave定期更新TONEX,这使得其永远不会成为过去式。
+- **优秀体验**: TONEX能为您带来非常优秀的游戏体验。
+- **良好生态**: XtremeWave为TONEX提供稳定运行的云服务,例如更新检查、游戏服务器。
 
-  </br></br>
+TONEX v1.2PV: <https://www.bilibili.com/video/BV1Zs421c74A>
 
-  <h1>:point_right: <a href="https://www.xtreme.net.cn">𝑪𝒍𝒊𝒄𝒌 𝑴𝒆</a> :point_left:</h1> 
-  <h3>to view the introduction & installation tutorial</h3>  
+## UI展示
+![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI1.png)
+![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI2.png)
+## 立即下载
+XtremeWave提供了多种下载方式。
+- [TONEX官方网站](https://tonex.cc/download)
+- [XtremeWave官方网站](https://www.xtreme.net.cn)
+- [TONEX官方Github仓库](https://github.com/XtremeWave/TownOfNewEpic_Xtreme/releases)
+- [TONEX官方Gitee仓库](https://gitee.com/TEAM_TONEX/TownOfNewEpic_Xtreme/releases)
+## 加入我们
+XtremeWave(亦或者是TONEX)非常欢迎您加入TONEX大家庭。<br>
+- [点击加入TONEX官方QQ群](https://qm.qq.com/q/9dkVmyBvpY)
+- [点击访问TONEX官方网站](https://tonex.cc)
+> TONEX官方网站尚未完成开发。
+- [点击访问XtremeWave官方网站](https://www.xtreme.net.cn/)
 
-  </br></br>
+## 模组鸣谢
 
-  <h1>:fire: 𝓐𝓷𝓷𝓸𝓾𝓷𝓬𝓮𝓶𝓮𝓷𝓽 :fire:</h1>
-  <p>Since May 20, TOHE stopped development due to some reasons. At the request of many players, TOHE will maintain the most basic adaptation and synchronize updates with TOH to ensure that players in need can still play normally. TOHE has renamed TONX<br>Because Of this, we no longer in the "name of inheritance", so we restart our project, named it "TONEX"</p>
+### [Town Of Host](https://github.com/tukasa0001/TownOfHost) :
+开发者：[tukasa0001](https://github.com/tukasa0001)
+一切都基于Town Of Host。
 
-  </br></br>
+###  [Town Of Next](https://github.com/KARPED1EM/TownOfNext) :
+开发者：[KARPED1EM](https://github.com/KARPED1EM)<br>
+梦开始的地方。<br>
+我们的项目是Town Of Next的分支。<br>
+**_感谢咔皮呆的近100000行优秀的代码，这为我们模组的开发建立了极好的基础。_**
 
-  <h1>:herb: 𝓡𝓮𝓰𝓪𝓻𝓭𝓲𝓷𝓰 :herb:</h1>
-  <p>This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.</p>
+###  [Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y) :
+开发者：[Yumenopai](https://github.com/Yumenopai)<br>
+许多职业想法。<br>
+提供职业: 监管者, 呪狼, 工作狂, 贪婪者, 潜藏者。<br>
+参考: 修改游戏公告。
 
-  </br></br>
+###  [Town Of Host : The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles) :
+开发者：[Music Discussion](https://github.com/music-discussion)<br>
+许多职业想法。<br>
+参考: 驱逐确认。<br>
+参考: 分割RPC包以缓解网络压力。
 
-</div>
-<div align="left">
+###  [Super New Roles](https://github.com/ykundesu/SuperNewRoles) :
+开发者：[ykundesu](https://github.com/ykundesu)
+参考: TOHEX中的制作者名单(v2023.7.11前)。<br>
+参考: 愚人节牧马模式(v2024.3.5前)。<br>
+参考: 寻找模组游戏。<br>
+参考: TOHEX中的自定义按钮。
 
-  # Source of ideas & Supports
-[Town Of Host](https://github.com/tukasa0001/TownOfHost)<br>
-[Town Of Host Edited & Town Of Next](https://github.com/KARPED1EM/TownOfHostEdited)<br>
-[Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y)<br>
-[Town Of Host:The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles)<br>
-[Super New Roles](https://github.com/ykundesu/SuperNewRoles)<br>
-[Town Of Host-ReEdited](https://github.com/Loonie-Toons/TownOfHost-ReEdited)<br>
-[Town Of Host:Enhanced](https://github.com/0xDrMoe/TownofHost-Enhanced)<br>
-[Town Of Us](https://github.com/Loonie-Toons/TownOfHost-ReEdited)<br>
-[Town-Of-Us-R](https://github.com/eDonnes124/Town-Of-Us-R)<br>
-[Foolers Mod](https://github.com/MengTube/Foolers-Mod)<br>
-[Nebula on the Ship](https://github.com/Dolly1016/Nebula)<br>
-[The Other Roles](https://github.com/TheOtherRolesAU/TheOtherRoles)<br>
-[The Other Roles: GM Edition](https://github.com/yukinogatari/TheOtherRoles-GM)<br>
-[The Other Roles: GM Haoming Edition](https://github.com/haoming37/TheOtherRoles-GM-Haoming)<br>
-[The Other Roles: GM IA Edition](https://github.com/dabao40/TheOtherRolesGMIA)<br>
-[Clash Of Gods](https://github.com/CognifyDev/ClashOfGods)<br>
-[Town Of Crew:Sea Of Shark](https://github.com/yiTOC/TOCS)<br>
-[QQ Channel](https://pd.qq.com/s/gm7xdfhw8)'s **Players**<br>
-**Thank you to all mods for their excellent ideas, which have created us**<br>
-**Thank you even more to the players who have supported us. It is you who have given us the motivation to continue!**
+###  [Town Of Plus](https://github.com/tugaru1975/TownOfPlus) :
+开发者：[tugaru1975](https://github.com/tugaru1975)<br>
+参考: 千里眼。
 
-  </br></br>
+###  [Revolutionary Host Roles](https://github.com/sansaaaaai/Revolutionary-host-roles) :
+开发者：[sansaaaaai](https://github.com/sansaaaaai)<br>
+参考: 修改设置菜单。
 
-# Special Thanks
->
->### :star: [Town Of Host](https://github.com/tukasa0001/TownOfHost) :
->
-> - Developer：[tukasa0001](https://github.com/tukasa0001)
-> - Everything is based on Town Of Host
->
->### :star: [Town Of Next(Formerly Town Of Host Edited)](https://github.com/KARPED1EM/TownOfHostEdited) :
-> 
-> - Developer：[KARPED1EM](https://github.com/KARPED1EM)
-> - The beginning of our Dream
-> - Our project is forked from Town Of Next 
-> - **Thanks Karpe's Nearly 100000 lines of code have established an excellent foundation for our mod**
->
->### :star: [Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y) :
-> 
-> - Developer：[Yumenopai](https://github.com/Yumenopai)
-> - Many role ideas
-> - Provided roles: AntiAdminer, CursedWolf, Workaholic, Greedier, DarkHide
-> - Reference: Modify game announcement
->### :star: [Town Of Host : The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles) :
->
-> - Developer：[Music Discussion](https://github.com/music-discussion)
-> - Many role ideas
-> - Reference: Exile Confirm
-> - Reference: Split RPC Pack
->
->### :star: [Super New Roles](https://github.com/ykundesu/SuperNewRoles) :
-> 
-> - Developer：[ykundesu](https://github.com/ykundesu)
-> - Reference: Credentials menu In TOHEX(Before v2023.7.11)
-> - Reference: Switch Horse Mode(Before v2024.3.5)
-> - Reference: Search Mod Game
-> - Reference: Custom Button In TOHEX
->
->### :star: [Town Of Plus](https://github.com/tugaru1975/TownOfPlus) :
-> 
-> - Developer：[tugaru1975](https://github.com/tugaru1975)
-> - Reference: Zoom
->
->### :star: [Revolutionary Host Roles](https://github.com/sansaaaaai/Revolutionary-host-roles) :
-> 
-> - Developer：[sansaaaaai](https://github.com/sansaaaaai)
-> - Reference: Modify settings menu 
->
->### :star: [Town Of Host-ReEdited](https://github.com/Loonie-Toons/TownOfHost-ReEdited) :
-> 
-> - Developer：[Loonie-Toons](https://github.com/Loonie-Toons)
-> - Many role ideas
-> - Provided roles: Medic, Disperser, Researcher In TOHEX
->  
->### :star: [To-Hope](https://gitee.com/xigua_ya/to-hope) :
-> 
-> - Developer：[遇千知Yu(Night_瓜)](https://gitee.com/xigua_ya)
-> - Reference: Custom Button In TOHEX
-> 
->### :star: [Project:Lotus](https://github.com/ImaMapleTree/Lotus) :
-> 
-> - Developer：[ImaMapleTree](https://github.com/ImaMapleTree)
-> - Reference: Modify Text Box
-> - Reference: Hotkey To Choose Messages Send Target
->
->### :star: [Town Of Host:Enhanced](https://github.com/0xDrMoe/TownofHost-Enhanced) :
-> 
-> - Developer：[Moe](https://github.com/0xDrMoe)
-> - Many role ideas
-> - Reference: Switch Horse Mode(v2024.3.5后)
->
-	
-  </br></br>
+###  [Town Of Host-ReEdited](https://github.com/Loonie-Toons/TownOfHost-ReEdited) :
+开发者：[Loonie-Toons](https://github.com/Loonie-Toons)<br>
+许多职业想法。<br>
+提供职业: TOHEX中的医生、分散者、变色龙。<br>
 
-# ***Credits***
->> ***Members Of XtremeWave：***<BR>
->[喜]()- **Developer** -<br>
->[Slok7565](https://github.com/Slok7565)- **Developer&Translator** -<br>
->[Zeyan]()- **Developer&Translator** -<br>
->[小黄117]()- **Artist** -<br>
->[caaattt]()- **Artist** -<br>
->[QingFeng]()- **Website** -<br>
->[中立小黑]()- **Website** -<br>
->[Hartex]()- **Promotion** -<br>
->[杰慕斯]()- **Artist** -<br>
->[玖咪]()- **Developer** -<br>
->[㍿]()- **Innovation** -<br>
+###  [To-Hope](https://gitee.com/xigua_ya/to-hope) :
+开发者：[YuQianZhi](https://gitee.com/xigua_ya)<br>
+参考: TOHEX中的自定义按钮。<br>
 
-  </br>
+###  [Project:Lotus](https://github.com/ImaMapleTree/Lotus) :
+开发者：[ImaMapleTree](https://github.com/ImaMapleTree)<br>
+参考: 修改聊天框。<br>
+参考: 选择发送目标的快捷键。<br>
 
->> ***Contributors：***<BR>
->[KARPED1EM](https://github.com/KARPED1EM)- **Technical Support** -<br>
->[遇千知Yu(Night_瓜)](https://gitee.com/xigua_ya)- **Developer In TOHEX** -<br>
->[ryuk]()- **Provide Some Ideas Of Features** -<br>
->[Amongus(水木年华)]()- **Translate&Bugs Fix** -<br>
->[Niko]()- **Bugs Fix&Technical Support** -<br>
->[Farewell]()- **Support** -<br>
->[LeZaiYa]()- **Support** -<br>
->[Imp11]()- **Support** -<br>
->[方块]()- **Support** -<br>
-</div>
+###  [Town Of Host:Enhanced](https://github.com/0xDrMoe/TownofHost-Enhanced) :
+开发者：[Moe](https://github.com/0xDrMoe)<br>
+许多职业想法。<br>
+参考: 愚人节牧马模式(v2024.3.5后)。
+
+**_感谢这些模组以及他们优秀的想法，是他们造就了我们。_**<br>
+**_更要感谢长久以来支持我们的玩家们。是您们给予了我们继续这个项目的动力！_**
+
+## 此项目参与者
+### XtremeWave成员
+
+- [喜](https://github.com/Xieiawa) - 开发者<br>
+- [Slok7565](https://github.com/Slok7565) - 开发者&翻译<br>
+- Zeyan - 开发者&翻译<br>
+- 小黄117 - 美术<br>
+- caaattt - 美术<br>
+-  [QingFeng](https://github.com/QingFeng-awa)- 网站开发<br>
+-  中立小黑 - 机器人开发<br>
+- Hartex - 宣传<br>
+-  杰慕斯 - 美术<br>
+- 玖咪 - 开发者<br>
+-  ㍿ - 文创
+
+### 贡献者
+
+- [KARPED1EM](https://github.com/KARPED1EM) - 技术支持
+- [YuQianZhi](https://github.com/Night-GUA) - _TOHEX开发者_
+- ryuk - 部分功能想法
+- 水木年华 - 翻译与技术支持
+- [NikoCat233](https://github.com/NikoCat233) - 技术支持与指导
+- Farewell - 技术支持
+- [LeZaiYa](https://github.com/LezaiYa1) - 技术支持
+- Imp11 - 技术支持
+- 方块 - 技术支持
