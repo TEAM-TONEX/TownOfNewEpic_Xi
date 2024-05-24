@@ -5,32 +5,35 @@
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/stars/XtremeWave/TownOfNewEpic_Xtreme" alt="Stars"></a>
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/forks/XtremeWave/TownOfNewEpic_Xtreme" alt="Forks"></a>
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/github/release/XtremeWave/TownOfNewEpic_Xtreme" alt="Release"></a>
+<br>
+
+[简体中文](README.md) | [English]
 <hr></div>
 TownOfNewEpic_Xtreme拥有以下特点:
 
-- **稳定更新**: XtremeWave定期更新TONEX,这使得其永远不会成为过去式。
-- **优秀体验**: TONEX能为您带来非常优秀的游戏体验。
-- **良好生态**: XtremeWave为TONEX提供稳定运行的云服务,例如更新检查、游戏服务器。
+- **StableUpdates**: XtremeWave updates TONEX on a regular basis, so it will never be a thing of the past.
+- **ExcellentExperience**: TONEX can provide you with a very good gaming experience.
+- **GoodEcology**: XtremeWave provides TONEX with stable cloud services such as update checking and game servers.
 
 TONEX v1.2PV: <https://www.bilibili.com/video/BV1Zs421c74A>
-
-## UI展示
+## UI
 ![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI1.png)
 ![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI2.png)
-## 立即下载
-XtremeWave提供了多种下载方式。
+## Download
+XtremeWave offers a variety of download options.
 - [TONEX官方网站](https://tonex.cc/download)
 - [XtremeWave官方网站](https://www.xtreme.net.cn)
 - [TONEX官方Github仓库](https://github.com/XtremeWave/TownOfNewEpic_Xtreme/releases)
 - [TONEX官方Gitee仓库](https://gitee.com/TEAM_TONEX/TownOfNewEpic_Xtreme/releases)
-## 加入我们
-XtremeWave(亦或者是TONEX)非常欢迎您加入TONEX大家庭。<br>
+## Join Us
+
+XtremeWave (also known as TONEX) would like to welcome you to the TONEX family.<br>
 - [点击加入TONEX官方QQ群](https://qm.qq.com/q/9dkVmyBvpY)
 - [点击访问TONEX官方网站](https://tonex.cc)
 > TONEX官方网站尚未完成开发。
 - [点击访问XtremeWave官方网站](https://www.xtreme.net.cn/)
 
-## 模组鸣谢
+## Mod Acknowledgement
 
 ### [Town Of Host](https://github.com/tukasa0001/TownOfHost) :
 开发者：[tukasa0001](https://github.com/tukasa0001)
@@ -88,32 +91,32 @@ XtremeWave(亦或者是TONEX)非常欢迎您加入TONEX大家庭。<br>
 许多职业想法。<br>
 参考: 愚人节牧马模式(v2024.3.5后)。
 
-**_感谢这些模组以及他们优秀的想法，是他们造就了我们。_**<br>
-**_更要感谢长久以来支持我们的玩家们。是您们给予了我们继续这个项目的动力！_**
+**_Thanks to these Mods and their excellent ideas, they made us who we are._**<br>
+**_We would also like to thank the players who have supported us for a long time. You have given us the motivation to
+continue this project!_**
 
-## 此项目参与者
-### XtremeWave成员
+## Participants in this Project
+### XtremeWave Members
+- [喜](https://github.com/Xieiawa) - Developers<br>
+- [Slok7565](https://github.com/Slok7565) - Developers & Rendering<br>
+- Zeyan - Developers & Rendering<br>
+- 小黄117 - Art<br>
+- caaattt - Art<br>
+-  [QingFeng](https://github.com/QingFeng-awa)- Web Development<br>
+-  中立小黑 - Bot Developers<br>
+- Hartex - UP<br>
+-  杰慕斯 - Art<br>
+- 玖咪 - Developers<br>
+-  ㍿ - Creative Industries
 
-- [喜](https://github.com/Xieiawa) - 开发者<br>
-- [Slok7565](https://github.com/Slok7565) - 开发者&翻译<br>
-- Zeyan - 开发者&翻译<br>
-- 小黄117 - 美术<br>
-- caaattt - 美术<br>
--  [QingFeng](https://github.com/QingFeng-awa)- 网站开发<br>
--  中立小黑 - 机器人开发<br>
-- Hartex - 宣传<br>
--  杰慕斯 - 美术<br>
-- 玖咪 - 开发者<br>
--  ㍿ - 文创
+### Benefactor
 
-### 贡献者
-
-- [KARPED1EM](https://github.com/KARPED1EM) - 技术支持
-- [YuQianZhi](https://github.com/Night-GUA) - _TOHEX开发者_
-- ryuk - 部分功能想法
-- 水木年华 - 翻译与技术支持
-- [NikoCat233](https://github.com/NikoCat233) - 技术支持与指导
-- Farewell - 技术支持
-- [LeZaiYa](https://github.com/LezaiYa1) - 技术支持
-- Imp11 - 技术支持
-- 方块 - 技术支持
+- [KARPED1EM](https://github.com/KARPED1EM) - Technical Support
+- [YuQianZhi](https://github.com/Night-GUA) - _TOHEX Developer_
+- ryuk - Some feature ideas
+- 水木年华 - Translation and technical support
+- [NikoCat233](https://github.com/NikoCat233) - Technical Support and Guidance
+- Farewell - Technical Support
+- [LeZaiYa](https://github.com/LezaiYa1) - Technical Support
+- Imp11 - Technical Support
+- 方块 - Technical Support
