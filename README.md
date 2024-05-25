@@ -17,8 +17,8 @@ TownOfNewEpic_Xtreme has the following features:
 
 TONEX v1.2PV: <https://www.bilibili.com/video/BV1Zs421c74A>
 ## UI
-![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI1.png)
-![](https://cn-sy1.rains3.com/xtremewave/TONEX-UI2.png)
+![TONEX-UI1](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/d3a80145-e31f-4147-a18e-97fdbff7a9bf)
+![TONEX-UI2](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/3800ed87-ec7b-42a2-80b9-d6c77f1501e0)
 ## Download
 XtremeWave offers a variety of download options.
 - [TONEX Official Website](https://tonex.cc/download)
