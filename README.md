@@ -16,6 +16,10 @@ TownOfNewEpic_Xtreme has the following features:
 - **GoodEcology**: XtremeWave provides TONEX with stable cloud services such as update checking and game servers.
 
 TONEX v1.2PV: <https://www.bilibili.com/video/BV1Zs421c74A>
+## Warning
+> This mod is not affiliated with Among Us or Innersloth LLC.<br>
+> and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC.<br>
+> Portions of the materials contained herein are property of Innersloth LLC.
 ## UI
 ![TONEX-UI1](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/d3a80145-e31f-4147-a18e-97fdbff7a9bf)
 ![TONEX-UI2](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/3800ed87-ec7b-42a2-80b9-d6c77f1501e0)
