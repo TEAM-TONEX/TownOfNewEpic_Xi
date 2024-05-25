@@ -575,14 +575,15 @@ class FixedUpdatePatch
                         __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
                     else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
                 }
-                else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-
-                if (!Main.playerVersion.TryGetValue(__instance.PlayerId, out var vers))
+                else
                 {
-
-                    Utils.KickPlayer(Utils.GetClientById(player.PlayerId).Id, false, "NoMod");
-                    RPC.NotificationPop(string.Format(GetString("Message.NotInstalled"), Utils.GetClientById(player.PlayerId)?.PlayerName));
-                    Logger.Info($"{Utils.GetClientById(player.PlayerId).PlayerName}无模组", "BAN");
+                    __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
+                    if (Options.IsAllCrew)
+                    {
+                        Utils.KickPlayer(Utils.GetClientById(player.PlayerId).Id, false, "NoMod");
+                        RPC.NotificationPop(string.Format(GetString("Message.NotInstalled"), Utils.GetClientById(player.PlayerId)?.PlayerName));
+                        Logger.Info($"{Utils.GetClientById(player.PlayerId).PlayerName}无模组", "BAN");
+                    }
                 }
             }
             if (GameStates.IsInGame)

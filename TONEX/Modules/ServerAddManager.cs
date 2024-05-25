@@ -15,7 +15,9 @@ public static class ServerAddManager
     [PluginModuleInitializer]
     public static void Init()
     {
+        Logger.Info("0", "gctest");
         if (!ModUpdater.isChecked && ModUpdater.firstStart) ModUpdater.BeforeCheck();
+        Logger.Info("2", "gctest");
         if (!File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/Birthday.wav"))
         {
             var task = MusicDownloader.StartDownload("Birthday");
@@ -25,9 +27,6 @@ public static class ServerAddManager
                 {
                     Logger.Error("DownloadFailed", "DownloadSound");
                 }
-                new LateTask(() =>
-                {
-                }, 0.1f);
             });
         }
         serverManager.AvailableRegions = ServerManager.DefaultRegions;
