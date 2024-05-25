@@ -114,8 +114,8 @@ continue this project!_**
 - [KARPED1EM](https://github.com/KARPED1EM) - Technical Support
 - [YuQianZhi](https://github.com/Night-GUA) - _TOHEX Developer_
 - ryuk - Some feature ideas
-- 水木年华 - Translation and technical support
-- [NikoCat233](https://github.com/NikoCat233) - Technical Support and Guidance
+- 水木年华 - Translation & technical support
+- [NikoCat233](https://github.com/NikoCat233) - Technical Support & Guidance
 - Farewell - Technical Support
 - [LeZaiYa](https://github.com/LezaiYa1) - Technical Support
 - Imp11 - Technical Support
