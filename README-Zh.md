@@ -17,7 +17,10 @@ TownOfNewEpic_Xtreme拥有以下特点:
 - **良好生态**: XtremeWave为TONEX提供稳定运行的云服务,例如更新检查、游戏服务器。
 
 TONEX v1.2PV: <https://www.bilibili.com/video/BV1Zs421c74A>
-
+## 警告
+> 该模组不隶属于Among Us或InnerslothLLC.<br>
+> 其中包含的内容未经InnerslothLLC.认可或以其他方式赞助。<br>
+> 此处包含的部分材料是InnerslothLLC.的财产。
 ## UI展示
 ![TONEX-UI1](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/f8119bc3-f5ab-4783-bc95-5f5606ac0658)
 ![TONEX-UI2](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/2dba7d87-f081-47e5-9f0b-57358b36df3f)
