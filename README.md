@@ -1,4 +1,4 @@
-![XtremeWave & TONEX](https://cn-sy1.rains3.com/xtremewave/XtremeWave-TONEX.png)
+![XtremeWave-TONEX](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/cdeb761a-6bb7-48b9-8bc3-86ce849dfc20)
 <div align="center">
 <p>Host only mod for Among Us, forked from Town Of Next.</p>
 <a href="https://github.com/XtremeWave/TownOfNewEpic_Xtreme"><img src="https://badgen.net/badge/License/GPL3.0" alt="License"></a>
