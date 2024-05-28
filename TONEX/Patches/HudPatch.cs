@@ -259,15 +259,18 @@ class MapBehaviourShowPatch
 {
     public static void Prefix(MapBehaviour __instance, ref MapOptions opts)
     {
-        if (GameStates.IsMeeting) return;
-
-        if (opts.Mode is MapOptions.Modes.Normal or MapOptions.Modes.Sabotage)
+        if (!Main.AssistivePluginMode.Value)
         {
-            var player = PlayerControl.LocalPlayer;
-            if (player.GetRoleClass() is IKiller killer && killer.CanUseSabotageButton())
-                opts.Mode = MapOptions.Modes.Sabotage;
-            else
-                opts.Mode = MapOptions.Modes.Normal;
+            if (GameStates.IsMeeting) return;
+
+            if (opts.Mode is MapOptions.Modes.Normal or MapOptions.Modes.Sabotage)
+            {
+                var player = PlayerControl.LocalPlayer;
+                if (player.GetRoleClass() is IKiller killer && killer.CanUseSabotageButton())
+                    opts.Mode = MapOptions.Modes.Sabotage;
+                else
+                    opts.Mode = MapOptions.Modes.Normal;
+            }
         }
     }
 }

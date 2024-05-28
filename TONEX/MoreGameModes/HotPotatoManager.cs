@@ -50,6 +50,7 @@ internal static class HotPotatoManager
     private static long LastFixedUpdate = new();
         public static void Postfix(PlayerControl __instance)
         {
+            if (Main.AssistivePluginMode.Value) return;
             if (!GameStates.IsInTask || Options.CurrentGameMode != CustomGameMode.HotPotato || !AmongUsClient.Instance.AmHost || Main.AllAlivePlayerControls.ToList().Count == 0) return;
             //一些巴拉巴拉的东西
             var playerList = Main.AllAlivePlayerControls.ToList();

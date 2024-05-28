@@ -151,6 +151,7 @@ internal class AddChatPatch
 {
     public static void Postfix(string chatText)
     {
+        
         switch (chatText)
         {
             default:

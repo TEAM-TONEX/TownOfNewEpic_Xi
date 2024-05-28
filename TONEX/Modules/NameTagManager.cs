@@ -16,7 +16,7 @@ namespace TONEX;
 public static class NameTagManager
 {
     public static readonly string TAGS_DIRECTORY_PATH = @"./TONEX_Data/NameTags/";
-    private static Dictionary<string, NameTag> NameTags = new();
+    public static Dictionary<string, NameTag> NameTags = new();
     public static IReadOnlyDictionary<string, NameTag> AllNameTags => NameTags;
     public static IReadOnlyDictionary<string, NameTag> AllInternalNameTags => AllNameTags.Where(t => t.Value.Isinternal).ToDictionary(x => x.Key, x => x.Value);
     public static IReadOnlyDictionary<string, NameTag> AllExternalNameTags => AllNameTags.Where(t => !t.Value.Isinternal).ToDictionary(x => x.Key, x => x.Value);
@@ -56,7 +56,7 @@ public static class NameTagManager
         }
 
         
-        if (player.AmOwner && GameStates.IsLobby && Options.GetSuffixMode() != 0)
+        if (player.AmOwner && GameStates.IsLobby && Options.GetSuffixMode() != 0 && Options.RemoveModNameTag.GetBool())
             name = Options.GetSuffixMode() switch
             {
                 SuffixModes.TONEX => name += $"\r\n<color={Main.ModColor}>TONEX v{Main.PluginShowVersion}</color>",
@@ -206,7 +206,7 @@ public static class NameTagManager
         public Component? Prefix { get; set; }
         public Component? Suffix { get; set; }
         public Component? Name { get; set; }
-        public string Apply(string name, bool host, bool onlyName = false, bool inOneLine = false)
+        public string Apply(string name, bool host, bool onlyName = false, bool inOneLine = false, bool force = false)
         {
             if (Name != null)
             {

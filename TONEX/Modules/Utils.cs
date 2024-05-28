@@ -851,7 +851,7 @@ public static class Utils
             
             if (role.IsEnable())
             {
-                if (onlycountexists && !role.IsExistCountDeath()) continue;
+                if (onlycountexists && !role.IsExist(true)) continue;
                 switch (role.GetCustomRoleTypes())
                 {
                     case CustomRoleTypes.Impostor:
@@ -893,7 +893,7 @@ public static class Utils
 
             if (role.IsEnable())
             {
-                if (onlycountexists && !role.IsExistCountDeath()) continue;
+                if (onlycountexists && !role.IsExist(true)) continue;
                 switch (role.GetCustomRoleTypes())
                 {
                     case CustomRoleTypes.Neutral:
@@ -1300,6 +1300,7 @@ public static class Utils
     }
     public static void AfterMeetingTasks()
     {
+        if (Main.AssistivePluginMode.Value) return;
         foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
             roleClass.AfterMeetingTasks();
         Signal.AfterMeet();

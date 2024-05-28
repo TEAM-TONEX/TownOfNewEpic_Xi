@@ -540,7 +540,7 @@ static class ExtendedPlayerControl
     public static bool CanUseSabotageButton(this PlayerControl pc)
     {
         var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseSabotageButton();
-
+        if (pc.IsImp() && !pc.IsAlive() && Options.DeadImpCantSabotage.GetBool()) roleCanUse = false;
         return roleCanUse ?? false;
     }
     public static void ResetKillCooldown(this PlayerControl player)

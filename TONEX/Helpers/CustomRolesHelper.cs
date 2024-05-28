@@ -10,14 +10,16 @@ namespace TONEX;
 
 static class CustomRolesHelper
 {
-    /// <summary>すべての役職(属性は含まない)</summary>
+    /// <summary>所有角色（不包括附加）</summary>
     public static readonly CustomRoles[] AllRoles = EnumHelper.GetAllValues<CustomRoles>().Where(role => role < CustomRoles.NotAssigned).ToArray();
-    /// <summary>すべての属性</summary>
+    /// <summary>所有附加</summary>
     public static readonly CustomRoles[] AllAddOns = EnumHelper.GetAllValues<CustomRoles>().Where(role => role > CustomRoles.NotAssigned).ToArray();
-    /// <summary>スタンダードモードで出現できるすべての役職</summary>
+    /// <summary>可以在标准模式下出现的所有角色</summary>
     public static readonly CustomRoles[] AllStandardRoles = AllRoles.Concat(AllAddOns).ToList().ToArray();
+    /// <summary>所有职业类型</summary>
     public static readonly CustomRoleTypes[] AllRoleTypes = EnumHelper.GetAllValues<CustomRoleTypes>();
 
+    /// <summary>是否内鬼</summary>
     public static bool IsImpostor(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
@@ -47,6 +49,32 @@ static class CustomRolesHelper
             return (roleInfo.CustomRoleType == CustomRoleTypes.Neutral && roleInfo.IsNK) || role ==CustomRoles.Opportunist && Opportunist.OptionCanKill.GetBool();
         return false;
     }
+
+    public static bool IsCrewmate(this CustomRoles role)
+    {
+        var roleInfo = role.GetRoleInfo();
+        if (roleInfo != null)
+            return roleInfo.CustomRoleType == CustomRoleTypes.Crewmate;
+        return
+            role is CustomRoles.Crewmate or
+            CustomRoles.Engineer or
+            CustomRoles.Scientist;
+    }
+    public static bool IsAddon(this CustomRoles role) => (int)role > 500;
+    public static bool IsValid(this CustomRoles role) => role is not CustomRoles.GM and not CustomRoles.NotAssigned;
+    public static bool IsExist(this CustomRoles role, bool CountDeath = false) => Main.AllPlayerControls.Any(x => x.Is(role) && (x.IsAlive() || CountDeath));
+    public static bool IsVanilla(this CustomRoles role)
+    {
+        return
+            role is 
+            CustomRoles.Crewmate or
+            CustomRoles.Engineer or
+            CustomRoles.Scientist or
+            CustomRoles.GuardianAngel or
+            CustomRoles.Impostor or
+            CustomRoles.Shapeshifter;
+    }
+
     public static bool IsHidden(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
@@ -76,7 +104,6 @@ static class CustomRolesHelper
     CustomRoles.CopyCat or//TODO 效颦者
     CustomRoles.Konan or//TODO 柯南
     CustomRoles.PVPboss or//TODO PVP大佬
-    CustomRoles.Revolutionist or//TODO 革命家
    CustomRoles.Changger or//TODO 连环交换师
     CustomRoles.Amnesiac or//TODO 失忆者
     CustomRoles.PoliticalStrategists or//TODO 纵横家
@@ -91,7 +118,7 @@ static class CustomRolesHelper
     CustomRoles.IncorruptibleOfficial or//TODO 清廉之官
     CustomRoles.VIP or//TODO VIP
       CustomRoles.Non_Villain //不演反派
-    
+
             )
             return true;
         return false;
@@ -103,31 +130,6 @@ static class CustomRolesHelper
             return roleInfo.CantOpen;
         return false;
     }
-    public static bool IsCrewmate(this CustomRoles role)
-    {
-        var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
-            return roleInfo.CustomRoleType == CustomRoleTypes.Crewmate;
-        return
-            role is CustomRoles.Crewmate or
-            CustomRoles.Engineer or
-            CustomRoles.Scientist;
-    }
-    public static bool IsAddon(this CustomRoles role) => (int)role > 500;
-    public static bool IsValid(this CustomRoles role) => role is not CustomRoles.GM and not CustomRoles.NotAssigned;
-    public static bool IsExist(this CustomRoles role, bool CountDeath = false) => Main.AllPlayerControls.Any(x => x.Is(role) && x.IsAlive() || CountDeath);
-    public static bool IsExistCountDeath(this CustomRoles role) => Main.AllPlayerControls.Any(x => x.Is(role));
-    public static bool IsVanilla(this CustomRoles role)
-    {
-        return
-            role is CustomRoles.Crewmate or
-            CustomRoles.Engineer or
-            CustomRoles.Scientist or
-            CustomRoles.GuardianAngel or
-            CustomRoles.Impostor or
-            CustomRoles.Shapeshifter;
-    }
-
     public static CustomRoleTypes GetCustomRoleTypes(this CustomRoles role)
     {
         if (role is CustomRoles.NotAssigned) return CustomRoleTypes.Crewmate;
@@ -144,6 +146,7 @@ static class CustomRolesHelper
 
         return type;
     }
+
     public static int GetCount(this CustomRoles role)
     {
         if (role.IsVanilla())
@@ -223,7 +226,7 @@ public enum CountTypes
     Demon= CustomWinner.Demon,
     BloodKnight= CustomWinner.BloodKnight,
     Succubus= CustomWinner.Succubus,
-    FAFL= CustomWinner.FAFL,
+    Vagator= CustomWinner.Vagator,
     Martyr= CustomWinner.Martyr,
     NightWolf= CustomWinner.NightWolf,
     GodOfPlagues= CustomWinner.GodOfPlagues,

@@ -32,7 +32,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
              "#E6AD0A",
             true,
             true,
-            countType: CountTypes.FAFL
+            countType: CountTypes.Vagator
         );
     public Vagator(PlayerControl player)
     : base(

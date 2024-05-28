@@ -29,7 +29,7 @@ public static class AntiBlackout
             => Options.NoGameEnd.GetBool()
                 || Enum.GetValues(typeof(CustomRoles))
                 .Cast<CustomRoles>()
-                .Any(role => role.GetRoleInfo()?.IsNK ?? false && role.IsExistCountDeath());
+                .Any(role => role.GetRoleInfo()?.IsNK ?? false && role.IsExist(true));
     ///<summary>
     ///非内鬼玩家人数与内鬼人数之差
     ///</summary>

@@ -1798,6 +1798,7 @@ Message.PetModeNotice: "提示：该房间启用了【是否用宠物按钮代�
 Message.ReadySetScanner: "已成功让您拥有扫描特效！"
 Message.ReadySetScannerReturn: "您正在游戏中，无法拥有扫描特效！"
 Message.NonLatestEje: "当前无驱逐"
+Message.NotInstalled: "本房间开启了全员模组模式\n因为【{0}】并未有安装模组\n所以被请离了房间"
 
 # 通知 / Notifications
 PlayerLeft: "【{0}】离开了游戏"

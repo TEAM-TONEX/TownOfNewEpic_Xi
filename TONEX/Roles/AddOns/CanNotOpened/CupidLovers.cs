@@ -66,13 +66,13 @@ public static class CupidLovers
         foreach (var playerId in playerIds)
         {
             //CupidLoversの後追い
-            if (CustomRoles.CupidLovers.IsExistCountDeath() && !isCupidLoversDead && CupidLoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
+            if (CustomRoles.CupidLovers.IsExist(true) && !isCupidLoversDead && CupidLoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
                 CupidLoversSuicide(playerId, true);
         }
     }
     public static void CupidLoversSuicide(byte deathId = 0x7f, bool isExiled = false, bool now = false)
     {
-        if (CupidLoverSuicide.GetBool() && CustomRoles.CupidLovers.IsExistCountDeath() && !isCupidLoversDead)
+        if (CupidLoverSuicide.GetBool() && CustomRoles.CupidLovers.IsExist(true) && !isCupidLoversDead)
         {
             foreach (var loversPlayer in CupidLoversPlayers)
             {

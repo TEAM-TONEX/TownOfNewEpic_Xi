@@ -26,14 +26,14 @@ public abstract class GameOptionsSender
 
     public abstract IGameOptions BasedGameOptions { get; }
     public abstract bool IsDirty { get; protected set; }
-    public byte[] ByteArray = new byte[0]; // 送信時に使い回す配列
+    public byte[] ByteArray = new byte[0]; // 用于发送时重用的数组
 
     public virtual void SendGameOptions()
     {
         var opt = BuildGameOptions();
 
-        var currentGameMode = AprilFoolsMode.IsAprilFoolsModeToggledOn //April fools mode toggled on by host
-                ? opt.AprilFoolsOnMode : opt.GameMode; //Change game mode, same as well as in "RpcSyncSettings()"
+        var currentGameMode = AprilFoolsMode.IsAprilFoolsModeToggledOn // 主机开启愚人节模式
+                ? opt.AprilFoolsOnMode : opt.GameMode; // 更改游戏模式，与 "RpcSyncSettings()" 中相同
 
         // option => byte[]
         MessageWriter writer = MessageWriter.Get(SendOption.None);
@@ -47,11 +47,11 @@ public abstract class GameOptionsSender
         else
         {
             writer.Recycle();
-            Logger.Error("オプションのキャストに失敗しました", this.ToString());
+            Logger.Error("未能将选项转换为指定类型", this.ToString());
         }
         writer.EndMessage();
 
-        // 配列化&送信
+        // 转换为数组并发送
         var byteArray = new Il2CppStructArray<byte>(writer.Length - 1);
         // MessageWriter.ToByteArray
         Buffer.BlockCopy(writer.Buffer.Cast<Array>(), 1, byteArray.Cast<Array>(), 0, writer.Length - 1);

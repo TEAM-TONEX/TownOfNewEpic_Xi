@@ -167,12 +167,12 @@ public sealed class MeteorArbiter : RoleBase, INeutralKiller, IAdditionalWinner
         {
             IsNK = true;
         }
-        if ((LOVE == 1 || LOVE < 5 && CustomRoles.MeteorMurderer.IsExistCountDeath())&& !CanWin)
+        if ((LOVE == 1 || LOVE < 5 && CustomRoles.MeteorMurderer.IsExist(true))&& !CanWin)
         {
             CanWin = true;
 
         }
-        else if ((LOVE != 1 || LOVE >= 5 && CustomRoles.MeteorMurderer.IsExistCountDeath()) && CanWin)
+        else if ((LOVE != 1 || LOVE >= 5 && CustomRoles.MeteorMurderer.IsExist(true)) && CanWin)
         {
             CanWin = false;
         }

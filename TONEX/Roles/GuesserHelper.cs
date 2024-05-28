@@ -155,7 +155,7 @@ public static class GuesserHelper
             reason = GetString("GuessMini");
             return false;
         }
-        if (CustomRoles.Medic.IsExistCountDeath())
+        if (CustomRoles.Medic.IsExist(true))
         if (Medic.InProtect(target.PlayerId))
         {
             if (guesser.GetRoleClass() is NiceGuesser ngClass2 && !NiceGuesser.OptionIgnoreMedicShield.GetBool() || guesser.GetRoleClass() is EvilGuesser egClass2 && !EvilGuesser.OptionIgnoreMedicShield.GetBool())
@@ -387,7 +387,7 @@ public static class GuesserHelper
                     {
                         foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
                         {
-                            if (role.IsExistCountDeath())
+                            if (role.IsExist(true))
                             switch (role.GetCustomRoleTypes())
                             {
                                 case CustomRoleTypes.Crewmate:
@@ -422,7 +422,7 @@ public static class GuesserHelper
                     {
                         foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
                         {
-                            if (role.IsExistCountDeath())
+                            if (role.IsExist(true))
                                 switch (role.GetCustomRoleTypes())
                                 {
                                     case CustomRoleTypes.Crewmate:
@@ -538,8 +538,8 @@ public static class GuesserHelper
             {
                 if (!EvilGuesser.OptionCanGuessVanilla.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.EvilGuesser) && role.IsVanilla()) continue;
                 if (!NiceGuesser.OptionCanGuessVanilla.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.NiceGuesser) && role.IsVanilla()) continue;
-                if (NiceGuesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.NiceGuesser) && !role.IsExistCountDeath()) continue;
-                if (EvilGuesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.EvilGuesser) && !role.IsExistCountDeath()) continue;
+                if (NiceGuesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.NiceGuesser) && !role.IsExist(true)) continue;
+                if (EvilGuesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.EvilGuesser) && !role.IsExist(true)) continue;
                 if (role.IsTODO()) continue;
                 if (role is CustomRoles.GM or CustomRoles.NotAssigned or CustomRoles.SuperStar or CustomRoles.GuardianAngel or CustomRoles.HotPotato or CustomRoles.ColdPotato) continue;
                 if (role is  CustomRoles.Mini or CustomRoles.InjusticeSpirit or CustomRoles.Phantom or CustomRoles.EvilAngle) continue;

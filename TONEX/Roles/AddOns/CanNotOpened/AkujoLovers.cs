@@ -65,13 +65,13 @@ public static class AkujoLovers
         foreach (var playerId in playerIds)
         {
             //AkujoLoversの後追い
-            if (CustomRoles.AkujoLovers.IsExistCountDeath() && !isAkujoLoversDead && AkujoLoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
+            if (CustomRoles.AkujoLovers.IsExist(true) && !isAkujoLoversDead && AkujoLoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
                 AkujoLoversSuicide(playerId, true);
         }
     }
     public static void AkujoLoversSuicide(byte deathId = 0x7f, bool isExiled = false, bool now = false)
     {
-        if (AkujoLoverSuicide.GetBool() && CustomRoles.AkujoLovers.IsExistCountDeath() && !isAkujoLoversDead)
+        if (AkujoLoverSuicide.GetBool() && CustomRoles.AkujoLovers.IsExist(true) && !isAkujoLoversDead)
         {
             foreach (var loversPlayer in AkujoLoversPlayers)
             {

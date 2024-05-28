@@ -304,38 +304,41 @@ class ShapeshiftPatch
 {
     public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        Logger.Info($"{__instance?.GetNameWithRole()} => {target?.GetNameWithRole()}", "Shapeshift");
-
-        var shapeshifter = __instance;
-        var shapeshifting = shapeshifter.PlayerId != target.PlayerId;
-
-        if (shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.All)) return;
-
-        if (!(shapeshifter.IsEaten() && shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.Skill)))
-            if (Main.CheckShapeshift.TryGetValue(shapeshifter.PlayerId, out var last) && last == shapeshifting)
-            {
-                Logger.Info($"{__instance?.GetNameWithRole()}:Cancel Shapeshift.Prefix", "Shapeshift");
-                return;
-            }
-
-        Main.CheckShapeshift[shapeshifter.PlayerId] = shapeshifting;
-        Main.ShapeshiftTarget[shapeshifter.PlayerId] = target.PlayerId;
-
-        if (!(shapeshifter.IsEaten() && shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.Skill)))
-            shapeshifter.GetRoleClass()?.OnShapeshift(target);
-
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        if (!shapeshifting) Camouflage.RpcSetSkin(__instance);
-
-        //変身解除のタイミングがずれて名前が直せなかった時のために強制書き換え
-        if (!shapeshifting)
+        if (!Main.AssistivePluginMode.Value)
         {
-            _ = new LateTask(() =>
+            Logger.Info($"{__instance?.GetNameWithRole()} => {target?.GetNameWithRole()}", "Shapeshift");
+
+            var shapeshifter = __instance;
+            var shapeshifting = shapeshifter.PlayerId != target.PlayerId;
+
+            if (shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.All)) return;
+
+            if (!(shapeshifter.IsEaten() && shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.Skill)))
+                if (Main.CheckShapeshift.TryGetValue(shapeshifter.PlayerId, out var last) && last == shapeshifting)
+                {
+                    Logger.Info($"{__instance?.GetNameWithRole()}:Cancel Shapeshift.Prefix", "Shapeshift");
+                    return;
+                }
+
+            Main.CheckShapeshift[shapeshifter.PlayerId] = shapeshifting;
+            Main.ShapeshiftTarget[shapeshifter.PlayerId] = target.PlayerId;
+
+            if (!(shapeshifter.IsEaten() && shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.Skill)))
+                shapeshifter.GetRoleClass()?.OnShapeshift(target);
+
+            if (!AmongUsClient.Instance.AmHost) return;
+
+            if (!shapeshifting) Camouflage.RpcSetSkin(__instance);
+
+            //変身解除のタイミングがずれて名前が直せなかった時のために強制書き換え
+            if (!shapeshifting)
             {
-                Utils.NotifyRoles(NoCache: true);
-            },
-            1.2f, "ShapeShiftNotify");
+                _ = new LateTask(() =>
+                {
+                    Utils.NotifyRoles(NoCache: true);
+                },
+                1.2f, "ShapeShiftNotify");
+            }
         }
     }
 }
@@ -471,10 +474,31 @@ class FixedUpdatePatch
     private static StringBuilder Mark = new(20);
     private static StringBuilder Suffix = new(120);
     private static int LevelKickBufferTime = 10;
+    private static int NoModKickBufferTime = 100;
     public static void Postfix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
-            var player = __instance;
+        var player = __instance;
+        if (Main.AssistivePluginMode.Value)
+        {
+            if (GameStates.IsLobby)
+            {
+                if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
+                {
+                    if (Main.ForkId != ver.forkId) // フォークIDが違う場合
+                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
+                    else if (Main.version.CompareTo(ver.version) == 0)
+                        __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
+                    else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
+                }
+                else
+                {
+                    __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
+                   
+                }
+            }
+            return;
+        }
+           
 
         if (player.AmOwner && player.IsEACPlayer() && (GameStates.IsLobby || GameStates.IsInGame) && GameStates.IsOnlineGame)
             AmongUsClient.Instance.ExitGame(DisconnectReasons.Error);
@@ -580,9 +604,15 @@ class FixedUpdatePatch
                     __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
                     if (Options.IsAllCrew)
                     {
-                        Utils.KickPlayer(Utils.GetClientById(player.PlayerId).Id, false, "NoMod");
-                        RPC.NotificationPop(string.Format(GetString("Message.NotInstalled"), Utils.GetClientById(player.PlayerId)?.PlayerName));
-                        Logger.Info($"{Utils.GetClientById(player.PlayerId).PlayerName}无模组", "BAN");
+                        NoModKickBufferTime--;
+                        if (NoModKickBufferTime <= 0)
+                        {
+                            NoModKickBufferTime = 100;
+                            Utils.KickPlayer(player.GetClientId(), false, "NoMod");
+                            string msg = string.Format(GetString("Message.NotInstalled"), player.GetRealName().RemoveHtmlTags());
+                            RPC.NotificationPop(msg);
+                            Logger.Info($"{Utils.GetClientById(player.PlayerId).PlayerName}无模组", "BAN");
+                        }
                     }
                 }
             }
@@ -838,6 +868,7 @@ class PlayerControlCompleteTaskPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         var pc = __instance;
 
         Logger.Info($"TaskComplete:{pc.GetNameWithRole()}", "CompleteTask");

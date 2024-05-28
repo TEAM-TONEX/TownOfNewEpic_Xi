@@ -73,7 +73,7 @@ public static class Lovers
         foreach (var playerId in playerIds)
         {
             //Loversの後追い
-            if (CustomRoles.Lovers.IsExistCountDeath() && !isLoversDead && LoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
+            if (CustomRoles.Lovers.IsExist(true) && !isLoversDead && LoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
                 LoversSuicide(playerId, true);
         }
     }
@@ -107,7 +107,7 @@ public static class Lovers
     }
     public static void LoversSuicide(byte deathId = 0x7f, bool isExiled = false, bool now = false)
     {
-        if (LoverSuicide.GetBool() && CustomRoles.Lovers.IsExistCountDeath() && !isLoversDead)
+        if (LoverSuicide.GetBool() && CustomRoles.Lovers.IsExist(true) && !isLoversDead)
         {
             foreach (var loversPlayer in LoversPlayers)
             {

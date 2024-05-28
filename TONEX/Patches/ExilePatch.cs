@@ -16,6 +16,7 @@ class ExileControllerWrapUpPatch
     {
         public static void Postfix(ExileController __instance)
         {
+            if (Main.AssistivePluginMode.Value) return;
             try
             {
                 WrapUpPostfix(__instance.exiled);

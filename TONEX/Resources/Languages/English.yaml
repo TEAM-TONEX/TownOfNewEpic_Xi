@@ -1780,6 +1780,7 @@ Message.PetModeNotice: "Warning： The [Use Pet To Release Skills] is enabled in
 Message.ReadySetScanner: "You're get scanner！"
 Message.ReadySetScannerReturn: "You are in Game.So you can't get scanner！"
 Message.NonLatestEje: "There's No Ejections"
+Message.NotInstalled: "The All Crew Mod Mode is enabled in this room\nBecause {0} has not installed the mod,\nthey have been kicked out of the room."
 
 # 通知 / Notifications
 PlayerLeft: "[{0}] left the game"
