@@ -19,6 +19,7 @@ using static TONEX.Translator;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using Rewired.Utils.Platforms.Windows;
 using TONEX.Attributes;
+using TONEX.Roles.AddOns.Common;
 
 namespace TONEX;
 
@@ -529,14 +530,14 @@ static class ExtendedPlayerControl
 
         return roleCanUse ?? false;
     }
-    public static bool CanUseShapeShiftButton(this PlayerControl pc)
-    {
-        if (!pc.IsAlive()) return false;
+    //public static bool CanUseShapeShiftButton(this PlayerControl pc)
+    //{
+    //    if (!pc.IsAlive()) return false;
 
-        var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseShapeShiftButton();
+    //    //var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseShapeShiftButton();
 
-        return roleCanUse ?? false;
-    }
+    //    return roleCanUse ?? false;
+    //}
     public static bool CanUseSabotageButton(this PlayerControl pc)
     {
         var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseSabotageButton();
@@ -548,6 +549,18 @@ static class ExtendedPlayerControl
         Main.AllPlayerKillCooldown[player.PlayerId] = (player.GetRoleClass() as IKiller)?.CalculateKillCooldown() ?? Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
         if (player.PlayerId == LastImpostor.currentId)
             LastImpostor.SetKillCooldown();
+        var IsKiller = (player.GetRoleClass() as IKiller)?.IsKiller ?? false;
+        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Diseased) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Hangman)))
+        {
+            Main.AllPlayerKillCooldown[player.PlayerId] *= Diseased.OptionVistion.GetFloat();
+        }
+
+        if (player.Is(CustomRoles.Mini) && IsKiller)
+        {
+
+            Main.AllPlayerKillCooldown[player.PlayerId] = Mini.Age[player.PlayerId] < 18 ? Mini.OptionKidKillCoolDown.GetFloat() : Mini.OptionAdultKillCoolDown.GetFloat();
+
+        }
     }
     public static void RpcExileV2(this PlayerControl player)
     {

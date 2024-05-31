@@ -166,7 +166,6 @@ public sealed class Vagator : RoleBase, INeutralKiller
         }
         return false;
     }
-    public bool IsKiller { get; private set; } = true;
     public override void OnSecondsUpdate(PlayerControl player, long now)
     {
         if (!AmongUsClient.Instance.AmHost) return;
