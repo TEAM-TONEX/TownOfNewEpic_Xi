@@ -17,7 +17,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, INeutralKiller
             CustomRoleTypes.Neutral,
             50100,
            SetupOptionItem,
-            "op|投機者|投机",
+            "op|投機者|投机|投机者",
             "#00ff00",
            true
            

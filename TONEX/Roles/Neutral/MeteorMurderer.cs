@@ -32,6 +32,10 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
             true,
             countType: CountTypes.MeteorMurderer,
             assignCountRule: new(1, 1, 1)
+#if RELEASE
+,
+ctop:true
+#endif
         );
     public MeteorMurderer(PlayerControl player)
     : base(
@@ -76,23 +80,23 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
 
         GetLoveCountByKillCrew = IntegerOptionItem.Create(RoleInfo, 11, OptionName.GetLoveCountByKillCrew, new (0, 20, 1), 4, false)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByKillNK = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByKillNK, new(0, 20, 1), 4, false)
+        GetLoveCountByKillNK = IntegerOptionItem.Create(RoleInfo, 12, OptionName.GetLoveCountByKillNK, new(0, 20, 1), 4, false)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByKillNeu = IntegerOptionItem.Create(RoleInfo, 12, OptionName.GetLoveCountByKillNeu, new (0, 20, 1), 4, false)
-            .SetValueFormat(OptionFormat.Level);
-
-        OptionCanGetLoveByReport = BooleanOptionItem.Create(RoleInfo, 13, OptionName.OptionCanGetLoveByReport, true, false);
-
-        GetLoveCountByReportImp = IntegerOptionItem.Create(RoleInfo, 14, OptionName.GetLoveCountByReportImp, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+        GetLoveCountByKillNeu = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GetLoveCountByKillNeu, new (0, 20, 1), 4, false)
             .SetValueFormat(OptionFormat.Level);
 
-        GetLoveCountByReportCrew = IntegerOptionItem.Create(RoleInfo, 15, OptionName.GetLoveCountByReportCrew, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+        OptionCanGetLoveByReport = BooleanOptionItem.Create(RoleInfo, 14, OptionName.OptionCanGetLoveByReport, true, false);
+
+        GetLoveCountByReportImp = IntegerOptionItem.Create(RoleInfo, 15, OptionName.GetLoveCountByReportImp, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 4, false)
+
+        GetLoveCountByReportCrew = IntegerOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportCrew, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+            .SetValueFormat(OptionFormat.Level);
+        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 17, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 4, false)
            .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByReportNeu = IntegerOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportNeu, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+        GetLoveCountByReportNeu = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByReportNeu, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
-        GetHPCountByLV = FloatOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportNeu, new(0f, 5f, 0.1f), 0.2f, false, OptionCanGetLoveByReport)
+        GetHPCountByLV = FloatOptionItem.Create(RoleInfo, 19, OptionName.GetLoveCountByReportNeu, new(0f, 5f, 0.1f), 0.2f, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
         OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 17, GeneralOption.ImpostorVision, true, false);
         
@@ -176,7 +180,7 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
     {
         seen ??= seer;
         if (!GameStates.IsInTask || isForMeeting || !Is(seer) || !Is(seen)) return "";
-        Color color = Utils.GetRoleColor(CustomRoles.MeteorMurderer);
+        Color color = Color.white;
         if (LOVE >= 10 && LOVE<20)
             color = Color.red;
         if (LOVE == 20)
