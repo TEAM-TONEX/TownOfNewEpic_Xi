@@ -20,10 +20,10 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
             CustomRoles.Revolutionist,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            75_1_2_1300,
+            75_1_3_1000,
             SetupOptionItem,
             "re|革命|改个",
-            "#ff6633",
+            "#ba4d06",
             isDesyncImpostor: true,
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );

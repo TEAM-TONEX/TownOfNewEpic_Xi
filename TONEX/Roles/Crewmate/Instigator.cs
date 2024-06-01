@@ -40,8 +40,8 @@ public sealed class Instigator : RoleBase
     static OptionItem MaxCooldown;
     enum OptionName
     {
-        NiceTimeStopsSkillCooldown,
-        NiceTimeStopsSkillDuration,
+        NiceTimeStopperSkillCooldown,
+        NiceTimeStopperSkillDuration,
         ReduceCooldown,
         MaxCooldown,
     }
@@ -136,7 +136,7 @@ public override bool GetAbilityButtonText(out string text)
         {
             ProtectStartTime = -1;
             player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("NiceTimeStopsOffGuard")));
+            player.Notify(string.Format(GetString("NiceTimeStopperOffGuard")));
         }
         if (UsePetCooldown + (long)Cooldown < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
         {

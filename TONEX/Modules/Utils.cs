@@ -570,7 +570,7 @@ public static class Utils
             return string.Empty;
         string mode;
         if (role.IsVanilla()) return "";
-        else if (role.IsHidden()) mode = GetString("HidenRole");
+        else if (role.IsHidden()) mode = GetString("HiddenRole");
         else if (role.IsCanNotOpen()) mode = GetString("CTOPRole");
         else mode = Options.CustomRoleSpawnChances[role].GetString().RemoveHtmlTags();
         return parentheses ? $"({mode})" : mode;

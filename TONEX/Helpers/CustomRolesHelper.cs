@@ -23,7 +23,7 @@ static class CustomRolesHelper
     public static bool IsImpostor(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
+        if (roleInfo != null && (int)role >= 100 && (int)role < 400)
             return roleInfo.CustomRoleType == CustomRoleTypes.Impostor;
         return false;
     }
@@ -31,7 +31,7 @@ static class CustomRolesHelper
     public static bool IsNeutral(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
+        if (roleInfo != null && (int)role >= 800 && (int)role < 1500)
             return roleInfo.CustomRoleType == CustomRoleTypes.Neutral;
         return false;
     }
@@ -53,14 +53,14 @@ static class CustomRolesHelper
     public static bool IsCrewmate(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
+        if (roleInfo != null && (int)role >= 400 && (int)role < 800)
             return roleInfo.CustomRoleType == CustomRoleTypes.Crewmate;
         return
             role is CustomRoles.Crewmate or
             CustomRoles.Engineer or
             CustomRoles.Scientist;
     }
-    public static bool IsAddon(this CustomRoles role) => (int)role > 500;
+    public static bool IsAddon(this CustomRoles role) => (int)role > 1500;
     public static bool IsValid(this CustomRoles role) => role is not CustomRoles.GM and not CustomRoles.NotAssigned;
     public static bool IsExist(this CustomRoles role, bool CountDeath = false) => Main.AllPlayerControls.Any(x => x.Is(role) && (x.IsAlive() || CountDeath));
     public static bool IsVanilla(this CustomRoles role)

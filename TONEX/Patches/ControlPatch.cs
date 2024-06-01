@@ -316,12 +316,12 @@ internal class HandleHUDPatch
         {
             DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.DoClick();
         }
-        if (player.GetButtonDown(49) && // 49:变形按钮id
-        PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == false &&
-        PlayerControl.LocalPlayer.CanUseShapeShiftButton())
-        {
-            DestroyableSingleton<HudManager>.Instance.AbilityButton.DoClick();
-        }
+        //if (player.GetButtonDown(49) && // 49:变形按钮id
+        //PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == false &&
+        //PlayerControl.LocalPlayer.CanUseShapeShiftButton())
+        //{
+        //    DestroyableSingleton<HudManager>.Instance.AbilityButton.DoClick();
+        //}
        
 
         /*

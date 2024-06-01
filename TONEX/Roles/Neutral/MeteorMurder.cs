@@ -25,7 +25,7 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
             75_1_2_0200,
-            null,
+            SetupOptionItem,
             "Frisk|MeteorMurderer|USF!Frisk",
              "#ff0000",
             true,
@@ -43,10 +43,65 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
     }
     public bool IsNK { get; private set; } = true;
 
+    static OptionItem GetLoveCountByKillImp;
+    static OptionItem GetLoveCountByKillCrew;
+    static OptionItem GetLoveCountByKillNK;
+    static OptionItem GetLoveCountByKillNeu;
+    static OptionItem OptionCanGetLoveByReport;
+    static OptionItem GetLoveCountByReportImp;
+    static OptionItem GetLoveCountByReportCrew;
+    static OptionItem GetLoveCountByReportNK;
+    static OptionItem GetLoveCountByReportNeu;
+    static OptionItem GetHPCountByLV;
+    static OptionItem OptionHasImpostorVision;
+    enum OptionName
+    {
+        GetLoveCountByKillImp,
+        GetLoveCountByKillCrew,
+        GetLoveCountByKillNeu,
+        GetLoveCountByKillNK,
+        OptionCanGetLoveByReport,
+        GetLoveCountByReportImp,
+        GetLoveCountByReportCrew,
+        GetLoveCountByReportNeu,
+        GetLoveCountByReportNK,
+
+        OptionHasImpostorVision,
+        GetHPCountByLV
+    }
+    private static void SetupOptionItem()
+    {
+        GetLoveCountByKillImp = IntegerOptionItem.Create(RoleInfo, 10, OptionName.GetLoveCountByKillImp, new (0, 20, 1), 4, false)
+     .SetValueFormat(OptionFormat.Level);
+
+        GetLoveCountByKillCrew = IntegerOptionItem.Create(RoleInfo, 11, OptionName.GetLoveCountByKillCrew, new (0, 20, 1), 4, false)
+            .SetValueFormat(OptionFormat.Level);
+        GetLoveCountByKillNK = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByKillNK, new(0, 20, 1), 4, false)
+            .SetValueFormat(OptionFormat.Level);
+        GetLoveCountByKillNeu = IntegerOptionItem.Create(RoleInfo, 12, OptionName.GetLoveCountByKillNeu, new (0, 20, 1), 4, false)
+            .SetValueFormat(OptionFormat.Level);
+
+        OptionCanGetLoveByReport = BooleanOptionItem.Create(RoleInfo, 13, OptionName.OptionCanGetLoveByReport, true, false);
+
+        GetLoveCountByReportImp = IntegerOptionItem.Create(RoleInfo, 14, OptionName.GetLoveCountByReportImp, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+            .SetValueFormat(OptionFormat.Level);
+
+        GetLoveCountByReportCrew = IntegerOptionItem.Create(RoleInfo, 15, OptionName.GetLoveCountByReportCrew, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+            .SetValueFormat(OptionFormat.Level);
+        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 4, false)
+           .SetValueFormat(OptionFormat.Level);
+        GetLoveCountByReportNeu = IntegerOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportNeu, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
+            .SetValueFormat(OptionFormat.Level);
+        GetHPCountByLV = FloatOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportNeu, new(0f, 5f, 0.1f), 0.2f, false, OptionCanGetLoveByReport)
+            .SetValueFormat(OptionFormat.Level);
+        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 17, GeneralOption.ImpostorVision, true, false);
+        
+    }
+
     #region 全局变量
     public int LOVE;
     public int LVOverFlow;
-    public int Shield;
+    public float HealthPoint;
     #endregion
     #region RPC相关
     private void SendRPC()
@@ -54,7 +109,7 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
         using var sender = CreateSender();
         sender.Writer.Write(LOVE);
         sender.Writer.Write(LVOverFlow);
-        sender.Writer.Write(Shield);
+        sender.Writer.Write(HealthPoint);
 
     }
     public override void ReceiveRPC(MessageReader reader)
@@ -62,7 +117,7 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
 
             LOVE = reader.ReadInt32();
             LVOverFlow = reader.ReadInt32();
-        Shield = reader.ReadInt32();
+        HealthPoint = reader.ReadInt32();
 
     }
     #endregion
@@ -74,9 +129,11 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
     {
         if (info.IsSuicide) return true;
 
-        if (Shield >0)
+        if (HealthPoint >0)
         {
-            Shield--;
+            HealthPoint--;
+            if (HealthPoint < 0)
+                HealthPoint = 0;
             SendRPC();
             return false;
         }
@@ -86,20 +143,35 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
     {
         if (info.IsSuicide) return true;
         var (killer, target) = info.AttemptTuple;
-        if (LOVE<=16)
+        int lv = LOVE;
+        var player = target;
+        if (player.IsImp())
         {
-            LOVE = 20;
-            LVOverFlow += LVOverFlow - 16;
+            lv += GetLoveCountByKillImp.GetInt();
         }
-        else
+        else if (player.IsNeutralKiller())
         {
-            LOVE += 4;
+            lv += GetLoveCountByKillNK.GetInt();
         }
-        Shield = LOVE +LVOverFlow;
+        else if (player.IsNeutralNonKiller())
+        {
+            lv += GetLoveCountByKillNeu.GetInt();
+        }
+        else if (player.IsCrew())
+        {
+            lv += GetLoveCountByKillCrew.GetInt();
+        }
+        if (lv > 20)
+        {
+            LVOverFlow += lv - 20;
+            lv = 20;
+        }
+        LOVE = lv;
+        HealthPoint = lv * GetHPCountByLV.GetFloat();
         SendRPC();
         return true;
     }
-
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(OptionHasImpostorVision.GetBool());
     public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
@@ -109,26 +181,40 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
             color = Color.red;
         if (LOVE == 20)
             color = Palette.Purple;
-        var hp = Player.IsAlive() ? Shield + 1 : 0;
+        var hp = Player.IsAlive() ? HealthPoint + 1 : 0;
         return Utils.ColorString(color, $"(LV{LOVE})"  +$"HP{hp}");
     }
   
     public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
     {
-        if (Is(reporter) && target != null)
+        if (!Is(reporter) || target != null || !OptionCanGetLoveByReport.GetBool()) return true;
+
+        int lv = LOVE;
+        var player = target.Object;
+        if (player.IsImp())
         {
-            if (LOVE <= 16)
-            {
-                LOVE = 20;
-                LVOverFlow += LVOverFlow - 16;
-            }
-            else
-            {
-                LOVE += 4;
-            }
-            Shield = LOVE + LVOverFlow;
-            SendRPC();
+            lv += GetLoveCountByReportImp.GetInt();
         }
-            return true;
+        else if (player.IsNeutralKiller())
+        {
+            lv += GetLoveCountByReportNK.GetInt();
+        }
+        else if (player.IsNeutralNonKiller())
+        {
+            lv += GetLoveCountByReportNeu.GetInt();
+        }
+        else if (player.IsCrew())
+        {
+            lv += GetLoveCountByReportCrew.GetInt();
+        }
+        if (lv > 20)
+        {
+            LVOverFlow += lv - 20;
+            lv = 20;
+        }
+        LOVE = lv;
+        HealthPoint = lv * GetHPCountByLV.GetFloat();
+        SendRPC();
+        return true;
     }
 }

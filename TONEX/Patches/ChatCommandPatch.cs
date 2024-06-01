@@ -85,7 +85,7 @@ internal class ChatCommands
 
         ChatUpdatePatch.DoBlockChat = false;
 
-        if (!mc.IsCommand && SpamManager.CheckSpam(player, text))
+        if (!mc.IsRoleCommand && SpamManager.CheckSpam(player, text))
             blockForLocalPlayer = true;
     }
 }

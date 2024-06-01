@@ -554,7 +554,7 @@ public enum CustomRoles
     //Default
     Crewmate = 0,
     //Impostor(Vanilla)
-    Impostor,
+    Impostor=100,
     Shapeshifter,
     //Impostor
     BountyHunter,
@@ -608,7 +608,7 @@ public enum CustomRoles
     Skinwalker,
     ViciousSeeker,
     EvilAngle,
-    EvilTimeStops,
+    EvilTimeStopper,
     MirrorSpirit,//TODO 镜妖
     Assaulter,
     MimicTeam,//TODO 模仿者团队
@@ -619,8 +619,9 @@ public enum CustomRoles
     Disperser,//TODO 分散者
     EvilPianist,//TODO 邪恶的钢琴家
     EvilGrenadier,
+
     //Crewmate(Vanilla)
-    Engineer,
+    Engineer = 400,
     GuardianAngel,
     Scientist,
     //Crewmate
@@ -653,7 +654,7 @@ public enum CustomRoles
     Medium,
     Observer,
     DoveOfPeace,
-    NiceTimeStops,
+    NiceTimeStopper,
     TimeMaster,
     Prophet,
     Instigator,
@@ -678,7 +679,7 @@ public enum CustomRoles
     Scout,
     Amber,
     //Neutral
-    Arsonist,
+    Arsonist= 800,
     Jester,
     God,
     Opportunist,
@@ -688,7 +689,7 @@ public enum CustomRoles
     Jackal,
     Innocent,
     Pelican,
-    Revolutionist, //TODO 革命家
+    Revolutionist, 
     Hater,
     Konan, //TODO 柯南
     Demon,
@@ -740,8 +741,8 @@ public enum CustomRoles
     //GM
     GM,
 
-    //Sub-role after 500
-    NotAssigned = 500,
+    //Sub-role after 1500
+    NotAssigned = 1500,
     LastImpostor,
     Lovers,
     AdmirerLovers,

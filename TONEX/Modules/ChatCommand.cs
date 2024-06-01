@@ -25,13 +25,14 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
     public Func<MessageControl, (MsgRecallMode, string)> Command { get; set; } = command;
 
     public static List<ChatCommand> AllCommands;
+    public static List<ChatCommand> SpamCommands;
 
     public static void Init()
     {
-        InitRoleCommands();
+        SpamInitOnly();
         AllCommands = new()
         {
-                        new(["srm"], CommandAccess.Debugger, mc =>
+            new(["srm"], CommandAccess.Debugger, mc =>
             {
                 ChatCommand.GetRoleByInputName(mc.Args, out var role);
                 PlayerState.GetByPlayerId(mc.Player.PlayerId).SetMainRole(role);
@@ -319,14 +320,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                 }
                 return (MsgRecallMode.Block, text);
             }),
-            new(["id"], CommandAccess.All, mc =>
-            {
-                string text = GetString("PlayerIdList");
-                foreach (var pc in Main.AllPlayerControls)
-                    text += "\n" + pc.PlayerId.ToString() + " → " + Main.AllPlayerNames[pc.PlayerId];
-                 mc.SendToList.Add(mc.Player.PlayerId);
-                return (MsgRecallMode.Spam, text);
-            }),
+            
             new(["end", "endgame"], CommandAccess.Host, mc =>
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);
@@ -351,6 +345,23 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                 return (MsgRecallMode.Block, null);
             }),
         };
+        
+    }
+    public static void SpamInitOnly()
+    {
+        InitRoleCommands();
+        SpamCommands = new()
+        {
+            new(["id"], CommandAccess.All, mc =>
+            {
+                string text = GetString("PlayerIdList");
+                foreach (var pc in Main.AllPlayerControls)
+                    text += "\n" + pc.PlayerId.ToString() + " → " + Main.AllPlayerNames[pc.PlayerId];
+                 mc.SendToList.Add(mc.Player.PlayerId);
+                return (MsgRecallMode.Spam, text);
+            }),
+        };
+
     }
 
     private static Dictionary<CustomRoles, List<string>> RoleCommands;

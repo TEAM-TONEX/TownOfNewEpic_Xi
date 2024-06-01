@@ -49,7 +49,7 @@ Here we go!
 - Addons：Chameleon
 - Addons：Libertarian
 - Crewmate：Prophet
-- Crewmate：Time Stop
+- Crewmate：Time Stopper
 - Crewmate：Time Master
 - Crewmate：Provocateur
 - Crewmate：Unyielding
