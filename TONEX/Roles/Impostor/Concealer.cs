@@ -55,11 +55,11 @@ public sealed class Concealer : RoleBase, IImpostor
     public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
     {
         Shapeshifting = !Is(target);
-
+        Player.RpcResetAbilityCooldown();
         if (!AmongUsClient.Instance.AmHost) return false;
 
         Camouflage.CheckCamouflage();
-        Player.RpcResetAbilityCooldown();
+        
         return false;
     }
     public override bool GetAbilityButtonSprite(out string buttonName)
