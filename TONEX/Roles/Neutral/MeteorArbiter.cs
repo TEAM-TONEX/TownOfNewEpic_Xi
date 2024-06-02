@@ -44,6 +44,12 @@ ctop:true
         () => HasTask.False
     )
     {
+        Murderer = false;
+        Crumble = false;
+        LOVE = 1;
+        Tired = 0;
+        LVOverFlow = 0;
+        HealthPoint = 0;
     }
     static OptionItem GetLoveCountByKillImp;
     static OptionItem GetLoveCountByKillCrew;
@@ -54,7 +60,7 @@ ctop:true
     static OptionItem GetLoveCountByReportCrew;
     static OptionItem GetLoveCountByReportNK;
     static OptionItem GetLoveCountByReportNeu;
-    static OptionItem GetHPCountByLV;
+    static OptionItem GetHPCountByLVOverFlow;
     static OptionItem OptionHasImpostorVision;
     static OptionItem SuccessKillProbability;
     static OptionItem SuccessMissProbability;
@@ -73,7 +79,7 @@ ctop:true
         GetLoveCountByReportCrew,
         GetLoveCountByReportNeu,
         GetLoveCountByReportNK,
-        GetHPCountByLV,
+        GetHPCountByLVOverFlow,
         SuccessKillProbability,
         SuccessMissProbability,
         ReduceMissProbabilityByLV,
@@ -82,35 +88,35 @@ ctop:true
     }
     private static void SetupOptionItem()
     {
-        GetLoveCountByKillImp = IntegerOptionItem.Create(RoleInfo, 10, OptionName.GetLoveCountByKillImp, new(0, 20, 1), 4, false)
+        GetLoveCountByKillImp = IntegerOptionItem.Create(RoleInfo, 10, OptionName.GetLoveCountByKillImp, new(0, 20, 1), 10, false)
      .SetValueFormat(OptionFormat.Level);
 
         GetLoveCountByKillCrew = IntegerOptionItem.Create(RoleInfo, 11, OptionName.GetLoveCountByKillCrew, new(0, 20, 1), 4, false)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByKillNK = IntegerOptionItem.Create(RoleInfo, 12, OptionName.GetLoveCountByKillNK, new(0, 20, 1), 4, false)
+        GetLoveCountByKillNK = IntegerOptionItem.Create(RoleInfo, 12, OptionName.GetLoveCountByKillNK, new(0, 20, 1), 6, false)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByKillNeu = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GetLoveCountByKillNeu, new(0, 20, 1), 4, false)
+        GetLoveCountByKillNeu = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GetLoveCountByKillNeu, new(0, 20, 1), 10, false)
             .SetValueFormat(OptionFormat.Level);
 
         OptionCanGetLoveByReport = BooleanOptionItem.Create(RoleInfo, 14, OptionName.OptionCanGetLoveByReport, true, false);
 
-        GetLoveCountByReportImp = IntegerOptionItem.Create(RoleInfo, 15, OptionName.GetLoveCountByReportImp, new(0, 20, 1), 4, false, OptionCanGetLoveByReport)
+        GetLoveCountByReportImp = IntegerOptionItem.Create(RoleInfo, 15, OptionName.GetLoveCountByReportImp, new(0, 20, 1), 10, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
 
         GetLoveCountByReportCrew = IntegerOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportCrew, new(0, 20, 1), 4, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 17, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 4, false, OptionCanGetLoveByReport)
+        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 17, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 6, false, OptionCanGetLoveByReport)
            .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByReportNeu = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByReportNeu, new(0, 20, 1), 4, false, OptionCanGetLoveByReport)
+        GetLoveCountByReportNeu = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByReportNeu, new(0, 20, 1), 10, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
-        GetHPCountByLV = FloatOptionItem.Create(RoleInfo, 19, OptionName.GetLoveCountByReportNeu, new(0f, 5f, 0.1f), 0.2f, false, OptionCanGetLoveByReport)
-            .SetValueFormat(OptionFormat.Level);
+        GetHPCountByLVOverFlow = FloatOptionItem.Create(RoleInfo, 19, OptionName.GetHPCountByLVOverFlow, new(0f, 3f, 0.1f), 0.2f, false)
+            .SetValueFormat(OptionFormat.Health);
         OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 20, GeneralOption.ImpostorVision, true, false);
-        SuccessKillProbability = FloatOptionItem.Create(RoleInfo, 21, OptionName.SuccessKillProbability, new(0f, 5f, 0.1f), 0.2f, false)
+        SuccessKillProbability = FloatOptionItem.Create(RoleInfo, 21, OptionName.SuccessKillProbability, new(0f, 100f, 2.5f), 0f, false)
     .SetValueFormat(OptionFormat.Percent);
-        SuccessMissProbability = FloatOptionItem.Create(RoleInfo, 22, OptionName.SuccessMissProbability, new(0f, 5f, 0.1f), 0.2f, false)
+        SuccessMissProbability = FloatOptionItem.Create(RoleInfo, 22, OptionName.SuccessMissProbability, new(0f, 100f, 2.5f), 100f, false)
             .SetValueFormat(OptionFormat.Percent);
-        ReduceMissProbabilityByLV = FloatOptionItem.Create(RoleInfo, 23, OptionName.ReduceMissProbabilityByLV, new(0f, 5f, 0.1f), 0.2f, false)
+        ReduceMissProbabilityByLV = FloatOptionItem.Create(RoleInfo, 23, OptionName.ReduceMissProbabilityByLV, new(0f, 100f, 2.5f), 7.5f, false)
             .SetValueFormat(OptionFormat.Percent);
         CanFollowWin = BooleanOptionItem.Create(RoleInfo, 24, OptionName.CanFollowWin, true, false);
         CanFollowWinWhenMurdererExists = BooleanOptionItem.Create(RoleInfo, 25, OptionName.CanFollowWinWhenMurdererExists, true, false, CanFollowWin);
@@ -185,6 +191,8 @@ ctop:true
         }
         return true;
     }
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(OptionHasImpostorVision.GetBool());
+
     public bool OnCheckMurderAsKiller(MurderInfo info)
     {
         if (info.IsSuicide) return true;
@@ -230,7 +238,7 @@ ctop:true
             LOVE = lv;
             var overflow = LVOverFlow;
             overflow += lv > 20 ? lv - 20 : 0;
-            HealthPoint = (int)(Mathf.Floor(overflow / 5f) * GetHPCountByLV.GetFloat());
+            HealthPoint = (int)(Mathf.Floor(overflow / 5f) * GetHPCountByLVOverFlow.GetFloat());
             overflow -= (int)Mathf.Floor(LVOverFlow / 5f);
             LVOverFlow = overflow;
             SendRPC();
@@ -310,7 +318,7 @@ ctop:true
             lv = 20;
         }
         LOVE = lv;
-        HealthPoint = lv * GetHPCountByLV.GetFloat();
+        HealthPoint = lv * GetHPCountByLVOverFlow.GetFloat();
         SendRPC();
         return true;
     }

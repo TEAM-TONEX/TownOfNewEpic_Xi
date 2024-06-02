@@ -44,6 +44,9 @@ ctop:true
         () => HasTask.False
     )
     {
+        LOVE = 1;
+        LVOverFlow = 0;
+        HealthPoint = 0;
     }
     public bool IsNK { get; private set; } = true;
 
@@ -92,18 +95,18 @@ ctop:true
 
         GetLoveCountByReportCrew = IntegerOptionItem.Create(RoleInfo, 16, OptionName.GetLoveCountByReportCrew, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
-        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 17, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 4, false)
+        GetLoveCountByReportNK = IntegerOptionItem.Create(RoleInfo, 17, OptionName.GetLoveCountByReportNK, new(0, 20, 1), 4, false, OptionCanGetLoveByReport)
            .SetValueFormat(OptionFormat.Level);
         GetLoveCountByReportNeu = IntegerOptionItem.Create(RoleInfo, 18, OptionName.GetLoveCountByReportNeu, new (0, 20, 1), 4, false, OptionCanGetLoveByReport)
             .SetValueFormat(OptionFormat.Level);
-        GetHPCountByLV = FloatOptionItem.Create(RoleInfo, 19, OptionName.GetLoveCountByReportNeu, new(0f, 5f, 0.1f), 0.2f, false, OptionCanGetLoveByReport)
-            .SetValueFormat(OptionFormat.Level);
-        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 17, GeneralOption.ImpostorVision, true, false);
+        GetHPCountByLV = FloatOptionItem.Create(RoleInfo, 19, OptionName.GetHPCountByLV, new(0f, 3f, 0.1f), 0.2f, false)
+            .SetValueFormat(OptionFormat.Health);
+        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 20, GeneralOption.ImpostorVision, true, false);
         
     }
 
     #region 全局变量
-    public int LOVE;
+    public int LOVE = 1;
     public int LVOverFlow;
     public float HealthPoint;
     #endregion

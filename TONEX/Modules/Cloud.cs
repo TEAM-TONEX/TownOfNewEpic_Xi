@@ -110,10 +110,10 @@ internal class Cloud
     }
     public static void SendData(string msg)
     {
-        //StartConnect();
+        StartConnect();
         if (EacClientSocket == null || !EacClientSocket.Connected)
         {
-            //Logger.Warn("未连接至TONEX服务器，报告被取消", "EAC Cloud");
+            Logger.Warn("未连接至TONEX服务器，报告被取消", "EAC Cloud");
             return;
         }
         EacClientSocket.Send(Encoding.Default.GetBytes(msg));

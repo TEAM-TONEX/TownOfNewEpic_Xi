@@ -935,7 +935,7 @@ public static class Utils
     }
     public static void ShowLastResult(byte PlayerId = byte.MaxValue)
     {
-        
+        if (Main.AssistivePluginMode.Value) return;
         if (AmongUsClient.Instance.IsGameStarted)
         {
             SendMessage(GetString("CantUse.lastresult"), PlayerId);

@@ -10,7 +10,9 @@ public class MapRealTimeLocationPatch
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowNormalMap)), HarmonyPrefix]
     public static bool ShowNormalMap(MapBehaviour __instance)
     {
-        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? PlayerControl.LocalPlayer.GetRoleColor() : Palette.DisabledGrey;
+        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
+        if (Main.AssistivePluginMode.Value)
+            color = new Color32(150, 187, 184, 255);
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
         if (!ShouldShowRealTime) return true;
@@ -22,14 +24,18 @@ public class MapRealTimeLocationPatch
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowNormalMap)), HarmonyPostfix]
     public static void ShowNormalMapAfter(MapBehaviour __instance)
     {
-        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? PlayerControl.LocalPlayer.GetRoleColor() : Palette.DisabledGrey;
+        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
+        if (Main.AssistivePluginMode.Value)
+            color =new Color32 (150, 187, 184, 255);
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
     }
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowSabotageMap)), HarmonyPrefix]
     public static bool ShowSabotageMap(MapBehaviour __instance)
     {
-        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? PlayerControl.LocalPlayer.GetRoleColor() : Palette.DisabledGrey;
+        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
+        if (Main.AssistivePluginMode.Value)
+            color = Palette.DisabledGrey;
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
         if (!ShouldShowRealTime || PlayerControl.LocalPlayer.Is(Roles.Core.CustomRoleTypes.Impostor)) return true;
@@ -40,7 +46,9 @@ public class MapRealTimeLocationPatch
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowSabotageMap)), HarmonyPostfix]
     public static void ShowSabotageMapAfter(MapBehaviour __instance)
     {
-        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? PlayerControl.LocalPlayer.GetRoleColor() : Palette.DisabledGrey;
+        var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ?  Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
+        if (Main.AssistivePluginMode.Value)
+            color = Palette.DisabledGrey;
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
     }
