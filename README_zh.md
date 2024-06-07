@@ -14,6 +14,8 @@
 
 [English](README.md) [简体中文]
 
+[TONEX官方网站](https://tonex.cc) | [XtremeWave官方网站](https://www.xtreme.net.cn)
+
 </div>
 
 ## 关于我们
