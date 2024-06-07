@@ -14,6 +14,8 @@
 
 [English] [简体中文](README_zh.md)
 
+[TONEX Website](https://tonex.cc) | [XtremeWave Website](https://www.xtreme.net.cn)
+
 </div>
 
 ## About Us
@@ -105,10 +107,10 @@ Portions of the materials contained herein are property of Innersloth LLC.
  - caaattt - **Artist**
  - [QingFeng](https://github.com/QingFeng-awa) - **Website**
  - [Miaoice](https://github.com/Miaoice) - **WebSite**
- - Terry(中立小黑) - **Website**
  - Hartex - **Promotion**
  - JMS - **Promotion**
  - ㍿ - **Innovation**
+ - [Terry(中立小黑)](https://github.com/ZhongLiXiaoHei) - **Innovation**
  - [一念旧情丶](https://github.com/ynjq) - **Innovation**
 
 ### Contributors
@@ -116,7 +118,7 @@ Portions of the materials contained herein are property of Innersloth LLC.
  - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **Developer In [TOHEX](https://tohex.cc)**
  - ryuk - **Provide Some Ideas Of Features**
  - Amongus(水木年华) - **Translate&Bugs Fix**
- - [NikoCat233]() - **Bugs Fix&Technical Support**
+ - [NikoCat233](https://github.com/NikoCat233) - **Bugs Fix&Technical Support**
  - Farewell - **Support**
  - [LeZaiYa](https://github.com/LezaiYa1) - **Support**
  - Imp11 - **Support**
@@ -126,5 +128,5 @@ Portions of the materials contained herein are property of Innersloth LLC.
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
 
 ## Our Other Star Projects
-[TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX,using with VuePress-reco.
-[TownOfNewEpic_XtremeBot](https://github.com/XtremeWave/TownOfNewEpic_XtremeBot) - TownOfNewEpic_XtremeBot(CheDuiJi),powered by TianMeng.
+ - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX,using with VuePress-reco.
+ - [TownOfNewEpic_XtremeBot](https://github.com/XtremeWave/TownOfNewEpic_XtremeBot) - TownOfNewEpic_XtremeBot(CheDuiJi),powered by TianMeng.
