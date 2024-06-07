@@ -179,7 +179,7 @@ ctop:true
         return true;
     }
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(OptionHasImpostorVision.GetBool());
-    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
         if (!GameStates.IsInTask || isForMeeting || !Is(seer) || !Is(seen)) return "";

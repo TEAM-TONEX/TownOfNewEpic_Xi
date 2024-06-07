@@ -252,32 +252,35 @@ ctop:true
         if (LOVE > 5 && !Murderer)
         {
             Murderer = true;
+            SendRPC();
         }
         if (LOVE == 20 && !Crumble)
         {
             Crumble = true;
+            SendRPC();
         }
        
         if (((LOVE == 1 && CanFollowWin.GetBool() || LOVE < 5 && CustomRoles.MeteorMurderer.IsExist(true)) && CanFollowWinWhenMurdererExists.GetBool()) && !CanWin)
         {
             CanWin = true;
-
+            SendRPC();
         }
         else if ((LOVE != 1 && !CustomRoles.MeteorMurderer.IsExist(true) || LOVE >= 5 && CustomRoles.MeteorMurderer.IsExist(true)) && CanWin)
         {
             CanWin = false;
             IsNK = true;
             IsNE = true;
+            SendRPC();
         }
         
-        SendRPC();
+        
     }
     
     public override void AfterMeetingTasks()
     {
         Tired -= 2;
     }
-    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
         if (!GameStates.IsInTask || isForMeeting || !Is(seer) || !Is(seen)) return "";
