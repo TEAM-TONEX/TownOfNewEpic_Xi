@@ -116,7 +116,7 @@ Portions of the materials contained herein are property of Innersloth LLC.
  - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **Developer In [TOHEX](https://tohex.cc)**
  - ryuk - **Provide Some Ideas Of Features**
  - Amongus(水木年华) - **Translate&Bugs Fix**
- - [NikoCat233]() - **Bugs Fix&Technical Support**
+ - [NikoCat233](https://github.com/NikoCat233) - **Bugs Fix&Technical Support**
  - Farewell - **Support**
  - [LeZaiYa](https://github.com/LezaiYa1) - **Support**
  - Imp11 - **Support**
