@@ -19,6 +19,7 @@ namespace TONEX;
 public enum CustomRPC
 {
     VersionCheck = 80,
+    
     RequestRetryVersionCheck = 81,
     SyncCustomSettings = 100,
     SetDeathReason,
@@ -112,7 +113,6 @@ public enum Sounds
     TaskUpdateSound,
     ImpTransform,
     Yeehawfrom,
-
     Test,
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]

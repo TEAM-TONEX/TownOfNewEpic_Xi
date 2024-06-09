@@ -3,6 +3,7 @@ using System.Linq;
 using static TONEX.Translator;
 using TONEX.Roles.Core;
 using YamlDotNet.Core;
+
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 
 namespace TONEX.Roles.Impostor;
@@ -81,6 +82,7 @@ public sealed class Concealer : RoleBase, IImpostor
             Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
             return;
         }
+        if (!AmongUsClient.Instance.AmHost) return;
         Camouflage.CheckCamouflage();
         return;
     }

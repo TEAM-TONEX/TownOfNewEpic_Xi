@@ -111,7 +111,8 @@ public static class Camouflage
 
         Logger.Info($"newOutfit={newOutfit.GetString()}", "RpcSetSkin");
 
-        target.SetOutFitStatic( newOutfit.ColorId, newOutfit.HatId, newOutfit.SkinId, newOutfit.VisorId, newOutfit.PetId);
+        target.SetOutFitStatic(newOutfit.ColorId, newOutfit.HatId, newOutfit.SkinId, newOutfit.VisorId, newOutfit.PetId);
     }
+
    
 }
