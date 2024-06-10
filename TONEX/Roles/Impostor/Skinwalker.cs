@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using Hazel;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 
@@ -59,8 +60,8 @@ public sealed class Skinwalker : RoleBase, IImpostor
         KillerSkins = new GameData.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId);
 
         TargetSkins = new GameData.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId);
-        TargetSpeed = Main.AllPlayerSpeed[killer.PlayerId];
-        TargetName = Main.AllPlayerNames[killer.PlayerId];
+        TargetSpeed = Main.AllPlayerSpeed[target.PlayerId];
+        TargetName = Main.AllPlayerNames[target.PlayerId];
         KillerSpeed = Main.AllPlayerSpeed[killer.PlayerId];
         KillerName = Main.AllPlayerNames[killer.PlayerId];
         target.SetOutFitStatic(killer.Data.DefaultOutfit.ColorId);
@@ -74,24 +75,26 @@ public sealed class Skinwalker : RoleBase, IImpostor
             var outfit2 = KillerSkins;
             //凶手变样子
             killer.SetOutFitStatic(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
-
-            Main.AllPlayerNames[killer.PlayerId] = Main.AllPlayerNames[target.PlayerId];
+            Main.AllPlayerNames[killer.PlayerId] = TargetName;
+            Main.AllPlayerNames[target.PlayerId] = KillerName; 
+            killer.RpcSetName(TargetName);
+            target.RpcSetName(KillerName);
             Main.AllPlayerSpeed[target.PlayerId] = KillerSpeed;
             target.SetOutFitStatic(outfit2.ColorId, outfit2.HatId, outfit2.SkinId, outfit2.VisorId, outfit2.PetId);
-
-            //目标变样子
-            Main.AllPlayerNames[target.PlayerId] = KillerName;
-        }, 0.5f, "Clam");
-        new LateTask(() =>
-        {
+        }, 0.2f, "Clam");
             killer.RpcMurderPlayerV2(target);
         target.SetRealKiller(killer);
-    }, 1f, "Clam");
-        var outfit2 = KillerSkins;
-        Main.AllPlayerNames[killer.PlayerId] = Main.AllPlayerNames[target.PlayerId];
-        Main.AllPlayerSpeed[target.PlayerId] = KillerSpeed;
-        target.SetOutFitStatic(outfit2.ColorId, outfit2.HatId, outfit2.SkinId, outfit2.VisorId, outfit2.PetId);
-        Main.AllPlayerNames[target.PlayerId] = KillerName;
+        new LateTask(() =>
+        {
+            Utils.NotifyRoles(target);
+            Utils.NotifyRoles(killer);
+            Utils.NotifyRoles();
+        /*    target.RpcSetName(KillerName);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(target.NetId, (byte)RpcCalls.SetName, SendOption.Reliable, -1);
+            writer.Write(KillerName);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);*/
+        }, 0.5f, "Clam");
+
         return false;
     }
 }

@@ -148,6 +148,7 @@ Deputy: "捕快"
 Scout: "侦察兵"
 InjusticeSpirit: "冤魂"
 Amber: "琥珀"
+Saint: "圣教徒"
 
 ## 中立阵营 / Neutrals
 Jester: "小丑"
@@ -197,6 +198,8 @@ Akujo: "魅魔"
 Cupid: "丘比特"
 Phantom: "幻影"
 Yandere: "病娇"
+Alternate: "伪人"
+SplitPersonality: "人格分裂者"
 
 ## 附加职业 / Add-ons
 LastImpostor: "绝境者"
@@ -321,6 +324,8 @@ WinnerRoleText.MeteorMurderer: "终是星陨天坠，时间线来到终点"
 WinnerRoleText.SharpShooter: "一箭射进您的心（物理意义上的）"
 WinnerRoleText.Phantom: "全都是假象！"
 WinnerRoleText.Yandere: "你永远是我的宝宝"
+WinnerRoleText.Alternate: "无事值得冒险"
+WinnerRoleText.SplitPersonality: "我是你们滴一员，对吧？嘿嘿嘿嘿"
 
 ## 胜利界面职业名 / Role Name for End Screen
 WinnerRoleText.InEnd.Impostor: "伪装者阵营"
@@ -368,6 +373,8 @@ WinnerRoleText.InEnd.MeteorMurderer: "陨星戮者"
 WinnerRoleText.InEnd.SharpShooter: "神射手"
 WinnerRoleText.InEnd.Phantom: "幻影"
 WinnerRoleText.InEnd.Yandere: "病娇"
+WinnerRoleText.InEnd.Alternate: "伪人"
+WinnerRoleText.InEnd.SplitPersonality: "人格分裂者"
 
 # 以下是职业简介（显示在开局以及任务栏的文本）/ Shows at Impostor/Crewmate Screen
 
@@ -476,6 +483,7 @@ DeputyInfo: "抓住您了！"
 ScoutInfo: "侦查骑士登场！"
 InjusticeSpiritInfo: "冤屈化作动力！"
 AmberInfo: "一切献给——琥珀王！"
+SaintInfo: "吾将重获新生"
 
 ## 中立阵营 / Neutral Blurbs
 ArsonistInfo: "今天天气真不错..."
@@ -525,6 +533,8 @@ AkujoInfo: "让我们做些「快乐」的事吧"
 CupidInfo: "爱情之箭！"
 PhantomInfo: "哎嘿！准备好被偷家了吗！"
 YandereInfo: "❤我爱你"
+AlternateInfo: "Nothing Is Worth The Risk"
+SplitPersonalityInfo: "我是谁？我是船员吗？"
 
 ## 附加职业 / Add-ons Blurbs
 LoversInfo: "最重要的是，记得照顾好您的另一半"
@@ -673,6 +683,7 @@ DeputyInfoLong: "捕快可以使用击杀键给一个人手铐，使他下一次
 InjusticeSpiritInfoLong: "你还有用，别退！！！\n冤魂在完成任务后可以向所有人暴露所有内鬼"
 AmberInfoLong: "琥珀使用击杀按钮可以使自己和一名其他角色获得标记，该标记可以抵挡一次伤害，标记每一次被攻击都会获得一层琥珀。每一层都会提升伤害避免率，当琥珀层数累计到上限时可消耗所有层数使用一次击杀"
 ScoutInfoLong: "侦察兵可以使用击杀按钮来检查一定范围内的玩家所属阵营数量"
+SaintInfoLong: "圣教徒可以通过跳管来进行救赎过程，当需要跳管数量归零时，此时有两个抉择。\n1.活下去：完成所有任务，可以获得一次免刀的机会\n2.救赎：随机挑选一位场上存活的玩家揭示身份并且自己死亡，死因为“救赎”"
 
 ## 中立阵营 / Neutrals Descriptions
 ArsonistInfoLong: "纵火犯可以通过对玩家点击击杀按钮并跟随其数秒来完成涂油，开始涂油以及涂油成功时会显示护盾破碎的动画作为提示（仅自己可见）。当所有存活玩家都被纵火犯涂油后，纵火犯可以通过跳通风管来点火，并单独获得胜利。\n玩家名显示「△」表示涂油中\n玩家名显示「▲」表示已涂油。"
@@ -721,6 +732,8 @@ AkujoInfoLong: "魅魔可以通过击杀按钮选定玩家成为真爱与备胎�
 CupidInfoLong: "丘比特可以通过击杀按钮选定两名玩家成为恋人，根据设定可以通过管道或者摸宠物为他们发放护盾，如果护盾被击破则丘比特代替死亡。如果开启共生死那么当选定的恋人死亡时丘比特也会死亡，丘比特与选定的恋人共同胜利。丘比特不会被记作人数"
 PhantomInfoLong: "白给你这么好的职业了（bushi），不过没关系，完成任务还能偷家！\n幻影完成任务后可以直接单独获得胜利"
 YandereInfoLong: "病娇开局会有一个目标，可以看到对方名字旁有「♡」标志。如果有人靠近病娇的目标太近，病娇就会拥有指向他的箭头并且可以击杀他。\n病娇只能击杀碰过目标的人，仅剩病娇阵营与船员阵营且病娇阵营人数大于船员人数，病娇和目标获得胜利"
+AlternateInfoLong: "伪人开局可以选择一个人进行替代，选中时会在名字旁边显示被替代人的名称和需要替代的次数，再次进行进行替代会减少次数，当次数归零时，伪人将和被替代者的装饰调换，不会留下尸体，并且被替代者不能胜利，如果被替代者的阵营胜利了，那么伪人将代替被替代者胜利。\n被替代者死亡时伪人需要重新选择替代目标"
+SplitPersonalityInfoLong: "人格分裂者会随机变换阵营，会在10秒到60秒之间随机变换三个阵营（船员，内鬼，中立）如果最后胜利的阵营是人格分裂者变换的阵营，则人格分裂者跟随胜利（中立阵营属性为投机者）"
 
 
 ## 附加职业 / Add-ons Descriptions
@@ -1405,6 +1418,8 @@ SuccessMissProbability: "闪避率"
 ReduceMissProbabilityByLV: "每级LV降低的闪避率"
 CanFollowWin: "在存活的情况下未获得LV可以跟随胜利"
 CanFollowWinWhenMurdererExists: "在存活的情况下获得LV小于5且<color=#ff0000>陨星戮者</color>在场时可以跟随胜利"
+SubstituteCooldown: "替代冷却"
+NeedSubstituteLimit: "需要替代的次数"
 
 # 随机出生点 / Random Spawn Locations
 Junction: "三岔路"
@@ -1445,6 +1460,7 @@ DeathReason.LossOfHead: "绞杀"
 DeathReason.Trialed: "审判"
 DeathReason.Infected: "感染"
 DeathReason.Merger: "阴阳合并"
+DeathReason.Redemption: "救赎"
 DeathReason.etc: "其它"
 Alive: "存活"
 Win: "胜利"
@@ -1765,6 +1781,7 @@ CupidCant: "对方无法接受这段姻缘"
 CupidIsShielded: "已经发放护盾了！"
 CupidIsDead: "丘比特护盾生效！"
 NWReady: "冷却结束"
+NothingIsWorthTheRisk: "Nothing Is Worth The Risk"
 
 # 信息 / Messages
 Message.SetToSeconds: "信息发送冷却时间为【{0}】秒"

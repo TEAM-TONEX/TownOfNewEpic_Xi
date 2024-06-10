@@ -144,17 +144,15 @@ public sealed class Ninja : RoleBase, IImpostor
         Player.SetKillCooldownV2();
         if (MarkedPlayer != byte.MaxValue)
         {
+           var target = Utils.GetPlayerById(MarkedPlayer);
+            MarkedPlayer = byte.MaxValue;
             SendRPC();
             new LateTask(() =>
             {
-                foreach (var pc in Main.AllAlivePlayerControls)
+                if (!(target == null || !target.IsAlive() || target.IsEaten() || target.inVent || !GameStates.IsInTask))
                 {
-                    if (pc.PlayerId == MarkedPlayer && !(pc == null || !pc.IsAlive() || pc.IsEaten() || pc.inVent || !GameStates.IsInTask))
-                    {
-
-                        Utils.TP(Player.NetTransform, pc.GetTruePosition());
-                        CustomRoleManager.OnCheckMurder(Player, pc);
-                    }
+                    Utils.TP(Player.NetTransform, target.GetTruePosition());
+                    CustomRoleManager.OnCheckMurder(Player, target);
                 }
             }, 1.5f, "Ninja Ninjaate");
         }

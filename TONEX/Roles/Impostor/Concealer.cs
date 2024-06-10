@@ -14,7 +14,7 @@ public sealed class Concealer : RoleBase, IImpostor
             typeof(Concealer),
             player => new Concealer(player),
             CustomRoles.Concealer,
-            () => RoleTypes.Shapeshifter,
+            () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
             4500,
             SetupOptionItem,

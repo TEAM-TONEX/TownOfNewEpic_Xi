@@ -105,6 +105,8 @@ public enum CustomRPC
     SetProsecutorList,
     //捕快
     SetDeputyList,
+    //伪人
+    SetSubstituteLimit,
 }
 public enum Sounds
 {
@@ -415,6 +417,9 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetDeputyList:
                 Deputy.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.SetSubstituteLimit:
+               Alternate.ReceiveRPC_Limit(reader);
                 break;
         }
     }

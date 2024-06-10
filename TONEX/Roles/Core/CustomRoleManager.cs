@@ -678,8 +678,9 @@ public enum CustomRoles
     InjusticeSpirit,
     Scout,
     Amber,
+    Saint,
     //Neutral
-    Arsonist= 800,
+    Arsonist = 800,
     Jester,
     God,
     Opportunist,
@@ -734,6 +735,8 @@ public enum CustomRoles
     MeteorArbiter,// 陨星判官,1.2限定
     MeteorMurderer,// 陨星戮者,1.2限定
     SharpShooter,
+    Alternate,
+    SplitPersonality,
     //GameMode
     HotPotato,
     ColdPotato,

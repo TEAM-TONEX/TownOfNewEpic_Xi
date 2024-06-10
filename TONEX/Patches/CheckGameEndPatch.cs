@@ -188,6 +188,22 @@ class GameEndChecker
                         }
                     }
                 }
+
+                //Instigator 胜利时移除玩家ID了
+                if (CustomRoles.Alternate.IsExist() && Alternate.SubstituteId != byte.MaxValue)
+                {
+                    foreach (var pc in Main.AllPlayerControls)
+                    {
+                        if (Alternate.SubstituteId==pc.PlayerId)
+                        {
+                            if (CustomWinnerHolder.WinnerIds.Contains(Alternate.SubstituteId)) {
+                                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+
+                            }
+                               
+                        }
+                    }
+                }
                 //追加胜利
                 foreach (var pc in Main.AllPlayerControls)
                 {

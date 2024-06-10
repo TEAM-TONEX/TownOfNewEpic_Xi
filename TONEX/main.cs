@@ -366,6 +366,7 @@ public enum CustomDeathReason
     Dismembered,
     LossOfHead,
     Trialed,
+    Redemption,
 
 
     // TONEX
