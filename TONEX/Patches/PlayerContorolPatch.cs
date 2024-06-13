@@ -170,10 +170,10 @@ class MurderPlayerPatch
                         target.RpcShapeshift(target, false);
                     }
                 }
-                if(!(target.GetRealKiller() != null && target.GetRealKiller().Is(CustomRoles.Skinwalker))) {
+                if (target.GetRealKiller() == null || !target.GetRealKiller().Is(CustomRoles.Skinwalker))
                    Camouflage.RpcSetSkin(target, ForceRevert: true, RevertToDefault: true);
-                }
-          }
+                
+            }
 
             return true;
         

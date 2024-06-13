@@ -11,7 +11,15 @@ namespace TONEX.Roles.Core;
 
 public abstract class RoleBase : IDisposable
 {
+    #region 玩家相关处理
+    /// <summary>
+    /// 玩家本体
+    /// </summary>
     public PlayerControl Player { get; private set; }
+
+
+
+
     /// <summary>
     /// 玩家状态
     /// </summary>
@@ -91,11 +99,35 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     public virtual void OnDestroy()
     { }
+    #endregion
+    #region 倒计时相关处理
+    /// <summary>
+    /// int倒计时列表
+    /// </summary>
+    public List<int> int_CountdownList;
+
+    /// <summary>
+    /// float倒计时列表
+    /// </summary>
+    public List<int> float_CountdownList;
+
+    /// <summary>
+    /// 使用宠物总冷却时间
+    /// </summary>
+    public long UsePetCoolDown_Totally;
+
+    /// <summary>
+    /// 使用宠物冷却时间倒计时
+    /// </summary>
+    public long UsePetCoolDown;
+    public virtual string GetOffGuardText() => "";
+    #endregion
+    #region RPC相关处理
     /// <summary>
     /// RoleBase 专用 RPC 发送类
     /// 会自动发送 PlayerId
     /// </summary>
-   public class RoleRPCSender : IDisposable
+    public class RoleRPCSender : IDisposable
     {
         public MessageWriter Writer;
         public RoleRPCSender(RoleBase role)
@@ -127,17 +159,15 @@ public abstract class RoleBase : IDisposable
     /// <param name="rpcType">收到 RPC 类型</param>
     public virtual void ReceiveRPC(MessageReader reader)
     { }
-    /// <summary>
-    /// 可以使用技能按钮
-    /// </summary>
-    /// <returns>true：可以使用能力按钮</returns>
-    public virtual bool CanUseAbilityButton() => true;
+    #endregion
+    #region 基层设定相关处理
     /// <summary>
     /// 在 BuildGameOptions 中调用的函数
     /// </summary>
     public virtual void ApplyGameOptions(IGameOptions opt)
     { }
-
+    #endregion
+    #region 击杀与玩家死亡相关处理
     /// <summary>
     /// CheckMurder 作为目标处理函数<br/>
     /// 该函数用于您被击杀前的检查，调用该函数前已经调用过 OnCheckMurderAsKiller 函数<br/>
@@ -175,6 +205,16 @@ public abstract class RoleBase : IDisposable
     { }
 
     /// <summary>
+    /// 玩家死亡时调用的函数
+    /// 无论死亡玩家是谁，所有玩家都会调用，所以您需要判断死亡玩家的身份
+    /// </summary>
+    /// <param name="player">死亡玩家</param>
+    /// <param name="deathReason">死亡原因</param>
+    public virtual void OnPlayerDeath(PlayerControl player, CustomDeathReason deathReason, bool isOnMeeting = false)
+    { }
+    #endregion
+    #region 变形相关处理
+    /// <summary>
     /// 仅自己视角变身
     /// 可以将外壳留在自己视角处
     /// </summary>
@@ -189,14 +229,7 @@ public abstract class RoleBase : IDisposable
     /// <param name="animate">是否播放动画</param>
     /// <returns>返回false可取消变身</returns>
     public virtual bool OnCheckShapeshift(PlayerControl target, ref bool animate) => true;
-    /// <summary>
-    /// 玩家死亡时调用的函数
-    /// 无论死亡玩家是谁，所有玩家都会调用，所以您需要判断死亡玩家的身份
-    /// </summary>
-    /// <param name="player">死亡玩家</param>
-    /// <param name="deathReason">死亡原因</param>
-    public virtual void OnPlayerDeath(PlayerControl player, CustomDeathReason deathReason, bool isOnMeeting = false)
-    { }
+
 
     /// <summary>
     /// 变形时调用的函数
@@ -206,16 +239,16 @@ public abstract class RoleBase : IDisposable
     /// <param name="shapeshifter">变形目标</param>
     public virtual void OnShapeshift(PlayerControl target)
     { }
-
+    #endregion
+    #region 使用按钮相关处理
     /// <summary>
     /// 使用任何设施时调用的函数（打开任务界面，打开按钮界面等等都有，只要是使用）
     /// 不需要验证您的身份，因为调用前已经验证
     /// 请注意：全部模组端都会调用
     /// </summary>
-    public virtual bool OnUse()
-    {
-        return true;
-    }
+    public virtual bool OnUse() => true;
+    #endregion
+    #region 保护相关处理
 
     /// <summary>
     /// 保护别人时调用的函数
@@ -224,15 +257,8 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     /// <param name="target">守护目标</param>
     public virtual bool OnProtectPlayer(PlayerControl target) => true;
-
-    /// <summary>
-    /// 摸宠物时调用的函数
-    /// 不需要验证您的身份，因为调用前已经验证
-    /// 请注意：全部模组端都会调用
-    /// </summary>
-    public virtual void OnUsePet()
-    { }
-
+    #endregion
+    #region 帧、秒task相关处理
     /// <summary>
     /// 帧 Task 处理函数<br/>
     /// 不需要验证您的身份，因为调用前已经验证<br/>
@@ -252,7 +278,8 @@ public abstract class RoleBase : IDisposable
     /// <param name="now">当前10位时间戳</param>
     public virtual void OnSecondsUpdate(PlayerControl player, long now)
     { }
-
+    #endregion
+    #region 报告相关处理
     /// <summary>
     /// 报告前检查调用的函数
     /// 与报告事件无关的玩家也会调用该函数
@@ -270,7 +297,8 @@ public abstract class RoleBase : IDisposable
     /// <param name="target">被报告的玩家</param>
     public virtual void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
     { }
-
+#endregion
+    #region 宠物管道相关处理
     /// <summary>
     /// <para>进入通风管时调用的函数</para>
     /// <para>可以取消</para>
@@ -289,14 +317,30 @@ public abstract class RoleBase : IDisposable
     /// <returns>false：将玩家被无法退出通风管，其他人将看不到动画。</returns>
     public virtual bool OnExitVent(PlayerPhysics physics, int ventId) => true;
 
-    public virtual void CheckNotWin(PlayerControl player)
-    {  }
+    /// <summary>
+    /// 摸宠物时调用的函数
+    /// 不需要验证您的身份，因为调用前已经验证
+    /// 请注意：全部模组端都会调用
+    /// </summary>
+    public virtual void OnUsePet()
+    { }
+
+    public virtual bool OnEnterVentWithUsePet(PlayerPhysics physics= null, int ventId = 173) => true;
+#endregion
+    #region 会议相关处理
     /// <summary>
     /// 会议开始时调用的函数
     /// </summary>
+    /// 
     public virtual void OnStartMeeting()
     { }
 
+    /// <summary>
+    /// 会议开始时的全部提示信息
+    /// </summary>
+    /// <param name="msgToSend">等待发送的信息列表</param>
+    public virtual void NotifyOnMeetingStart(ref List<(string, byte, string)> msgToSend)
+    { }
     /// <summary>
     /// 在玩家投票时触发，此时还未计票<br/>
     /// 如果返回 false，本次投票将被忽略，玩家可以再次投票<br/>
@@ -359,12 +403,16 @@ public abstract class RoleBase : IDisposable
     public virtual void AfterMeetingTasks()
     { }
 
+
+    #endregion
+    #region 消息相关处理
     /// <summary>
     /// 玩家发送消息后调用的函数
     /// </summary>
     /// <param name="msg">玩家发送的消息</param>
     /// <param name="recallMode">该消息应该做何处理</param>
     /// <returns>true: 阻塞该消息并停止向下判断</returns>
+
     public virtual bool OnSendMessage(string msg, out MsgRecallMode recallMode)
     {
         recallMode = MsgRecallMode.None;
@@ -382,7 +430,8 @@ public abstract class RoleBase : IDisposable
         recallMode = MsgRecallMode.None;
         return false;
     }
-
+    #endregion
+    #region 任务相关处理
     /// <summary>
     /// 每次任务完成时调用的函数
     /// 设置 cancel=true 后返回 true 来取消原版的任务完成处理
@@ -393,8 +442,8 @@ public abstract class RoleBase : IDisposable
         cancel = default;
         return false;
     }
-
-    // == 破坏相关处理 ==
+    #endregion
+    #region 破坏相关处理
     /// <summary>
     /// 当玩家造成破坏时调用
     /// 若禁止将无法关门
@@ -410,7 +459,8 @@ public abstract class RoleBase : IDisposable
     /// <param name="systemType">造成破坏的设施</param>
     /// <returns>返回false取消破坏</returns>
     public virtual bool OnSabotage(PlayerControl player, SystemTypes systemType) => true;
-
+    #endregion
+    #region 名称相关处理
     // NameSystem
     // 显示的名字结构如下
     // [Role][Progress]
@@ -508,28 +558,20 @@ public abstract class RoleBase : IDisposable
     /// <returns>组合后的全部 Suffix</returns>
     public virtual string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false) => "";
 
+    #endregion
+    #region 技能按钮相关处理
     /// <summary>
     /// 修改技能按钮的剩余次数
     /// </summary>
     public virtual int OverrideAbilityButtonUsesRemaining() => -1;
+    
     /// <summary>
-    /// 更改变形/跳管/生命面板按钮的文本
+    /// 可以使用技能按钮
     /// </summary>
-    public virtual bool GetAbilityButtonText(out string text)
-    {
-        text = default;
-        return false;
-    }
-    /// <summary>
-    /// 更改变形/跳管/生命面板按钮的图片
-    /// </summary>
-    /// <param name="buttonName">按钮图片名</param>
-    /// <returns>true：确定要覆盖</returns>
-    public virtual bool GetAbilityButtonSprite(out string buttonName)
-    {
-        buttonName = default;
-        return false;
-    }
+    /// <returns>true：可以使用能力按钮</returns>
+    public virtual bool CanUseAbilityButton() => true;
+    #endregion
+    #region 按钮文本图片相关处理
     /// <summary>
     /// 更改报告按钮的文本
     /// </summary>
@@ -563,6 +605,24 @@ public abstract class RoleBase : IDisposable
         return false;
     }
     /// <summary>
+    /// 更改变形/跳管/生命面板按钮的文本
+    /// </summary>
+    public virtual bool GetAbilityButtonText(out string text)
+    {
+        text = default;
+        return false;
+    }
+    /// <summary>
+    /// 更改变形/跳管/生命面板按钮的图片
+    /// </summary>
+    /// <param name="buttonName">按钮图片名</param>
+    /// <returns>true：确定要覆盖</returns>
+    public virtual bool GetAbilityButtonSprite(out string buttonName)
+    {
+        buttonName = default;
+        return false;
+    }
+    /// <summary>
     /// 更改使用按钮的文本
     /// </summary>
     public virtual string GetUseButtonText() => default;
@@ -586,6 +646,8 @@ public abstract class RoleBase : IDisposable
         buttonName = default;
         return false;
     }
+    #endregion
+    #region 游戏开始相关处理
     /// <summary>
     /// 更改游戏开始时的音效
     /// </summary>
@@ -596,13 +658,6 @@ public abstract class RoleBase : IDisposable
     }
 
     /// <summary>
-    /// 会议开始时的全部提示信息
-    /// </summary>
-    /// <param name="msgToSend">等待发送的信息列表</param>
-    public virtual void NotifyOnMeetingStart(ref List<(string, byte, string)> msgToSend)
-    { }
-
-    /// <summary>
     /// 游戏开始后会立刻调用该函数
     /// 默认为全体玩家调用
     /// </summary>
@@ -611,7 +666,7 @@ public abstract class RoleBase : IDisposable
 
     protected static AudioClip GetIntroSound(RoleTypes roleType) =>
         RoleManager.Instance.AllRoles.Where((role) => role.Role == roleType).FirstOrDefault().IntroSound;
-
+    #endregion
     protected enum GeneralOption
     {
         Cooldown,
@@ -629,13 +684,5 @@ public abstract class RoleBase : IDisposable
         SkillDuration,
         SkillCooldown,
         SkillLimit,
-    }
-    public enum SkillReleaseType : int
-    {
-        Kill_Killer,
-        Kill_Target,
-        Vent,
-        ShapeShift,
-        Pet,
     }
 }
