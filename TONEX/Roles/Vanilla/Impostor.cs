@@ -8,11 +8,18 @@ namespace TONEX.Roles.Vanilla;
 public sealed class Impostor : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
-        SimpleRoleInfo.CreateForVanilla(
-            typeof(Impostor),
-            player => new Impostor(player),
-            RoleTypes.Impostor
-        );
+   SimpleRoleInfo.Create(
+       typeof(Impostor),
+       player => new Impostor(player),
+       CustomRoles.Impostor,
+       () => RoleTypes.Impostor,
+       CustomRoleTypes.Impostor,
+       0001,
+       null,
+       "imp",
+       "#ff1919"
+
+    );
     public Impostor(PlayerControl player)
     : base(
         RoleInfo,

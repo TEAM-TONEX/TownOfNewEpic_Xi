@@ -7,11 +7,18 @@ namespace TONEX.Roles.Vanilla;
 public sealed class GuardianAngel : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
-        SimpleRoleInfo.CreateForVanilla(
-            typeof(GuardianAngel),
-            player => new GuardianAngel(player),
-            RoleTypes.GuardianAngel
-        );
+       SimpleRoleInfo.Create(
+           typeof(GuardianAngel),
+           player => new GuardianAngel(player),
+           CustomRoles.GuardianAngel,
+           () => RoleTypes.GuardianAngel,
+           CustomRoleTypes.Crewmate,
+           0005,
+           null,
+           "ga|guard",
+           "#8cffff"
+
+       );
     public GuardianAngel(PlayerControl player)
     : base(
         RoleInfo,

@@ -7,12 +7,18 @@ namespace TONEX.Roles.Vanilla;
 public sealed class Engineer : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
-        SimpleRoleInfo.CreateForVanilla(
-            typeof(Engineer),
-            player => new Engineer(player),
-            RoleTypes.Engineer,
-            "#8cffff"
-        );
+       SimpleRoleInfo.Create(
+           typeof(Engineer),
+           player => new Engineer(player),
+           CustomRoles.Engineer,
+           () => RoleTypes.Engineer,
+           CustomRoleTypes.Crewmate,
+           0002,
+           null,
+           "engin",
+           "#8cffff"
+
+       );
     public Engineer(PlayerControl player)
     : base(
         RoleInfo,
