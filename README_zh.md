@@ -129,4 +129,4 @@
 
 ## 我们的其它明显项目
  - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX,using with VuePress-reco.
- - [TownOfNewEpic_XtremeBot](https://github.com/XtremeWave/TownOfNewEpic_XtremeBot) - TownOfNewEpic_XtremeBot(CheDuiJi),powered by TianMeng.
+ - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN(车队姬),powered by 天梦LK.
