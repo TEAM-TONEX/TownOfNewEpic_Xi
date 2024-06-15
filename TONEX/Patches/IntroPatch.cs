@@ -40,7 +40,7 @@ class IntroCutscenePatch
            else
             {
             CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
-            if (!role.IsVanilla())
+            if (!(role.IsVanilla() && Options.DisableVanillaRoles.GetBool()))
             {
                 __instance.YouAreText.color = Utils.GetRoleColor(role);
                 __instance.RoleText.text = Utils.GetRoleName(role);

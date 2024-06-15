@@ -33,7 +33,7 @@ static class CustomRolesHelper
         var roleInfo = role.GetRoleInfo();
         if (roleInfo != null && (int)role >= 800 && (int)role < 1500)
             return roleInfo.CustomRoleType == CustomRoleTypes.Neutral;
-        return false;
+        return role is CustomRoles.Impostor or CustomRoles.Shapeshifter;
     }
     public static bool IsNotNeutralKilling(this CustomRoles role)
     {
@@ -149,7 +149,7 @@ static class CustomRolesHelper
 
     public static int GetCount(this CustomRoles role)
     {
-        if (role.IsVanilla())
+        if (role.IsVanilla() && Options.DisableVanillaRoles.GetBool())
         {
             var roleOpt = Main.NormalOptions.RoleOptions;
             return role switch
@@ -169,7 +169,7 @@ static class CustomRolesHelper
     }
     public static int GetChance(this CustomRoles role)
     {
-        if (role.IsVanilla())
+        if (role.IsVanilla() && Options.DisableVanillaRoles.GetBool())
         {
             var roleOpt = Main.NormalOptions.RoleOptions;
             return role switch

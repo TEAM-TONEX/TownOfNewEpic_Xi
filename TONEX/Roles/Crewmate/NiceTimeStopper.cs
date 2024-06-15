@@ -45,7 +45,8 @@ public sealed class NiceTimeStopper : RoleBase
     private List<byte> NiceTimeStopperstop;
     private long ProtectStartTime;
     private float Cooldown;
-    public long UsePetCooldown;
+    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimeStopperSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
@@ -62,11 +63,7 @@ public sealed class NiceTimeStopper : RoleBase
     {
         ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -86,12 +83,12 @@ public sealed class NiceTimeStopper : RoleBase
     public override bool GetPetButtonSprite(out string buttonName)
     {
         buttonName = "TheWorld";
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("NiceTimeStopperVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool GetGameStartSound(out string sound)
     {
@@ -104,7 +101,7 @@ public sealed class NiceTimeStopper : RoleBase
         Cooldown = Cooldown + ReduceCooldown.GetFloat();
         if (Cooldown > MaxCooldown.GetFloat())Cooldown -= ReduceCooldown.GetFloat();    
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         ReduceNowCooldown();
         Player.SyncSettings();
@@ -142,45 +139,6 @@ public sealed class NiceTimeStopper : RoleBase
             player.RpcProtectedMurderPlayer();
             player.Notify(string.Format(GetString("NiceTimeStopperOffGuard")));
         }
-        if (Player.IsAlive() && UsePetCooldown + (long)Cooldown < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
-    public override void OnUsePet()
-    {
-        if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)Cooldown - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
-        ReduceNowCooldown();
-        Player.SyncSettings();
-        Player.RpcResetAbilityCooldown();
-        ProtectStartTime = Utils.GetTimeStamp();
-        UsePetCooldown = Utils.GetTimeStamp();
-        if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
-        Player.Notify(GetString("NiceTimeStopperOnGuard"));
-        foreach (var player in Main.AllAlivePlayerControls)
-        {
-            if (Player == player) continue;
-            if (!player.IsAlive() || Pelican.IsEaten(player.PlayerId)) continue;
-            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimeStopper), GetString("ForNiceTimeStopper")));
-            NiceTimeStopperstop.Add(player.PlayerId);
-            Player.DisableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-
-
-            new LateTask(() =>
-            {
-                Player.EnableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-                NiceTimeStopperstop.Remove(player.PlayerId);
-                RPC.PlaySoundRPC(player.PlayerId, Sounds.TaskComplete);
-            }, OptionSkillDuration.GetFloat(), "Time Stopper");
-        }
     }
     public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
     {
@@ -194,7 +152,7 @@ public sealed class NiceTimeStopper : RoleBase
     }
     public override void AfterMeetingTasks()
     {
-        UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void OnStartMeeting()
     {

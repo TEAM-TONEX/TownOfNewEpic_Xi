@@ -38,14 +38,14 @@ public sealed class Concealer : RoleBase, IImpostor
         OptionShapeshiftDuration = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.ShapeshiftDuration, new(2.5f, 180f, 2.5f), 10f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    public long UsePetCooldown;
+    
     public override void Add()
     {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void OnGameStart()
     {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -71,36 +71,17 @@ public sealed class Concealer : RoleBase, IImpostor
     public override bool GetPetButtonSprite(out string buttonName)
     {
         buttonName = "Camo";
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
    public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionShapeshiftCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
         if (!AmongUsClient.Instance.AmHost) return;
         Camouflage.CheckCamouflage();
         return;
     }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() &&  UsePetCooldown + (long)OptionShapeshiftCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
-    public override void AfterMeetingTasks()
-    {
-        UsePetCooldown = Utils.GetTimeStamp();
-    }
+    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public static bool IsHidding
         => Main.AllAlivePlayerControls.Any(x => (x.GetRoleClass() is Concealer roleClass) && roleClass.Shapeshifting) && GameStates.IsInTask;
 }

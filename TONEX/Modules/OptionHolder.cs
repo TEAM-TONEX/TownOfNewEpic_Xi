@@ -13,6 +13,7 @@ using UnityEngine;
 using TONEX.Roles.Ghost.Impostor;
 using TONEX.Roles.Ghost.Crewmate;
 using TONEX.Roles.Ghost.Neutral;
+using TONEX.Roles.Vanilla;
 
 namespace TONEX;
 
@@ -520,6 +521,7 @@ public static class Options
         EvilAngle.SetupOptionItem();
         InjusticeSpirit.SetupOptionItem();
 #endif
+        GuardianAngel.SetupCustomOptionItem();
 
         NeutralRolesMinPlayer = IntegerOptionItem.Create(1_003_001, "NeutralRolesMinPlayer", new(0, 15, 1), 0, TabGroup.NeutralRoles, false)
             .SetGameMode(CustomGameMode.Standard)
@@ -1132,7 +1134,7 @@ public static class Options
         SetupRoleOptions(info.ConfigId, info.Tab, info.RoleName);
     public static void SetupRoleOptions(int id, TabGroup tab, CustomRoles role, IntegerValueRule assignCountRule = null, CustomGameMode customGameMode = CustomGameMode.Standard | CustomGameMode.AllCrewModMode)
     {
-        if (role.IsVanilla() || role.IsHidden() || role.IsCanNotOpen()) return;
+        if (role.IsHidden() || role.IsCanNotOpen()) return;
         
         assignCountRule ??= role.GetRoleInfo()?.AssignCountRule??new(1, 15, 1);
 

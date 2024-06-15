@@ -14,7 +14,7 @@ public sealed class Impostor : RoleBase, IImpostor
        CustomRoles.Impostor,
        () => RoleTypes.Impostor,
        CustomRoleTypes.Impostor,
-       0001,
+       0020,
        null,
        "imp",
        "#ff1919"

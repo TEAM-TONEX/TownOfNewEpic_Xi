@@ -13,7 +13,7 @@ public sealed class Crewmate : RoleBase
             CustomRoles.Crewmate,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            0000,
+            0010,
             null,
             "crew",
             "#8cffff"

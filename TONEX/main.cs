@@ -240,10 +240,10 @@ public class Main : BasePlugin
                 {CustomRoles.GM, "#ff5b70"},
 
                 //Vanilla
-                {CustomRoles.Crewmate, "#ffffff"},
+                {CustomRoles.Crewmate, "#8cffff"},
                 {CustomRoles.Engineer, "#8cffff"},
                 {CustomRoles.Scientist, "#8cffff"},
-                {CustomRoles.GuardianAngel, "#ffffff"},
+                {CustomRoles.GuardianAngel, "#8cffff"},
                 {CustomRoles.Impostor, "#ff1919"},
                 {CustomRoles.Shapeshifter, "#ff1919"},
 

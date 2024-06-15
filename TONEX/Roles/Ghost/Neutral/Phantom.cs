@@ -30,6 +30,11 @@ public sealed class Phantom : RoleBase, INeutral
     {
     }
     public static PlayerControl SetPlayer;
+    public static bool SetYet;
+    public override void OnGameStart()
+    {
+        SetYet = false;
+    }
     public static OptionItem EnablePhantom;
     public static OptionItem OptionTaskCount;
 
@@ -56,10 +61,7 @@ public sealed class Phantom : RoleBase, INeutral
         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Phantom);
         CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
     }
-    public override void OnGameStart()
-    {
-        SetYet = false;
-    }
+
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref UnityEngine.Color roleColor, ref string roleText)
     => enabled |= true;
     public override bool CanUseAbilityButton() => false;
@@ -71,5 +73,5 @@ public sealed class Phantom : RoleBase, INeutral
     {
         AURoleOptions.GuardianAngelCooldown = 255f;
     }
-    public static bool SetYet;
+
 }

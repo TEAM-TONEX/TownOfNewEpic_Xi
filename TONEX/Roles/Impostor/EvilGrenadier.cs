@@ -65,7 +65,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
         return false;
     }
     private long BlindingStartTime;
-    public long UsePetCooldown;
+    
     static List<byte> Blinds;
     private static void SetupOptionItem()
     {
@@ -79,13 +79,10 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override void Add()
     {
         BlindingStartTime = -1;
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-
-    }
+    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.ShapeshifterLeaveSkin = false;
@@ -100,7 +97,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("NiceGrenadierVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
     {
@@ -136,13 +133,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionSkillCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
-        UsePetCooldown = Utils.GetTimeStamp();
+        
         BlindingStartTime = Utils.GetTimeStamp();
         foreach (var pc in Main.AllAlivePlayerControls.Where(x => !x.IsImpTeam() ))
         {
@@ -167,16 +158,10 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
             Player.Notify(GetString("NiceGrenadierSkillStop"));
             Utils.MarkEveryoneDirtySettings();
         }
-        if (UsePetCooldown + (long)OptionSkillCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
     }
     public override void AfterMeetingTasks()
     {
-        UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     
     public override void OnStartMeeting()
@@ -199,6 +184,6 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override bool GetPetButtonSprite(out string buttonName)
     {
         buttonName = "Gangstar";
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
 }

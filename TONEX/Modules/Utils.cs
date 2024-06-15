@@ -28,6 +28,7 @@ using TONEX.Roles.Neutral;
 using UnityEngine;
 using static TONEX.Translator;
 using TMPro;
+using TONEX.Roles.Vanilla;
 
 namespace TONEX;
 
@@ -836,6 +837,7 @@ public static class Utils
 #if DEBUG
                 sb1.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.InjusticeSpirit), GetRoleName(CustomRoles.InjusticeSpirit)), InjusticeSpirit.EnableInjusticeSpirit.GetString().RemoveHtmlTags());
 #endif
+                sb1.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.GuardianAngel), GetRoleName(CustomRoles.GuardianAngel)), GuardianAngel.EnableGuardianAngel.GetString().RemoveHtmlTags());
             }
 
 

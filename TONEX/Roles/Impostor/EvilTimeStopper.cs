@@ -42,7 +42,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     private List<byte> EvilTimeStopperstop;
     private long ProtectStartTime;
     private float Cooldown;
-    public long UsePetCooldown;
+    
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimeStopperSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
@@ -55,12 +55,10 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     {
         ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
+    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown = Cooldown;
@@ -79,12 +77,12 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     public override bool GetPetButtonSprite(out string buttonName)
     {
         buttonName = "TheWorld";
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("NiceTimeStopperVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool GetGameStartSound(out string sound)
     {
@@ -97,7 +95,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
         ProtectStartTime = Utils.GetTimeStamp();
-        UsePetCooldown = Utils.GetTimeStamp();
+        
         foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
             pc.Notify(GetString("NiceTimeStopperOnGuard"));
         foreach (var player in Main.AllAlivePlayerControls)
@@ -128,26 +126,13 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
             player.RpcProtectedMurderPlayer();
             player.Notify(string.Format(GetString("NiceTimeStopperOffGuard")));
         }
-        if (Player.IsAlive() && UsePetCooldown + (long)Cooldown < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
     }
     public override void OnUsePet()
     {
-        if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)Cooldown - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
         ProtectStartTime = Utils.GetTimeStamp();
-        UsePetCooldown = Utils.GetTimeStamp();
+        
         foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
             pc.Notify(GetString("NiceTimeStopperOnGuard"));
         foreach (var player in Main.AllAlivePlayerControls)
@@ -178,7 +163,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     }
     public override void AfterMeetingTasks()
     {
-        UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void OnStartMeeting()
     {

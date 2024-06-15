@@ -69,164 +69,177 @@ public static class MeetingHudPatch
                 Main.AllPlayerControls.Do(x => ReportDeadBodyPatch.WaitReport[x.PlayerId].Clear());
                 MeetingStates.MeetingCalled = true;
             }
-            }
-            public static void Postfix(MeetingHud __instance)
+        }
+        public static void Postfix(MeetingHud __instance)
+        {
+            MeetingVoteManager.Start();
+
+            SoundManager.Instance.ChangeAmbienceVolume(0f);
+            if (!GameStates.IsModHost) return;
+            var myRole = PlayerControl.LocalPlayer.GetRoleClass();
+            foreach (var pva in __instance.playerStates)
             {
-                MeetingVoteManager.Start();
+                var pc = Utils.GetPlayerById(pva.TargetPlayerId);
+                if (pc == null) continue;
+                var roleTextMeeting = UnityEngine.Object.Instantiate(pva.NameText);
+                roleTextMeeting.transform.SetParent(pva.NameText.transform);
+                roleTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
+                roleTextMeeting.fontSize = 1.5f;
+                (roleTextMeeting.enabled, roleTextMeeting.text)
+                    = Utils.GetRoleNameAndProgressTextData(PlayerControl.LocalPlayer, pc);
+                roleTextMeeting.gameObject.name = "RoleTextMeeting";
+                roleTextMeeting.enableWordWrapping = false;
 
-                SoundManager.Instance.ChangeAmbienceVolume(0f);
-                if (!GameStates.IsModHost) return;
-                var myRole = PlayerControl.LocalPlayer.GetRoleClass();
-                foreach (var pva in __instance.playerStates)
+                // 役職とサフィックスを同時に表示する必要が出たら要改修
+                var suffixBuilder = new StringBuilder(32);
+                if (myRole != null)
                 {
-                    var pc = Utils.GetPlayerById(pva.TargetPlayerId);
-                    if (pc == null) continue;
-                    var roleTextMeeting = UnityEngine.Object.Instantiate(pva.NameText);
-                    roleTextMeeting.transform.SetParent(pva.NameText.transform);
-                    roleTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
-                    roleTextMeeting.fontSize = 1.5f;
-                    (roleTextMeeting.enabled, roleTextMeeting.text)
-                        = Utils.GetRoleNameAndProgressTextData(PlayerControl.LocalPlayer, pc);
-                    roleTextMeeting.gameObject.name = "RoleTextMeeting";
-                    roleTextMeeting.enableWordWrapping = false;
-
-                    // 役職とサフィックスを同時に表示する必要が出たら要改修
-                    var suffixBuilder = new StringBuilder(32);
-                    if (myRole != null)
-                    {
-                        suffixBuilder.Append(myRole.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
-                    }
-                    suffixBuilder.Append(CustomRoleManager.GetSuffixOthers(PlayerControl.LocalPlayer, pc, isForMeeting: true));
-                    if (suffixBuilder.Length > 0)
-                    {
-                        roleTextMeeting.text = suffixBuilder.ToString();
-                        roleTextMeeting.enabled = true;
-                    }
+                    suffixBuilder.Append(myRole.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
                 }
-
-                if (Options.SyncButtonMode.GetBool())
+                suffixBuilder.Append(CustomRoleManager.GetSuffixOthers(PlayerControl.LocalPlayer, pc, isForMeeting: true));
+                if (suffixBuilder.Length > 0)
                 {
-                    Utils.SendMessage(string.Format(GetString("Message.SyncButtonLeft"), Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount));
-                    Logger.Info("紧急会议剩余 " + (Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount) + " 次使用次数", "SyncButtonMode");
-                }
-                if (AntiBlackout.OverrideExiledPlayer && !Options.NoGameEnd.GetBool())
-                {
-                    _ = new LateTask(() =>
-                    {
-                        Utils.SendMessage(GetString("Warning.OverrideExiledPlayer"), 255, Utils.ColorString(Color.red, GetString("DefaultSystemMessageTitle")));
-                    }, 5f, "Warning OverrideExiledPlayer");
-                }
-                if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);
-                TemplateManager.SendTemplate("OnMeeting", noErr: true);
-
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    _ = new LateTask(() =>
-                    {
-                        foreach (var seen in Main.AllPlayerControls)
-                        {
-                            var seenName = seen.GetRealName(isMeeting: true);
-                            var coloredName = Utils.ColorString(seen.GetRoleColor(), seenName);
-                            foreach (var seer in Main.AllPlayerControls)
-                            {
-                                seen.RpcSetNamePrivate(
-                                    seer == seen ? coloredName : seenName,
-                                    true,
-                                    seer);
-                            }
-                        }
-                        ChatUpdatePatch.DoBlockChat = false;
-                    }, 3f, "SetName To Chat");
-                }
-
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
-                    MeetingStartNotify.OnMeetingStart();
-                    Tiebreaker.OnMeetingStart();
-                }
-
-                foreach (var pva in __instance.playerStates)
-                {
-                    if (pva == null) continue;
-                    var seer = PlayerControl.LocalPlayer;
-                    var seerRole = seer.GetRoleClass();
-
-                    var target = Utils.GetPlayerById(pva.TargetPlayerId);
-                    if (target == null) continue;
-
-                    var sb = new StringBuilder();
-
-                    //会議画面での名前変更
-                    //自分自身の名前の色を変更
-                    //NameColorManager準拠の処理
-                    pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
-
-                    var overrideName = pva.NameText.text;
-                    //调用职业类通过 seer 重写 name
-                    seer.GetRoleClass()?.OverrideNameAsSeer(target, ref overrideName, true);
-                    //调用职业类通过 seen 重写 name
-                    target.GetRoleClass()?.OverrideNameAsSeen(seer, ref overrideName, true);
-                    pva.NameText.text = overrideName;
-
-                    //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。
-
-                    if (seer.KnowDeathReason(target))
-                        sb.Append($"({Utils.ColorString(Utils.GetRoleColor(CustomRoles.MedicalExaminer), Utils.GetVitalText(target.PlayerId))})");
-
-                    sb.Append(seerRole?.GetMark(seer, target, true));
-                    sb.Append(CustomRoleManager.GetMarkOthers(seer, target, true));
-
-                    bool isLover = false;
-                    foreach (var subRole in target.GetCustomSubRoles())
-                    {
-                        switch (subRole)
-                        {
-                            case CustomRoles.Lovers:
-                                if (seer.Is(CustomRoles.Lovers) || seer.Data.IsDead)
-                                {
-                                    sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), "♡"));
-                                    isLover = true;
-                                }
-                                break;
-                            case CustomRoles.AdmirerLovers:
-                                if (seer.Is(CustomRoles.AdmirerLovers) || seer.Data.IsDead)
-                                {
-                                    sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.AdmirerLovers), "♡"));
-                                    isLover = true;
-                                }
-                                break;
-                            case CustomRoles.AkujoLovers:
-                                if (seer.Is(CustomRoles.Akujo) || seer.Data.IsDead || seer == target)
-                                {
-                                    sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.AkujoLovers), "❤"));
-                                    isLover = true;
-                                }
-                                break;
-                            case CustomRoles.CupidLovers:
-                                if (seer.Is(CustomRoles.CupidLovers) || seer.Is(CustomRoles.Cupid) || seer.Data.IsDead)
-                                {
-                                    sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.CupidLovers), "♡"));
-                                    isLover = true;
-                                }
-                                break;
-                        }
-                    }
-
-                    AkujoFakeLovers.MeetingHud(isLover, seer, target, ref sb);
-                    //海王相关显示
-                    Neptune.MeetingHud(isLover, seer, target, ref sb);
-                    Mini.MeetingHud(isLover, seer, target, ref sb);
-
-
-                    //会議画面ではインポスター自身の名前にSnitchマークはつけません。
-
-                    pva.NameText.text += sb.ToString();
-                    pva.ColorBlindName.transform.localPosition -= new Vector3(1.35f, 0f, 0f);
-
+                    roleTextMeeting.text = suffixBuilder.ToString();
+                    roleTextMeeting.enabled = true;
                 }
             }
-        
+
+            if (Options.SyncButtonMode.GetBool())
+            {
+                Utils.SendMessage(string.Format(GetString("Message.SyncButtonLeft"), Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount));
+                Logger.Info("紧急会议剩余 " + (Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount) + " 次使用次数", "SyncButtonMode");
+            }
+            if (AntiBlackout.OverrideExiledPlayer && !Options.NoGameEnd.GetBool())
+            {
+                _ = new LateTask(() =>
+                {
+                    Utils.SendMessage(GetString("Warning.OverrideExiledPlayer"), 255, Utils.ColorString(Color.red, GetString("DefaultSystemMessageTitle")));
+                }, 5f, "Warning OverrideExiledPlayer");
+            }
+            if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);
+            TemplateManager.SendTemplate("OnMeeting", noErr: true);
+
+            if (AmongUsClient.Instance.AmHost)
+            {
+                _ = new LateTask(() =>
+                {
+                    foreach (var seen in Main.AllPlayerControls)
+                    {
+                        var seenName = seen.GetRealName(isMeeting: true);
+                        var coloredName = Utils.ColorString(seen.GetRoleColor(), seenName);
+                        foreach (var seer in Main.AllPlayerControls)
+                        {
+                            seen.RpcSetNamePrivate(
+                                seer == seen ? coloredName : seenName,
+                                true,
+                                seer);
+                        }
+                    }
+                    ChatUpdatePatch.DoBlockChat = false;
+                }, 3f, "SetName To Chat");
+            }
+
+            if (AmongUsClient.Instance.AmHost)
+            {
+                CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
+                foreach (var player in Main.AllPlayerControls)
+                {
+                    var roleclass = (player.GetRoleClass());
+                    if (player.IsAlive())
+                    {
+                        for (int i = 0; i < roleclass.CountdownList.Count; i++)
+                        {
+                            roleclass.CountdownList[i] = -1;
+                        }
+                        roleclass.UsePetCoolDown = -1;
+                    }
+                }
+                MeetingStartNotify.OnMeetingStart();
+                Tiebreaker.OnMeetingStart();
+
+            }
+
+            foreach (var pva in __instance.playerStates)
+            {
+                if (pva == null) continue;
+                var seer = PlayerControl.LocalPlayer;
+                var seerRole = seer.GetRoleClass();
+
+                var target = Utils.GetPlayerById(pva.TargetPlayerId);
+                if (target == null) continue;
+
+                var sb = new StringBuilder();
+
+                //会議画面での名前変更
+                //自分自身の名前の色を変更
+                //NameColorManager準拠の処理
+                pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
+
+                var overrideName = pva.NameText.text;
+                //调用职业类通过 seer 重写 name
+                seer.GetRoleClass()?.OverrideNameAsSeer(target, ref overrideName, true);
+                //调用职业类通过 seen 重写 name
+                target.GetRoleClass()?.OverrideNameAsSeen(seer, ref overrideName, true);
+                pva.NameText.text = overrideName;
+
+                //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。
+
+                if (seer.KnowDeathReason(target))
+                    sb.Append($"({Utils.ColorString(Utils.GetRoleColor(CustomRoles.MedicalExaminer), Utils.GetVitalText(target.PlayerId))})");
+
+                sb.Append(seerRole?.GetMark(seer, target, true));
+                sb.Append(CustomRoleManager.GetMarkOthers(seer, target, true));
+
+                bool isLover = false;
+                foreach (var subRole in target.GetCustomSubRoles())
+                {
+                    switch (subRole)
+                    {
+                        case CustomRoles.Lovers:
+                            if (seer.Is(CustomRoles.Lovers) || seer.Data.IsDead)
+                            {
+                                sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), "♡"));
+                                isLover = true;
+                            }
+                            break;
+                        case CustomRoles.AdmirerLovers:
+                            if (seer.Is(CustomRoles.AdmirerLovers) || seer.Data.IsDead)
+                            {
+                                sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.AdmirerLovers), "♡"));
+                                isLover = true;
+                            }
+                            break;
+                        case CustomRoles.AkujoLovers:
+                            if (seer.Is(CustomRoles.Akujo) || seer.Data.IsDead || seer == target)
+                            {
+                                sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.AkujoLovers), "❤"));
+                                isLover = true;
+                            }
+                            break;
+                        case CustomRoles.CupidLovers:
+                            if (seer.Is(CustomRoles.CupidLovers) || seer.Is(CustomRoles.Cupid) || seer.Data.IsDead)
+                            {
+                                sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.CupidLovers), "♡"));
+                                isLover = true;
+                            }
+                            break;
+                    }
+                }
+
+                AkujoFakeLovers.MeetingHud(isLover, seer, target, ref sb);
+                //海王相关显示
+                Neptune.MeetingHud(isLover, seer, target, ref sb);
+                Mini.MeetingHud(isLover, seer, target, ref sb);
+
+
+                //会議画面ではインポスター自身の名前にSnitchマークはつけません。
+
+                pva.NameText.text += sb.ToString();
+                pva.ColorBlindName.transform.localPosition -= new Vector3(1.35f, 0f, 0f);
+
+            }
+        }
+
     }
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Update))]
     class UpdatePatch

@@ -32,17 +32,15 @@ public sealed class Escapist : RoleBase, IImpostor
     private bool Shapeshifting;
     private bool Marked;
     private Vector2 MarkedPosition;
-    private long UsePetCooldown;
+    
     public override void Add()
     {
         Marked = false;
         Shapeshifting = false;
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
+    public override long UsePetCoolDown_Totally { get; set; } = (long)AURoleOptions.ShapeshifterCooldown;
+    public override bool EnablePetSkill() => true;
     private void SendRPC()
     {
         using var sender = CreateSender();
@@ -61,22 +59,16 @@ public sealed class Escapist : RoleBase, IImpostor
     public override bool GetPetButtonText(out string text)
     {
         text = Marked ? Translator.GetString("EscapistTeleportButtonText") : Translator.GetString("EscapistMarkButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool GetPetButtonSprite(out string buttonName)
     {
         buttonName = "Telport";
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)Options.DefaultKillCooldown - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
                 if (Marked)
         {
             Marked = false;
@@ -113,20 +105,5 @@ public sealed class Escapist : RoleBase, IImpostor
             Marked = true;
             SendRPC();
         }
-    }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() &&  UsePetCooldown + (long)Options.DefaultKillCooldown < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
-  public override void AfterMeetingTasks()
-    {
-        UsePetCooldown = Utils.GetTimeStamp(); 
     }
 }

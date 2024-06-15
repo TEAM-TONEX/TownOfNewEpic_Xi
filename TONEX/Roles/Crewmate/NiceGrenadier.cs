@@ -69,7 +69,7 @@ public sealed class NiceGrenadier : RoleBase
 
     private long BlindingStartTime;
     private long MadBlindingStartTime;
-    public long UsePetCooldown;
+    
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceGrenadierSkillCooldown, new(2.5f, 180f, 2.5f), 20f, false)
@@ -84,12 +84,10 @@ public sealed class NiceGrenadier : RoleBase
     {
         BlindingStartTime = -1;
         MadBlindingStartTime = -1;
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
+    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown = OptionSkillCooldown.GetFloat();
@@ -103,7 +101,7 @@ public sealed class NiceGrenadier : RoleBase
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("NiceGrenadierVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
@@ -148,39 +146,6 @@ public sealed class NiceGrenadier : RoleBase
             //pc.Notify("<size=1000><color=#ffffff>●</color></size>", OptionSkillDuration.GetInt());
         }
     }
-    public override void OnUsePet()
-    {
-        if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionSkillCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
-        UsePetCooldown = Utils.GetTimeStamp();
-        if (Player.Is(CustomRoles.Madmate))
-        {
-            MadBlindingStartTime = Utils.GetTimeStamp();
-            foreach (var pc in Main.AllAlivePlayerControls.Where(x => !x.IsImpTeam()))
-            {
-
-                OnBlinding(pc);
-            }
-        }
-        else
-        {
-            BlindingStartTime = Utils.GetTimeStamp();
-            foreach (var pc in Main.AllAlivePlayerControls.Where(x => x.IsImpTeam() || (x.IsNeutral() && OptionCanAffectNeutral.GetBool())))
-            {
-                OnBlinding(pc);
-            }
-        }
-        SendRPC_SyncList();
-        if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer();
-        Player.RPCPlayCustomSound("FlashBang");
-        Player.Notify(GetString("NiceGrenadierSkillInUse"), OptionSkillDuration.GetFloat());
-        return;
-    }
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -203,12 +168,6 @@ public sealed class NiceGrenadier : RoleBase
             Player.Notify(GetString("NiceGrenadierSkillStop"));
             Utils.MarkEveryoneDirtySettings();
         }
-        if (UsePetCooldown + (long)OptionSkillCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
     }
     public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
     {
@@ -216,7 +175,7 @@ public sealed class NiceGrenadier : RoleBase
     }
     public override void AfterMeetingTasks()
     {
-        UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void OnStartMeeting()
     {
@@ -239,6 +198,6 @@ public sealed class NiceGrenadier : RoleBase
     public override bool GetPetButtonSprite(out string buttonName)
     {
         buttonName = "Gangstar";
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
 }

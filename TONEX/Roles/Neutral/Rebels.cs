@@ -37,7 +37,7 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
         RebelsSkillDuration
     }
     private long ProtectStartTime;
-    private long UsePetCooldown;
+    
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.RebelsSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
@@ -48,12 +48,10 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
     public override void Add()
     {
         ProtectStartTime = -1;
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
+    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown = OptionSkillCooldown.GetFloat();
@@ -82,23 +80,16 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
     }
     public override void OnUsePet()
     {
-        if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionSkillCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
             ProtectStartTime = Utils.GetTimeStamp();
             if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
             Player.RPCPlayCustomSound("Gunload");
-            UsePetCooldown = Utils.GetTimeStamp();
+            
             Player.Notify(string.Format(GetString("RebelsOnGuard"), 2f));
     }
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("RebelsVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
@@ -109,12 +100,6 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
             ProtectStartTime = -1;
             player.RpcProtectedMurderPlayer();
             player.Notify(string.Format(GetString("RebelsOffGuard")));
-        }
-        if (Player.IsAlive() && UsePetCooldown + (long)OptionSkillCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
         }
     }
     public override void OnStartMeeting()

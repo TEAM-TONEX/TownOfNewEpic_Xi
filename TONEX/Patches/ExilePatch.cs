@@ -80,6 +80,19 @@ class ExileControllerWrapUpPatch
             foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
             {
                 roleClass.OnExileWrapUp(exiled, ref DecidedWinner);
+                var now = Utils.GetTimeStamp();
+                foreach (var player in Main.AllPlayerControls)
+                {
+                    var roleclass = (player.GetRoleClass());
+                    if (player.IsAlive())
+                    {
+                        for (int i = 0; i < roleclass.CountdownList.Count;  i++)
+                        {
+                            roleclass.CountdownList[i] = now;
+                        }
+                        roleclass.UsePetCoolDown = now;
+                    }
+                }
             }
 
             if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();

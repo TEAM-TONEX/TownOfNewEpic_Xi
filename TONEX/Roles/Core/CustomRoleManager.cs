@@ -10,7 +10,9 @@ using TONEX.Modules;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
 using TONEX.Roles.AddOns.Impostor;
+using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
+using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.ParticleSystem.PlaybackState;
 
@@ -230,7 +232,6 @@ public static class CustomRoleManager
     /// 返回 false 以阻止本次击杀事件
     /// </summary>
     public static HashSet<Func<MurderInfo, bool>> OnCheckMurderPlayerOthers_After = new();
-
     private static Dictionary<byte, long> LastSecondsUpdate = new();
     public static void OnFixedUpdate(PlayerControl player)
     {
@@ -245,6 +246,37 @@ public static class CustomRoleManager
                 Mini.OnSecondsUpdate(player,now);
                 Chameleon.OnSecondsUpdate(player, now);
             }
+            var roleclass = (player.GetRoleClass());
+            if (player.IsAlive() && roleclass?.CountdownList != null && roleclass?.CountdownList_Totally != null)
+            {
+                for (int i= 0; i< roleclass.CountdownList.Count; i++)
+                {
+                    if (roleclass.CountdownList[i] + roleclass.CountdownList_Totally[i] < now && roleclass.CountdownList[i] != -1)
+                    {
+                        roleclass.CountdownList[i] = -1;
+                        if (roleclass.GetOffGuardProtect(out string notify, out int format_int, out float format_float))
+                        player.RpcProtectedMurderPlayer();
+                        if (format_int != -255)
+                            player.Notify(string.Format(notify, format_int));
+                        else if (format_float != -255)
+                            player.Notify(string.Format(notify, format_float));
+                        else
+                            player.Notify(notify);
+                        roleclass.AfterOffGuard();
+                    }
+                }
+                roleclass.CD_Update();
+            }
+            if (player.IsAlive() && Options.UsePets.GetBool() && roleclass?.UsePetCoolDown != null && roleclass?.UsePetCoolDown_Totally != null)
+            {
+                if (roleclass.UsePetCoolDown + roleclass.UsePetCoolDown_Totally < now && roleclass.UsePetCoolDown != -1)
+                {
+                    roleclass.UsePetCoolDown = -1;
+                    player.RpcProtectedMurderPlayer();
+                    player.Notify(string.Format(GetString("PetSkillCanUse")));
+                }
+            }
+            
 
             player.GetRoleClass()?.OnFixedUpdate(player);
             

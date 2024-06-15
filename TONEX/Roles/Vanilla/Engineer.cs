@@ -13,8 +13,8 @@ public sealed class Engineer : RoleBase
            CustomRoles.Engineer,
            () => RoleTypes.Engineer,
            CustomRoleTypes.Crewmate,
-           0002,
-           null,
+           0030,
+           SetupOptionItem,
            "engin",
            "#8cffff"
 
@@ -25,4 +25,18 @@ public sealed class Engineer : RoleBase
         player
     )
     { }
+    static OptionItem EngineerCooldown;
+    static OptionItem EngineerInVentCooldown;
+    private static void SetupOptionItem()
+    {
+        EngineerCooldown = IntegerOptionItem.Create(RoleInfo, 5, StringNames.EngineerCooldown, new(0, 180, 5), 20, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        EngineerInVentCooldown = IntegerOptionItem.Create(RoleInfo, 6, StringNames.EngineerInVentCooldown, new(0, 60, 5), 20, false)
+            .SetValueFormat(OptionFormat.Seconds);
+    }
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.EngineerCooldown = EngineerCooldown.GetInt();
+        AURoleOptions.EngineerInVentMaxTime = EngineerInVentCooldown.GetInt();
+    }
 }

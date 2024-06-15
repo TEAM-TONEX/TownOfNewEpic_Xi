@@ -1597,6 +1597,7 @@ static class ExtendedPlayerControl
                     break;
             };
         var Info = (role.IsVanilla() ? "Blurb" : "Info") + (InfoLong ? "Long" : "");
+        
         return GetString($"{Prefix}{text}{Info}");
     }
     public static string GetRoleInfoWithRole(this CustomRoles role, bool InfoLong = false)

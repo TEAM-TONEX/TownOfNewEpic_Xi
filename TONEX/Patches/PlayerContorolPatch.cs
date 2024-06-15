@@ -327,6 +327,8 @@ class ShapeshiftPatch
 
             if (!(shapeshifter.IsEaten() && shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.Skill)))
                 shapeshifter.GetRoleClass()?.OnShapeshift(target);
+            if (!(shapeshifter.IsEaten() && shapeshifter.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Shapeshift, ExtendedPlayerControl.PlayerActionInUse.Skill)))
+                shapeshifter.GetRoleClass()?.OnShapeshiftWithUsePet(target);
 
             if (!AmongUsClient.Instance.AmHost) return;
 
@@ -807,6 +809,24 @@ class CoEnterVentPatch
             }, 0.5f, "Fix DesyncImpostor Stuck");
             return false;
         }
+
+        if ((!user.GetRoleClass()?.OnEnterVentWithUsePet(__instance, id) ?? false)
+            || (user.Data.Role.Role != RoleTypes.Engineer //非工程师
+            && !user.CanUseImpostorVentButton()) //也不能使用内鬼管道
+        )
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, -1);
+            writer.WritePacked(127);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            _ = new LateTask(() =>
+            {
+                int clientId = user.GetClientId();
+                MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, clientId);
+                writer2.Write(id);
+                AmongUsClient.Instance.FinishRpcImmediately(writer2);
+            }, 0.5f, "Fix DesyncImpostor Stuck");
+            return false;
+        }
         return true;
     }
 }
@@ -1123,11 +1143,18 @@ public static class PlayerControlDiePatch
                 switch (__instance.GetCustomRole().GetCustomRoleTypes())
                 {
                     case CustomRoleTypes.Crewmate:
+
                         if (!InjusticeSpirit.SetYet && InjusticeSpirit.EnableInjusticeSpirit.GetBool())
                         {
                             InjusticeSpirit.SetYet = true;
                             __instance.Notify(GetString("Surprise"));
                             InjusticeSpirit.SetPlayer = __instance;
+                        }
+                        else if (GuardianAngel.SatPlayerCount < GuardianAngel.PlayerCount.GetInt() && GuardianAngel.EnableGuardianAngel.GetBool())
+                        {
+                            GuardianAngel.SatPlayerCount++;
+                            __instance.Notify(GetString("Surprise"));
+                            __instance.RpcSetCustomRole(CustomRoles.GuardianAngel);
                         }
                         break;
                     case CustomRoleTypes.Neutral:

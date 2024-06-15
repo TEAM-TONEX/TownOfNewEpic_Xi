@@ -13,8 +13,8 @@ public sealed class Shapeshifter : RoleBase, IImpostor
            CustomRoles.Shapeshifter,
            () => RoleTypes.Shapeshifter,
            CustomRoleTypes.Impostor,
-           0004,
-           null,
+           0050,
+           SetupOptionItem,
            "shape",
            "#ff1919"
 
@@ -25,4 +25,22 @@ public sealed class Shapeshifter : RoleBase, IImpostor
         player
     )
     { }
+    static OptionItem ShapeshifterCooldown;
+    static OptionItem ShapeshifterDuration;
+    static OptionItem ShapeshifterLeaveSkin;
+    private static void SetupOptionItem()
+    {
+        ShapeshifterCooldown = IntegerOptionItem.Create(RoleInfo, 5, StringNames.ShapeshifterCooldown, new(0, 180, 5), 30, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        ShapeshifterDuration = IntegerOptionItem.Create(RoleInfo, 6, StringNames.ShapeshifterDuration, new(0, 60, 5), 20, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        ShapeshifterLeaveSkin = BooleanOptionItem.Create(RoleInfo, 7, StringNames.ShapeshifterLeaveSkin, true, false);
+    
+    }
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.ShapeshifterCooldown = ShapeshifterCooldown.GetInt();
+        AURoleOptions.ShapeshifterDuration = ShapeshifterDuration.GetInt();
+        AURoleOptions.ShapeshifterLeaveSkin = ShapeshifterLeaveSkin.GetBool();
+    }
 }

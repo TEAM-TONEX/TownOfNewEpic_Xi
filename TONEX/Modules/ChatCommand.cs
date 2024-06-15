@@ -490,7 +490,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             if (
                 !role.IsEnable()
                 || role.IsAddon()
-                || role.IsVanilla()
+                || role.IsVanilla() && Options.DisableVanillaRoles.GetBool()
                 || role is CustomRoles.GM or CustomRoles.NotAssigned
                 || role.IsHidden()
                 || role.IsCanNotOpen()
@@ -529,7 +529,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
         if (string.IsNullOrEmpty(input)) return false;
         foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
         {
-            if (!includeVanilla && role.IsVanilla()) continue;
+            if (!includeVanilla && Options.DisableVanillaRoles.GetBool() && role.IsVanilla()) continue;
             if (input == GetString(Enum.GetName(typeof(CustomRoles), role)).TrimStart('*').ToLower().Trim().Replace(" ", string.Empty).RemoveHtmlTags() //匹配到翻译文件中的职业原名
                 || (RoleCommands.TryGetValue(role, out var com) && com.Any(c => input == c.Trim().ToLower())) //匹配到职业缩写
                 )

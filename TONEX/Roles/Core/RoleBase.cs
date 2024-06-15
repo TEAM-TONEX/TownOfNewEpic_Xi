@@ -101,26 +101,54 @@ public abstract class RoleBase : IDisposable
     { }
     #endregion
     #region 倒计时相关处理
-    /// <summary>
-    /// int倒计时列表
-    /// </summary>
-    public List<int> int_CountdownList;
 
     /// <summary>
-    /// float倒计时列表
+    /// 总计时列表
     /// </summary>
-    public List<int> float_CountdownList;
+    public virtual List<long> CountdownList_Totally { get; set; } = new();
+
+    /// <summary>
+    /// 倒计时列表
+    /// </summary>
+    public virtual List<long> CountdownList { get;  set; } = new();
 
     /// <summary>
     /// 使用宠物总冷却时间
     /// </summary>
-    public long UsePetCoolDown_Totally;
+    public virtual long UsePetCoolDown_Totally { get; set; } = -1;
 
     /// <summary>
     /// 使用宠物冷却时间倒计时
     /// </summary>
-    public long UsePetCoolDown;
-    public virtual string GetOffGuardText() => "";
+    public virtual long UsePetCoolDown { get; set; } = Utils.GetTimeStamp();
+    /// <summary>
+    /// 摸宠物倒计时未设置
+    /// </summary>
+    public virtual bool PetUnSet() => UsePetCoolDown == -1;
+    /// <summary>
+    /// 倒计时结束时击破护盾特效
+    /// </summary>
+    public virtual bool GetOffGuardProtect(out string notify, out int format_int, out float format_float)
+    {
+        notify = "";
+        format_int = -255;
+        format_float = -255;
+        return true;
+    }
+    /// <summary>
+    /// 倒计时结束时行为
+    /// </summary>
+    public virtual void AfterOffGuard()
+    {
+    }
+    /// <summary>
+    /// 每帧倒计时更新
+    /// </summary>
+    public virtual void CD_Update() { }
+    /// <summary>
+    /// 摸宠物倒计时未设置
+    /// </summary>
+
     #endregion
     #region RPC相关处理
     /// <summary>
@@ -230,6 +258,8 @@ public abstract class RoleBase : IDisposable
     /// <returns>返回false可取消变身</returns>
     public virtual bool OnCheckShapeshift(PlayerControl target, ref bool animate) => true;
 
+    public virtual bool OnCheckShapeshiftWithUsePet(ref bool animate, PlayerControl target = null) => true;
+
 
     /// <summary>
     /// 变形时调用的函数
@@ -239,6 +269,7 @@ public abstract class RoleBase : IDisposable
     /// <param name="shapeshifter">变形目标</param>
     public virtual void OnShapeshift(PlayerControl target)
     { }
+    public virtual void OnShapeshiftWithUsePet(PlayerControl target = null) { }
     #endregion
     #region 使用按钮相关处理
     /// <summary>
@@ -326,7 +357,8 @@ public abstract class RoleBase : IDisposable
     { }
 
     public virtual bool OnEnterVentWithUsePet(PlayerPhysics physics= null, int ventId = 173) => true;
-#endregion
+    public virtual bool EnablePetSkill() => false;
+    #endregion
     #region 会议相关处理
     /// <summary>
     /// 会议开始时调用的函数

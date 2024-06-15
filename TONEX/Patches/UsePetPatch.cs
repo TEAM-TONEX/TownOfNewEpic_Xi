@@ -54,10 +54,11 @@ class ExternalRpcPetPatch
                 || pc.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Pet)) return;
 
             var roleClass = pc.GetRoleClass();
-            roleClass?.OnUsePet();
 
+            if (!roleClass.EnablePetSkill()) return;
             var petCooldown = roleClass.UsePetCoolDown;
             var totalCooldown = roleClass.UsePetCoolDown_Totally;
+            
             if (petCooldown != -1)
             {
                 var cooldown = petCooldown + totalCooldown - Utils.GetTimeStamp();
@@ -65,10 +66,16 @@ class ExternalRpcPetPatch
                 Logger.Info($"使用宠物冷却时间：{cooldown}", "Pet");
                 return;
             }
-            if (!pc.GetRoleClass().OnEnterVentWithUsePet())
+            roleClass?.OnUsePet();
+            if (!roleClass.OnEnterVentWithUsePet())
             {
                 Logger.Info($"使用宠物被阻塞", "Pet");
             }
+            else
+            {
+                roleClass.UsePetCoolDown = Utils.GetTimeStamp();
+            }
+            roleClass.OnShapeshiftWithUsePet();
         }
     }
 }
