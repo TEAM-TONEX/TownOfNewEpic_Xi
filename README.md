@@ -1,6 +1,6 @@
 <div align="center">
 	
-![XtremeWave-TONEX](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/d3ac3d89-170a-4613-b555-60621c8ba95b)
+![XtremeWave-TONEX](.Readme/XtremeWave-TONEX.png)
 
 **TownOfNewEpic_Xtreme,AmongUsMod Excellent Leaders.**
 

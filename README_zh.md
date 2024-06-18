@@ -1,6 +1,6 @@
 <div align="center">
 	
-![XtremeWave-TONEX](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/d3ac3d89-170a-4613-b555-60621c8ba95b)
+![XtremeWave-TONEX](.Readme/XtremeWave-TONEX.png)
 
 **TownOfNewEpic_Xtreme,AmongUs Mod优秀领导者。**
 
@@ -24,6 +24,27 @@
 正因如此，我们不必再以继承的名义制作模组，我们启动了一个新计划，称其为“TONEX”。
 > TOHE已更名为TONX。
 
+"TownOfNewEpic_Xtreme" (缩写为 "TONEX") 是一个为热门游戏 "Among Us" 提供扩展功能的开源模组。由 XtremeWave 维护和开发，TONEX
+为游戏增添了大量新的内容和玩法，极大地提升了游戏的深度和趣味性。
+
+### 主要特点
+
+1. **新增角色**：TONEX 引入了许多新角色，每个角色都具备独特的能力。例如，某些角色可能拥有额外的任务或特殊技能，使得游戏策略更加多样化。
+
+2. **自定义选项**：玩家可以根据自己的喜好调整游戏规则和设置。TONEX 提供了丰富的自定义选项，使得每一局游戏都可以有不同的体验。
+
+3. **游戏平衡**：模组不断更新以确保新增功能不会破坏游戏的平衡性。开发团队积极倾听社区反馈，进行调整和优化。
+
+4. **开放源码**：作为一个开源项目，TONEX 欢迎社区的贡献。开发者们可以通过 GitHub 仓库提交代码、报告问题或提出建议，共同推动模组的发展。
+
+5. **社区支持**：TONEX 拥有活跃的社区，玩家们可以在论坛和社交媒体上交流经验、分享策略和参与讨论。
+
+### 总结
+
+TONEX 致力于为 "Among Us" 玩家提供一个更具深度和趣味性的游戏环境。通过新增角色、自定义选项和持续的社区支持，TONEX 成为 "
+Among Us" 玩家探索新玩法的理想选择。无论你是新手还是老玩家，TONEX
+都能为你带来全新的游戏体验。访问其官方网站 [tonex.cc](https://tonex.cc) 和 GitHub
+仓库 [TownOfNewEpic_Xtreme](https://github.com/XtremeWave/TownOfNewEpic_Xtreme) 了解更多信息并下载模组。
 ## 须知
 本模组不隶属于 Among Us 或 Innersloth LLC，其包含的内容也未得到 Innersloth LLC 的认可或以其他方式赞助。<br>
 此处包含的部分材料是Innersloth LLC的财产。
@@ -84,7 +105,7 @@
 ### [Town Of Host-ReEdited](https://github.com/Loonie-Toons/TownOfHost-ReEdited) :
 - 开发者：[Loonie-Toons](https://github.com/Loonie-Toons)
 - 许多职业想法
-- 提供职业: TOHEX中的医生、分散者、变色龙
+- 提供职业: [TOHEX](https://tohex.cc)中的医生、分散者、变色龙
 ### [To-Hope](https://gitee.com/xigua_ya/to-hope) :
 - 开发者：[遇千知Yu(Night_瓜)](https://gitee.com/xigua_ya)
 - 参考: TOHEX中的自定义按钮
@@ -113,7 +134,7 @@
  - [Terry(中立小黑)](https://github.com/ZhongLiXiaoHei) - **职业设计**
  - [一念旧情丶](https://github.com/ynjq) - **职业设计**
 
-### Contributors
+### 贡献者
  - [KARPED1EM](https://github.com/KARPED1EM) - **技术支持**
  - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **[TOHEX](https://tohex.cc)开发者**
  - ryuk - **新功能与优秀的想法**
@@ -121,8 +142,9 @@
  - [NikoCat233](https://github.com/NikoCat233) - **技术支持**
  - Farewell - **咨询支持**
  - [LeZaiYa](https://github.com/LezaiYa1) - **咨询支持**
- - Imp11 - **咨询支持**
- - 方块 - **咨询支持**
+ - [Imp11](https://github.com/dabao40) - **咨询支持**
+ - [方块](https://github.com/FangKuaiYa) - **咨询支持**
+ - [ChatGPT](https://chatgpt.com) - **技术支持**
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
