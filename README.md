@@ -100,7 +100,7 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 - Developer：[Moe](https://github.com/0xDrMoe)
 - Many role ideas
 - Reference: Switch Horse Mode(v2024.3.5后)
-- ### [Endless Host Roles(Formerly Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles) :
+### [Endless Host Roles(Formerly Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles) :
 - Developer：[Gurge44](https://github.com/Gurge44)
 - Many role ideas
 - Provided: Pet Event

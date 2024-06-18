@@ -100,10 +100,10 @@
 - 开发者：[Moe](https://github.com/0xDrMoe)
 - 许多职业想法
 - 参考: 愚人节牧马模式(v2024.3.5后)
-- ### [Endless Host Roles(原Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles) :
+### [Endless Host Roles(原Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles) :
 - 开发者：[Gurge44](https://github.com/Gurge44)
-- Many role ideas
-- Provided: Pet Event
+- 许多职业想法
+- 提供: 摸宠物事件
 
 ## 开发者成员
 ### XtremeWave成员
