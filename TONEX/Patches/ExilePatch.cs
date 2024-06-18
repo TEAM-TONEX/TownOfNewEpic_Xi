@@ -90,7 +90,7 @@ class ExileControllerWrapUpPatch
                         {
                             roleclass.CountdownList[i] = now;
                         }
-                        roleclass.UsePetCoolDown = now;
+                        roleclass.UsePetCooldown_Timer = now;
                     }
                 }
             }

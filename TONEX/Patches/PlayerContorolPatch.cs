@@ -987,7 +987,7 @@ class PlayerControlRpcSetRolePatch
                 var seerIsKiller = seer.GetRoleClass() is IKiller;
 
                 
-                if(target.Is(CustomRoles.EvilAngle) || target.Is(CustomRoles.Phantom) || target.Is(CustomRoles.InjusticeSpirit))
+                if(target.Is(CustomRoles.EvilAngle) || target.Is(CustomRoles.Specterraid) || target.Is(CustomRoles.InjusticeSpirit))
                 {
                    ghostRoles[seer] = RoleTypes.GuardianAngel;
                 }
@@ -1126,11 +1126,11 @@ public static class PlayerControlDiePatch
             }
             else if (__instance.Is(CustomRoles.Wolfmate) || __instance.Is(CustomRoles.Charmed))
             {
-                if (!Phantom.SetYet && Phantom.EnablePhantom.GetBool())
+                if (!Specterraid.SetYet && Specterraid.EnableSpecterraid.GetBool())
                 {
-                    Phantom.SetYet = true;
+                    Specterraid.SetYet = true;
                     __instance.Notify(GetString("Surprise"));
-                    Phantom.SetPlayer = __instance;
+                    Specterraid.SetPlayer = __instance;
                 }
             }
             else if ((__instance.Is(CustomRoleTypes.Crewmate) || __instance.Is(CustomRoleTypes.Impostor))
@@ -1158,11 +1158,11 @@ public static class PlayerControlDiePatch
                         }
                         break;
                     case CustomRoleTypes.Neutral:
-                        if (!Phantom.SetYet && Phantom.EnablePhantom.GetBool())
+                        if (!Specterraid.SetYet && Specterraid.EnableSpecterraid.GetBool())
                         {
-                            Phantom.SetYet = true;
+                            Specterraid.SetYet = true;
                             __instance.Notify(GetString("Surprise"));
-                            Phantom.SetPlayer = __instance;
+                            Specterraid.SetPlayer = __instance;
                         }
                         break;
                     case CustomRoleTypes.Impostor:

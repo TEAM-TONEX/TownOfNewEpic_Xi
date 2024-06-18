@@ -46,7 +46,7 @@ public sealed class TimeMaster : RoleBase
     public static Dictionary<byte, Vector2> TimeMasterbacktrack = new();
     private long ProtectStartTime;
     private float Cooldown;
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {

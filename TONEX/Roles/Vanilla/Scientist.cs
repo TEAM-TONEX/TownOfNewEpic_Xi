@@ -15,7 +15,7 @@ public sealed class Scientist : RoleBase
            0040,
            SetupOptionItem,
            "sci",
-           "#8cffff"
+           "#F8FF8C"
 
        );
     public Scientist(PlayerControl player)

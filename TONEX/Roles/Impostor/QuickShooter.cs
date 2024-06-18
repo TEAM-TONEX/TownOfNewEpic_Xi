@@ -38,7 +38,7 @@ public sealed class QuickShooter : RoleBase, IImpostor
 
     private int ShotLimit;
     private bool Storaging;
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {

@@ -434,8 +434,10 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
         else
         {
 
-            if (!role.IsAddon())
+            if (!role.IsAddon() &&!role.IsVanilla())
             Utils.SendMessage(role.GetRoleInfo().Description.FullFormatHelp, playerId);
+            else if (role.IsVanilla())
+                Utils.SendMessage(role.GetRoleInfo().Description.FullFormatHelp, playerId);
             else if (role.IsAddon())
                 Utils.SendMessage(AddonDescription.FullFormatHelpByRole(role) ??
                         // roleInfoがない役職

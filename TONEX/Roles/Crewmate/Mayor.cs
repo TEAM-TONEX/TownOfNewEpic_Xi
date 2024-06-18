@@ -64,7 +64,7 @@ public sealed class Mayor : RoleBase
             ? 255f
             : opt.GetInt(Int32OptionNames.EmergencyCooldown);
         AURoleOptions.EngineerInVentMaxTime = 1;
-        UsePetCoolDown_Totally = (long)AURoleOptions.EngineerCooldown;
+        UsePetCooldown = (long)AURoleOptions.EngineerCooldown;
     
     }
     public override bool CanUseAbilityButton() => LeftButtonCount > 0;

@@ -39,14 +39,6 @@ public sealed class Concealer : RoleBase, IImpostor
             .SetValueFormat(OptionFormat.Seconds);
     }
     
-    public override void Add()
-    {
-        
-    }
-    public override void OnGameStart()
-    {
-        
-    }
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.ShapeshifterCooldown = OptionShapeshiftCooldown.GetFloat();
@@ -80,7 +72,7 @@ public sealed class Concealer : RoleBase, IImpostor
         Camouflage.CheckCamouflage();
         return;
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     public static bool IsHidding
         => Main.AllAlivePlayerControls.Any(x => (x.GetRoleClass() is Concealer roleClass) && roleClass.Shapeshifting) && GameStates.IsInTask;

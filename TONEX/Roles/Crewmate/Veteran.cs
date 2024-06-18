@@ -49,11 +49,11 @@ public sealed class Veteran : RoleBase
         OptionSkillNums = IntegerOptionItem.Create(RoleInfo, 12, OptionName.VeteranSkillMaxOfUseage, new(1, 99, 1), 5, false)
             .SetValueFormat(OptionFormat.Times);
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private int SkillLimit;
     private long ProtectStartTime;
-    public override List<long> CountdownList_Totally { get; set; } = new();
+    public override List<long> CooldownList { get; set; } = new();
     public override List<long> CountdownList { get; set; } = new();
 
     public override void CD_Update()
@@ -61,7 +61,7 @@ public sealed class Veteran : RoleBase
         ProtectStartTime = CountdownList[0];
     }
 
-    public override bool GetOffGuardProtect(out string notify, out int format_int, out float format_float)
+    public override bool SetOffGuardProtect(out string notify, out int format_int, out float format_float)
     {
         notify = GetString("VeteranOffGuard");
         format_int = SkillLimit;
@@ -73,8 +73,8 @@ public sealed class Veteran : RoleBase
     {
         SkillLimit = OptionSkillNums.GetInt();
         ProtectStartTime = -1;
-        CountdownList_Totally.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add((long)ProtectStartTime);
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -119,7 +119,7 @@ public sealed class Veteran : RoleBase
         {
             SkillLimit--;
             SendRPC();
-            CountdownList[0] = Utils.GetTimeStamp();
+            ResetCountdown(0);
             if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
             Player.RPCPlayCustomSound("Gunload");
             Player.Notify(string.Format(GetString("VeteranOnGuard"), SkillLimit, 2f));
@@ -144,7 +144,7 @@ public sealed class Veteran : RoleBase
     public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         if (info.IsSuicide) return true;
-        if (ProtectStartTime != -1 && ProtectStartTime + OptionSkillDuration.GetFloat() >= Utils.GetTimeStamp())
+        if (CheckForOnGuard(0))
         {
             var (killer, target) = info.AttemptTuple;
             target.RpcMurderPlayerV2(killer);

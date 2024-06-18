@@ -87,11 +87,11 @@ class RpcSetTasksPatch
             NumLongTasks = 0;
             NumShortTasks = InjusticeSpirit.OptionTaskCount.GetInt();
         }
-        if (pc.Is(CustomRoles.Phantom))
+        if (pc.Is(CustomRoles.Specterraid))
         {
             hasCommonTasks = false;
             NumLongTasks = 0;
-            NumShortTasks = Phantom.OptionTaskCount.GetInt();
+            NumShortTasks = Specterraid.OptionTaskCount.GetInt();
         }
         //管理员和摆烂人没有任务
         if (pc.Is(CustomRoles.GM) || pc.Is(CustomRoles.LazyGuy))

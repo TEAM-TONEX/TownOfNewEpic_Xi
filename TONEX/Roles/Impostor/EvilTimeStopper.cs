@@ -57,7 +57,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
         Cooldown = OptionSkillCooldown.GetFloat();
         
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {

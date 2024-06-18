@@ -56,8 +56,8 @@ class ExternalRpcPetPatch
             var roleClass = pc.GetRoleClass();
 
             if (!roleClass.EnablePetSkill()) return;
-            var petCooldown = roleClass.UsePetCoolDown;
-            var totalCooldown = roleClass.UsePetCoolDown_Totally;
+            var petCooldown = roleClass.UsePetCooldown_Timer;
+            var totalCooldown = roleClass.UsePetCooldown;
             
             if (petCooldown != -1)
             {
@@ -73,7 +73,7 @@ class ExternalRpcPetPatch
             }
             else
             {
-                roleClass.UsePetCoolDown = Utils.GetTimeStamp();
+                roleClass.UsePetCooldown_Timer = Utils.GetTimeStamp();
             }
             roleClass.OnShapeshiftWithUsePet();
         }

@@ -29,7 +29,7 @@
 		<PackageReference Include="GitInfo" Version="3.3.5" />
 		<PackageReference Include="Microsoft.VisualStudio.VsixColorCompiler" Version="17.5.33428.366" />
 		<PackageReference Include="System.Windows.Extensions" Version="8.0.0" />
-		<PackageReference Include="YamlDotNet" Version="15.1.4" />
+		<PackageReference Include="YamlDotNet" Version="15.3.0" />
 	</ItemGroup>
 
 	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">

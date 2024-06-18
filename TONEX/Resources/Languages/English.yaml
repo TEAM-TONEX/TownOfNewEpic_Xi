@@ -195,7 +195,7 @@ SharpShooter: "Sharp Shooter"
 Admirer: "Admirer"
 Akujo: "Akujo"
 Cupid: "Cupid"
-Phantom: "Phantom"
+Specterraid: "Specterraid"
 Yandere: "Yandere"
 
 ## 附加职业 / Add-ons
@@ -315,7 +315,7 @@ WinnerRoleText.GodOfPlagues: "Are you ready for online class?"
 WinnerRoleText.MeteorArbiter: "if we're still friends, then don't come back again"
 WinnerRoleText.MeteorMurderer: "In the end, stars fall and the dome crumbles, as the timeline reaches its endpoint"
 WinnerRoleText.SharpShooter: "A shot straight into your heart (physically)"
-WinnerRoleText.Phantom: "All of it is just an illusion！"
+WinnerRoleText.Specterraid: "All of it is just an illusion！"
 WinnerRoleText.Yandere: "You'll always be my baby"
 
 ## 胜利界面职业名 / Role Name for End Screen
@@ -362,7 +362,7 @@ WinnerRoleText.InEnd.GodOfPlague: "God Of Plague"
 WinnerRoleText.InEnd.MeteorArbiter: "Meteor Arbiter"
 WinnerRoleText.InEnd.MeteorMurderer: "Meteor Murderer"
 WinnerRoleText.InEnd.SharpShooter: "Sharp Shooter"
-WinnerRoleText.InEnd.Phantom: "Phantom"
+WinnerRoleText.InEnd.Specterraid: "Specterraid"
 WinnerRoleText.InEnd.Yandere: "Yandere"
 
 # 以下是职业简介（显示在开局以及任务栏的文本）/ Shows at Impostor/Crewmate Screen
@@ -518,7 +518,7 @@ SharpShooterInfo: "A shot right between your eyebrows! (in a physical sense)"
 AdmirerInfo: "All unrequited love not aimed at romance is bullshit！"
 AkujoInfo: "Use your wiles to manipulate the crews into helping you"
 CupidInfo: "The Arrow Of Love!！"
-PhantomInfo: "Opes!Get Ready To Lose?"
+SpecterraidInfo: "Opes!Get Ready To Lose?"
 YandereInfo: "❤I Love You"
 
 ## 附加职业 / Add-ons Blurbs
@@ -695,7 +695,7 @@ SunnyboyInfoLong: "The Sunnyboy can check the life status of others through the 
 VultureInfoLong: "Vulture can consume a corpse by pressing the report corpse button, making it can't be report. If it consumes a certain number of corpses, the Vulture wins."
 WhoopsInfoLong: "Whoops is a class that doesn't have a kill button or doesn't have a kill button as a skill that comes after the jackal is recruited (see Jackal settings) If whoops have a vent button before whoops recruit (veterans, for example) , whoops keep the vent button after whoops recruit.Whoops need to help the Jackal win. Have a mission"
 SidekickInfoLong: "Sidekick are classes that have kill button or have kill button as a skill that come after the jackal is recruited (see Jackal settings) and need to help the Jackal win.\nAfter the death of the Jackal, the sidekick becomes a jackal (sidekick kill Cooldown is equal to jackal kill Cooldown) . sidekicks can not kill before the death of the Jackal"
-DespairInfoLong: "Despair must complete their task to win. Despair have a suicide countdown,die when the countdown reaches zero,Reset the countdown to completion of a task"
+DespairInfoLong: "Despair must complete their task or stay alive to win. Despair have a suicide countdown,die when the countdown reaches zero,Reset the countdown to completion of a task"
 RewardOfficerInfoLong: "There are two types of reward: \n=>Role reward: A Role that displays the target next to its name. You need to kill the player who owns that class.\n=>Player reward: will not show anything next to the name, need to kill the target player.\nKill the wrong target will die"
 VagatorInfoLong: "Vagator can consecutively execute 6 kills, with the 5th kill inflicting 4 consecutive damages. The success rate for each kill is 5%, with a guaranteed success after 80 attempts.\nWhen Vagator employs a pet, different skills are utilized based on the number of energy points available.\nWhen energy points are less than 20:\nWhen energy points are less than 20 points: Instantly gain 1 point of energy and grant oneself two layers of shield. Depending on the number of players within a 2.5x range, additional energy points are obtained, and the 「weakness」 status is applied to them. Additionally, there's a 5% chance of killing all players within the range.\n\nWhen energy points are greater than or equal to 20:\nWhen energy points are greater than or equal to 20: Consume all energy points and apply the 」petrification「 status to all players within a 5x range. there's a 20% chance of killing all players within the range. Each player within the range provides 2 points of energy, and when energy points are greater than or equal to 10, an additional layer of shield is provided.\nVagator gains 1 point of energy each time it successfully kills a player. The kill cooldown time is 20 seconds, and the skill cooldown time is also 20 seconds, with a guaranteed success after 80 attempts. Schrödinger's cat cannot join the Vagator faction.\nWeakness: Increases the probability of being killed by 150% for 40 seconds. When using a skill, all players within the range are affected by this effect.\nPetrification: Renders the player immobile and unable to interact for 5 seconds.\nShield: Stackable, lasts for 20 seconds."
 Non_VillainInfoLong: "\nWhen the villain is not present, all players will receive 25 cash per second.\nDo not play the villain「s kill key will be given red envelopes and give each other a random blessing, the amount of cash in red envelopes for<color=#ffff00>100￥~1000￥</color>\nBlessing is divided into」 I congratulate you get rich, I congratulate you wonderful「 , 」 the best please come, bad please go away「 and」 happy to help you eliminate disaster「 three\nI congratulate you on making a fortune, I congratulate you wonderful: the blessing of the player」s cash will be an additional 20 yuan per second rate of growth, up to three layers;\nThe best please come, the bad please go away: the blessed player will have a greater view when the electricity is destroyed;\nRakuten eliminate disaster for You: the player who receives this blessing can be immune to a kill, after which the blessing will disappear\n\nWhen a player「s cash amount reaches 7500, the player will receive the 」far ahead「 blessing and return to zero cash amount.\nLead by a long shot: players in this state move 10% faster, have an additional 25 cash per second, and will be immune to a single strike when their power is destroyed because of the advanced flashlight function, this state is disabled after being killed.\n\nWhen the total amount of cash of the players who have been 」far ahead「 reaches 5,000 again, they will receive a 」Digital Life Card「 and return to zero cash\nDigital Life Card: a player who gains a digital life card will be converted to a digital life after death, and all digital lives will be won along with 」no villains「 .\n\nWhen the villain is not killed, the murderer will be cast 」many people not blame the negative effect「 .\nIt」s okay to be polite: you can't use any of your skills because you」re too polite, and you can't win with 」no villains「 .\n\nIf you don」t play a villain to survive, you don't play a villain to win with the camp that accumulates the most cash. Without the death of the villain, you can follow any faction in digital life to victory"
@@ -713,7 +713,7 @@ SharpShooterInfoLong: "During a Sharpshooter's kill, if successful, their killin
 AdmirerInfoLong: "The Admirer can use the kill button to confess to a player, forming a lover relationship if the player can be confessed to. The Admirer needs to achieve victory together with their lover."
 AkujoInfoLong: "The Succubus can use the kill button to select a player as their true love or backup. In the backup's view, the Succubus is the true love. The Succubus needs to achieve victory together with their true love."
 CupidInfoLong: "Cupid can select two players as lovers using the kill button and distribute shields to them via pipes or pet touch. If the shield is broken, Cupid dies instead. If mutual death is enabled, Cupid dies when the selected lovers die, and Cupid achieves victory together with the selected lovers. Cupid is not counted as part of the player count."
-PhantomInfoLong: "I'm giving you such a good profession (bushi) \nIt's okay, you can still steal homes after completing tasks!"
+SpecterraidInfoLong: "I'm giving you such a good profession (bushi) \nIt's okay, you can still steal homes after completing tasks!"
 YandereInfoLong: "The Yandere starts with a target, indicated by a 「♡」 next to their name. If someone gets too close to the Yandere's target, the Yandere will have an arrow pointing towards them and can kill them. The Yandere can only kill people who have touched their target. If only the Yandere faction and the Crew faction remain, and the Yandere faction outnumbers the Crew faction, the Yandere and the target achieve victory."
 
 
@@ -1326,7 +1326,7 @@ KillProbability: "Probability of Successful Kill"
 EnableEvilAngle: "Enable <color=#ff1919>Evil Angle</color>"
 EnableInjusticeSpirit: "Enable <color=#B6B87B>Injustice Spirit</color>"
 EnableGuardianAngel: "Enable <color=#8cffff>Guardian Angle</color>"
-EnablePhantom: "Enable <color=#65167D>Phantom</color>"
+EnableSpecterraid: "Enable <color=#65167D>Specterraid</color>"
 OptionTaskCount: "Task Count"
 OptionTryMax: "Try Kill Max"
 RecruitModeSwitchAction: "Recruit Mode"

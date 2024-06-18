@@ -43,27 +43,35 @@ public sealed class NiceTimeStopper : RoleBase
         MaxCooldown,
     }
     private List<byte> NiceTimeStopperstop;
-    private long ProtectStartTime;
     private float Cooldown;
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimeStopperSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
             .SetValueFormat(OptionFormat.Seconds);
         ReduceCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.ReduceCooldown, new(2.5f, 180f, 2.5f), 10f, false)
-    .SetValueFormat(OptionFormat.Seconds);
+            .SetValueFormat(OptionFormat.Seconds);
         MaxCooldown = FloatOptionItem.Create(RoleInfo, 12, OptionName.MaxCooldown, new(2.5f, 250f, 2.5f), 60f, false)
-  .SetValueFormat(OptionFormat.Seconds);
+            .SetValueFormat(OptionFormat.Seconds);
         OptionSkillDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.NiceTimeStopperSkillDuration, new(2.5f, 180f, 2.5f), 20f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        
+    }
+    public override List<long> CooldownList { get; set; } = new();
+    public override List<long> CountdownList { get; set; } = new();
+
+    public override bool SetOffGuardProtect(out string notify, out int format_int, out float format_float)
+    {
+        notify = GetString("NiceTimeStopperOffGuard");
+        format_int = -255;
+        format_float = -255;
+        return true;
     }
     public override void Add()
     {
-        ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
-        
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(-1);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -99,14 +107,15 @@ public sealed class NiceTimeStopper : RoleBase
     public void ReduceNowCooldown()
     {
         Cooldown = Cooldown + ReduceCooldown.GetFloat();
-        if (Cooldown > MaxCooldown.GetFloat())Cooldown -= ReduceCooldown.GetFloat();    
+        if (Cooldown > MaxCooldown.GetFloat())Cooldown -= ReduceCooldown.GetFloat();
+        UsePetCooldown = (long)Cooldown;
     }
     public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         ReduceNowCooldown();
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
-        ProtectStartTime = Utils.GetTimeStamp();
+        CountdownList[0] = Utils.GetTimeStamp();
         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
         Player.Notify(GetString("NiceTimeStopperOnGuard"));
         Player.ColorFlash(Utils.GetRoleColor(CustomRoles.SchrodingerCat));
@@ -129,17 +138,6 @@ public sealed class NiceTimeStopper : RoleBase
         }
         return true;
     }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() && ProtectStartTime + (long)OptionSkillDuration.GetFloat() < now && ProtectStartTime != -1)
-        {
-            ProtectStartTime = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("NiceTimeStopperOffGuard")));
-        }
-    }
     public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
     {
         if (NiceTimeStopperstop.Contains(reporter.PlayerId))    
@@ -149,13 +147,5 @@ public sealed class NiceTimeStopper : RoleBase
     public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
-    }
-    public override void AfterMeetingTasks()
-    {
-        
-    }
-    public override void OnStartMeeting()
-    {
-        ProtectStartTime = -1;
     }
 }

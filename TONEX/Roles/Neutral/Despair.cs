@@ -6,7 +6,7 @@ using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using UnityEngine;
 
 namespace TONEX.Roles.Neutral;
-public sealed class Despair : RoleBase, INeutral
+public sealed class Despair : RoleBase, INeutral, IAdditionalWinner
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -78,6 +78,7 @@ public sealed class Despair : RoleBase, INeutral
         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Despair);
         CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
     }
+    public bool CheckWin(ref CustomRoles role, ref CountTypes countTypes) => Player.IsAlive();
     public override void OnSecondsUpdate(PlayerControl player,long now)
     {
         if (!AmongUsClient.Instance.AmHost) return;

@@ -36,7 +36,7 @@ public sealed class Ninja : RoleBase, IImpostor
         NinjaNinjaateCooldown,
         NinjaCanKillAfterNinjaate,
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)NinjaateCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)NinjaateCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     public byte MarkedPlayer = new();
     

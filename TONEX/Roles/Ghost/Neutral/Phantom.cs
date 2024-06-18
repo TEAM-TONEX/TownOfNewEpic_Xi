@@ -5,14 +5,14 @@ using MS.Internal.Xml.XPath;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 
 namespace TONEX.Roles.Ghost.Neutral;
-public sealed class Phantom : RoleBase, INeutral
+public sealed class Specterraid : RoleBase, INeutral
 {
 
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(Phantom),
-            player => new Phantom(player),
-            CustomRoles.Phantom,
+            typeof(Specterraid),
+            player => new Specterraid(player),
+            CustomRoles.Specterraid,
             () => RoleTypes.GuardianAngel,
             CustomRoleTypes.Neutral,
             75_1_5_0300,
@@ -21,7 +21,7 @@ public sealed class Phantom : RoleBase, INeutral
             "#65167d",
             ctop: true
         );
-    public Phantom(PlayerControl player)
+    public Specterraid(PlayerControl player)
     : base(
         RoleInfo,
         player,
@@ -35,18 +35,18 @@ public sealed class Phantom : RoleBase, INeutral
     {
         SetYet = false;
     }
-    public static OptionItem EnablePhantom;
+    public static OptionItem EnableSpecterraid;
     public static OptionItem OptionTaskCount;
 
 
     public static void SetupOptionItem()
     {
-        EnablePhantom = BooleanOptionItem.Create(75_1_5_0310, "EnablePhantom", false, TabGroup.NeutralRoles, false)
+        EnableSpecterraid = BooleanOptionItem.Create(75_1_5_0310, "EnableSpecterraid", false, TabGroup.NeutralRoles, false)
             .SetHeader(true)
             .SetGameMode(CustomGameMode.Standard);
         OptionTaskCount = IntegerOptionItem.Create(75_1_5_0311, "OptionTaskCount", new(0, 100, 1), 10, TabGroup.NeutralRoles, false)
             .SetValueFormat(OptionFormat.Pieces)
-            .SetParent(EnablePhantom);
+            .SetParent(EnableSpecterraid);
         
     }
     public override bool OnCompleteTask(out bool cancel)
@@ -58,7 +58,7 @@ public sealed class Phantom : RoleBase, INeutral
     }
     public void Win()
     {
-        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Phantom);
+        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Specterraid);
         CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
     }
 

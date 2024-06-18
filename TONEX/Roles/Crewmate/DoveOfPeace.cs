@@ -37,7 +37,7 @@ public sealed class DoveOfPeace : RoleBase
     }
 
     private int SkillLimit;
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {

@@ -33,10 +33,6 @@ public sealed class Saint : RoleBase
 
     static OptionItem OptionSkillCooldown;
     static OptionItem OptionSkillNums;
-    enum OptionName
-    {
-
-    }
     private static Options.OverrideTasksData Tasks;
     private int SkillLimit;
     public bool CanRedemption = false;

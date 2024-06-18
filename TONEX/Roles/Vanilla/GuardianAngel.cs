@@ -16,7 +16,7 @@ public sealed class GuardianAngel : RoleBase
            0060,
            null,
            "ga|guard",
-           "#8cffff",
+           "#8CFFDB",
            ctop: true
 
        );

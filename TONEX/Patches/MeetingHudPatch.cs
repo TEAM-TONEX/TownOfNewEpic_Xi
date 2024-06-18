@@ -151,7 +151,7 @@ public static class MeetingHudPatch
                         {
                             roleclass.CountdownList[i] = -1;
                         }
-                        roleclass.UsePetCoolDown = -1;
+                        roleclass.UsePetCooldown_Timer = -1;
                     }
                 }
                 MeetingStartNotify.OnMeetingStart();

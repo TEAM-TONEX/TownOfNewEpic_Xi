@@ -105,7 +105,7 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 总计时列表
     /// </summary>
-    public virtual List<long> CountdownList_Totally { get; set; } = new();
+    public virtual List<long> CooldownList { get; set; } = new();
 
     /// <summary>
     /// 倒计时列表
@@ -115,20 +115,41 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 使用宠物总冷却时间
     /// </summary>
-    public virtual long UsePetCoolDown_Totally { get; set; } = -1;
+    public virtual long UsePetCooldown { get; set; } = -1;
 
     /// <summary>
     /// 使用宠物冷却时间倒计时
     /// </summary>
-    public virtual long UsePetCoolDown { get; set; } = Utils.GetTimeStamp();
+    public virtual long UsePetCooldown_Timer { get; set; } = Utils.GetTimeStamp();
     /// <summary>
     /// 摸宠物倒计时未设置
     /// </summary>
-    public virtual bool PetUnSet() => UsePetCoolDown == -1;
+    public virtual bool PetUnSet() => UsePetCooldown_Timer == -1;
+
+    /// <summary>
+    /// 每帧倒计时更新
+    /// </summary>
+    public virtual void CD_Update() { }
+    /// <summary>
+    /// 倒计时未设置
+    /// </summary>
+    public bool UnSet(int Item) => CountdownList[Item] == -1;
+    /// <summary>
+    /// 检查倒计时是否生效
+    /// </summary>
+    public bool CheckForOnGuard(int Item) => CountdownList[Item] != -1 && CountdownList[Item] + CooldownList[Item] >= Utils.GetTimeStamp();
+    /// <summary>
+    /// 检查倒计时是否失效
+    /// </summary>
+    public bool CheckForOffGuard(int Item) => CountdownList[Item] != -1 && CountdownList[Item] + CooldownList[Item] < Utils.GetTimeStamp();
+    /// <summary>
+    /// 倒计时结束时行为
+    /// </summary>
+    public virtual void AfterOffGuard() { }
     /// <summary>
     /// 倒计时结束时击破护盾特效
     /// </summary>
-    public virtual bool GetOffGuardProtect(out string notify, out int format_int, out float format_float)
+    public virtual bool SetOffGuardProtect(out string notify, out int format_int, out float format_float)
     {
         notify = "";
         format_int = -255;
@@ -136,19 +157,13 @@ public abstract class RoleBase : IDisposable
         return true;
     }
     /// <summary>
-    /// 倒计时结束时行为
+    /// 重置倒计时
     /// </summary>
-    public virtual void AfterOffGuard()
-    {
-    }
+    public void ResetCountdown(int Item) => CountdownList[Item] = Utils.GetTimeStamp();
     /// <summary>
-    /// 每帧倒计时更新
+    /// 归零倒计时
     /// </summary>
-    public virtual void CD_Update() { }
-    /// <summary>
-    /// 摸宠物倒计时未设置
-    /// </summary>
-
+    public void ZeroingCountdown(int Item) => CountdownList[Item] = -1;
     #endregion
     #region RPC相关处理
     /// <summary>
@@ -625,7 +640,7 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     public virtual bool GetPetButtonText(out string text)
     {
-        text = default;
+        text = GetString(StringNames.PetLabel);
         return false;
     }
     /// <summary>

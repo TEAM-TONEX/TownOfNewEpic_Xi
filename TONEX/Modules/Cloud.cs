@@ -41,6 +41,7 @@ internal class Cloud
         using StreamReader reader = new(stream, Encoding.UTF8);
         return reader.ReadToEnd();
     }
+    public static string ServerName ="";
     public static bool ShareLobby(bool command = false)
     {
         try
@@ -50,10 +51,8 @@ internal class Cloud
             if (!AmongUsClient.Instance.AmHost || !GameData.Instance || AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame) return false;
 
             if (IP == null || LOBBY_PORT == 0) throw new("Has no ip or port");
-
-            Main.NewLobby = false;
-            string msg = $"{GameStartManager.Instance.GameRoomNameCode.text}|{Main.PluginShowVersion}|{GameData.Instance.PlayerCount}|{TranslationController.Instance.currentLanguage.languageID}|{ServerManager.Instance.CurrentRegion.Name}|{DataManager.player.customization.name}";
-
+            
+            string msg = $"{GameStartManager.Instance.GameRoomNameCode.text}|{Main.PluginShowVersionPrefix}|{GameData.Instance.PlayerCount}|{TranslationController.Instance.currentLanguage.languageID}|{ServerName}|{DataManager.player.customization.name}";
             if (msg.Length <= 60)
             {
                 byte[] buffer = Encoding.Default.GetBytes(msg);
@@ -62,8 +61,8 @@ internal class Cloud
                 ClientSocket.Send(buffer);
                 ClientSocket.Close();
             }
-
             Utils.SendMessage(Translator.GetString("Message.LobbyShared"), PlayerControl.LocalPlayer.PlayerId);
+            Main.NewLobby = false; 
 
         }
         catch (Exception e)

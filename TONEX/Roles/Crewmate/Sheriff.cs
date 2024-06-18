@@ -117,7 +117,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
         foreach (var neutral in CustomRolesHelper.AllStandardRoles.Where(x => x.IsNeutral() && !x.IsTODO()).ToArray())
         {
-            if (neutral is CustomRoles.SchrodingerCat or CustomRoles.HotPotato or CustomRoles.ColdPotato or CustomRoles.Non_Villain or CustomRoles.GodOfPlagues or CustomRoles.Phantom) continue;
+            if (neutral is CustomRoles.SchrodingerCat or CustomRoles.HotPotato or CustomRoles.ColdPotato or CustomRoles.Non_Villain or CustomRoles.GodOfPlagues or CustomRoles.Specterraid) continue;
             if (neutral.IsTODO()) continue;
             SetUpKillTargetOption(neutral, idOffset, true, CanKillNeutralsMode);
             idOffset++;

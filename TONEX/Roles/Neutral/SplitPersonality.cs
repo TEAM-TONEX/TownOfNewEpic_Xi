@@ -16,11 +16,11 @@ public sealed class SplitPersonality : RoleBase, IAdditionalWinner
             player => new SplitPersonality(player),
             CustomRoles.SplitPersonality,
          () => RoleTypes.Crewmate,
-            InCrew ? CustomRoleTypes.Crewmate : InImp? CustomRoleTypes.Impostor : CustomRoleTypes.Neutral,
+            CustomRoleTypes.Neutral,
             94_1_4_0400,
            null,
             "sp",
-            "#FFFFFF",
+            "#960F0F",
            true
 
         );

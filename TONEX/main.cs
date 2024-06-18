@@ -40,8 +40,10 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.3.5";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.17";
-    public const string PluginShowVersion = "1.3_20240602_Debug_7";
+    public const string PluginVersion = "1.2.20";
+    public const string PluginShowVersionPrefix = "1.3_20240616";
+    public const string PluginShowVersionPostfix = "_Debug_10";
+    public const string PluginShowVersion = PluginShowVersionPrefix + PluginShowVersionPostfix;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
     public static readonly bool ShowWebsiteButton = true;
@@ -239,14 +241,6 @@ public class Main : BasePlugin
                 //GM
                 {CustomRoles.GM, "#ff5b70"},
 
-                //Vanilla
-                {CustomRoles.Crewmate, "#8cffff"},
-                {CustomRoles.Engineer, "#8cffff"},
-                {CustomRoles.Scientist, "#8cffff"},
-                {CustomRoles.GuardianAngel, "#8cffff"},
-                {CustomRoles.Impostor, "#ff1919"},
-                {CustomRoles.Shapeshifter, "#ff1919"},
-
                 //Add-Ons
                 {CustomRoles.NotAssigned, "#ffffff"},
                 {CustomRoles.LastImpostor, "#ff1919"},
@@ -423,7 +417,7 @@ public enum CustomWinner
     AdmirerLovers = CustomRoles.AdmirerLovers,
     AkujoLovers = CustomRoles.AkujoLovers,
     CupidLovers = CustomRoles.CupidLovers,
-    Phantom = CustomRoles.Phantom,
+    Specterraid = CustomRoles.Specterraid,
     Yandere = CustomRoles.Yandere,
 }
 public enum SuffixModes

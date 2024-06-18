@@ -39,7 +39,7 @@ public sealed class Escapist : RoleBase, IImpostor
         Shapeshifting = false;
         
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)AURoleOptions.ShapeshifterCooldown;
+    public override long UsePetCooldown { get; set; } = (long)AURoleOptions.ShapeshifterCooldown;
     public override bool EnablePetSkill() => true;
     private void SendRPC()
     {

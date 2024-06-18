@@ -625,7 +625,7 @@ public static class Utils
                 hasTasks = false;
                 break;
             case CustomRoles.InjusticeSpirit:
-            case CustomRoles.Phantom:
+            case CustomRoles.Specterraid:
                 hasTasks = true;
                 break;
 
@@ -845,7 +845,7 @@ public static class Utils
             {
                 sb2.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.NeutralRoles")));
 #if DEBUG
-                sb2.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.Phantom), GetRoleName(CustomRoles.Phantom)), Phantom.EnablePhantom.GetString().RemoveHtmlTags());
+                sb2.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.Specterraid), GetRoleName(CustomRoles.Specterraid)), Specterraid.EnableSpecterraid.GetString().RemoveHtmlTags());
 #endif
             }
             else if (role.IsAddon() && headCount == 3) sb3.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.Addons")));
@@ -1322,18 +1322,18 @@ public static class Utils
             InjusticeSpirit.SetPlayer = null;
 
         }
-        if (Phantom.SetPlayer != null)
+        if (Specterraid.SetPlayer != null)
         {
            
-            Phantom.SetPlayer.RpcSetCustomRole(CustomRoles.Phantom);
-            var taskState = Phantom.SetPlayer.GetPlayerTaskState();
-            taskState.AllTasksCount = Phantom.OptionTaskCount.GetInt();
+            Specterraid.SetPlayer.RpcSetCustomRole(CustomRoles.Specterraid);
+            var taskState = Specterraid.SetPlayer.GetPlayerTaskState();
+            taskState.AllTasksCount = Specterraid.OptionTaskCount.GetInt();
             if (AmongUsClient.Instance.AmHost)
             {
-                GameData.Instance.RpcSetTasks(Phantom.SetPlayer.PlayerId, Array.Empty<byte>());
-                Phantom.SetPlayer.SyncSettings();
+                GameData.Instance.RpcSetTasks(Specterraid.SetPlayer.PlayerId, Array.Empty<byte>());
+                Specterraid.SetPlayer.SyncSettings();
             }
-            Phantom.SetPlayer = null;
+            Specterraid.SetPlayer = null;
 
         }
         if (EvilAngle.SetPlayer != null)

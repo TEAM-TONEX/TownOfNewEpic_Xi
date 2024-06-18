@@ -16,7 +16,7 @@ public sealed class Engineer : RoleBase
            0030,
            SetupOptionItem,
            "engin",
-           "#8cffff"
+           "#8C90FF"
 
        );
     public Engineer(PlayerControl player)

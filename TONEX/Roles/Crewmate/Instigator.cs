@@ -60,7 +60,7 @@ public sealed class Instigator : RoleBase
         MaxCooldown = FloatOptionItem.Create(RoleInfo, 12, OptionName.MaxCooldown, new(2.5f, 250f, 2.5f), 60f, false)
           .SetValueFormat(OptionFormat.Seconds);
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     public override void Add()
     {
@@ -117,7 +117,7 @@ public override bool GetAbilityButtonText(out string text)
     {
         if (!AmongUsClient.Instance.AmHost) return;
         var now = Utils.GetTimeStamp();
-        if (ProtectStartTime + (long)OptionSkillDuration.GetFloat() < now && ProtectStartTime != -1)
+        if (CheckForOffGuard(0))
         {
             ProtectStartTime = -1;
             player.RpcProtectedMurderPlayer();

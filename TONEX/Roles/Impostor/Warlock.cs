@@ -28,7 +28,7 @@ public sealed class Warlock : RoleBase, IImpostor
         player
     )
     { }
-    public override long UsePetCoolDown_Totally { get; set; } = 0;
+    public override long UsePetCooldown { get; set; } = 0;
     public override bool EnablePetSkill() => true;
     public override void OnDestroy()
     {
@@ -131,7 +131,7 @@ public sealed class Warlock : RoleBase, IImpostor
                 IsCursed = true;
                 SendRPC();
                 CursedPlayer = target;  
-                UsePetCoolDown = 1;
+                UsePetCooldown_Timer = 1;
                 //呪える相手は一人だけなのでキルボタン無効化
                 killer.SetKillCooldownV2(255f);
                 killer.RpcResetAbilityCooldown();

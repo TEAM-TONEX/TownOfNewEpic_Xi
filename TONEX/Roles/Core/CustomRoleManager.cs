@@ -247,14 +247,14 @@ public static class CustomRoleManager
                 Chameleon.OnSecondsUpdate(player, now);
             }
             var roleclass = (player.GetRoleClass());
-            if (player.IsAlive() && roleclass?.CountdownList != null && roleclass?.CountdownList_Totally != null)
+            if (player.IsAlive() && roleclass?.CountdownList != null && roleclass?.CooldownList != null)
             {
                 for (int i= 0; i< roleclass.CountdownList.Count; i++)
                 {
-                    if (roleclass.CountdownList[i] + roleclass.CountdownList_Totally[i] < now && roleclass.CountdownList[i] != -1)
+                    if (roleclass.CheckForOffGuard(i))
                     {
                         roleclass.CountdownList[i] = -1;
-                        if (roleclass.GetOffGuardProtect(out string notify, out int format_int, out float format_float))
+                        if (roleclass.SetOffGuardProtect(out string notify, out int format_int, out float format_float))
                         player.RpcProtectedMurderPlayer();
                         if (format_int != -255)
                             player.Notify(string.Format(notify, format_int));
@@ -267,11 +267,11 @@ public static class CustomRoleManager
                 }
                 roleclass.CD_Update();
             }
-            if (player.IsAlive() && Options.UsePets.GetBool() && roleclass?.UsePetCoolDown != null && roleclass?.UsePetCoolDown_Totally != null)
+            if (player.IsAlive() && Options.UsePets.GetBool() && roleclass?.UsePetCooldown_Timer != null && roleclass?.UsePetCooldown != null)
             {
-                if (roleclass.UsePetCoolDown + roleclass.UsePetCoolDown_Totally < now && roleclass.UsePetCoolDown != -1)
+                if (roleclass.UsePetCooldown_Timer + roleclass.UsePetCooldown < now && roleclass.UsePetCooldown_Timer != -1)
                 {
-                    roleclass.UsePetCoolDown = -1;
+                    roleclass.UsePetCooldown_Timer = -1;
                     player.RpcProtectedMurderPlayer();
                     player.Notify(string.Format(GetString("PetSkillCanUse")));
                 }
@@ -588,6 +588,7 @@ public enum CustomRoles
     //Impostor(Vanilla)
     Impostor=100,
     Shapeshifter,
+    Phantom,
     //Impostor
     BountyHunter,
     Fireworker,
@@ -654,8 +655,10 @@ public enum CustomRoles
 
     //Crewmate(Vanilla)
     Engineer = 400,
-    GuardianAngel,
     Scientist,
+    GuardianAngel,
+    NoiseMaker,
+    Tracker,
     //Crewmate
     Luckey,
     LazyGuy,
@@ -711,6 +714,7 @@ public enum CustomRoles
     Scout,
     Amber,
     Saint,
+
     //Neutral
     Arsonist = 800,
     Jester,
@@ -763,7 +767,7 @@ public enum CustomRoles
     Martyr,//先烈 1.1限定
     NightWolf,
     Moonshadow,//TODO 月影,1.4限定
-    Phantom,
+    Specterraid,
     MeteorArbiter,// 陨星判官,1.2限定
     MeteorMurderer,// 陨星戮者,1.2限定
     SharpShooter,

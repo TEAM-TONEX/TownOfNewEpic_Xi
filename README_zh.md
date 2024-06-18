@@ -1,8 +1,8 @@
 <div align="center">
 	
-![XtremeWave-TONEX](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/d3ac3d89-170a-4613-b555-60621c8ba95b)
+![XtremeWave-TONEX](Assets/XtremeWave-TONEX.png)
 
-**TownOfNewEpic_Xtreme,AmongUs Mod优秀领导者。**
+**TownOfNewEpic_Xtreme，Among Us Mod的出色贡献者**
 
 <img src="https://badgen.net/github/license/XtremeWave/TownOfNewEpic_Xtreme" alt="Licences">
 <img src="https://badgen.net/github/tag/XtremeWave/TownOfNewEpic_Xtreme" alt="LatestTag">
@@ -19,10 +19,13 @@
 </div>
 
 ## 关于我们
-自从5月20日起，因为某些原因，TOHE停止了开发。<br>
-应广大玩家的请求, KARPED1EM为TOHE保持最基本的兼容，并与TOH同步更新，以确保有需要的玩家仍然可以正常游玩。<br>
-正因如此，我们不必再以继承的名义制作模组，我们启动了一个新计划，称其为“TONEX”。
-> TOHE已更名为TONX。
+自2023年5月20日起，Town Of Host Edited(TOHE)停止了开发。为了延续TOHE的“火种”，我们开发了一个名为Town Of Host Edited-Xi(TOHEX)的分支项目<br>
+然而，这个项目的开发并不是一帆风顺，我们的口碑持续下滑，我们的开发毫无成果。<br>
+应广大玩家的请求, KARPED1EM为TOHE保持最基本的兼容，并将其更名为Town Of Next(TONX)。<br>
+因此，我们基于TONX进行改良并重新制作了TOHEX，组建了全新的制作组-XtremeWave，弥补过去的错误并以全新的面貌回归，Town Of New Epic_Xtreme(TONEX)就此诞生。<br>
+如今的TONX再一次终止了更新，而我们也在TONEX恢复了TONX未来得及完成的TOHE的全部内容，<br>
+让我们再一次，以“传承”的名义，继续模组的制作！
+> ——XtremeWave
 
 ## 须知
 本模组不隶属于 Among Us 或 Innersloth LLC，其包含的内容也未得到 Innersloth LLC 的认可或以其他方式赞助。<br>
@@ -30,12 +33,13 @@
 
 ## 部分想法来源与支持
  - [Town Of Host](https://github.com/tukasa0001/TownOfHost)
- - [Town Of Host Edited & Town Of Next](https://github.com/KARPED1EM/TownOfHostEdited)
+ - [Town Of Next(原Town Of Host Edited)](https://github.com/KARPED1EM/TownOfHostEdited)
  - [Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y)
  - [Town Of Host:The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles)
  - [Super New Roles](https://github.com/ykundesu/SuperNewRoles)
  - [Town Of Host-ReEdited](https://github.com/Loonie-Toons/TownOfHost-ReEdited)
  - [Town Of Host:Enhanced](https://github.com/0xDrMoe/TownofHost-Enhanced)
+ - [Endless Host Roles(原Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles)
  - [Town Of Us](https://github.com/Loonie-Toons/TownOfHost-ReEdited)
  - [Town-Of-Us-R](https://github.com/eDonnes124/Town-Of-Us-R)
  - [Foolers Mod](https://github.com/MengTube/Foolers-Mod)
@@ -96,37 +100,43 @@
 - 开发者：[Moe](https://github.com/0xDrMoe)
 - 许多职业想法
 - 参考: 愚人节牧马模式(v2024.3.5后)
+- ### [Endless Host Roles(原Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles) :
+- 开发者：[Gurge44](https://github.com/Gurge44)
+- Many role ideas
+- Provided: Pet Event
 
 ## 开发者成员
 ### XtremeWave成员
- - [喜](https://github.com/Xieiawa)- **开发者**
- - [Slok7565](https://github.com/Slok7565)- **开发者 &amp; 翻译**
- - Zeyan - **开发者 &amp; 翻译**
- - 玖咪 - **开发者**
- - 小黄117 - **美术**
- - caaattt - **美术**
- - [QingFeng](https://github.com/QingFeng-awa) - **网站开发**
- - [Miaoice](https://github.com/Miaoice) - **网站开发**
- - Hartex - **宣传**
- - JMS - **宣传**
- - ㍿ - **职业设计**
- - [Terry(中立小黑)](https://github.com/ZhongLiXiaoHei) - **职业设计**
- - [一念旧情丶](https://github.com/ynjq) - **职业设计**
+ - [喜](https://github.com/Xieiawa)- **开发组-编程 &amp; 文创组-翻译**
+ - [QingFeng](https://github.com/QingFeng-awa) - **开发组-网站 &amp; 运营组-维护**
+ - [Slok7565](https://github.com/Slok7565)- **开发组-编程 &amp; 文创组-音乐、翻译、宣传 &amp; 运营组-发行、交流**
+ - Zeyan - **开发组-编程 &amp; 文创组-翻译**
+ - 小黄117 - **文创组-美术**
+ - caaattt - **文创组-美术**
+ - 玖咪 - **开发组-编程**
+ - JMS - **文创组-宣传**
+ - [中立小黑](https://github.com/ZhongLiXiaoHei) - **文创组-翻译**
+ - [空水梦冰](https://github.com/Miaoice) - **文创组-设计**
+ - Hartex - **文创组-宣传**
+ - ㍿ - **文创组-设计**
+ - Zxtlem - **文创组-设计**
+ - 刻刻刻刻刻薄 - **文创组-宣传**
+ - [一念旧情丶](https://github.com/ynjq) - **文创组-设计**
 
-### Contributors
+### 贡献者
  - [KARPED1EM](https://github.com/KARPED1EM) - **技术支持**
  - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **[TOHEX](https://tohex.cc)开发者**
  - ryuk - **新功能与优秀的想法**
- - Amongus(水木年华) - **翻译与支持**
+ - Amongus(水木年华) - **翻译与技术支持**
  - [NikoCat233](https://github.com/NikoCat233) - **技术支持**
  - Farewell - **咨询支持**
  - [LeZaiYa](https://github.com/LezaiYa1) - **咨询支持**
- - Imp11 - **咨询支持**
- - 方块 - **咨询支持**
+ - [Imp11](https://github.com/dabao40) - **咨询支持**
+ - [方块](https://github.com/FangKuaiYa) - **咨询支持**
 
-## Star History
+## 星标历史
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
 
-## 我们的其它明显项目
- - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX,using with VuePress-reco.
- - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN(车队姬),powered by 天梦LK.
+## 我们的其它开源项目
+ - [TONEX官方网站](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) -使用了 VuePress-reco.
+ - [TONEX车队姬](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - 由天梦LK提供技术支持.

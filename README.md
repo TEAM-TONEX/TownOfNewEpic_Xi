@@ -1,8 +1,8 @@
 <div align="center">
 	
-![XtremeWave-TONEX](https://github.com/QingFeng-awa/TownOfNewEpic_Xtreme/assets/151742581/d3ac3d89-170a-4613-b555-60621c8ba95b)
+![XtremeWave-TONEX](Assets/XtremeWave-TONEX.png)
 
-**TownOfNewEpic_Xtreme,AmongUsMod Excellent Leaders.**
+**TownOfNewEpic_Xtreme, an outstanding contributor to Among Us mods**
 
 <img src="https://badgen.net/github/license/XtremeWave/TownOfNewEpic_Xtreme" alt="Licences">
 <img src="https://badgen.net/github/tag/XtremeWave/TownOfNewEpic_Xtreme" alt="LatestTag">
@@ -19,23 +19,27 @@
 </div>
 
 ## About Us
-Since May 20, TOHE stopped development due to some reasons.<br>
-At the request of many players, TOHE will maintain the most basic adaptation and synchronize updates with TOH to ensure that players in need can still play normally.<br>
-Because Of this, we no longer in the "name of inheritance", so we restart our project, named it "TONEX".
-> TOHE has renamed TONX.
+Since May 20, 2023, Town Of Host Edited (TOHE) has ceased development. To keep the "flame" of TOHE alive, we developed a branch project called Town Of Host Edited-Xi (TOHEX).<br>
+However, the development of this project was not smooth sailing; our reputation continued to decline, and our efforts yielded no results.<br>
+At the request of many players, KARPED1EM decided to maintain basic compatibility for TOHE and renamed it to Town Of Next (TONX).<br>
+Consequently, we improved and recreated TOHEX based on TONX, forming a new team, XtremeWave, to correct past mistakes and return with a fresh look. Thus, Town Of New Epic_Xtreme (TONEX) was born.<br>
+Now, TONX has once again ceased updates, but we have restored all the content from TOHE that TONX could not complete within TONEX.<br>
+Let us continue the creation of mods in the name of "inheritance" once more!
+> ——XtremeWave
 
 ## Regarding
 This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC.<br>
-Portions of the materials contained herein are property of Innersloth LLC.
+Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
 
 # Source of ideas & Supports
  - [Town Of Host](https://github.com/tukasa0001/TownOfHost)
- - [Town Of Host Edited & Town Of Next](https://github.com/KARPED1EM/TownOfHostEdited)
+ - [Town Of Host Edited(Formerly Town Of Host Edited)](https://github.com/KARPED1EM/TownOfHostEdited)
  - [Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y)
  - [Town Of Host:The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles)
  - [Super New Roles](https://github.com/ykundesu/SuperNewRoles)
  - [Town Of Host-ReEdited](https://github.com/Loonie-Toons/TownOfHost-ReEdited)
  - [Town Of Host:Enhanced](https://github.com/0xDrMoe/TownofHost-Enhanced)
+ - [Endless Host Roles(Formerly Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles)
  - [Town Of Us](https://github.com/Loonie-Toons/TownOfHost-ReEdited)
  - [Town-Of-Us-R](https://github.com/eDonnes124/Town-Of-Us-R)
  - [Foolers Mod](https://github.com/MengTube/Foolers-Mod)
@@ -96,37 +100,43 @@ Portions of the materials contained herein are property of Innersloth LLC.
 - Developer：[Moe](https://github.com/0xDrMoe)
 - Many role ideas
 - Reference: Switch Horse Mode(v2024.3.5后)
+- ### [Endless Host Roles(Formerly Town Of Host Edited Plus)](https://github.com/Gurge44/EndlessHostRoles) :
+- Developer：[Gurge44](https://github.com/Gurge44)
+- Many role ideas
+- Provided: Pet Event
 
 ## Credits
 ### Members Of XtremeWave
- - [喜](https://github.com/Xieiawa)- **Developer**
- - [Slok7565](https://github.com/Slok7565)- **Developer &amp; Translator**
- - Zeyan - **Developer &amp; Translator**
- - 玖咪 - **Developer**
- - 小黄117 - **Artist**
- - caaattt - **Artist**
- - [QingFeng](https://github.com/QingFeng-awa) - **Website**
- - [Miaoice](https://github.com/Miaoice) - **WebSite**
- - Hartex - **Promotion**
- - JMS - **Promotion**
- - ㍿ - **Innovation**
- - [Terry(中立小黑)](https://github.com/ZhongLiXiaoHei) - **Innovation**
- - [一念旧情丶](https://github.com/ynjq) - **Innovation**
+ - [喜](https://github.com/Xieiawa) - **Development Team - Programming &amp; Creative Team - Translation**
+ - [QingFeng](https://github.com/QingFeng-awa) - **Development Team - Website &amp; Operations Team - Maintenance**
+ - [Slok7565](https://github.com/Slok7565) - **Development Team - Programming &amp; Creative Team - Music, Translation, Promotion &amp; Operations Team - Distribution, Communication**
+ - Zeyan - **Development Team - Programming & Creative Team - Translation**
+ - 小黄117 - **Creative Team - Art**
+ - caaattt - **Creative Team - Art**
+ - 玖咪 - **Development Team - Programming**
+ - JMS - **Creative Team - Promotion**
+ - [中立小黑](https://github.com/ZhongLiXiaoHei) - **Creative Team - Translation**
+ - [空水梦冰](https://github.com/Miaoice) - **Creative Team - Design**
+ - Hartex - **Creative Team - Promotion**
+ - ㍿ - **Creative Team - Design**
+ - Zxtlem - **Creative Team - Design**
+ - 刻刻刻刻刻薄 - **Creative Team - Promotion**
+ - [一念旧情丶](https://github.com/ynjq) - **Creative Team - Design**
 
 ### Contributors
- - [KARPED1EM](https://github.com/KARPED1EM) - **Technical Support**
- - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **Developer In [TOHEX](https://tohex.cc)**
- - ryuk - **Provide Some Ideas Of Features**
- - Amongus(水木年华) - **Translate&Bugs Fix**
- - [NikoCat233](https://github.com/NikoCat233) - **Bugs Fix&Technical Support**
- - Farewell - **Support**
- - [LeZaiYa](https://github.com/LezaiYa1) - **Support**
- - Imp11 - **Support**
- - 方块 - **Support**
+- [KARPED1EM](https://github.com/KARPED1EM) - **Technical Support**
+ - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **Developer of [TOHEX](https://tohex.cc)**
+ - ryuk - **New Features &amp; Great Ideas**
+ - Amongus (水木年华) - **Translation &amp; Technical Support**
+ - [NikoCat233](https://github.com/NikoCat233) - **Technical Support**
+ - Farewell - **Consultation Support**
+ - [LeZaiYa](https://github.com/LezaiYa1) - **Consultation Support**
+ - [Imp11](https://github.com/dabao40) - **Consultation Support**
+ - [方块](https://github.com/FangKuaiYa) - **Consultation Support**
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
 
 ## Our Other Star Projects
- - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX,using with VuePress-reco.
- - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN(车队姬),powered by 天梦LK.
+ - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX, using with VuePress-reco.
+ - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN, powered by 天梦LK.

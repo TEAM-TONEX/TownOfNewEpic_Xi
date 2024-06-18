@@ -74,7 +74,7 @@ public static class ServerAddManager
             "方块服[北京]" => "方块[北京]",
             "Nikocat233(CN)" => "Niko(CN)",
             "Nikocat233(US)" => "Niko(US)",
-            "XtremeWave[HongKong]" => "XW[HK]",
+            "XtremeWave[HongKong]" =>  "XW[HK]",
 
             _ => serverName,
         };
@@ -87,6 +87,7 @@ public static class ServerAddManager
                 "Europe" => "欧服",
                 "North America" => "北美服",
                 "NA" => "北美服",
+                "XW[HK]" => "XW[香港]",
                 _ => name,
             };
         };
@@ -110,7 +111,7 @@ public static class ServerAddManager
 
             _ => new(255, 255, 255, 255),
         };
-
+        Cloud.ServerName = name;
         PingTrackerUpdatePatch.ServerName = Utils.ColorString(color, name);
     }
 

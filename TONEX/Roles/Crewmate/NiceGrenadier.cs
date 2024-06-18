@@ -86,7 +86,7 @@ public sealed class NiceGrenadier : RoleBase
         MadBlindingStartTime = -1;
         
     }
-    public override long UsePetCoolDown_Totally { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -103,7 +103,7 @@ public sealed class NiceGrenadier : RoleBase
         text = GetString("NiceGrenadierVetnButtonText");
         return PetUnSet();
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (Player.Is(CustomRoles.Madmate))
         {
@@ -143,7 +143,6 @@ public sealed class NiceGrenadier : RoleBase
             }
             Blinds.Add(pc.PlayerId);
             
-            //pc.Notify("<size=1000><color=#ffffff>●</color></size>", OptionSkillDuration.GetInt());
         }
     }
     public override void OnFixedUpdate(PlayerControl player)
