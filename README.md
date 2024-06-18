@@ -19,13 +19,13 @@
 </div>
 
 ## About Us
-On 20 May 2023, TownOfHostEdited (TOHE) ceased development.
-In order to continue the "flame" of TOHE, we developed an offshoot called TownOfHostEdited-Xi (TOHEX).
-However, the development of this project did not go smoothly, our reputation continued to decline, and our development was fruitless.
-In the end, on 2 February 2024, we officially ceased development of TOHEX.
-After that, at the request of the players, KARPED1EM renamed it TownOfNext (TONX) in order to maintain the basic compatibility of TOHE.
-Therefore, we improved and remade TOHEX based on TONX, and formed a brand new production team XtremeWave to make up for the mistakes of the past and return with a brand new look, and TownOfNewEpic_Xtreme(TONEX) was born.
-However, TONX has once again stopped updating, but we at TONEX have restored all the content of TOHE that TONX had not been able to finish.
+On 20 May 2023, TownOfHostEdited (TOHE) ceased development.<br>
+In order to continue the "flame" of TOHE, we developed an offshoot called [TownOfHostEdited-Xi (TOHEX)](https://tohex.cc).<br>
+However, the development of this project did not go smoothly, our reputation continued to decline, and our development was fruitless.<br>
+In the end, on 2 February 2024, we officially ceased development of TOHEX.<br>
+After that, at the request of the players, KARPED1EM renamed it TownOfNext (TONX) in order to maintain the basic compatibility of TOHE.<br>
+Therefore, we improved and remade TOHEX based on TONX, and formed a brand new production team [XtremeWave](https://www.xtreme.net.cn) to make up for the mistakes of the past and return with a brand new look, and TownOfNewEpic_Xtreme(TONEX) was born.<br>
+However, TONX has once again stopped updating, but we at TONEX have restored all the content of TOHE that TONX had not been able to finish.<br>
 Let's continue making modules in the name of "legacy" once again!
 
 <div align="right">
