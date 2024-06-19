@@ -1,5 +1,6 @@
 using AmongUs.Data;
 using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
@@ -18,7 +19,7 @@ class OnGameJoinedPatch
 {
     public static void Postfix(AmongUsClient __instance)
     {
-        
+        if (Main.AssistivePluginMode.Value) return;
         while (!Options.IsLoaded) System.Threading.Tasks.Task.Delay(1);
         Logger.Info($"{__instance.GameId} 加入房间", "OnGameJoined");
         Main.playerVersion = new Dictionary<byte, PlayerVersion>();
@@ -201,7 +202,7 @@ class CreatePlayerPatch
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-
+        if (!Main.AssistivePluginMode.Value) return;//辅助插件模式
         Logger.Msg($"创建玩家数据：ID{client.Character.PlayerId}: {client.PlayerName}", "CreatePlayer");
 
         //规范昵称

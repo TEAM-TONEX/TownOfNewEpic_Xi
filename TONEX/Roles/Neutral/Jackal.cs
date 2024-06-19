@@ -174,7 +174,7 @@ public sealed class Jackal : RoleBase, INeutralKiller
                     taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();
                     if (AmongUsClient.Instance.AmHost)
                     {
-                        GameData.Instance.RpcSetTasks(target.PlayerId, Array.Empty<byte>());
+                        Player.Data.RpcSetTasks(Array.Empty<byte>());
                         target.SyncSettings();
                         Utils.NotifyRoles();
                     }

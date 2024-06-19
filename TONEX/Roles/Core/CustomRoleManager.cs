@@ -657,7 +657,7 @@ public enum CustomRoles
     Engineer = 400,
     Scientist,
     GuardianAngel,
-    NoiseMaker,
+    Noisemaker,
     Tracker,
     //Crewmate
     Luckey,

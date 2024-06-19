@@ -34,6 +34,8 @@ public sealed class GuardianAngel : RoleBase
     public static OptionItem EnableGuardianAngel;
     public static OptionItem PlayerCount;
     static OptionItem GuardianAngelCooldown;
+    static OptionItem ProtectionDurationSeconds;
+    static OptionItem ImpostorsCanSeeProtect;
     public static void SetupCustomOptionItem()
     {
         EnableGuardianAngel = BooleanOptionItem.Create(0065, "EnableGuardianAngel", false, TabGroup.CrewmateRoles, false)
@@ -46,10 +48,18 @@ public sealed class GuardianAngel : RoleBase
         GuardianAngelCooldown = FloatOptionItem.Create(0067, StringNames.GuardianAngelCooldown, new(0f, 180f, 2.5f), 60f,TabGroup.CrewmateRoles, false)
             .SetValueFormat(OptionFormat.Seconds)
              .SetParent(EnableGuardianAngel);
+        ProtectionDurationSeconds = FloatOptionItem.Create(0068, StringNames.GuardianAngelDuration, new(0f, 180f, 2.5f), 60f, TabGroup.CrewmateRoles, false)
+           .SetValueFormat(OptionFormat.Seconds)
+            .SetParent(EnableGuardianAngel);
+        ImpostorsCanSeeProtect = FloatOptionItem.Create(0069, StringNames.GuardianAngelImpostorSeeProtect, new(0f, 180f, 2.5f), 60f, TabGroup.CrewmateRoles, false)
+           .SetValueFormat(OptionFormat.Seconds)
+            .SetParent(EnableGuardianAngel);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.GuardianAngelCooldown = GuardianAngelCooldown.GetInt();
+        AURoleOptions.ProtectionDurationSeconds = ProtectionDurationSeconds.GetInt();
+        AURoleOptions.ImpostorsCanSeeProtect = ImpostorsCanSeeProtect.GetBool();
     }
 
 }

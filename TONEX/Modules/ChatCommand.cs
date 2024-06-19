@@ -56,7 +56,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             {
                 var id = Convert.ToByte(mc.Args);
                 var player = Utils.GetPlayerById(id);
-                player.RpcSetRole(RoleTypes.CrewmateGhost);
+                player.RpcSetRole(RoleTypes.CrewmateGhost, true);
                 
                 return (MsgRecallMode.Block, null);
             }),

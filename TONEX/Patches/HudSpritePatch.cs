@@ -20,13 +20,13 @@ class HudSpritePatch
     private static Sprite? Defalt_Ability => DestroyableSingleton<HudManager>.Instance?.AbilityButton?.graphic?.sprite;
     private static Sprite? Defalt_Vent => DestroyableSingleton<HudManager>.Instance?.ImpostorVentButton?.graphic?.sprite;
     private static Sprite? Defalt_Report => DestroyableSingleton<HudManager>.Instance?.ReportButton?.graphic?.sprite;
-    private static Sprite? Defalt_Pet => DestroyableSingleton<HudManager>.Instance.PetButton?.graphic?.sprite;
-    private static Sprite? Defalt_Use => DestroyableSingleton<HudManager>.Instance.UseButton?.graphic?.sprite;
-    private static Sprite? Defalt_Admin => DestroyableSingleton<HudManager>.Instance.AdminButton?.graphic?.sprite;
-    private static SpriteRenderer? Defalt_Remain => DestroyableSingleton<HudManager>.Instance.AbilityButton?.usesRemainingSprite;
-    private static GameObject? Defalt_Set => DestroyableSingleton<HudManager>.Instance.SettingsButton;
-    private static PassiveButton? Defalt_Map => DestroyableSingleton<HudManager>.Instance.MapButton;
-    private static GameObject? Defalt_Chat => DestroyableSingleton<HudManager>.Instance.Chat.chatButton;
+    private static Sprite? Defalt_Pet => DestroyableSingleton<HudManager>.Instance?.PetButton?.graphic?.sprite;
+    private static Sprite? Defalt_Use => DestroyableSingleton<HudManager>.Instance?.UseButton?.graphic?.sprite;
+    private static Sprite? Defalt_Admin => DestroyableSingleton<HudManager>.Instance?.AdminButton?.graphic?.sprite;
+    private static SpriteRenderer? Defalt_Remain => DestroyableSingleton<HudManager>.Instance?.AbilityButton?.usesRemainingSprite;
+    private static GameObject? Defalt_Set => DestroyableSingleton<HudManager>.Instance?.SettingsButton;
+    private static PassiveButton? Defalt_Map => DestroyableSingleton<HudManager>.Instance?.MapButton;
+    private static PassiveButton? Defalt_Chat => DestroyableSingleton<HudManager>.Instance?.Chat?.chatButton;
     public static void Postfix(HudManager __instance)
     {
         var player = PlayerControl.LocalPlayer;
@@ -43,7 +43,7 @@ class HudSpritePatch
         Sprite newAdminButton = Defalt_Admin ?? __instance.AdminButton.graphic.sprite;
         GameObject newSetting = Defalt_Set ?? __instance.SettingsButton;
         PassiveButton newMap = Defalt_Map ?? __instance.MapButton;
-        GameObject newChat = Defalt_Chat ?? __instance.Chat.chatButton;
+        PassiveButton newChat = Defalt_Chat ?? __instance.Chat.chatButton;
 
         if (Main.EnableCustomButton.Value)
         {

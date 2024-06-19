@@ -333,7 +333,7 @@ public abstract class RoleBase : IDisposable
     /// <param name="reporter">报告者</param>
     /// <param name="target">被报告的玩家</param>
     /// <returns>false：取消报告</returns>
-    public virtual bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target) => true;
+    public virtual bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target) => true;
 
     /// <summary>
     /// 报告时调用的函数
@@ -341,7 +341,7 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     /// <param name="reporter">报告者</param>
     /// <param name="target">被报告的玩家</param>
-    public virtual void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public virtual void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     { }
 #endregion
     #region 宠物管道相关处理
@@ -432,7 +432,7 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     /// <param name="exiled">被驱逐的玩家</param>
     /// <param name="DecidedWinner">是否决定了胜利玩家</param>
-    public virtual void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public virtual void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     { }
 
     /// <summary>
@@ -442,7 +442,7 @@ public abstract class RoleBase : IDisposable
     /// <param name="DecidedWinner">是否决定了胜利玩家</param>
     /// <param name="winDescriptionText">胜利描述文本</param>
     /// <returns>OnExileWrapUp 将要执行的函数</returns>
-    public virtual Action CheckExile(GameData.PlayerInfo exiled, ref bool DecidedWinner, ref List<string> WinDescriptionText) => null;
+    public virtual Action CheckExile(NetworkedPlayerInfo exiled, ref bool DecidedWinner, ref List<string> WinDescriptionText) => null;
 
     /// <summary>
     /// 每次会议结束后调用的函数

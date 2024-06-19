@@ -143,7 +143,7 @@ internal class ChangeRoleSettings
 
                 RandomSpawn.CustomNetworkTransformPatch.FirstTP.Add(pc.PlayerId, false);
                 var outfit = pc.Data.DefaultOutfit;
-                Camouflage.PlayerSkins[pc.PlayerId] = new GameData.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+                Camouflage.PlayerSkins[pc.PlayerId] = new NetworkedPlayerInfo.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
                 Main.clientIdList.Add(pc.GetClientId());
             }
             Main.VisibleTasksCount = true;
@@ -392,20 +392,28 @@ internal class SelectRolesPatch
         var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
         var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
 
-        //Desync役職視点
+        if (role is CustomRoles.CrewPostor) othersRole = RoleTypes.Impostor;
+        // 同时处理Desync角色视角和其他玩家角色视角
         foreach (var target in Main.AllPlayerControls)
+        {
+            // Desync角色视角
             rolesMap[(player.PlayerId, target.PlayerId)] = player.PlayerId != target.PlayerId ? othersRole : selfRole;
 
-        //他者視点
-        foreach (var seer in Main.AllPlayerControls.Where(x => player.PlayerId != x.PlayerId))
-            rolesMap[(seer.PlayerId, player.PlayerId)] = othersRole;
+            // 其他玩家角色视角（针对不是当前玩家的玩家）
+            if (player.PlayerId != target.PlayerId)
+            {
+                rolesMap[(target.PlayerId, player.PlayerId)] = othersRole;
+            }
+        }
 
+        // 将当前玩家添加到发送者列表
         RpcSetRoleReplacer.OverriddenSenderList.Add(senders[player.PlayerId]);
+
         //ホスト視点はロール決定
-        player.SetRole(othersRole);
+        player.StartCoroutine(player.CoSetRole(othersRole, true));
         player.Data.IsDead = true;
 
-        Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomSubRoles");
+        Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomRoles");
     }
     public static void MakeDesyncSender(Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap)
     {
@@ -431,7 +439,7 @@ internal class SelectRolesPatch
         public static List<(PlayerControl, RoleTypes)> StoragedData = new();
         // 役職Desyncなど別の処理でSetRoleRpcを書き込み済みなため、追加の書き込みが不要なSenderのリスト
         public static List<CustomRpcSender> OverriddenSenderList;
-        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType)
+        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType, [HarmonyArgument(1)] bool canOverrideRole = true)
         {
             if (doReplace && senders != null)
             {
@@ -450,7 +458,7 @@ internal class SelectRolesPatch
 
                 foreach (var pair in StoragedData)
                 {
-                    pair.Item1.SetRole(pair.Item2);
+                    pair.Item1.StartCoroutine(pair.Item1.CoSetRole(pair.Item2, true));
                     sender.Value.AutoStartRpc(pair.Item1.NetId, (byte)RpcCalls.SetRole, Utils.GetPlayerById(sender.Key).GetClientId())
                         .Write((ushort)pair.Item2)
                         .EndRpc();

@@ -106,7 +106,7 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
     {
         ProtectStartTime = -1;
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
     }

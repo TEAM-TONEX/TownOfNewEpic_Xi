@@ -192,7 +192,7 @@ ctop:true
         return Utils.ColorString(color, $"(LV{LOVE})"  +$"HP{hp}");
     }
   
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (!Is(reporter) || target != null || !OptionCanGetLoveByReport.GetBool()) return true;
 

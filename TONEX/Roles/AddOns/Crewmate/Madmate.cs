@@ -138,7 +138,7 @@ public static class Madmate
                     taskState.AllTasksCount = Madmate.MadSnitchTasks.GetInt();
                     if (AmongUsClient.Instance.AmHost)
                     {
-                        GameData.Instance.RpcSetTasks(voter.PlayerId, Array.Empty<byte>());
+                        voter.Data.RpcSetTasks(Array.Empty<byte>());
                         voter.SyncSettings();
                         Utils.NotifyRoles();
                     }
@@ -176,7 +176,7 @@ public static class Madmate
                     taskState.AllTasksCount = Madmate.MadSnitchTasks.GetInt();
                     if (AmongUsClient.Instance.AmHost)
                     {
-                        GameData.Instance.RpcSetTasks(player.PlayerId, Array.Empty<byte>());
+                        player.Data.RpcSetTasks(Array.Empty<byte>());
                         player.SyncSettings();
                         Utils.NotifyRoles();
                     }
@@ -195,7 +195,7 @@ public static class Madmate
             taskState.AllTasksCount = Madmate.MadSnitchTasks.GetInt();
             if (AmongUsClient.Instance.AmHost)
             {
-                GameData.Instance.RpcSetTasks(target.PlayerId, Array.Empty<byte>());
+                target.Data.RpcSetTasks(Array.Empty<byte>());
                 target.SyncSettings();
                 Utils.NotifyRoles();
             }

@@ -152,12 +152,12 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
             }, OptionSkillDuration.GetFloat(), "Time Stopper");
         }
     }
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (EvilTimeStopperstop.Contains(reporter.PlayerId))    return false;
         return true;
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
     }

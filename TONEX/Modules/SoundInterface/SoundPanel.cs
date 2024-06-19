@@ -30,11 +30,6 @@ public static class SoundPanel
     {
         if (CustomBackground != null)
             CustomBackground?.gameObject?.SetActive(false);
-        if (!GameStates.IsNotJoined)
-        {
-            Utils.LocationLocked = false;
-            PlayerControl.LocalPlayer.EnableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, true);
-        }
     }
     public static void Init(OptionsMenuBehaviour optionsMenuBehaviour)
     {
@@ -64,11 +59,6 @@ public static class SoundPanel
             {
                 
                 CustomBackground.gameObject.SetActive(false);
-                if (!GameStates.IsNotJoined)
-                {
-                    Utils.LocationLocked = false;
-                    PlayerControl.LocalPlayer.EnableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, true);
-                }
             }));
 
             var stopButton = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);

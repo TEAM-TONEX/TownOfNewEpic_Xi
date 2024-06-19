@@ -32,8 +32,8 @@ public sealed class Skinwalker : RoleBase, IImpostor
         TargetSpeed = new();
         TargetName = "";
     }
-    public GameData.PlayerOutfit TargetSkins = new();
-    public GameData.PlayerOutfit KillerSkins = new();
+    public NetworkedPlayerInfo.PlayerOutfit TargetSkins = new();
+    public NetworkedPlayerInfo.PlayerOutfit KillerSkins = new();
     public float KillerSpeed = new();
     public string KillerName = "";
     public float TargetSpeed = new();
@@ -57,9 +57,9 @@ public sealed class Skinwalker : RoleBase, IImpostor
     public bool OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        KillerSkins = new GameData.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId);
+        KillerSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId);
 
-        TargetSkins = new GameData.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId);
+        TargetSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId);
         TargetSpeed = Main.AllPlayerSpeed[target.PlayerId];
         TargetName = Main.AllPlayerNames[target.PlayerId];
         KillerSpeed = Main.AllPlayerSpeed[killer.PlayerId];

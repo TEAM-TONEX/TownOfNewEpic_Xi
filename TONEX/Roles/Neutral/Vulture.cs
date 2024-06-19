@@ -124,7 +124,7 @@ public sealed class Vulture : RoleBase, INeutral
         LocateArrow.RemoveAllTarget(Player.PlayerId);
         SendRPC(false);
     }
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         Logger.Info("1", "test");
         if (target != null && ForVulture.Contains(target.PlayerId))
@@ -178,7 +178,7 @@ public sealed class Vulture : RoleBase, INeutral
         if (!Is(seer) || !(seen) || isForMeeting) return "";
         return (Utils.ColorString(Utils.GetRoleColor(CustomRoles.Vulture), LocateArrow.GetArrows(seer)));
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         EatTime = Utils.GetTimeStamp();
     }

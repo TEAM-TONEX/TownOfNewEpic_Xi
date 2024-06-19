@@ -63,7 +63,7 @@ public sealed class SpecterSlayer : RoleBase, IKiller, ISchrodingerCatOwner
         }
         return true;
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (reporter == null || !Is(reporter) || target == null || reporter.PlayerId == target.PlayerId) return;
         KillLimit++;

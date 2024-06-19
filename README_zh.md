@@ -19,13 +19,18 @@
 </div>
 
 ## 关于我们
-自2023年5月20日起，Town Of Host Edited(TOHE)停止了开发。为了延续TOHE的“火种”，我们开发了一个名为Town Of Host Edited-Xi(TOHEX)的分支项目<br>
+自2023年5月20日起，Town Of Host Edited(TOHE)停止了开发。<br>
+为了延续TOHE的“火种”，我们开发了一个名为Town Of Host Edited-Xi(TOHEX)的分支项目<br>
 然而，这个项目的开发并不是一帆风顺，我们的口碑持续下滑，我们的开发毫无成果。<br>
+最终，在2023年11月17日，TOHEX无期限停更<br>
 应广大玩家的请求, KARPED1EM为TOHE保持最基本的兼容，并将其更名为Town Of Next(TONX)。<br>
 因此，我们基于TONX进行改良并重新制作了TOHEX，组建了全新的制作组-XtremeWave，弥补过去的错误并以全新的面貌回归，Town Of New Epic_Xtreme(TONEX)就此诞生。<br>
 如今的TONX再一次终止了更新，而我们也在TONEX恢复了TONX未来得及完成的TOHE的全部内容，<br>
 让我们再一次，以“传承”的名义，继续模组的制作！
-> ——XtremeWave
+
+<div align="right">
+——XtremeWave
+</div>
 
 ## 须知
 本模组不隶属于 Among Us 或 Innersloth LLC，其包含的内容也未得到 Innersloth LLC 的认可或以其他方式赞助。<br>

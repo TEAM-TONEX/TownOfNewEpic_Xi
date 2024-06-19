@@ -13,7 +13,7 @@ public sealed class Shapeshifter : RoleBase, IImpostor
            CustomRoles.Shapeshifter,
            () => RoleTypes.Shapeshifter,
            CustomRoleTypes.Impostor,
-           0050,
+           0040,
            SetupOptionItem,
            "shape",
            "#ff1919"

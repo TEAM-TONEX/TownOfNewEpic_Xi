@@ -74,7 +74,7 @@ static class ExtendedPlayerControl
     {
         playanima = false;
         InGameSetRole = true;
-        player.RpcSetRole(role);
+        player.RpcSetRole(role, true);
         playanima = true;
         InGameSetRole = false;
     }
@@ -118,7 +118,7 @@ static class ExtendedPlayerControl
         var client = player.GetClient();
         return client == null ? -1 : client.Id;
     }
-    public static CustomRoles GetCustomRole(this GameData.PlayerInfo player)
+    public static CustomRoles GetCustomRole(this NetworkedPlayerInfo player)
     {
         return player == null || player.Object == null ? CustomRoles.Crewmate : player.Object.GetCustomRole();
     }
@@ -255,7 +255,7 @@ static class ExtendedPlayerControl
         if (player == null) return;
         if (AmongUsClient.Instance.ClientId == clientId)
         {
-            player.SetRole(role);
+            player.StartCoroutine(player.CoSetRole(role, true));
             return;
         }
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, clientId);
@@ -1488,7 +1488,7 @@ static class ExtendedPlayerControl
             meetingHud.ClearVote();
         }
     }
-    public static void NoCheckStartMeeting(this PlayerControl reporter, GameData.PlayerInfo target, bool force = false)
+    public static void NoCheckStartMeeting(this PlayerControl reporter, NetworkedPlayerInfo target, bool force = false)
     { /*サボタージュ中でも関係なしに会議を起こせるメソッド
         targetがnullの場合はボタンとなる*/
 

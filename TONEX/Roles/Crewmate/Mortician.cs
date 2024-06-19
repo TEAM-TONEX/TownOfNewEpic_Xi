@@ -76,7 +76,7 @@ public sealed class Mortician : RoleBase
         LocateArrow.RemoveAllTarget(Player.PlayerId);
         SendRPC(false);
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (reporter == null || !Is(reporter) || target == null || reporter.PlayerId == target.PlayerId) return;
         MsgToSend = LastPlayerName.TryGetValue(target.PlayerId, out var name)

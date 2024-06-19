@@ -12,7 +12,7 @@ public sealed class Scientist : RoleBase
            CustomRoles.Scientist,
            () => RoleTypes.Scientist,
            CustomRoleTypes.Crewmate,
-           0040,
+           0030,
            SetupOptionItem,
            "sci",
            "#F8FF8C"

@@ -138,7 +138,7 @@ public sealed class TimeMaster : RoleBase
             player.Notify(string.Format(GetString("TimeMasterOffGuard")));
         }
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
     }

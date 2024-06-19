@@ -166,7 +166,7 @@ public sealed class EvilInvisibler : RoleBase, IImpostor
 
         info.DoKill = false;
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         LastTime = -1;
         InvisTime = -1;

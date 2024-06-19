@@ -100,14 +100,14 @@ public sealed class Medusa : RoleBase, IImpostor
                
         }
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner) => ForMedusa.Clear();
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner) => ForMedusa.Clear();
     public override void OnStartMeeting() => ForMedusa.Clear();
     public static string MarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
         return (ForMedusa.Contains(seen.PlayerId) && isForMeeting == false) ? Utils.ColorString(Color.black, "⬛") : "";
     }
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (ForMedusa.Contains(target.PlayerId))
         {

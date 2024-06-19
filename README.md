@@ -19,13 +19,18 @@
 </div>
 
 ## About Us
-Since May 20, 2023, Town Of Host Edited (TOHE) has ceased development. To keep the "flame" of TOHE alive, we developed a branch project called Town Of Host Edited-Xi (TOHEX).<br>
+Since May 20, 2023, Town Of Host Edited (TOHE) has ceased development. <br>
+To keep the "flame" of TOHE alive, we developed a branch project called Town Of Host Edited-Xi (TOHEX).<br>
 However, the development of this project was not smooth sailing; our reputation continued to decline, and our efforts yielded no results.<br>
+Finally, on November 17, 2023, TOHEX ceased updates indefinitely.<br>
 At the request of many players, KARPED1EM decided to maintain basic compatibility for TOHE and renamed it to Town Of Next (TONX).<br>
 Consequently, we improved and recreated TOHEX based on TONX, forming a new team, XtremeWave, to correct past mistakes and return with a fresh look. Thus, Town Of New Epic_Xtreme (TONEX) was born.<br>
 Now, TONX has once again ceased updates, but we have restored all the content from TOHE that TONX could not complete within TONEX.<br>
-Let us continue the creation of mods in the name of "inheritance" once more!
-> ——XtremeWave
+Let us continue the creation of mods in the name of "INHERITANCE" once more!
+
+<div align="right">
+——XtremeWave
+</div>
 
 ## Regarding
 This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC.<br>

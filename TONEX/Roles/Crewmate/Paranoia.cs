@@ -109,5 +109,5 @@ public sealed class Paranoia : RoleBase
         
         Player.RpcResetAbilityCooldown();
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner) => Player.RpcResetAbilityCooldown();
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner) => Player.RpcResetAbilityCooldown();
 }

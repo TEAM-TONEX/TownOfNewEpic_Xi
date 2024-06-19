@@ -13,7 +13,7 @@ public sealed class Engineer : RoleBase
            CustomRoles.Engineer,
            () => RoleTypes.Engineer,
            CustomRoleTypes.Crewmate,
-           0030,
+           0050,
            SetupOptionItem,
            "engin",
            "#8C90FF"

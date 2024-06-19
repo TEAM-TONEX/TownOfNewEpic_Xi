@@ -1,4 +1,5 @@
 using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils;
 using Epic.OnlineServices;
 using HarmonyLib;
 using Hazel;
@@ -353,8 +354,8 @@ class ShapeshiftPatch
 class ReportDeadBodyPatch
 {
     public static Dictionary<byte, bool> CanReport;
-    public static Dictionary<byte, List<GameData.PlayerInfo>> WaitReport = new();
-    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target)
+    public static Dictionary<byte, List<NetworkedPlayerInfo>> WaitReport = new();
+    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
     {
         if (Main.AssistivePluginMode.Value) return true;
         if (GameStates.IsMeeting) return false;
@@ -970,9 +971,10 @@ class CheckProtectPatch
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetRole))]
 class PlayerControlRpcSetRolePatch
 {
-    public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType)
+    public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, ref bool canOverrideRole )
     {
         if (Main.AssistivePluginMode.Value) return true;
+        canOverrideRole = true;
         var target = __instance;
         var targetName = __instance.GetNameWithRole();
         Logger.Info($"{targetName} =>{roleType}", "PlayerControl.RpcSetRole");
@@ -1025,7 +1027,7 @@ class PlayerControlRpcSetRolePatch
         return true;
     }
 }
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetRole))]
+/*[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CoSetRole))]*/
 public static class PlayerControlSetRolePatch
 {
     public static bool playanima = true;
@@ -1037,73 +1039,84 @@ public static class PlayerControlSetRolePatch
         InGameSetRole = false;
 
     }
-
-    public static void Prefix(PlayerControl __instance, RoleTypes role)
+    /*public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes role, [HarmonyArgument(1)] bool canOverride)
     {
-        if (!Main.AssistivePluginMode.Value)
+        bool ghostRole = RoleManager.IsGhostRole(role);
+        if (!DestroyableSingleton<TutorialManager>.InstanceExists && __instance.roleAssigned && !ghostRole)
         {
-            bool flag = RoleManager.IsGhostRole(role);
-            if (!DestroyableSingleton<TutorialManager>.InstanceExists && __instance.roleAssigned && !flag || !InGameSetRole)
-            {
-                return;
-            }
-            __instance.roleAssigned = true;
-            if (flag)
-            {
-                DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
-                __instance.Data.Role.SpawnTaskHeader(__instance);
-                if (__instance.AmOwner)
-                {
-                    DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
-                    return;
-                }
-            }
-            else
-            {
-                __instance.RemainingEmergencies = GameManager.Instance.LogicOptions.GetNumEmergencyMeetings();
-                DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
-                __instance.Data.Role.SpawnTaskHeader(__instance);
-                __instance.MyPhysics.SetBodyType(__instance.BodyType);
-                if (__instance.AmOwner)
-                {
-                    if (__instance.Data.Role.IsImpostor)
-                    {
-                        StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
-                        StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
-                    }
-                    else
-                    {
-                        StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
-                        StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
-                    }
-                    DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
-                    DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);
-                    DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(true);
-                }
-                if (!DestroyableSingleton<TutorialManager>.InstanceExists)
-                {
-                    if (Enumerable.All<PlayerControl>(Main.AllPlayerControls, (PlayerControl pc) => pc.roleAssigned || pc.Data.Disconnected))
-                    {
-                        System.Action<PlayerControl> action = new(pc => PlayerNameColor.Set(pc));
-                        PlayerControl.AllPlayerControls.ForEach(action);
-                        __instance.StopAllCoroutines();
-                        if (playanima)
-                        {
-                            DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
-                            DestroyableSingleton<HudManager>.Instance.HideGameLoader();
-                            playanima = false;
-                        }
-                    }
-                }
-            }
             return;
         }
-    }
+        if (!canOverride)
+        {
+            __instance.roleAssigned = true;
+        }
+        int attempts = 0;
+        while ((!__instance.Data || GameManager.Instance == null || !GameManager.Instance) && attempts < 60)
+        {
+            attempts++;
+            Effects.Wait(0.1f);
+        }
+        if (!__instance.Data)
+        {
+            Debug.LogWarning("CoSetRole timed out waiting for NetworkedPlayerInfo");
+            return;
+        }
+        if (GameManager.Instance == null || !GameManager.Instance)
+        {
+            Debug.LogWarning("CoSetRole timed out waiting for GameManager");
+            return;
+        }
+        if (ghostRole)
+        {
+            DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
+            __instance.Data.Role.SpawnTaskHeader(__instance);
+            if (__instance.AmOwner)
+            {
+                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            __instance.RemainingEmergencies = GameManager.Instance.LogicOptions.GetNumEmergencyMeetings();
+            DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
+            __instance.Data.Role.SpawnTaskHeader(__instance);
+            __instance.MyPhysics.SetBodyType(__instance.BodyType);
+            if (__instance.AmOwner)
+            {
+                if (__instance.Data.Role.IsImpostor)
+                {
+                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
+                    StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
+                }
+                else
+                {
+                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
+                    StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
+                }
+                DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
+                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);
+                DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(true);
+            }
+            if (!DestroyableSingleton<TutorialManager>.InstanceExists)
+            {
+                if (Enumerable.All<PlayerControl>(Main.AllPlayerControls, (PlayerControl pc) => pc.Data != null && (pc.roleAssigned || pc.Data.Disconnected)))
+                {
+                    foreach (var pc in Main.AllPlayerControls)
+                    {
+                        PlayerNameColor.Set(pc);
+                    }
+                    __instance.StopAllCoroutines();
+                    DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+                    DestroyableSingleton<HudManager>.Instance.HideGameLoader();
+                }
+            }
+        }
+}*/
 }
-#endregion
+    #endregion
 
-#region 死亡事件
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
+    #region 死亡事件
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
 public static class PlayerControlDiePatch
 {
     public static void Postfix(PlayerControl __instance)

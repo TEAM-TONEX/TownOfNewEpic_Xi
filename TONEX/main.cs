@@ -63,7 +63,7 @@ public class Main : BasePlugin
     public static string ExceptionMessage;
     public static bool ExceptionMessageIsShown = false;
     public static string CredentialsText;
-    public static NormalGameOptionsV07 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+    public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
     //Client Options
     public static ConfigEntry<string> HideName { get; private set; }
     public static ConfigEntry<string> HideColor { get; private set; }
@@ -193,7 +193,7 @@ public class Main : BasePlugin
             TONEX.Logger.Disable("CustomRpcSender");
             //TONEX.Logger.Disable("ReceiveRPC");
             TONEX.Logger.Disable("SendRPC");
-            TONEX.Logger.Disable("SetRole");
+            TONEX.Logger.Disable("CoSetRole");
             TONEX.Logger.Disable("Info.Role");
             TONEX.Logger.Disable("TaskState.Init");
             //TONEX.Logger.Disable("Vote");

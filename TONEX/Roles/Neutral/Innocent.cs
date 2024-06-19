@@ -66,7 +66,7 @@ public sealed class Innocent : RoleBase,  INeutralKiller
         SendRPC();
         return false;
     }
-    public override Action CheckExile(GameData.PlayerInfo exiled, ref bool DecidedWinner, ref List<string> WinDescriptionText)
+    public override Action CheckExile(NetworkedPlayerInfo exiled, ref bool DecidedWinner, ref List<string> WinDescriptionText)
     {
         if (!AmongUsClient.Instance.AmHost || Player.GetRealKiller().PlayerId != exiled.PlayerId ||!IsKilled) return null;
 

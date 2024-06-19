@@ -87,7 +87,7 @@ class StartPatch
 [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]
 class StartMeetingPatch
 {
-    public static void Prefix(ShipStatus __instance, PlayerControl reporter, GameData.PlayerInfo target)
+    public static void Prefix(ShipStatus __instance, PlayerControl reporter, NetworkedPlayerInfo target)
     {
         MeetingStates.ReportTarget = target;
         MeetingStates.DeadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();

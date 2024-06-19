@@ -8,6 +8,7 @@ using UnityEngine;
 using System;
 using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
+using TONEX.Roles.Ghost.Neutral;
 
 namespace TONEX.Roles.Neutral;
 public sealed class Whoops : RoleBase, INeutral
@@ -67,7 +68,7 @@ public sealed class Whoops : RoleBase, INeutral
                 taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();
                 if (AmongUsClient.Instance.AmHost)
                 {
-                    GameData.Instance.RpcSetTasks(votedFor.PlayerId, Array.Empty<byte>());
+                    votedFor.Data.RpcSetTasks(Array.Empty<byte>());
                     votedFor.SyncSettings();
                     Utils.NotifyRoles();
 

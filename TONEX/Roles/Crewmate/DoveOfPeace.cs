@@ -98,7 +98,7 @@ public sealed class DoveOfPeace : RoleBase
         }
     }
     public override bool CanUseAbilityButton() => SkillLimit > 0;
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
     }

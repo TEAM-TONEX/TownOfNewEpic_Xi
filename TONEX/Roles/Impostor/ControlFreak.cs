@@ -78,7 +78,7 @@ public sealed class ControlFreak : RoleBase, IImpostor
         Utils.NotifyRoles(SpecifySeer: ControlFreak);
         return false;
     }
-    public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
+    public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
     {
         Puppets.Clear();
         SendRPC(byte.MaxValue, 0);
