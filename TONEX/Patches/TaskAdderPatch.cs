@@ -86,6 +86,7 @@ class AddTaskButtonPatch
 {
     public static bool Prefix(TaskAddButton __instance)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         try
         {
             if ((int)__instance.Role.Role >= 1000)

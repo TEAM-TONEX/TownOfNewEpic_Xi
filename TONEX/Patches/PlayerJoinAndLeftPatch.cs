@@ -196,12 +196,119 @@ class OnPlayerLeftPatch
         }
     }
 }
-[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-class CreatePlayerPatch
+//[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
+//class CreatePlayerPatch
+//{
+//    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+//    {
+//        if (!AmongUsClient.Instance.AmHost) return;
+//        if (!Main.AssistivePluginMode.Value) return;//辅助插件模式
+//        Logger.Msg($"创建玩家数据：ID{client.Character.PlayerId}: {client.PlayerName}", "CreatePlayer");
+
+//        //规范昵称
+//        var name = client.PlayerName;
+//        if (Options.FormatNameMode.GetInt() == 2 && client.Id != AmongUsClient.Instance.ClientId)
+//            name = Main.Get_TName_Snacks;
+//        else
+//        {
+//            // 删除非法字符
+//            name = name.RemoveHtmlTags().Replace(@"\", string.Empty).Replace("/", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace("\0", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty);
+//            // 删除超出10位的字符
+//            if (name.Length > 10) name = name[..10];
+//            // 删除Emoji
+//            if (Options.DisableEmojiName.GetBool()) name = Regex.Replace(name, @"\p{Cs}", string.Empty);
+//            // 若无有效字符则随机取名
+//            if (Regex.Replace(Regex.Replace(name, @"\s", string.Empty), @"[\x01-\x1F,\x7F]", string.Empty).Length < 1) name = Main.Get_TName_Snacks;
+//            // 替换重名
+//            string fixedName = name;
+//            int suffixNumber = 0;
+//            while (Main.AllPlayerNames.ContainsValue(fixedName))
+//            {
+//                suffixNumber++;
+//                fixedName = $"{name} {suffixNumber}";
+//            }
+//            if (!fixedName.Equals(name)) name = fixedName;
+//        }
+//        Main.AllPlayerNames.Remove(client.Character.PlayerId);
+//        Main.AllPlayerNames.TryAdd(client.Character.PlayerId, name);
+//        if (!name.Equals(client.PlayerName))
+//        {
+//            _ = new LateTask(() =>
+//            {
+//                if (client.Character == null) return;
+//                Logger.Warn($"规范昵称：{client.PlayerName} => {name}", "Name Format");
+//                //client.Character.RpcSetName(name);
+
+//                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(client.Character.NetId, (byte)RpcCalls.SetName, SendOption.None, -1);
+
+//                    writer.Write(name);
+//                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+//            }, 1f, "Name Format");
+//        }
+
+//        _ = new LateTask(() => { if (client.Character == null || !GameStates.IsLobby) return; OptionItem.SyncAllOptions(client.Id); }, 3f, "Sync All Options For New Player");
+
+//        _ = new LateTask(() =>
+//        {
+//            if (client.Character == null) return;
+//            if (Main.OverrideWelcomeMsg != "") Utils.SendMessage(Main.OverrideWelcomeMsg, client.Character.PlayerId);
+//            else TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
+//        }, 3f, "Welcome Message");
+//        if (Main.OverrideWelcomeMsg == "" && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
+//        {
+//            if (Options.AutoDisplayKillLog.GetBool() && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
+//            {
+//                _ = new LateTask(() =>
+//                {
+//                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+//                    {
+//                        Utils.ShowKillLog(client.Character.PlayerId);
+//                    }
+//                }, 3f, "DisplayKillLog");
+//            }
+//            if (Options.AutoDisplayLastResult.GetBool())
+//            {
+//                _ = new LateTask(() =>
+//                {
+//                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+//                    {
+//                        Utils.ShowLastResult(client.Character.PlayerId);
+//                    }
+//                }, 3.1f, "DisplayLastResult");
+//            }
+//            if (Options.EnableDirectorMode.GetBool())
+//            {
+//                _ = new LateTask(() =>
+//                {
+//                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+//                    {
+//                        Utils.SendMessage($"{GetString("Message.DirectorModeNotice")}", client.Character.PlayerId);
+//                    }
+//                }, 3.2f, "DisplayDirectorModeWarnning");
+//            }
+//         if (Options.UsePets.GetBool())
+//            {
+//                _ = new LateTask(() =>
+//                {
+//                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+//                    {
+//                        Utils.SendMessage($"{GetString("Message.PetModeNotice")}", client.Character.PlayerId);
+//                    }
+//                }, 3.2f, "DisplayDirectorModeWarnning");
+//            }
+//        }
+//    }
+//}
+
+[HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.Spawn))]
+class InnerNetClientSpawnPatch
 {
-    public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+    public static void Prefix([HarmonyArgument(1)] int ownerId, [HarmonyArgument(2)] SpawnFlags flags)
     {
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost || flags != SpawnFlags.IsClientCharacter) return;
+
+        ClientData client = Utils.GetClientById(ownerId);
         if (!Main.AssistivePluginMode.Value) return;//辅助插件模式
         Logger.Msg($"创建玩家数据：ID{client.Character.PlayerId}: {client.PlayerName}", "CreatePlayer");
 
@@ -238,11 +345,12 @@ class CreatePlayerPatch
                 if (client.Character == null) return;
                 Logger.Warn($"规范昵称：{client.PlayerName} => {name}", "Name Format");
                 //client.Character.RpcSetName(name);
-                
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(client.Character.NetId, (byte)RpcCalls.SetName, SendOption.None, -1);
-                    writer.Write(name);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                
+
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(client.Character.NetId, (byte)RpcCalls.SetName, SendOption.None, -1);
+                writer.Write(client.Character.Data.NetId);
+                writer.Write(name);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+
             }, 1f, "Name Format");
         }
 
@@ -286,7 +394,7 @@ class CreatePlayerPatch
                     }
                 }, 3.2f, "DisplayDirectorModeWarnning");
             }
-         if (Options.UsePets.GetBool())
+            if (Options.UsePets.GetBool())
             {
                 _ = new LateTask(() =>
                 {

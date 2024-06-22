@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using TMPro;
 using TONEX.Modules;
 using TONEX.Modules.SoundInterface;
+using TONEX.OptionUI;
 using UnityEngine;
 using static TONEX.Translator;
 
@@ -94,6 +95,8 @@ public class ModUpdater
         //    CustomSoundsManager.Play("Birthday", 0);
         //}
         firstStart = false;
+        CreateUIElements.Instance.Initialize();
+        CreateUIElements.Instance.Load();
     }
     public static void SetUpdateButtonStatus()
     {

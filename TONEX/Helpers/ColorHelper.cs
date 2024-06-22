@@ -74,7 +74,7 @@ public static class ColorHelper
         return gradientText;
 
     }
-    private static Color HexToColor(string hex)
+    public static Color HexToColor(string hex)
     {
         Color color = new();
         ColorUtility.TryParseHtmlString("#" + hex, out color);

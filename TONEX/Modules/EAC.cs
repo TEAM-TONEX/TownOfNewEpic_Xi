@@ -60,6 +60,7 @@ internal class EAC
                     break;
                 case RpcCalls.SetRole:
                     var role = (RoleTypes)sr.ReadUInt16();
+                    var canOverrideRole = sr.ReadBoolean();
                     if (GameStates.IsLobby && (role is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost))
                     {
                         WarnHost();

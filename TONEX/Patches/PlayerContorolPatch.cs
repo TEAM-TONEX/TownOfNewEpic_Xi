@@ -974,7 +974,7 @@ class PlayerControlRpcSetRolePatch
     public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, ref bool canOverrideRole )
     {
         if (Main.AssistivePluginMode.Value) return true;
-        canOverrideRole = true;
+        canOverrideRole = false;
         var target = __instance;
         var targetName = __instance.GetNameWithRole();
         Logger.Info($"{targetName} =>{roleType}", "PlayerControl.RpcSetRole");
@@ -1115,8 +1115,8 @@ public static class PlayerControlSetRolePatch
 }
     #endregion
 
-    #region 死亡事件
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
+#region 死亡事件
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
 public static class PlayerControlDiePatch
 {
     public static void Postfix(PlayerControl __instance)
@@ -1243,3 +1243,34 @@ public static class PlayerControlCheckSporeTriggerPatch
     }
 }
 #endregion
+
+/*
+ *  I have no idea how the check vanish is approved by host & server and how to reject it
+ *  Suggest leaving phantom stuffs after 2.1.0
+ */
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckVanish))]
+class CheckVanishPatch
+{
+    public static bool Prefix(PlayerControl __instance)
+    {
+        return true;
+    }
+}
+
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
+class CheckAppearPatch
+{
+    public static bool Prefix(PlayerControl __instance, bool shouldAnimate)
+    {
+        return true;
+    }
+}
+
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.SetRoleInvisibility))]
+class SetRoleInvisibilityPatch
+{
+    public static void Postfix(PlayerControl __instance, bool isActive, bool shouldAnimate, bool playFullAnimation)
+    {
+        return;
+    }
+}

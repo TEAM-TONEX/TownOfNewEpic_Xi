@@ -5,6 +5,7 @@ using TONEX.Roles.Core;
 using TONEX.Roles.Crewmate;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
+using TONEX.Roles.Vanilla;
 
 namespace TONEX;
 
@@ -33,7 +34,8 @@ static class CustomRolesHelper
         var roleInfo = role.GetRoleInfo();
         if (roleInfo != null && (int)role >= 800 && (int)role < 1500)
             return roleInfo.CustomRoleType == CustomRoleTypes.Neutral;
-        return role is CustomRoles.Impostor or CustomRoles.Shapeshifter;
+        return role is CustomRoles.Impostor or CustomRoles.Shapeshifter or
+            CustomRoles.Phantom;
     }
     public static bool IsNotNeutralKilling(this CustomRoles role)
     {
@@ -58,6 +60,8 @@ static class CustomRolesHelper
         return
             role is CustomRoles.Crewmate or
             CustomRoles.Engineer or
+            CustomRoles.Tracker or
+            CustomRoles.Noisemaker or
             CustomRoles.Scientist;
     }
     public static bool IsAddon(this CustomRoles role) => (int)role > 1500;
@@ -72,7 +76,10 @@ static class CustomRolesHelper
             CustomRoles.Scientist or
             CustomRoles.GuardianAngel or
             CustomRoles.Impostor or
-            CustomRoles.Shapeshifter;
+            CustomRoles.Shapeshifter or
+            CustomRoles.Tracker or
+            CustomRoles.Noisemaker or
+            CustomRoles.Phantom;
     }
 
     public static bool IsHidden(this CustomRoles role)
@@ -158,6 +165,9 @@ static class CustomRolesHelper
                 CustomRoles.Scientist => roleOpt.GetNumPerGame(RoleTypes.Scientist),
                 CustomRoles.Shapeshifter => roleOpt.GetNumPerGame(RoleTypes.Shapeshifter),
                 CustomRoles.GuardianAngel => roleOpt.GetNumPerGame(RoleTypes.GuardianAngel),
+                CustomRoles.Noisemaker => roleOpt.GetNumPerGame(RoleTypes.Noisemaker),
+                CustomRoles.Tracker => roleOpt.GetNumPerGame(RoleTypes.Tracker),
+                CustomRoles.Phantom => roleOpt.GetNumPerGame(RoleTypes.Phantom),
                 CustomRoles.Crewmate => roleOpt.GetNumPerGame(RoleTypes.Crewmate),
                 _ => 0
             };
@@ -178,6 +188,9 @@ static class CustomRolesHelper
                 CustomRoles.Scientist => roleOpt.GetChancePerGame(RoleTypes.Scientist),
                 CustomRoles.Shapeshifter => roleOpt.GetChancePerGame(RoleTypes.Shapeshifter),
                 CustomRoles.GuardianAngel => roleOpt.GetChancePerGame(RoleTypes.GuardianAngel),
+                CustomRoles.Noisemaker => roleOpt.GetChancePerGame(RoleTypes.Noisemaker),
+                CustomRoles.Tracker => roleOpt.GetChancePerGame(RoleTypes.Tracker),
+                CustomRoles.Phantom => roleOpt.GetChancePerGame(RoleTypes.Phantom),
                 CustomRoles.Crewmate => roleOpt.GetChancePerGame(RoleTypes.Crewmate),
                 _ => 0
             };

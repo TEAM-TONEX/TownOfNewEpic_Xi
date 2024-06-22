@@ -577,7 +577,7 @@ public static class Utils
         return parentheses ? $"({mode})" : mode;
     }
 
-    public static bool HasTasks(GameData.PlayerInfo p, bool ForRecompute = true)
+    public static bool HasTasks(NetworkedPlayerInfo p, bool ForRecompute = true)
     {
         if (GameStates.IsLobby) return false;
       //  Logger.Info($"1", "test");
@@ -1102,7 +1102,7 @@ public static class Utils
         cachedPlayers[playerId] = player;
         return player;
     }
-    public static GameData.PlayerInfo GetPlayerInfoById(int PlayerId) =>
+    public static NetworkedPlayerInfo GetPlayerInfoById(int PlayerId) =>
         GameData.Instance.AllPlayers.ToArray().Where(info => info.PlayerId == PlayerId).FirstOrDefault();
     private static StringBuilder SelfMark = new(20);
     private static StringBuilder SelfSuffix = new(20);
@@ -1316,7 +1316,7 @@ public static class Utils
             taskState.AllTasksCount = InjusticeSpirit.OptionTaskCount.GetInt();
             if (AmongUsClient.Instance.AmHost)
             {
-                GameData.Instance.RpcSetTasks(InjusticeSpirit.SetPlayer.PlayerId, Array.Empty<byte>());
+                InjusticeSpirit.SetPlayer.Data.RpcSetTasks(Array.Empty<byte>());
                 InjusticeSpirit.SetPlayer.SyncSettings();
             }
             InjusticeSpirit.SetPlayer = null;
@@ -1330,7 +1330,7 @@ public static class Utils
             taskState.AllTasksCount = Specterraid.OptionTaskCount.GetInt();
             if (AmongUsClient.Instance.AmHost)
             {
-                GameData.Instance.RpcSetTasks(Specterraid.SetPlayer.PlayerId, Array.Empty<byte>());
+                Specterraid.SetPlayer.Data.RpcSetTasks(Array.Empty<byte>());
                 Specterraid.SetPlayer.SyncSettings();
             }
             Specterraid.SetPlayer = null;
@@ -1589,6 +1589,7 @@ public static class Utils
         }
         return null;
     }
+
     public static Texture2D LoadTextureFromResources(string path)
     {
         try

@@ -282,16 +282,18 @@ class GameEndChecker
                     Logger.Info($"{pc.GetNameWithRole()}: ImpostorGhostに変更", "ResetRoleAndEndGame");
                     sender.StartRpc(pc.NetId, RpcCalls.SetRole)
                         .Write((ushort)RoleTypes.ImpostorGhost)
+                        .Write(false)
                         .EndRpc();
-                    pc.SetRole(RoleTypes.ImpostorGhost);
+                    pc.SetRole(RoleTypes.ImpostorGhost, true);
                 }
                 else
                 {
                     Logger.Info($"{pc.GetNameWithRole()}: CrewmateGhostに変更", "ResetRoleAndEndGame");
                     sender.StartRpc(pc.NetId, RpcCalls.SetRole)
                         .Write((ushort)RoleTypes.CrewmateGhost)
+                        .Write(false)
                         .EndRpc();
-                    pc.SetRole(RoleTypes.Crewmate);
+                    pc.SetRole(RoleTypes.Crewmate, true);
                 }
             }
             SetEverythingUpPatch.LastWinsReason = winner is CustomWinner.Crewmate or CustomWinner.Impostor ? GetString($"GameOverReason.{reason}") : "";
@@ -305,15 +307,15 @@ class GameEndChecker
         // GameDataによる蘇生処理
         writer.StartMessage(1); // Data
         {
-            writer.WritePacked(GameData.Instance.NetId); // NetId
-            foreach (var info in GameData.Instance.AllPlayers)
+            writer.WritePacked(PlayerControl.LocalPlayer.NetId); // NetId
+            foreach (var info in GameData.Instance.AllPlayers)// undecided
             {
                 if (ReviveRequiredPlayerIds.Contains(info.PlayerId))
                 {
                     // 蘇生&メッセージ書き込み
                     info.IsDead = false;
                     writer.StartMessage(info.PlayerId);
-                    info.Serialize(writer);
+                    info.Serialize(writer, false);
                     writer.EndMessage();
                 }
             }

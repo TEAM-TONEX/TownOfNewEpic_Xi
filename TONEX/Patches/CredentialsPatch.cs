@@ -33,23 +33,30 @@ internal class PingTrackerUpdatePatch
 
         sb.Append($"\r\n").Append($"<color={color}>{ping} <size=60%>Ping</size></color>  <color=#00a4ff>{fps} <size=60%>FPS</size></color>{"  " + (GameStates.IsOnlineGame ? ServerName : GetString("Local"))}");
 
-        if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
-        else
-        {
+        //if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
+        //else
+        //{
             sb.Append("<size=110%>");
-            if (Options.NoGameEnd.GetBool()) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
-            if (Options.AllowConsole.GetBool()) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("AllowConsole")));
-            if (DebugModeManager.IsDebugMode) sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("DebugMode")));
-            if (Options.LowLoadMode.GetBool()) sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("LowLoadMode")));
-            if (Options.EnableDirectorMode.GetBool()) sb.Append("\r\n").Append(Utils.ColorString(new Color32(214, 157, 133, byte.MaxValue), GetString("DirectorMode")));
-            if (Options.UsePets.GetBool()) sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
+        //    if (Options.NoGameEnd.GetBool())
+        sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
+        //    if (Options.AllowConsole.GetBool())
+        sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("AllowConsole")));
+        //    if (DebugModeManager.IsDebugMode)
+        sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("DebugMode")));
+        //    if (Options.LowLoadMode.GetBool())
+        sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("LowLoadMode")));
+        //    if (Options.EnableDirectorMode.GetBool())
+        sb.Append("\r\n").Append(Utils.ColorString(new Color32(214, 157, 133, byte.MaxValue), GetString("DirectorMode")));
+        //    if (Options.UsePets.GetBool())
+        sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
             sb.Append($"\r\n").Append("</size>");
-        }
+        //}
 
-        var offset_x = 1.2f; //右端からのオフセット
-        if (HudManager.InstanceExists && HudManager._instance.Chat.chatButton.gameObject.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
-        if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
-        __instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, 0f, 0f);
+        var offset_x = 2.5f; //右端からのオフセット
+        var offset_y = 6.1f; //右端からのオフセット
+        if (HudManager.InstanceExists && !HudManager._instance.Chat.chatButton.gameObject.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
+        //if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
+        __instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, offset_y, 0f);
 
         __instance.text.text = sb.ToString();
     }
@@ -236,6 +243,7 @@ internal class TitleLogoPatch
         AULogo.transform.position += new Vector3(0f, 0.1f, 0f);
         var logoRenderer = AULogo.GetComponent<SpriteRenderer>();
         logoRenderer.sprite = Utils.LoadSprite("TONEX.Resources.Images.TONEX-Logo.png");
+        Logger.Info($"{logoRenderer.transform.position}", "test");
 
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
         BottomButtonBounds.transform.localPosition -= new Vector3(0f, 0.1f, 0f);

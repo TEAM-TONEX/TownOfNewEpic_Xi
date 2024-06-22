@@ -140,6 +140,7 @@ internal class RPCHandlerPatch
                     break;
                 case RpcCalls.SetRole: //SetNameRPC
                     var role = (RoleTypes)subReader.ReadUInt16();
+                    var overrides = subReader.ReadBoolean();
                     Logger.Info("RPC设置职业:" + __instance.GetRealName() + " => " + role, "SetRole");
                     break;
                 case RpcCalls.SendChat:
@@ -505,8 +506,8 @@ internal static class RPC
                 writer.WritePacked(clientId);
             writer.StartMessage(1); //0x01 Data
             {
-                writer.WritePacked(GameData.Instance.NetId);
-                GameData.Instance.Serialize(writer, true);
+                writer.WritePacked(PlayerControl.LocalPlayer.NetId);// undecided
+                PlayerControl.LocalPlayer.Serialize(writer, true);
             }
             writer.EndMessage();
         }
@@ -625,7 +626,8 @@ internal static class RPC
 
     public static void SetRoleInGame(byte targetId, RoleTypes role)
     {
-        Utils.GetPlayerById(targetId).SetRole(role);
+        var player = Utils.GetPlayerById(targetId);
+        player.SetRole(role, true);
 
         HudManager.Instance.SetHudActive(true);
         if (PlayerControl.LocalPlayer.PlayerId == targetId) RemoveDisableDevicesPatch.UpdateDisableDevices();

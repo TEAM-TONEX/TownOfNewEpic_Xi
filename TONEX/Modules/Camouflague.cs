@@ -8,7 +8,7 @@ namespace TONEX;
 
 static class PlayerOutfitExtension
 {
-    public static NetworkedPlayerInfo.PlayerOutfit Set(this NetworkedPlayerInfo.PlayerOutfit instance, string playerName, int colorId, string hatId, string skinId, string visorId, string petId)
+    public static NetworkedPlayerInfo.PlayerOutfit Set(this NetworkedPlayerInfo.PlayerOutfit instance, string playerName, int colorId, string hatId, string skinId, string visorId, string petId, string nameplateId)
     {
         instance.PlayerName = playerName;
         instance.ColorId = colorId;
@@ -16,6 +16,7 @@ static class PlayerOutfitExtension
         instance.SkinId = skinId;
         instance.VisorId = visorId;
         instance.PetId = petId;
+        instance.NamePlateId = nameplateId;
         return instance;
     }
     public static bool Compare(this NetworkedPlayerInfo.PlayerOutfit instance, NetworkedPlayerInfo.PlayerOutfit targetOutfit)
@@ -34,8 +35,8 @@ static class PlayerOutfitExtension
 }
 public static class Camouflage
 {
-    public static NetworkedPlayerInfo.PlayerOutfit CamouflageOutfit_Default = new NetworkedPlayerInfo.PlayerOutfit().Set("", 15, "", "", "", "");
-    public static NetworkedPlayerInfo.PlayerOutfit CamouflageOutfit_KPD = new NetworkedPlayerInfo.PlayerOutfit().Set("", 13, "hat_pk05_Plant", "", "visor_BubbleBumVisor", "");
+    public static NetworkedPlayerInfo.PlayerOutfit CamouflageOutfit_Default = new NetworkedPlayerInfo.PlayerOutfit().Set("", 15, "", "", "", "", "");
+    public static NetworkedPlayerInfo.PlayerOutfit CamouflageOutfit_KPD = new NetworkedPlayerInfo.PlayerOutfit().Set("", 13, "hat_pk05_Plant", "", "visor_BubbleBumVisor", "", "");
 
     public static bool IsCamouflage;
     public static Dictionary<byte, NetworkedPlayerInfo.PlayerOutfit> PlayerSkins = new();

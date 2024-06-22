@@ -13,7 +13,7 @@ using TONEX.Attributes;
 using TONEX.Roles.Core;
 using TONEX.Modules;
 using UnityEngine;
-using TONEX.UI;
+using TONEX.OptionUI;
 
 [assembly: AssemblyFileVersion(TONEX.Main.PluginVersion)]
 [assembly: AssemblyInformationalVersion(TONEX.Main.PluginVersion)]
@@ -235,7 +235,7 @@ public class Main : BasePlugin
 
         LastKillCooldown = Config.Bind("Other", "LastKillCooldown", (float)30);
         LastShapeshifterCooldown = Config.Bind("Other", "LastShapeshifterCooldown", (float)30);
-        coroutines = AddComponent<Coroutines>();
+
         hasArgumentException = false;
         ExceptionMessage = "";
         try
@@ -307,7 +307,7 @@ public class Main : BasePlugin
         RegistryManager.Init(); // 这是优先级最高的模块初始化方法，不能使用模块初始化属性
 
         PluginModuleInitializerAttribute.InitializeAll();
-        UI = AddComponent<CreateUIElements>();
+
         IRandom.SetInstance(new NetRandomWrapper());
 
         TONEX.Logger.Info($"{Application.version}", "AmongUs Version");
@@ -321,6 +321,15 @@ public class Main : BasePlugin
         handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
+        AddComponent<CanvasManager>();
+        AddComponent<MainUIManager>();
+        AddComponent<OpenButtonManager>();
+        AddComponent<SettingItemManager>();
+        AddComponent<SidebarManager>();
+        AddComponent<TabGroupManager>();
+        AddComponent<UIBase>();
+        UI = AddComponent<CreateUIElements>();
+
 
         SystemEnvironment.SetEnvironmentVariables();
 

@@ -8,7 +8,7 @@ using UnityEngine;
 using static TONEX.Translator;
 
 namespace TONEX;
-
+/*
 [HarmonyPatch(typeof(HudManager))]
 public static class OptionShowerPatch
 {
@@ -41,7 +41,7 @@ public static class OptionShowerPatch
     }
     public static void CalculateAndSetYBounds() => Scroller?.SetYBoundsMax(GameSettings.GetComponent<TextMeshPro>().renderedHeight - 2.6f);
 }
-
+*/
 public static class OptionShower
 {
     public static int currentPage = 0;

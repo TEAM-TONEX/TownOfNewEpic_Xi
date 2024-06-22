@@ -20,11 +20,17 @@ using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using Rewired.Utils.Platforms.Windows;
 using TONEX.Attributes;
 using TONEX.Roles.AddOns.Common;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace TONEX;
 
 static class ExtendedPlayerControl
 {
+    public static void SetRole(this PlayerControl player, RoleTypes role, bool canOverrideRole = true)
+    {
+        canOverrideRole = false;
+        Main.Instance.StartCoroutine(player.CoSetRole(role, canOverrideRole).WrapToManaged());
+    }
     public static void RpcSetCustomRole(this PlayerControl player, CustomRoles role)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -74,7 +80,7 @@ static class ExtendedPlayerControl
     {
         playanima = false;
         InGameSetRole = true;
-        player.RpcSetRole(role, true);
+        player.RpcSetRole(role, false);
         playanima = true;
         InGameSetRole = false;
     }
@@ -182,6 +188,7 @@ static class ExtendedPlayerControl
         {
             target.SetColor(colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetColor)
+                .Write(target.Data.NetId)
                 .Write(colorId)
             .EndRpc();
         }
@@ -190,6 +197,7 @@ static class ExtendedPlayerControl
             target.SetHat(hatId, colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
                 .Write(hatId)
+                .Write(target.GetNextRpcSequenceId(RpcCalls.SetHatStr))
             .EndRpc();
         }
         if (skinId != "")
@@ -197,13 +205,15 @@ static class ExtendedPlayerControl
             target.SetSkin(skinId, colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
                 .Write(skinId)
+                .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
             .EndRpc();
         }
-        if (hatId != "")
+        if (visorId != "")
         {
             target.SetVisor(visorId, colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetVisorStr)
                 .Write(visorId)
+                .Write(target.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
             .EndRpc();
         }
         if (petId != "")
@@ -211,6 +221,7 @@ static class ExtendedPlayerControl
             target.SetPet(petId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
                 .Write(petId)
+                .Write(target.GetNextRpcSequenceId(RpcCalls.SetPetStr))
                 .EndRpc();
         }
         sender.SendMessage();
@@ -244,6 +255,7 @@ static class ExtendedPlayerControl
 
         var clientId = seer.GetClientId();
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, SendOption.Reliable, clientId);
+        writer.Write(player.Data.NetId);
         writer.Write(name);
         writer.Write(DontShowOnModdedClient);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -255,11 +267,12 @@ static class ExtendedPlayerControl
         if (player == null) return;
         if (AmongUsClient.Instance.ClientId == clientId)
         {
-            player.StartCoroutine(player.CoSetRole(role, true));
+            player.SetRole(role, true);
             return;
         }
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, clientId);
         writer.Write((ushort)role);
+        writer.Write(false);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
@@ -383,6 +396,29 @@ static class ExtendedPlayerControl
                 player.RpcSpecificShapeshift(target, shouldAnimate);
             }
         }
+    }
+    public static void RpcSpecificVanish(this PlayerControl player, PlayerControl seer)
+    {
+        /*
+         *  Unluckily the vanish animation cannot be disabled
+         *  For vanila client seer side, the player must be with Phantom Role behavior, or the rpc will do nothing
+         */
+        if (!AmongUsClient.Instance.AmHost) return;
+
+        MessageWriter msg = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.StartVanish, SendOption.None, seer.GetClientId());
+        AmongUsClient.Instance.FinishRpcImmediately(msg);
+    }
+
+    public static void RpcSpecificAppear(this PlayerControl player, PlayerControl seer, bool shouldAnimate)
+    {
+        /*
+         *  For vanila client seer side, the player must be with Phantom Role behavior, or the rpc will do nothing
+         */
+        if (!AmongUsClient.Instance.AmHost) return;
+
+        MessageWriter msg = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.StartAppear, SendOption.None, seer.GetClientId());
+        msg.Write(shouldAnimate);
+        AmongUsClient.Instance.FinishRpcImmediately(msg);
     }
     public static void RpcDesyncUpdateSystem(this PlayerControl target, SystemTypes systemType, int amount)
     {
