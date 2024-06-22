@@ -131,9 +131,9 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
                 SubstituteLimit--;
                 SendRPC_SyncInt();
                 if(SubstituteLimit == 0) {
-                    KillerSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId);
+                    KillerSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId, killer.Data.DefaultOutfit.NamePlateId);
 
-                    TargetSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId);
+                    TargetSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId, target.Data.DefaultOutfit.NamePlateId);
                     TargetSpeed = Main.AllPlayerSpeed[target.PlayerId];
                     TargetName = Main.AllPlayerNames[target.PlayerId];
                     KillerSpeed = Main.AllPlayerSpeed[killer.PlayerId];
