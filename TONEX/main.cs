@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using TONEX.Attributes;
 using TONEX.Roles.Core;
 using TONEX.Modules;
 using UnityEngine;
-using xCloud;
+using TONEX.UI;
 
 [assembly: AssemblyFileVersion(TONEX.Main.PluginVersion)]
 [assembly: AssemblyInformationalVersion(TONEX.Main.PluginVersion)]
@@ -40,9 +41,9 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.3.5";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.20";
-    public const string PluginShowVersionPrefix = "1.3_20240616";
-    public const string PluginShowVersionPostfix = "_Debug_10";
+    public const string PluginVersion = "1.2.27";
+    public const string PluginShowVersionPrefix = "1.3_20240620";
+    public const string PluginShowVersionPostfix = "_Debug_17";
     public const string PluginShowVersion = PluginShowVersionPrefix + PluginShowVersionPostfix;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
@@ -54,6 +55,7 @@ public class Main : BasePlugin
     public static readonly string DiscordInviteUrl = "https://discord.gg/kz787Zg7h8";
     public static readonly bool ShowGithubUrl = true;
     public static readonly string GithubRepoUrl = "https://github.com/XtremeWave/TownOfNewEpic_Xtreme";
+
     // ==========
 
     public Harmony Harmony { get; } = new Harmony(PluginGuid);
@@ -63,6 +65,8 @@ public class Main : BasePlugin
     public static string ExceptionMessage;
     public static bool ExceptionMessageIsShown = false;
     public static string CredentialsText;
+    public Coroutines coroutines;
+    public CreateUIElements UI;
     public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
     //Client Options
     public static ConfigEntry<string> HideName { get; private set; }
@@ -231,7 +235,7 @@ public class Main : BasePlugin
 
         LastKillCooldown = Config.Bind("Other", "LastKillCooldown", (float)30);
         LastShapeshifterCooldown = Config.Bind("Other", "LastShapeshifterCooldown", (float)30);
-
+        coroutines = AddComponent<Coroutines>();
         hasArgumentException = false;
         ExceptionMessage = "";
         try
@@ -303,7 +307,7 @@ public class Main : BasePlugin
         RegistryManager.Init(); // 这是优先级最高的模块初始化方法，不能使用模块初始化属性
 
         PluginModuleInitializerAttribute.InitializeAll();
-
+        UI = AddComponent<CreateUIElements>();
         IRandom.SetInstance(new NetRandomWrapper());
 
         TONEX.Logger.Info($"{Application.version}", "AmongUs Version");
@@ -326,6 +330,28 @@ public class Main : BasePlugin
         else ConsoleManager.CreateConsole();
 
         TONEX.Logger.Msg("========= TONEX loaded! =========", "Plugin Load");
+    }
+    public void StartCoroutine(System.Collections.IEnumerator coroutine)
+    {
+        if (coroutine == null)
+        {
+            return;
+        }
+        coroutines.StartCoroutine(coroutine.WrapToIl2Cpp());
+    }
+
+    public void StopCoroutine(System.Collections.IEnumerator coroutine)
+    {
+        if (coroutine == null)
+        {
+            return;
+        }
+        coroutines.StopCoroutine(coroutine.WrapToIl2Cpp());
+    }
+
+    public void StopAllCoroutines()
+    {
+        coroutines.StopAllCoroutines();
     }
 }
 public enum CustomDeathReason
@@ -443,4 +469,7 @@ public enum TieMode
     Default,
     All,
     Random
+}
+public class Coroutines : MonoBehaviour
+{
 }
