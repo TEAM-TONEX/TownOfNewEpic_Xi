@@ -37,6 +37,15 @@ class IntroCutscenePatch
                 __instance.RoleBlurbText.color = color;
                 __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
             }
+           else if (Options.CurrentGameMode == CustomGameMode.ZombieMode){
+                var color = ColorUtility.TryParseHtmlString("#FF9900", out var c) ? c : new(255, 255, 255, 255);
+                CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
+                __instance.YouAreText.color = color;
+                __instance.RoleText.text = Utils.GetRoleName(roles);
+                __instance.RoleText.color = Utils.GetRoleColor(roles);
+                __instance.RoleBlurbText.color = color;
+                __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+            }
            else
             {
             CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
@@ -285,6 +294,17 @@ class IntroCutscenePatch
             __instance.BackgroundBar.material.color = color;
             PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
         }
+        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        {
+            var color = ColorUtility.TryParseHtmlString("#ffa300", out var c) ? c : new(255, 255, 255, 255);
+            __instance.TeamTitle.text = Utils.GetRoleName(role);
+            __instance.TeamTitle.color = Utils.GetRoleColor(role);
+            __instance.ImpostorText.gameObject.SetActive(true);
+            __instance.ImpostorText.text = GetString("ModeZombieMode");
+            __instance.BackgroundBar.material.color = color;
+            PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
+        }
+        
 
         if (Input.GetKey(KeyCode.RightShift))
         {
@@ -386,7 +406,7 @@ class IntroCutscenePatch
             if (mapId != 4)
             {
                 Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
-                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato)
+                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato && Options.CurrentGameMode != CustomGameMode.ZombieMode)
                     _ = new LateTask(() =>
                     {
                         if (GameStates.IsInTask)
@@ -421,7 +441,7 @@ class IntroCutscenePatch
                         break;
                 }
             }
-            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato)
+            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.ZombieMode)
             {
                 RandomSpawn.SpawnMap map;
                 switch (Main.NormalOptions.MapId)

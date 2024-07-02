@@ -420,7 +420,14 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.HotPotato"), playerId);
             return;
         }
+        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        {
+            Utils.SendMessage(GetString("ModeDescribe.ZombieMode"), playerId);
+            return;
+        }
         
+
+
         if (string.IsNullOrWhiteSpace(input))
         {
             Utils.ShowActiveRoles(playerId);
@@ -451,6 +458,12 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.HotPotato"), playerId);
             return;
         }
+        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        {
+            Utils.SendMessage(GetString("ModeDescribe.ZombieMode"), playerId);
+            return;
+        }
+        
         if (string.IsNullOrWhiteSpace(input))
         {
             Utils.ShowActiveRoles(playerId);

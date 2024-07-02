@@ -95,8 +95,8 @@ public class ModUpdater
         //    CustomSoundsManager.Play("Birthday", 0);
         //}
         firstStart = false;
-        CreateUIElements.Instance.Initialize();
-        CreateUIElements.Instance.Load();
+        //CreateUIElements.Instance.Initialize();
+        //CreateUIElements.Instance.Load();
     }
     public static void SetUpdateButtonStatus()
     {

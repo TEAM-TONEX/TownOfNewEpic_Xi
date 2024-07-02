@@ -60,6 +60,21 @@ internal static class CustomRoleSelector
             }
             return;
         }
+        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        {
+            var pcList = Main.AllAlivePlayerControls.Where(x => x.IsAlive()).ToList();
+            var Zb = pcList[IRandom.Instance.Next(0, pcList.Count)];
+
+            foreach (var pc in Main.AllAlivePlayerControls)
+            {
+                if(pc!=Zb)
+                   RoleResult.Add(pc, CustomRoles.Human);
+            }
+            RoleResult.Add(Zb, CustomRoles.ZomBie);
+            Zb.SetOutFitStatic(2);
+            return;
+        }
+        
 
         // 在职业列表中搜索职业
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
@@ -405,6 +420,7 @@ internal static class CustomRoleSelector
     public static void SelectAddonRoles()
     {
         if (Options.CurrentGameMode == CustomGameMode.HotPotato) return;
+        if (Options.CurrentGameMode == CustomGameMode.ZombieMode) return;
         AddonRolesList = new();
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
         {

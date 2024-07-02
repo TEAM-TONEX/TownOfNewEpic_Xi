@@ -22,8 +22,9 @@ public enum CustomGameMode
 {
     Standard = 0x01,
     HotPotato = 0x02,
+    ZombieMode = 0x03,
     AllCrewModMode = Standard | 0x04,
-    All = Standard | HotPotato | AllCrewModMode
+    All = Standard | HotPotato | AllCrewModMode | ZombieMode
 }
 
 [HarmonyPatch]
@@ -59,6 +60,7 @@ public static class Options
 #if DEBUG
             2 => CustomGameMode.AllCrewModMode,
 #endif
+            3 => CustomGameMode.ZombieMode,
             _ => CustomGameMode.Standard
         };
 

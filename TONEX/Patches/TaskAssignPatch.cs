@@ -8,6 +8,7 @@ using TONEX.Roles.Ghost.Neutral;
 using TONEX.Roles.Core;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
+using TONEX.MoreGameModes;
 namespace TONEX;
 
 [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.AddTasksFromList))]
@@ -105,6 +106,13 @@ class RpcSetTasksPatch
                 NumShortTasks = 0;
                 NumLongTasks = 0;
             }
+            ////管理员和摆烂人没有任务
+            //if (pc.Is(CustomRoles.Human))
+            //{
+            //    hasCommonTasks = true;
+            //    NumShortTasks = ZombieManager.ShortTasksNum;
+            //    NumLongTasks = ZombieManager.LongTasksNum;
+            //}
 
             //加班狂加班咯~
             if (pc.Is(CustomRoles.Workhorse))

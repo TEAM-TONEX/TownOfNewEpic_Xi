@@ -12,6 +12,7 @@ using static TONEX.Modules.CustomRoleSelector;
 using static TONEX.Translator;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
+using TONEX.MoreGameModes;
 
 namespace TONEX;
 
@@ -350,6 +351,11 @@ internal class SelectRolesPatch
                 case CustomGameMode.HotPotato:
                     GameEndChecker.SetPredicateToHotPotato();
                     break;
+                //case CustomGameMode.ZombieMode:
+                //    GameEndChecker.SetPredicateToZombie();
+
+
+                //    break;
             }
 
             GameOptionsSender.AllSenders.Clear();

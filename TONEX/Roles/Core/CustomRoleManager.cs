@@ -776,6 +776,8 @@ public enum CustomRoles
     //GameMode
     HotPotato,
     ColdPotato,
+    Human,
+    ZomBie,
 
     //GM
     GM,

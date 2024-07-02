@@ -321,14 +321,14 @@ public class Main : BasePlugin
         handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
-        AddComponent<CanvasManager>();
-        AddComponent<MainUIManager>();
-        AddComponent<OpenButtonManager>();
-        AddComponent<SettingItemManager>();
-        AddComponent<SidebarManager>();
-        AddComponent<TabGroupManager>();
-        AddComponent<UIBase>();
-        UI = AddComponent<CreateUIElements>();
+     ///*   AddComponent<CanvasManager>();
+     //   AddComponent<MainUIManager>();
+     //   AddComponent<OpenButtonManager>();
+     //   AddComponent<SettingItemManager>();
+     //   AddComponent<SidebarManager>();
+     //   AddComponent<TabGroupManager>();
+     //   AddComponent<UIBase>();
+     //   UI = AddComponent<CreateUIElements>();*/
 
 
         SystemEnvironment.SetEnvironmentVariables();
@@ -454,6 +454,8 @@ public enum CustomWinner
     CupidLovers = CustomRoles.CupidLovers,
     Specterraid = CustomRoles.Specterraid,
     Yandere = CustomRoles.Yandere,
+    ZomBie = CustomRoles.ZomBie,
+    Human = CustomRoles.Human,
 }
 public enum SuffixModes
 {

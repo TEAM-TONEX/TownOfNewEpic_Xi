@@ -1421,6 +1421,9 @@ CanFollowWin: "在存活的情况下未获得LV可以跟随胜利"
 CanFollowWinWhenMurdererExists: "在存活的情况下获得LV小于5且<color=#ff0000>陨星戮者</color>在场时可以跟随胜利"
 SubstituteCooldown: "替代冷却"
 NeedSubstituteLimit: "需要替代的次数"
+LongTasksNum: "人类的长任务数"
+ShortTasksNum: "人类的短任务数"
+RoundTotalTime: "游戏时间"
 
 # 随机出生点 / Random Spawn Locations
 Junction: "三岔路"
@@ -1783,6 +1786,7 @@ CupidIsShielded: "已经发放护盾了！"
 CupidIsDead: "丘比特护盾生效！"
 NWReady: "冷却结束"
 NothingIsWorthTheRisk: "Nothing Is Worth The Risk"
+ZombieTimeRemain: "游戏结束倒计时：{0}"
 
 # 信息 / Messages
 Message.SetToSeconds: "信息发送冷却时间为【{0}】秒"
@@ -2250,12 +2254,13 @@ MainMenuCredential: "{0} © 2024"
 Local: "<color=#D1FA87>本地</color>"
 IPhone: "苹果"
 Android: "安卓"
-
+Start: "开始"
 BaseOn: "基于"
 
 # 游戏模式
 Standard: "标准"
 HotPotatoMode: "烫手山芋"
+ZombieMode: "僵尸模式"
 AllCrewModMode: "全员模组（试验性）"
 GameMode: "游戏模式"
 
