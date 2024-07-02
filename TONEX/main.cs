@@ -197,7 +197,7 @@ public class Main : BasePlugin
             TONEX.Logger.Disable("CustomRpcSender");
             //TONEX.Logger.Disable("ReceiveRPC");
             TONEX.Logger.Disable("SendRPC");
-            TONEX.Logger.Disable("CoSetRole");
+            TONEX.Logger.Disable("SetRole");
             TONEX.Logger.Disable("Info.Role");
             TONEX.Logger.Disable("TaskState.Init");
             //TONEX.Logger.Disable("Vote");
