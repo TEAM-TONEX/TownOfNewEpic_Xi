@@ -29,7 +29,7 @@ static class ExtendedPlayerControl
     public static void SetRole(this PlayerControl player, RoleTypes role, bool canOverrideRole = true)
     {
         canOverrideRole = false;
-        player.StartCoroutine(player.CoSetRole(role, canOverrideRole));
+        AmongUsClient.Instance.StartCoroutine(player.CoSetRole(role, canOverrideRole));
     }
     public static void RpcSetCustomRole(this PlayerControl player, CustomRoles role)
     {
@@ -238,7 +238,7 @@ static class ExtendedPlayerControl
             action(pc);
         }
     }
-    public static void RpcSetNamePrivate(this PlayerControl player, string name, bool DontShowOnModdedClient = false, PlayerControl seer = null, bool force = false)
+    public static void RpcSetNamePrivate(this PlayerControl player, string name,  PlayerControl seer = null, bool force = false)
     {
         //player: 名前の変更対象
         //seer: 上の変更を確認することができるプレイヤー
@@ -251,23 +251,22 @@ static class ExtendedPlayerControl
         }
         Main.LastNotifyNames[(player.PlayerId, seer.PlayerId)] = name;
         HudManagerPatch.LastSetNameDesyncCount++;
-      //  Logger.Info($"Set: {player?.Data?.PlayerName} => {name} for {seer.GetNameWithRole()}", "RpcSetNamePrivate");
-
+        Logger.Info($"Set: {player?.Data?.PlayerName} => {name} for {seer.GetNameWithRole()}", "RpcSetNamePrivate");
+        if (seer == null || player == null) return;
         var clientId = seer.GetClientId();
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, SendOption.Reliable, clientId);
         writer.Write(player.Data.NetId);
         writer.Write(name);
-        writer.Write(DontShowOnModdedClient);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
-    public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, int clientId)
+    public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, bool canOverride, int clientId)
     {
         //player: 名前の変更対象
 
         if (player == null) return;
         if (AmongUsClient.Instance.ClientId == clientId)
         {
-            player.SetRole(role, true);
+            player.SetRole(role, false);
             return;
         }
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, clientId);

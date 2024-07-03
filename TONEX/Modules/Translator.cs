@@ -110,8 +110,6 @@ public static class Translator
                 if (stringNames != null && stringNames.Any())
                     res = GetString(stringNames.FirstOrDefault());
             }
-            if (res == $"<INVALID:{str}>")
-            Logger.Info(res, "test");
         }
         catch (Exception Ex)
         {

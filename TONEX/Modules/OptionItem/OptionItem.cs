@@ -292,7 +292,7 @@ public abstract class OptionItem
 public enum TabGroup
 {
     SystemSettings,
-    GameSettings,
+    ModSettings,
     ImpostorRoles,
     CrewmateRoles,
     NeutralRoles,

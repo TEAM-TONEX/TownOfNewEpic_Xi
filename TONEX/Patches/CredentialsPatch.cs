@@ -33,24 +33,24 @@ internal class PingTrackerUpdatePatch
 
         sb.Append($"\r\n").Append($"<color={color}>{ping} <size=60%>Ping</size></color>  <color=#00a4ff>{fps} <size=60%>FPS</size></color>{"  " + (GameStates.IsOnlineGame ? ServerName : GetString("Local"))}");
 
-        //if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
-        //else
-        //{
+        if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
+        else
+        {
             sb.Append("<size=110%>");
-        //    if (Options.NoGameEnd.GetBool())
-        sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
-        //    if (Options.AllowConsole.GetBool())
-        sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("AllowConsole")));
-        //    if (DebugModeManager.IsDebugMode)
-        sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("DebugMode")));
-        //    if (Options.LowLoadMode.GetBool())
-        sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("LowLoadMode")));
-        //    if (Options.EnableDirectorMode.GetBool())
-        sb.Append("\r\n").Append(Utils.ColorString(new Color32(214, 157, 133, byte.MaxValue), GetString("DirectorMode")));
-        //    if (Options.UsePets.GetBool())
-        sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
+            if (Options.NoGameEnd.GetBool())
+                sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
+            if (Options.AllowConsole.GetBool())
+                sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("AllowConsole")));
+            if (DebugModeManager.IsDebugMode)
+                sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("DebugMode")));
+            if (Options.LowLoadMode.GetBool())
+                sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("LowLoadMode")));
+            if (Options.EnableDirectorMode.GetBool())
+                sb.Append("\r\n").Append(Utils.ColorString(new Color32(214, 157, 133, byte.MaxValue), GetString("DirectorMode")));
+            if (Options.UsePets.GetBool())
+                sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
             sb.Append($"\r\n").Append("</size>");
-        //}
+        }
 
         var offset_x = 2.5f; //右端からのオフセット
         var offset_y = 6.1f; //右端からのオフセット

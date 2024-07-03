@@ -11,6 +11,7 @@ public class PresetOptionItem : OptionItem
     {
         Rule = (0, NumPresets - 1, 1);
     }
+    public int ValuePresets = NumPresets;
     public static PresetOptionItem Create(int defaultValue, TabGroup tab)
     {
         return new PresetOptionItem(defaultValue, tab);

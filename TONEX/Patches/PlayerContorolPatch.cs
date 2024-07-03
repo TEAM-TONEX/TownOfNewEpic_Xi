@@ -8,7 +8,7 @@ using MS.Internal.Xml.XPath;
 using Rewired.Utils.Platforms.Windows;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Text;
 using System.Threading.Tasks;
 using TONEX.Modules;
@@ -100,7 +100,7 @@ class CheckMurderPatch
             Logger.Info("会議が始まっていたため、キルをキャンセルしました。", "CheckMurder");
             return false;
         }
-        var divice = Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.ZombieMode ? 3000f : 2000f;
+        var divice = Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.InfectorMode ? 3000f : 2000f;
         // 連打キルでないか
         float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / divice * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
                                                                                     //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
@@ -362,7 +362,7 @@ class ReportDeadBodyPatch
         Logger.Info("1", "test");
         if (Options.DisableMeeting.GetBool()) return false;
         if (Options.CurrentGameMode == CustomGameMode.HotPotato) return false;
-        if (Options.CurrentGameMode == CustomGameMode.ZombieMode) return false; 
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode) return false; 
         if (__instance.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Report, ExtendedPlayerControl.PlayerActionInUse.All))
         {
             WaitReport[__instance.PlayerId].Add(target);
@@ -1020,7 +1020,7 @@ class PlayerControlRpcSetRolePatch
                 foreach ((var seer, var role) in ghostRoles)
                 {
                     Logger.Info($"Desync {targetName} =>{role} for{seer.GetNameWithRole()}", "PlayerControl.RpcSetRole");
-                    target.RpcSetRoleDesync(role, seer.GetClientId());
+                    target.RpcSetRoleDesync(role, false,seer.GetClientId());
                 }
                 return false;
             }
@@ -1275,3 +1275,65 @@ class SetRoleInvisibilityPatch
         return;
     }
 }
+
+#region 名称检查
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckName))]
+class PlayerControlCheckNamePatch
+{
+    public static void Postfix(PlayerControl __instance, string playerName)
+    {
+        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby) return;
+
+        var name = playerName;
+        if (Options.FormatNameMode.GetInt() == 2)
+            name = Main.Get_TName_Snacks;
+        else
+        {
+            // 删除非法字符
+            name = name.RemoveHtmlTags().Replace(@"\", string.Empty).Replace("/", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace("\0", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty);
+            // 删除超出10位的字符
+            if (name.Length > 10) name = name[..10];
+            // 删除Emoji
+            if (Options.DisableEmojiName.GetBool()) name = Regex.Replace(name, @"\p{Cs}", string.Empty);
+            // 若无有效字符则随机取名
+            if (Regex.Replace(Regex.Replace(name, @"\s", string.Empty), @"[\x01-\x1F,\x7F]", string.Empty).Length < 1) name = Main.Get_TName_Snacks;
+            // 替换重名
+            string fixedName = name;
+            int suffixNumber = 0;
+            while (Main.AllPlayerNames.ContainsValue(fixedName))
+            {
+                suffixNumber++;
+                fixedName = $"{name} {suffixNumber}";
+            }
+            if (!fixedName.Equals(name)) name = fixedName;
+        }
+        Main.AllPlayerNames.Remove(__instance.PlayerId);
+        Main.AllPlayerNames.TryAdd(__instance.PlayerId, name);
+        if (!name.Equals(playerName))
+        {
+            _ = new LateTask(() =>
+            {
+                if (__instance == null) return;
+                Logger.Warn($"规范昵称：{playerName} => {name}", "Name Format");
+                //__instance.RpcSetName(name);
+
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.SetName, SendOption.None, -1);
+                writer.Write(__instance.Data.NetId);
+                writer.Write(name);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+            }, 1f, "Name Format");
+        }
+
+    }
+}
+
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdCheckName))]
+class CmdCheckNameVersionCheckPatch
+{
+    public static void Postfix(PlayerControl __instance)
+    {
+        RPC.RpcVersionCheck();
+    }
+}
+#endregion

@@ -237,11 +237,11 @@ public static class NameTagManager
                     $"<color=#F39C12>{Main.PluginShowVersion}</color>";
                     name = prefix + "</size>" +"\n"+ name;
                     break;
-                //case CustomGameMode.ZombieMode:
-                //    var prefix = $"<size=80%><color=#F39C12>{GetString("ZombieMode")}</color>" +
-                //   $"<color=#F39C12>{Main.PluginShowVersion}</color>";
-                //    name = prefix + "</size>" + "\n" + name;
-                //    break;
+                case CustomGameMode.InfectorMode:
+                    var prefixV2 = $"<size=80%><color=#F39C12>{GetString("ZombieMode")}</color>" +
+                   $"<color=#F39C12>{Main.PluginShowVersion}</color>";
+                    name = prefixV2 + "</size>" + "\n" + name;
+                    break;
 
             };
             return name;

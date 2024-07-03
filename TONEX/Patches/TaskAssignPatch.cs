@@ -17,28 +17,28 @@ class AddTasksFromListPatch
     public static void Prefix(ShipStatus __instance,
         [HarmonyArgument(4)] Il2CppSystem.Collections.Generic.List<NormalPlayerTask> unusedTasks)
     {
-        //if (!Main.AssistivePluginMode.Value)
-        //{
-        //    if (!AmongUsClient.Instance.AmHost) return;
-        
-        //    if (!Options.DisableTasks.GetBool()) return;
-        //    List<NormalPlayerTask> disabledTasks = new();
-        //    for (var i = 0; i < unusedTasks.Count; i++)
-        //    {
-        //        var task = unusedTasks[i];
-        //        if (task.TaskType == TaskTypes.SwipeCard && Options.DisableSwipeCard.GetBool()) disabledTasks.Add(task);//カードタスク
-        //        if (task.TaskType == TaskTypes.SubmitScan && Options.DisableSubmitScan.GetBool()) disabledTasks.Add(task);//スキャンタスク
-        //        if (task.TaskType == TaskTypes.UnlockSafe && Options.DisableUnlockSafe.GetBool()) disabledTasks.Add(task);//金庫タスク
-        //        if (task.TaskType == TaskTypes.UploadData && Options.DisableUploadData.GetBool()) disabledTasks.Add(task);//アップロードタスク
-        //        if (task.TaskType == TaskTypes.StartReactor && Options.DisableStartReactor.GetBool()) disabledTasks.Add(task);//リアクターの3x3タスク
-        //        if (task.TaskType == TaskTypes.ResetBreakers && Options.DisableResetBreaker.GetBool()) disabledTasks.Add(task);//レバータスク
-        //    }
-        //    foreach (var task in disabledTasks)
-        //    {
-        //        Logger.Msg("削除: " + task.TaskType.ToString(), "AddTask");
-        //        unusedTasks.Remove(task);
-        //    }
-        //}
+        if (!Main.AssistivePluginMode.Value)
+        {
+            if (!AmongUsClient.Instance.AmHost) return;
+
+            if (!Options.DisableTasks.GetBool()) return;
+            List<NormalPlayerTask> disabledTasks = new();
+            for (var i = 0; i < unusedTasks.Count; i++)
+            {
+                var task = unusedTasks[i];
+                if (task.TaskType == TaskTypes.SwipeCard && Options.DisableSwipeCard.GetBool()) disabledTasks.Add(task);//カードタスク
+                if (task.TaskType == TaskTypes.SubmitScan && Options.DisableSubmitScan.GetBool()) disabledTasks.Add(task);//スキャンタスク
+                if (task.TaskType == TaskTypes.UnlockSafe && Options.DisableUnlockSafe.GetBool()) disabledTasks.Add(task);//金庫タスク
+                if (task.TaskType == TaskTypes.UploadData && Options.DisableUploadData.GetBool()) disabledTasks.Add(task);//アップロードタスク
+                if (task.TaskType == TaskTypes.StartReactor && Options.DisableStartReactor.GetBool()) disabledTasks.Add(task);//リアクターの3x3タスク
+                if (task.TaskType == TaskTypes.ResetBreakers && Options.DisableResetBreaker.GetBool()) disabledTasks.Add(task);//レバータスク
+            }
+            foreach (var task in disabledTasks)
+            {
+                Logger.Msg("削除: " + task.TaskType.ToString(), "AddTask");
+                unusedTasks.Remove(task);
+            }
+        }
     }
 }
 
@@ -106,13 +106,12 @@ class RpcSetTasksPatch
                 NumShortTasks = 0;
                 NumLongTasks = 0;
             }
-            ////管理员和摆烂人没有任务
-            //if (pc.Is(CustomRoles.Human))
-            //{
-            //    hasCommonTasks = true;
-            //    NumShortTasks = ZombieManager.ShortTasksNum;
-            //    NumLongTasks = ZombieManager.LongTasksNum;
-            //}
+            if (pc.Is(CustomRoles.Survivor))
+            {
+                hasCommonTasks = true;
+                NumShortTasks = InfectorManager.ShortTasksNum.GetInt();
+                NumLongTasks = InfectorManager.LongTasksNum.GetInt();
+            }
 
             //加班狂加班咯~
             if (pc.Is(CustomRoles.Workhorse))
@@ -128,7 +127,7 @@ class RpcSetTasksPatch
             //割り当て可能なタスクのIDが入ったリスト
             //本来のRpcSetTasksの第二引数のクローン
             Il2CppSystem.Collections.Generic.List<byte> TasksList = new();
-            foreach (var num in taskTypeIds)
+            foreach (var num in taskTypeIds) 
                 TasksList.Add(num);
 
             //参考:ShipStatus.Begin

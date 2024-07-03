@@ -35,6 +35,7 @@ namespace TONEX;
 public static class Utils
 {
     private static readonly DateTime timeStampStartTime = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    public static long TimeStamp => (long)(DateTime.Now.ToUniversalTime() - timeStampStartTime).TotalSeconds;
     public static long GetTimeStamp(DateTime? dateTime = null) => (long)((dateTime ?? DateTime.Now).ToUniversalTime() - timeStampStartTime).TotalSeconds;
     public static void ErrorEnd(string text)
     {
@@ -567,7 +568,7 @@ public static class Utils
     }
     public static string GetRoleDisplaySpawnMode(CustomRoles role, bool parentheses = true)
     {
-        if (Options.HideGameSettings.GetBool() && Main.AllPlayerControls.Count() > 1)
+        if (Options.HideModSettings.GetBool() && Main.AllPlayerControls.Count() > 1)
             return string.Empty;
         string mode;
         if (role.IsVanilla()) return "";
@@ -734,12 +735,12 @@ public static class Utils
     }
     public static void ShowActiveSettings(byte PlayerId = byte.MaxValue)
     {
-        if (Options.HideGameSettings.GetBool() && PlayerId != byte.MaxValue)
+        if (Options.HideModSettings.GetBool() && PlayerId != byte.MaxValue)
         {
-            SendMessage(GetString("Message.HideGameSettings"), PlayerId);
+            SendMessage(GetString("Message.HideModSettings"), PlayerId);
             return;
         }
-        if (Options.DIYGameSettings.GetBool())
+        if (Options.DIYModSettings.GetBool())
         {
             SendMessage(GetString("Message.NowOverrideText"), PlayerId);
             return;
@@ -768,9 +769,9 @@ public static class Utils
     public static void CopyCurrentSettings()
     {
         var sb = new StringBuilder();
-        if (Options.HideGameSettings.GetBool() && !AmongUsClient.Instance.AmHost)
+        if (Options.HideModSettings.GetBool() && !AmongUsClient.Instance.AmHost)
         {
-            ClipboardHelper.PutClipboardString(GetString("Message.HideGameSettings"));
+            ClipboardHelper.PutClipboardString(GetString("Message.HideModSettings"));
             return;
         }
         sb.Append($"━━━━━━━━━━━━【{GetString("Roles")}】━━━━━━━━━━━━");
@@ -809,9 +810,9 @@ public static class Utils
 
     public static void ShowActiveRoles(byte PlayerId = byte.MaxValue ,bool onlycountexists = false)
     {
-        if (Options.HideGameSettings.GetBool() && PlayerId != byte.MaxValue)
+        if (Options.HideModSettings.GetBool() && PlayerId != byte.MaxValue)
         {
-            SendMessage(GetString("Message.HideGameSettings"), PlayerId);
+            SendMessage(GetString("Message.HideModSettings"), PlayerId);
             return;
         }
         var sb = new StringBuilder(GetString("Roles")).Append(':');
@@ -881,9 +882,9 @@ public static class Utils
     }
     public static void ShowActiveNKs(byte PlayerId = byte.MaxValue, bool onlycountexists = false)
     {
-        if (Options.HideGameSettings.GetBool() && PlayerId != byte.MaxValue)
+        if (Options.HideModSettings.GetBool() && PlayerId != byte.MaxValue)
         {
-            SendMessage(GetString("Message.HideGameSettings"), PlayerId);
+            SendMessage(GetString("Message.HideModSettings"), PlayerId);
             return;
         }
         var sb2 = new StringBuilder(GetString("Roles")).Append(':');
@@ -1148,7 +1149,7 @@ public static class Utils
             // 会議じゃなくて，キノコカオス中で，seerが生きていてdesyncインポスターの場合に自身の名前を消す
             if (!isForMeeting && isMushroomMixupActive && seer.IsAlive() && !seer.Is(CustomRoleTypes.Impostor) && seer.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true)
             {
-                seer.RpcSetNamePrivate("<size=0>", true, force: NoCache);
+                seer.RpcSetNamePrivate("<size=0>", force: NoCache);
             }
             else
             {
@@ -1204,7 +1205,7 @@ public static class Utils
                 if (!isForMeeting) SelfName += "\r\n";
 
                 //適用
-                seer.RpcSetNamePrivate(SelfName, true, force: NoCache);
+                seer.RpcSetNamePrivate(SelfName, force: NoCache);
             }
 
             //seerが死んでいる場合など、必要なときのみ第二ループを実行する
@@ -1217,7 +1218,7 @@ public static class Utils
                 // 会議じゃなくて，キノコカオス中で，targetが生きていてseerがdesyncインポスターの場合にtargetの名前を消す
                 if (!isForMeeting && isMushroomMixupActive && target.IsAlive() && !seer.Is(CustomRoleTypes.Impostor) && seer.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true)
                 {
-                    target.RpcSetNamePrivate("<size=0>", true, seer, force: NoCache);
+                    target.RpcSetNamePrivate("<size=0>", seer, force: NoCache);
                 }
                 else
                 {
@@ -1283,7 +1284,7 @@ public static class Utils
                     string TargetName = $"{TargetRoleText}{TargetPlayerName}{TargetDeathReason}{TargetMark}{TargetSuffix}";
 
                     //適用
-                    target.RpcSetNamePrivate(TargetName, true, seer, force: NoCache);
+                    target.RpcSetNamePrivate(TargetName, seer, force: NoCache);
                 }
 
                // logger.Info("NotifyRoles-Loop2-" + target.GetNameWithRole() + ":END");

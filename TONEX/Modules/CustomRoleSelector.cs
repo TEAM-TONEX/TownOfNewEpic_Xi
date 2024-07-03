@@ -60,7 +60,7 @@ internal static class CustomRoleSelector
             }
             return;
         }
-        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
         {
             var pcList = Main.AllAlivePlayerControls.Where(x => x.IsAlive()).ToList();
             var Zb = pcList[IRandom.Instance.Next(0, pcList.Count)];
@@ -68,9 +68,9 @@ internal static class CustomRoleSelector
             foreach (var pc in Main.AllAlivePlayerControls)
             {
                 if(pc!=Zb)
-                   RoleResult.Add(pc, CustomRoles.Human);
+                   RoleResult.Add(pc, CustomRoles.Survivor);
             }
-            RoleResult.Add(Zb, CustomRoles.ZomBie);
+            RoleResult.Add(Zb, CustomRoles.Infector);
             Zb.SetOutFitStatic(2);
             return;
         }
@@ -420,7 +420,7 @@ internal static class CustomRoleSelector
     public static void SelectAddonRoles()
     {
         if (Options.CurrentGameMode == CustomGameMode.HotPotato) return;
-        if (Options.CurrentGameMode == CustomGameMode.ZombieMode) return;
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode) return;
         AddonRolesList = new();
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
         {

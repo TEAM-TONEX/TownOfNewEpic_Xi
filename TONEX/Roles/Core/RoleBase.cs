@@ -65,7 +65,9 @@ public abstract class RoleBase : IDisposable
         HasPet = haspet ?? Player.CanPet();
         HasAbility = hasAbility ?? roleInfo.BaseRoleType.Invoke() is
             RoleTypes.Shapeshifter or
+            RoleTypes.Phantom or
             RoleTypes.Engineer or
+            RoleTypes.Tracker or
             RoleTypes.Scientist or
             RoleTypes.GuardianAngel or
             RoleTypes.CrewmateGhost or

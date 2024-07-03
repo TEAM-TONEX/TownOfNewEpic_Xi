@@ -14,17 +14,17 @@ public static class OptionShowerPatch
 {
     public static float OriginalY = 2.9f;
     public static Scroller Scroller;
-    public static GameObject GameSettings;
+    public static GameObject ModSettings;
     public static bool Allow => OptionShower.currentPage != 0 && Input.mousePosition.x < 320f;
     [HarmonyPatch(nameof(HudManager.Start)), HarmonyPostfix]
     public static void Start(HudManager __instance)
     {
         OptionShower.BuildText();
-        GameSettings = __instance.GameSettings.gameObject;
-        __instance.GameSettings.fontSizeMin =
-        __instance.GameSettings.fontSizeMax = 0.85f;
-        Scroller = __instance.GameSettings.transform.parent.gameObject.AddComponent<Scroller>();
-        Scroller.Inner = __instance.GameSettings.transform;
+        ModSettings = __instance.ModSettings.gameObject;
+        __instance.ModSettings.fontSizeMin =
+        __instance.ModSettings.fontSizeMax = 0.85f;
+        Scroller = __instance.ModSettings.transform.parent.gameObject.AddComponent<Scroller>();
+        Scroller.Inner = __instance.ModSettings.transform;
         Scroller.SetYBoundsMin(OriginalY);
         Scroller.allowY = true;
     }
@@ -34,12 +34,12 @@ public static class OptionShowerPatch
         if (GameStates.IsLobby)
         {
             var POM = GameObject.Find("PlayerOptionsMenu(Clone)");
-            __instance.GameSettings.text = POM != null ? "" : OptionShower.GetText();
+            __instance.ModSettings.text = POM != null ? "" : OptionShower.GetText();
             Scroller.enabled = Allow;
             CalculateAndSetYBounds();
         }
     }
-    public static void CalculateAndSetYBounds() => Scroller?.SetYBoundsMax(GameSettings.GetComponent<TextMeshPro>().renderedHeight - 2.6f);
+    public static void CalculateAndSetYBounds() => Scroller?.SetYBoundsMax(ModSettings.GetComponent<TextMeshPro>().renderedHeight - 2.6f);
 }
 */
 public static class OptionShower
@@ -58,9 +58,9 @@ public static class OptionShower
         };
         //ゲームモードの表示
         sb.Append($"{Options.GameMode.GetName()}: {Options.GameMode.GetString()}\n\n");
-        if (Options.HideGameSettings.GetBool() && !AmongUsClient.Instance.AmHost)
+        if (Options.HideModSettings.GetBool() && !AmongUsClient.Instance.AmHost)
         {
-            sb.Append($"<color=#ff0000>{GetString("Message.HideGameSettings")}</color>");
+            sb.Append($"<color=#ff0000>{GetString("Message.HideModSettings")}</color>");
         }
         else
         {
@@ -101,7 +101,7 @@ public static class OptionShower
                 sb.Clear();
             }
 
-            sb.Append($"<size=140%><color=#59ef83>{GetString("TabGroup.GameSettings")}</color></size>\n");
+            sb.Append($"<size=140%><color=#59ef83>{GetString("TabGroup.ModSettings")}</color></size>\n");
             foreach (var opt in OptionItem.AllOptions.Where(x => x.Id is >= 3000000 and < 5000000 && !x.IsHiddenOn(Options.CurrentGameMode) && x.Parent == null))
             {
                 if (opt.IsHeader) sb.Append('\n');

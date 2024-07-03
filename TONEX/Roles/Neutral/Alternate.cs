@@ -170,6 +170,9 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
                     killer.SetKillCooldownV2();
                     EndSubstitute = true;
                     SubstituteId= target.PlayerId;
+                    //变成目标的模版职业
+                    //var pc = target.GetCustomRole().GetRoleInfo();
+                    //killer.SetRole(pc.BaseRoleType.Invoke());
                 }
                 else {
                   if(IRandom.Instance.Next(0, 100) >=50) target.Notify(Utils.ColorString(Utils.GetRoleColor(CustomRoles.Alternate), GetString("NothingIsWorthTheRisk")),0.3f);

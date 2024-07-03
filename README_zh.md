@@ -73,6 +73,7 @@
 - 许多职业想法
 - 提供职业: 监管者, 呪狼, 工作狂, 贪婪者, 潜藏者
 - 参考: 修改游戏公告
+- 移植了新的设置界面UI(2024.6.18后)
 ### [Town Of Host : The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles) :
 - 开发者：[Music Discussion](https://github.com/music-discussion)
 - 许多职业想法

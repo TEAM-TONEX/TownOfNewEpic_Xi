@@ -1,4 +1,4 @@
-﻿/*using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using UnityEngine;
 using Hazel;
 using TONEX.Roles.Core;
@@ -9,13 +9,13 @@ using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using TONEX.Roles.Neutral;
 
 namespace TONEX.Roles.GameModeRoles;
-public sealed class Human : RoleBase
+public sealed class Survivor : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(Human),
-            player => new Human(player),
-            CustomRoles.Human,
+            typeof(Survivor),
+            player => new Survivor(player),
+            CustomRoles.Survivor,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
             94_1_3_0200,
@@ -27,7 +27,7 @@ public sealed class Human : RoleBase
            ctop: true
 
         );
-    public ColdPotato(PlayerControl player)
+    public Survivor(PlayerControl player)
     : base(
         RoleInfo,
         player,
@@ -40,8 +40,9 @@ public sealed class Human : RoleBase
     }
     public override bool OnCompleteTask(out bool cancel)
     {
-        if (MyTaskState.IsTaskFinished && Player.IsAlive() && !ZombieManager.HumanCompleteTasks.Contains(Player))  {
-            ZombieManager.HumanCompleteTasks.Add(Player);
+        if (MyTaskState.IsTaskFinished && Player.IsAlive() && !InfectorManager.HumanCompleteTasks.Contains(Player.PlayerId))
+        {
+            InfectorManager.HumanCompleteTasks.Add(Player.PlayerId);
         }
         cancel = false;
         return false;
@@ -55,7 +56,6 @@ public sealed class Human : RoleBase
         //seeおよびseenが自分である場合以外は関係なし
         if (!Is(seer) || !Is(seen)) return "";
 
-        return string.Format(GetString("HotPotatoTimeRemain"), ZombieManager.RemainRoundTime);
+        return string.Format(GetString("HotPotatoTimeRemain"), InfectorManager.RemainRoundTime);
     }
 }
-*/

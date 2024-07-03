@@ -37,7 +37,7 @@ class IntroCutscenePatch
                 __instance.RoleBlurbText.color = color;
                 __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
             }
-           else if (Options.CurrentGameMode == CustomGameMode.ZombieMode){
+           else if (Options.CurrentGameMode == CustomGameMode.InfectorMode){
                 var color = ColorUtility.TryParseHtmlString("#FF9900", out var c) ? c : new(255, 255, 255, 255);
                 CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
                 __instance.YouAreText.color = color;
@@ -294,7 +294,7 @@ class IntroCutscenePatch
             __instance.BackgroundBar.material.color = color;
             PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
         }
-        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
         {
             var color = ColorUtility.TryParseHtmlString("#ffa300", out var c) ? c : new(255, 255, 255, 255);
             __instance.TeamTitle.text = Utils.GetRoleName(role);
@@ -406,7 +406,7 @@ class IntroCutscenePatch
             if (mapId != 4)
             {
                 Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
-                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato && Options.CurrentGameMode != CustomGameMode.ZombieMode)
+                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato && Options.CurrentGameMode != CustomGameMode.InfectorMode)
                     _ = new LateTask(() =>
                     {
                         if (GameStates.IsInTask)
@@ -420,7 +420,7 @@ class IntroCutscenePatch
                     CustomRoleManager.AllActiveRoles.Values.Do(x => x?.OnGameStart());
                 }, 0.1f, "RoleClassOnGameStartTask");
             }
-            _ = new LateTask(() => Main.AllPlayerControls.Do(pc => pc.RpcSetRoleDesync(RoleTypes.Shapeshifter, -3)), 2f, "SetImpostorForServer");
+            _ = new LateTask(() => Main.AllPlayerControls.Do(pc => pc.RpcSetRoleDesync(RoleTypes.Shapeshifter, false, -3)), 2f, "SetImpostorForServer");
             if (PlayerControl.LocalPlayer.Is(CustomRoles.GM))
             {
                 PlayerControl.LocalPlayer.RpcExile();
@@ -441,7 +441,7 @@ class IntroCutscenePatch
                         break;
                 }
             }
-            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.ZombieMode)
+            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.InfectorMode)
             {
                 RandomSpawn.SpawnMap map;
                 switch (Main.NormalOptions.MapId)

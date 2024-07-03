@@ -73,6 +73,7 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 - Many role ideas
 - Provided roles: AntiAdminer, CursedWolf, Workaholic, Greedier, DarkHide
 - Reference: Modify game announcement
+- Ported new UI for settings (after v2024.6.18)
 ### [Town Of Host : The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles) :
 - Developer：[Music Discussion](https://github.com/music-discussion)
 - Many role ideas

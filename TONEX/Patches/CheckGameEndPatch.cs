@@ -55,29 +55,31 @@ class GameEndChecker
 
         }
         //僵尸用
-        //if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
-        //{
-        //    var playerList = Main.AllAlivePlayerControls.ToList();
-        //   if(playerList.Count == ZombieManager.ZombiePlayers.Count || RemainRoundTime<=0)   {
-        //        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.ZomBie);
-        //        foreach (var zb in playerList)
-        //             CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
-        //        ShipStatus.Instance.enabled = false;
-        //        StartEndGame(reason); 
-        //        predicate = null;
-        //        return false;
-        //    }
-        //   else if (ZombieManager.HumanCompleteTasks.Count == ZombieManager.HumanNum) {
-        //        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Human);
-        //        foreach (var hm in ZombieManager.HumanCompleteTasks)
-        //             CustomWinnerHolder.WinnerIds.Add(hm.PlayerId);
-        //        ShipStatus.Instance.enabled = false;
-        //        StartEndGame(reason);
-        //        predicate = null;
-        //        return false;
-        //    }
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
+        {
+            var playerList = Main.AllAlivePlayerControls.ToList();
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count || InfectorManager.RemainRoundTime <= 0)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
+                foreach (var zb in playerList)
+                    CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
+                ShipStatus.Instance.enabled = false;
+                StartEndGame(reason);
+                predicate = null;
+                return false;
+            }
+            else if (InfectorManager.HumanCompleteTasks.Count == InfectorManager.HumanNum.Count)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Survivor);
+                foreach (var hm in InfectorManager.HumanCompleteTasks)
+                    CustomWinnerHolder.WinnerIds.Add(hm);
+                ShipStatus.Instance.enabled = false;
+                StartEndGame(reason);
+                predicate = null;
+                return false;
+            }
 
-        //}
+        }
 
         //ゲーム終了時
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default)
@@ -364,7 +366,7 @@ class GameEndChecker
 
     public static void SetPredicateToNormal() => predicate = new NormalGameEndPredicate();
     public static void SetPredicateToHotPotato() => predicate = new HotPotatoGameEndPredicate();
-    //public static void SetPredicateToZombie() => predicate = new ZombieGameEndPredicate();
+    public static void SetPredicateToZombie() => predicate = new ZombieGameEndPredicate();
 
     // ===== ゲーム終了条件 =====
     // 通常ゲーム用
@@ -544,28 +546,29 @@ class GameEndChecker
             return true;
         }
     }
-    //class ZombieGameEndPredicate : GameEndPredicate
-    //{
-    //    public override bool CheckForEndGame(out GameOverReason reason)
-    //    {
-    //        reason = GameOverReason.ImpostorByKill;
-    //        var playerList = Main.AllAlivePlayerControls.ToList();
-    //        if (playerList.Count == ZombieManager.ZombiePlayers.Count && RemainRoundTime<=0){
-    //            CustomWinnerHolder.ResetAndSetWinner(CustomWinner.ZomBie);
-    //            foreach (var zb in playerList)
-    //                CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
-    //            return true;
-    //        }
-    //        else if (ZombieManager.HumanCompleteTasks.Count == ZombieManager.HumanNum)
-    //        {
-    //            CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Human);
-    //            foreach (var hm in ZombieManager.HumanCompleteTasks)
-    //                CustomWinnerHolder.WinnerIds.Add(hm.PlayerId);
-    //            return true;
-    //        }
-    //        else { return false; }
-    //    }
-    //}
+    class ZombieGameEndPredicate : GameEndPredicate
+    {
+        public override bool CheckForEndGame(out GameOverReason reason)
+        {
+            reason = GameOverReason.ImpostorByKill;
+            var playerList = Main.AllAlivePlayerControls.ToList();
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count && InfectorManager.RemainRoundTime <= 0)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
+                foreach (var zb in playerList)
+                    CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
+                return true;
+            }
+            else if (InfectorManager.HumanCompleteTasks.Count == InfectorManager.HumanNum.Count)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Survivor);
+                foreach (var hm in InfectorManager.HumanCompleteTasks)
+                    CustomWinnerHolder.WinnerIds.Add(hm);
+                return true;
+            }
+            else { return false; }
+        }
+    }
 }
 
 public abstract class GameEndPredicate

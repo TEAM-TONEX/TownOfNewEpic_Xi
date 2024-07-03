@@ -21,16 +21,16 @@ internal static class HotPotatoManager
 
     public static void SetupCustomOption()
     {
-        HotPotatoMaxNum = IntegerOptionItem.Create(62_293_009, "HotPotatoMaxNum", new(1, 4, 1), 2, TabGroup.GameSettings, false)
+        HotPotatoMaxNum = IntegerOptionItem.Create(62_293_009, "HotPotatoMaxNum", new(1, 4, 1), 2, TabGroup.ModSettings, false)
            .SetGameMode(CustomGameMode.HotPotato)
            .SetColor(new Color32(245, 82, 82, byte.MaxValue))
            .SetHeader(true)
            .SetValueFormat(OptionFormat.Players);
-        ExplosionTotalTime = IntegerOptionItem.Create(62_293_008, "ExplosionTotalTime", new(10, 60, 5), 15, TabGroup.GameSettings, false)
+        ExplosionTotalTime = IntegerOptionItem.Create(62_293_008, "ExplosionTotalTime", new(10, 60, 5), 15, TabGroup.ModSettings, false)
            .SetGameMode(CustomGameMode.HotPotato)
            .SetColor(new Color32(245, 82, 82, byte.MaxValue))
            .SetValueFormat(OptionFormat.Seconds);
-        RoundTotalTime = IntegerOptionItem.Create(62_293_010, "RoundTotalTime", new(100, 300, 25), 150, TabGroup.GameSettings, false)
+        RoundTotalTime = IntegerOptionItem.Create(62_293_010, "RoundTotalTime", new(100, 300, 25), 150, TabGroup.ModSettings, false)
           .SetGameMode(CustomGameMode.HotPotato)
           .SetColor(new Color32(245, 82, 82, byte.MaxValue))
           .SetValueFormat(OptionFormat.Seconds);

@@ -420,9 +420,9 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.HotPotato"), playerId);
             return;
         }
-        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        else if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
         {
-            Utils.SendMessage(GetString("ModeDescribe.ZombieMode"), playerId);
+            Utils.SendMessage(GetString("ModeDescribe.InfectorMode"), playerId);
             return;
         }
         
@@ -458,9 +458,9 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.HotPotato"), playerId);
             return;
         }
-        if (Options.CurrentGameMode == CustomGameMode.ZombieMode)
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
         {
-            Utils.SendMessage(GetString("ModeDescribe.ZombieMode"), playerId);
+            Utils.SendMessage(GetString("ModeDescribe.InfectorMode"), playerId);
             return;
         }
         

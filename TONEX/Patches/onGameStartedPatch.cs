@@ -32,7 +32,10 @@ internal class ChangeRoleSettings
             {
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
+                Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Tracker, 0, 0);
+                Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Noisemaker, 0, 0);
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
+                Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Phantom, 0, 0);
             }
             Main.SetRolesList = new();
             foreach (var pc in Main.AllPlayerControls)
@@ -351,11 +354,11 @@ internal class SelectRolesPatch
                 case CustomGameMode.HotPotato:
                     GameEndChecker.SetPredicateToHotPotato();
                     break;
-                //case CustomGameMode.ZombieMode:
-                //    GameEndChecker.SetPredicateToZombie();
+                case CustomGameMode.InfectorMode:
+                    GameEndChecker.SetPredicateToZombie();
 
 
-                //    break;
+                    break;
             }
 
             GameOptionsSender.AllSenders.Clear();

@@ -16,7 +16,7 @@ public sealed class Noisemaker : RoleBase
            0070,
            SetupOptionItem,
            "engin",
-           "#93FF8C"
+           "#B48CFF"
 
        );
     public Noisemaker(PlayerControl player)

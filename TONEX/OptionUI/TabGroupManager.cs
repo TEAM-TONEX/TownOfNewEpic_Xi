@@ -125,7 +125,7 @@ public class TabGroupManager : SettingItemManager
         return tab switch
         {
             TabGroup.SystemSettings => Main.ModColor,
-            TabGroup.GameSettings => "#59ef83",
+            TabGroup.ModSettings => "#59ef83",
             TabGroup.ImpostorRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Impostor),
             TabGroup.CrewmateRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Crewmate),
             TabGroup.NeutralRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Neutral),

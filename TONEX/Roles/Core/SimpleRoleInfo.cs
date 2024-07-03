@@ -104,7 +104,7 @@ public class SimpleRoleInfo
         _ = ColorUtility.TryParseHtmlString(colorCode, out RoleColor);
 
         if (Experimental) tab = TabGroup.OtherRoles;
-        else if (tab == TabGroup.GameSettings)
+        else if (tab == TabGroup.ModSettings)
             tab = CustomRoleType switch
             {
                 CustomRoleTypes.Impostor => TabGroup.ImpostorRoles,
@@ -129,7 +129,7 @@ public class SimpleRoleInfo
         string colorCode = "", 
         bool isDesyncImpostor = false,
         bool isNK = false,
-        TabGroup tab = TabGroup.GameSettings,
+        TabGroup tab = TabGroup.ModSettings,
         Func<AudioClip> introSound = null,
         CountTypes? countType = null,
         bool experimental = false,
@@ -227,7 +227,7 @@ public class SimpleRoleInfo
     //            colorCode,
     //            false,
     //            false,
-    //            TabGroup.GameSettings,
+    //            TabGroup.ModSettings,
     //            null,
     //            false,
     //            false,

@@ -454,8 +454,8 @@ public enum CustomWinner
     CupidLovers = CustomRoles.CupidLovers,
     Specterraid = CustomRoles.Specterraid,
     Yandere = CustomRoles.Yandere,
-    ZomBie = CustomRoles.ZomBie,
-    Human = CustomRoles.Human,
+    Infector = CustomRoles.Infector,
+    Survivor = CustomRoles.Survivor,
 }
 public enum SuffixModes
 {
