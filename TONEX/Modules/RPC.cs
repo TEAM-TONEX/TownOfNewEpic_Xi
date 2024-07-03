@@ -131,46 +131,53 @@ internal class RPCHandlerPatch
             MessageReader subReader = MessageReader.Get(reader);
             if (EAC.ReceiveRpc(__instance, callId, reader)) return false;
             Logger.Info($"{__instance?.Data?.PlayerId}({(__instance?.Data?.PlayerId == 0 ? "Host" : __instance?.Data?.PlayerName)}):{callId}({RPC.GetRpcName(callId)})", "ReceiveRPC");
-            switch (rpcType)
-            {
-                case RpcCalls.SetName: //SetNameRPC
-                    string name = subReader.ReadString();
-                    if (subReader.BytesRemaining > 0 && subReader.ReadBoolean()) return false;
-                    Logger.Info("RPC名称修改:" + __instance.GetNameWithRole() + " => " + name, "SetName");
-                    break;
-                case RpcCalls.SetRole: //SetNameRPC
-                    var role = (RoleTypes)subReader.ReadUInt16();
-                    var overrides = subReader.ReadBoolean();
-                    Logger.Info("RPC设置职业:" + __instance.GetRealName() + " => " + role, "SetRole");
-                    break;
-                case RpcCalls.SendChat:
-                    var text = subReader.ReadString();
-                    if (string.IsNullOrEmpty(text) || text.EndsWith('\0')) return false;
-                    Logger.Info($"{__instance.GetNameWithRole()}:{text}", "ReceiveChat");
-                    ChatCommands.OnReceiveChat(__instance, text, out var canceled);
-                    if (canceled) return false;
-                    break;
-                case RpcCalls.StartMeeting:
-                    var p = Utils.GetPlayerById(subReader.ReadByte());
-                    Logger.Info($"{__instance.GetNameWithRole()} => {p?.GetNameWithRole() ?? "null"}", "StartMeeting");
-                    break;
-            }
-            if (__instance.PlayerId != 0
+
+        switch (rpcType)
+        {
+            case RpcCalls.SetName: //SetNameRPC
+                subReader.ReadUInt32();
+                string name = subReader.ReadString();
+                if (subReader.BytesRemaining > 0 && subReader.ReadBoolean()) return false;
+                Logger.Info("RPC Set Name For Player: " + __instance.GetNameWithRole() + " => " + name, "SetName");
+                break;
+            case RpcCalls.SetRole: //SetRoleRPC
+                var role = (RoleTypes)subReader.ReadUInt16();
+                var canOverriddenRole = subReader.ReadBoolean();
+                Logger.Info("RPC Set Role For Player: " + __instance.GetRealName() + " => " + role + " CanOverrideRole: " + canOverriddenRole, "SetRole");
+                break;
+            case RpcCalls.SendChat: // Free chat
+                var text = subReader.ReadString();
+                Logger.Info($"{__instance.GetNameWithRole().RemoveHtmlTags()}:{text.RemoveHtmlTags()}", "ReceiveChat");
+                ChatCommands.OnReceiveChat(__instance, text, out var canceled);
+                if (canceled) return false;
+                break;
+            case RpcCalls.SendQuickChat:
+                Logger.Info($"{__instance.GetNameWithRole().RemoveHtmlTags()}:Some message from quick chat", "ReceiveChat");
+                ChatCommands.OnReceiveChat(__instance, "Some message from quick chat", out var canceledQuickChat);
+                if (canceledQuickChat) return false;
+                break;
+            case RpcCalls.StartMeeting:
+                var p = Utils.GetPlayerById(subReader.ReadByte());
+                Logger.Info($"{__instance.GetNameWithRole()} => {p?.GetNameWithRole() ?? "null"}", "StartMeeting");
+                break;
+        }
+
+        if (__instance.PlayerId != 0
                 && Enum.IsDefined(typeof(CustomRPC), (int)callId)
                 && !TrustedRpc(callId)) //ホストではなく、CustomRPCで、VersionCheckではない
+        {
+            Logger.Warn($"{__instance?.Data?.PlayerName}:{callId}({RPC.GetRpcName(callId)}) 已取消，因为它是由主机以外的其他人发送的。", "CustomRPC");
+            if (AmongUsClient.Instance.AmHost)
             {
-                Logger.Warn($"{__instance?.Data?.PlayerName}:{callId}({RPC.GetRpcName(callId)}) 已取消，因为它是由主机以外的其他人发送的。", "CustomRPC");
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    if (!EAC.ReceiveInvalidRpc(__instance, callId)) return false;
-                    Utils.KickPlayer(__instance.GetClientId(), false, "InvalidRPC");
-                    Logger.Warn($"收到来自 {__instance?.Data?.PlayerName} 的不受信用的RPC，因此将其踢出。", "Kick");
-                    RPC.NotificationPop(string.Format(GetString("Warning.InvalidRpc"), __instance?.Data?.PlayerName));
-                }
-                return false;
+                if (!EAC.ReceiveInvalidRpc(__instance, callId)) return false;
+                Utils.KickPlayer(__instance.GetClientId(), false, "InvalidRPC");
+                Logger.Warn($"收到来自 {__instance?.Data?.PlayerName} 的不受信用的RPC，因此将其踢出。", "Kick");
+                RPC.NotificationPop(string.Format(GetString("Warning.InvalidRpc"), __instance?.Data?.PlayerName));
             }
-        
-            return true;
+            return false;
+        }
+
+        return true;
         
     }
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
