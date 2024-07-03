@@ -189,7 +189,7 @@ static class ExtendedPlayerControl
             target.SetColor(colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetColor)
                 .Write(target.Data.NetId)
-                .Write(colorId)
+                .Write((byte)colorId)
             .EndRpc();
         }
         if (hatId != "")
