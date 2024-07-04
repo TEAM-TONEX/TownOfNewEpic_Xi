@@ -65,7 +65,6 @@ public class Main : BasePlugin
     public static string ExceptionMessage;
     public static bool ExceptionMessageIsShown = false;
     public static string CredentialsText;
-    public Coroutines coroutines;
     public CreateUIElements UI;
     public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
     //Client Options
@@ -458,7 +457,4 @@ public enum TieMode
     Default,
     All,
     Random
-}
-public class Coroutines : MonoBehaviour
-{
 }
