@@ -99,7 +99,7 @@ public class GameStartManagerPatch
             AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
             if (AURoleOptions.ShapeshifterCooldown == 0f)
                 AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
-            Logger.Info("Set Shapeshifter  Cooldown", "test");
+            Logger.Info("Set Shapeshifter Cooldown", "test");
         }
     }
 
@@ -139,7 +139,7 @@ public class GameStartManagerPatch
         public static void Postfix(GameStartManager __instance)
         {
             if (!AmongUsClient.Instance) return;
-
+            if (Main.AssistivePluginMode.Value) return;
             string warningMessage = "";
             if (AmongUsClient.Instance.AmHost)
             {

@@ -484,21 +484,20 @@ class FixedUpdatePatch
     public static void Postfix(PlayerControl __instance)
     {
         var player = __instance;
-        if (Main.AssistivePluginMode.Value)
+        if (Main.AssistivePluginMode.Value && __instance == PlayerControl.LocalPlayer)
         {
             if (GameStates.IsLobby)
             {
-                PlayerControl.LocalPlayer.cosmetics.nameText.text =
-                    $"<color=#31D5BA>{PlayerControl.LocalPlayer.name}</color>";
+                __instance.cosmetics.nameText.text =
+                    $"<color=#31D5BA>{__instance?.name}</color>";
             }
             else
             {
-                var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+                var roleType = __instance.Data.Role.Role;
                 var cr = roleType.GetCustomRoleTypes();
                 var color = Utils.GetRoleColorCode(cr);
-                PlayerControl.LocalPlayer.cosmetics.nameText.text = $"<color={color}>{PlayerControl.LocalPlayer.name}</color>";
+                __instance.cosmetics.nameText.text = $"<color={color}>{__instance?.name}</color>";
             }
-                
             return;
         }
            
@@ -1279,7 +1278,7 @@ class PlayerControlCheckNamePatch
 {
     public static void Postfix(PlayerControl __instance, string playerName)
     {
-        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby) return;
+        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || Main.AssistivePluginMode.Value) return;
 
         var name = playerName;
         if (Options.FormatNameMode.GetInt() == 2)
@@ -1330,6 +1329,7 @@ class CmdCheckNameVersionCheckPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         RPC.RpcVersionCheck();
     }
 }

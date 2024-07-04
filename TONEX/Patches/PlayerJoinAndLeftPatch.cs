@@ -19,9 +19,10 @@ class OnGameJoinedPatch
 {
     public static void Postfix(AmongUsClient __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        
         while (!Options.IsLoaded) System.Threading.Tasks.Task.Delay(1);
         Logger.Info($"{__instance.GameId} 加入房间", "OnGameJoined");
+        if (Main.AssistivePluginMode.Value) return;
         Main.playerVersion = new Dictionary<byte, PlayerVersion>();
         if (!Main.VersionCheat.Value) RPC.RpcVersionCheck();
         SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
@@ -87,8 +88,9 @@ class OnPlayerJoinedPatch
 {
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
     {
-        if (Main.AssistivePluginMode.Value) return;
+
         Logger.Info($"{client.PlayerName}(ClientID:{client.Id}/FriendCode:{client.FriendCode}) 加入房间", "Session");
+        if (Main.AssistivePluginMode.Value) return;
         if (AmongUsClient.Instance.AmHost && client.FriendCode == "" && Options.KickPlayerFriendCodeNotExist.GetBool())
         {
             Utils.KickPlayer(client.Id, false, "NotLogin");
@@ -202,10 +204,11 @@ class InnerNetClientSpawnPatch
 {
     public static void Prefix([HarmonyArgument(1)] int ownerId, [HarmonyArgument(2)] SpawnFlags flags)
     {
-        if (!AmongUsClient.Instance.AmHost || flags != SpawnFlags.IsClientCharacter) return;
-
-        ClientData client = Utils.GetClientById(ownerId);
         if (Main.AssistivePluginMode.Value) return;//辅助插件模式
+        if (!AmongUsClient.Instance.AmHost || flags != SpawnFlags.IsClientCharacter) return;
+        
+        ClientData client = Utils.GetClientById(ownerId);
+        
 
         //规范昵称
 
