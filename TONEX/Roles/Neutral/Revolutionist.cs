@@ -246,7 +246,7 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
         }
 
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (GameStates.IsInGame && IsDrawDone(Player))
         {
@@ -271,30 +271,6 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
         return false;
     }
     
-    public override void OnUsePet()
-    {
-                if (GameStates.IsInGame && IsDrawDone(Player))
-        {
-            foreach (var pc in Main.AllAlivePlayerControls)
-            {
-                if (pc.PlayerId != Player.PlayerId)
-                {
-                    //生存者は焼殺
-                    pc.SetRealKiller(Player);
-                    pc.RpcMurderPlayer(pc);
-                    var state = PlayerState.GetByPlayerId(pc.PlayerId);
-                    state.DeathReason = CustomDeathReason.Torched;
-                    state.SetDead();
-                }
-                else
-                    RPC.PlaySoundRPC(pc.PlayerId, Sounds.KillSound);
-            }
-            CustomWinnerHolder.ShiftWinnerAndSetWinner(CustomWinner.Revolutionist); //焼殺で勝利した人も勝利させる
-            CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
-            return;
-        }
-        return;
-    }
     public bool OverrideKillButtonText(out string text)
     {
         text = GetString("RevolutionistDouseButtonText");

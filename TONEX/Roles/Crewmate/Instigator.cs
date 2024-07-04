@@ -67,7 +67,8 @@ public sealed class Instigator : RoleBase
         ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
         ForInstigator = new();
-        
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -108,26 +109,15 @@ public override bool GetAbilityButtonText(out string text)
     {
         ReduceNowCooldown();
         Player.SyncSettings();
-        ProtectStartTime = Utils.GetTimeStamp();
+        ResetCountdown(0);
         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
         Player.Notify(GetString("InstigatorOnGuard"),2f);
         return true;
     }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (CheckForOffGuard(0))
-        {
-            ProtectStartTime = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("NiceTimeStopperOffGuard")));
-        }
-    }
     public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         if (info.IsSuicide) return true;
-        if (ProtectStartTime != -1 && ProtectStartTime + (long)OptionSkillDuration.GetFloat() >= Utils.GetTimeStamp())
+        if (CheckForOnGuard(0))
         {
             var (killer, target) = info.AttemptTuple;
             target.RpcMurderPlayerV2(killer);
@@ -140,13 +130,5 @@ public override bool GetAbilityButtonText(out string text)
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
-    }
-    public override void AfterMeetingTasks()
-    {
-        
-    }
-    public override void OnStartMeeting()
-    {
-        ProtectStartTime = -1;
     }
 }

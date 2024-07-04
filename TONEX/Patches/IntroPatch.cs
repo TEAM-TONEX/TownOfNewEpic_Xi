@@ -171,6 +171,13 @@ class IntroCutscenePatch
                     __instance.TeamTitle.color = __instance.BackgroundBar.material.color =  new Color32(255, 25, 25, byte.MaxValue);
                     break;
                 case CustomRoleTypes.Crewmate:
+                    if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
+                    {
+                        __instance.TeamTitle.text = GetString("TeamImpostor");
+                        __instance.ImpostorText.text = GetString("ImpostorIntroText");
+                        __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
+                        break;
+                    }
                     __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
                     __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
                     __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");

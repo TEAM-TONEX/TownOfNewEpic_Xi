@@ -170,7 +170,7 @@ public sealed class Cupid : RoleBase, INeutralKiller
         text = GetString("CupidKillButtonText");
         return true;
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (!CupidCanShield.GetBool()) return false;
         if (!Shield)
@@ -182,19 +182,6 @@ public sealed class Cupid : RoleBase, INeutralKiller
             Player.Notify(GetString("CupidIsShielded"));
 
         return false;
-    }
-    public override void OnUsePet()
-    {
-        if (!CupidCanShield.GetBool()) return ;
-        if (!Shield)
-        {
-            Shield = true;
-            Player.Notify(GetString("CupidShielded"));
-        }
-        else
-            Player.Notify(GetString("CupidIsShielded"));
-
-        return ;
     }
     public static bool OnCheckMurderPlayerOthers_After(MurderInfo info)
     {

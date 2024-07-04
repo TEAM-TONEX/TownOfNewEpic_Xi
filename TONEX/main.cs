@@ -321,17 +321,17 @@ public class Main : BasePlugin
         handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
-     ///*   AddComponent<CanvasManager>();
+     //   AddComponent<CanvasManager>();
      //   AddComponent<MainUIManager>();
      //   AddComponent<OpenButtonManager>();
      //   AddComponent<SettingItemManager>();
      //   AddComponent<SidebarManager>();
      //   AddComponent<TabGroupManager>();
      //   AddComponent<UIBase>();
-     //   UI = AddComponent<CreateUIElements>();*/
+     //   UI = AddComponent<CreateUIElements>();
 
 
-        // SystemEnvironment.SetEnvironmentVariables();
+        //SystemEnvironment.SetEnvironmentVariables();
 
         Harmony.PatchAll();
 
@@ -339,28 +339,6 @@ public class Main : BasePlugin
         else ConsoleManager.CreateConsole();
 
         TONEX.Logger.Msg("========= TONEX loaded! =========", "Plugin Load");
-    }
-    public void StartCoroutine(System.Collections.IEnumerator coroutine)
-    {
-        if (coroutine == null)
-        {
-            return;
-        }
-        coroutines.StartCoroutine(coroutine.WrapToIl2Cpp());
-    }
-
-    public void StopCoroutine(System.Collections.IEnumerator coroutine)
-    {
-        if (coroutine == null)
-        {
-            return;
-        }
-        coroutines.StopCoroutine(coroutine.WrapToIl2Cpp());
-    }
-
-    public void StopAllCoroutines()
-    {
-        coroutines.StopAllCoroutines();
     }
 }
 public enum CustomDeathReason

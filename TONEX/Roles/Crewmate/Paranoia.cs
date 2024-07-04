@@ -52,10 +52,6 @@ public sealed class Paranoia : RoleBase
         SkillLimit = OptionSkillNums.GetInt();
         
     }
-    public override void OnGameStart()
-    {
-        
-    }
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown =
@@ -88,9 +84,14 @@ public sealed class Paranoia : RoleBase
     {
         if (SkillLimit >= 1)
         {
-            var user = physics.myPlayer;
-            physics.RpcBootFromVent(ventId);
-            user?.NoCheckStartMeeting(user?.Data);
+            if (physics != null)
+            {
+                var user = physics.myPlayer;
+                physics.RpcBootFromVent(ventId);
+                user?.NoCheckStartMeeting(user?.Data);
+            }
+            else
+                Player.NoCheckStartMeeting(Player?.Data);
             SkillLimit--;
         }
         else

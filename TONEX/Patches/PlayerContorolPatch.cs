@@ -811,7 +811,6 @@ class CoEnterVentPatch
             }, 0.5f, "Fix DesyncImpostor Stuck");
             return false;
         }
-
         if ((!user.GetRoleClass()?.OnEnterVentWithUsePet(__instance, id) ?? false)
             || (user.Data.Role.Role != RoleTypes.Engineer //非工程师
             && !user.CanUseImpostorVentButton()) //也不能使用内鬼管道

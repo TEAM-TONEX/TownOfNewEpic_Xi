@@ -20,10 +20,11 @@ namespace TONEX;
 [Flags]
 public enum CustomGameMode
 {
+    //二进制！！！！！！！！！！！！
     Standard = 0x01,
     HotPotato = 0x02,
-    InfectorMode = 0x03,
-    AllCrewModMode = Standard | 0x04,
+    InfectorMode = 0x04,
+    AllCrewModMode = Standard | 0x08,
     All = Standard | HotPotato | AllCrewModMode | InfectorMode
 }
 
@@ -57,10 +58,11 @@ public static class Options
         => GameMode.GetInt() switch
         {    
             1 => CustomGameMode.HotPotato,
+            2 => CustomGameMode.InfectorMode,
 #if DEBUG
-            2 => CustomGameMode.AllCrewModMode,
+            3 => CustomGameMode.AllCrewModMode,
 #endif
-            3 => CustomGameMode.InfectorMode,
+            
             _ => CustomGameMode.Standard
         };
 
@@ -68,6 +70,7 @@ public static class Options
     {
         "Standard",
         "HotPotatoMode",
+        "InfectorMode",
 #if DEBUG
         "AllCrewModMode"
 #endif

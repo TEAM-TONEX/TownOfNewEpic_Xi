@@ -135,7 +135,7 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 倒计时未设置
     /// </summary>
-    public bool UnSet(int Item) => CountdownList[Item] == -1;
+    public bool CheckForUnSet(int Item) => CountdownList[Item] == -1;
     /// <summary>
     /// 检查倒计时是否生效
     /// </summary>
@@ -161,11 +161,13 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 重置倒计时
     /// </summary>
-    public void ResetCountdown(int Item) => CountdownList[Item] = Utils.GetTimeStamp();
+    public void ResetCountdown(int Item = 0) => CountdownList[Item] = Utils.GetTimeStamp();
     /// <summary>
     /// 归零倒计时
     /// </summary>
-    public void ZeroingCountdown(int Item) => CountdownList[Item] = -1;
+    public void ZeroingCountdown(int Item = 0) => CountdownList[Item] = -1;
+
+    public long RemainTime(int Item = 0) => CountdownList[Item] + CooldownList[Item] - Utils.GetTimeStamp();
     #endregion
     #region RPC相关处理
     /// <summary>

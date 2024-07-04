@@ -82,9 +82,14 @@ public sealed class Mayor : RoleBase
     {
         if (LeftButtonCount > 0 )
         {
-            var user = physics.myPlayer;
-            physics.RpcBootFromVent(ventId);
-            user?.ReportDeadBody(null);
+            if (physics != null)
+            {
+                var user = physics.myPlayer;
+                physics.RpcBootFromVent(ventId);
+                user?.ReportDeadBody(null);
+            }
+            else
+                Player.ReportDeadBody(null);
             LeftButtonCount--;
 
             SendRPC();

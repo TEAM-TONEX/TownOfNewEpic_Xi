@@ -55,7 +55,8 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     {
         ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
-        
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
     }
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
@@ -94,7 +95,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     {
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
-        ProtectStartTime = Utils.GetTimeStamp();
+        ResetCountdown(0);
         
         foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
             pc.Notify(GetString("NiceTimeStopperOnGuard"));
@@ -116,22 +117,11 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
         }
         return false;
     }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() && ProtectStartTime + (long)OptionSkillDuration.GetFloat() < now && ProtectStartTime != -1)
-        {
-            ProtectStartTime = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("NiceTimeStopperOffGuard")));
-        }
-    }
     public override void OnUsePet()
     {
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
-        ProtectStartTime = Utils.GetTimeStamp();
+        ResetCountdown(0);
         
         foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
             pc.Notify(GetString("NiceTimeStopperOnGuard"));
@@ -160,13 +150,5 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
-    }
-    public override void AfterMeetingTasks()
-    {
-        
-    }
-    public override void OnStartMeeting()
-    {
-        ProtectStartTime = -1;
     }
 }

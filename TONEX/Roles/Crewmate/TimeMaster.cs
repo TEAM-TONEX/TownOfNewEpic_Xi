@@ -65,11 +65,9 @@ public sealed class TimeMaster : RoleBase
         ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
         TimeMasterbacktrack = new();
-        
-    }
-    public override void OnGameStart()
-    {
-        
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
+
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -105,7 +103,7 @@ public sealed class TimeMaster : RoleBase
     {
         ReduceNowCooldown();
         Player.SyncSettings();
-        ProtectStartTime = Utils.GetTimeStamp();
+        ResetCountdown(0);
         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
         Player.Notify(GetString("TimeMasterOnGuard"));
         foreach (var player in Main.AllPlayerControls)
@@ -127,17 +125,6 @@ public sealed class TimeMaster : RoleBase
         }
         return true;
     }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (ProtectStartTime + (long)OptionSkillDuration.GetFloat() < now && ProtectStartTime != -1)
-        {
-            ProtectStartTime = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("TimeMasterOffGuard")));
-        }
-    }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
@@ -145,7 +132,7 @@ public sealed class TimeMaster : RoleBase
     public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         if (info.IsSuicide) return true;
-        if (ProtectStartTime != -1 && ProtectStartTime + OptionSkillDuration.GetFloat() >= Utils.GetTimeStamp() && Marked)
+        if (CheckForOnGuard(0) && Marked)
         {
             var (killer, target) = info.AttemptTuple;
             foreach (var player in Main.AllPlayerControls)
@@ -161,14 +148,6 @@ public sealed class TimeMaster : RoleBase
             return false;
         }
         return true;
-    }
-    public override void AfterMeetingTasks()
-    {
-        
-    }
-    public override void OnStartMeeting()
-    {
-        ProtectStartTime = -1;
     }
     public override bool GetAbilityButtonSprite(out string buttonName)
     {

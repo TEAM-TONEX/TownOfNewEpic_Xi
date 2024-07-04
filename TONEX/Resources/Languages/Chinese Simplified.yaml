@@ -24,8 +24,8 @@ ImpostorNumEN: "<color=#bbbaa1>我们之中有</color><color=#ff1919>{0}</color>
 
 # 阵营开场
 ImpostorIntroText: "<color=#ff1919>让邪恶笼罩世界</color>"
-CrewmateIntroText: "<color=#8cffff>完成您的任务，共同解决那群坏蛋！</color>"
-NNeutralIntroText: "<color=#fffee2>顺水推舟，正义还是邪恶由您来抉择</color>"
+CrewmateIntroText: "<color=#8cffff>完成你的任务，解决那群坏蛋！</color>"
+NNeutralIntroText: "<color=#fffee2>顺水推舟，正义还是邪恶由你来抉择</color>"
 IndependentIntroText: "<color=#bbbaa1>让我们以全新的力量，征服整个世界！</color>"
 
 # 职业 / Roles
@@ -49,7 +49,7 @@ Noisemaker: "大嗓门"
 GuardianAngel: "守护天使"
 Impostor: "内鬼"
 Shapeshifter: "变形者"
-Phantom: "幻术师"
+Phantom: "幻象师"
 
 ## 内鬼阵营 / Impostors
 BountyHunter: "赏金猎人"
