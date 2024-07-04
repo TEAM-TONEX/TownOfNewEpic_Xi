@@ -95,10 +95,11 @@ public class GameStartManagerPatch
 
             if (Main.NormalOptions.KillCooldown == 0f)
                 Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
-
+            Logger.Info("Set Kill Cooldown", "test");
             AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
             if (AURoleOptions.ShapeshifterCooldown == 0f)
                 AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
+            Logger.Info("Set Shapeshifter  Cooldown", "test");
         }
     }
 
@@ -121,7 +122,7 @@ public class GameStartManagerPatch
                 HideName.enabled = false;
             }
 
-            if (Main.AutoStartGame.Value)
+            if (Main.AutoStartGame.Value && !Main.AssistivePluginMode.Value)
             {
                 updateTimer++;
                 if (updateTimer >= 50)

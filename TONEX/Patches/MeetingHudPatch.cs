@@ -72,6 +72,7 @@ public static class MeetingHudPatch
         }
         public static void Postfix(MeetingHud __instance)
         {
+            if (Main.AssistivePluginMode.Value) return;
             MeetingVoteManager.Start();
 
             SoundManager.Instance.ChangeAmbienceVolume(0f);

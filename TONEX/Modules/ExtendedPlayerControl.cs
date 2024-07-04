@@ -1612,7 +1612,7 @@ static class ExtendedPlayerControl
         }
         return false;
     }
-    public static string GetRoleInfo(this PlayerControl player, bool InfoLong = false)
+    public static string GetRoleInfo(this PlayerControl player, bool InfoLong = false, bool forVanilla = false)
     {
         var roleClass = player.GetRoleClass();
         var role = player.GetCustomRole();
@@ -1634,6 +1634,17 @@ static class ExtendedPlayerControl
         var Info = (role.IsVanilla() ? "Blurb" : "Info") + (InfoLong ? "Long" : "");
         
         return GetString($"{Prefix}{text}{Info}");
+    }
+    public static string GetRoleInfoForVanilla(this CustomRoles role, bool InfoLong = false)
+    {
+        if (role is CustomRoles.Crewmate or CustomRoles.Impostor)
+            InfoLong = false;
+
+        var text = role.ToString();
+
+        var Info = (role.IsVanilla() ? "Blurb" : "Info") + (InfoLong ? "Long" : "");
+
+        return GetString($"{text}{Info}");
     }
     public static string GetRoleInfoWithRole(this CustomRoles role, bool InfoLong = false)
     {

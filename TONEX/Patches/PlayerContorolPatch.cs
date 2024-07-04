@@ -488,26 +488,24 @@ class FixedUpdatePatch
         {
             if (GameStates.IsLobby)
             {
-                if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
-                {
-                    if (Main.ForkId != ver.forkId) // フォークIDが違う場合
-                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
-                    else if (Main.version.CompareTo(ver.version) == 0)
-                        __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
-                    else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
-                }
-                else
-                {
-                    __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-                   
-                }
+                PlayerControl.LocalPlayer.cosmetics.nameText.text =
+                    $"<color=#31D5BA>{PlayerControl.LocalPlayer.name}</color>";
             }
+            else
+            {
+                var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+                var cr = roleType.GetCustomRoleTypes();
+                var color = Utils.GetRoleColorCode(cr);
+                PlayerControl.LocalPlayer.cosmetics.nameText.text = $"<color={color}>{PlayerControl.LocalPlayer.name}</color>";
+            }
+                
             return;
         }
            
 
         if (player.AmOwner && player.IsEACPlayer() && (GameStates.IsLobby || GameStates.IsInGame) && GameStates.IsOnlineGame)
             AmongUsClient.Instance.ExitGame(DisconnectReasons.Error);
+
 
         if (Utils.LocationLocked&& PlayerControl.LocalPlayer == player)
         {

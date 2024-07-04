@@ -37,6 +37,7 @@ public static class RegistryManager
             [
                 @"./TOH_DATA",
                 @"./TOHE_DATA",
+                @"./TONX_DATA",
             ];
 
         Logger.Warn("上次启动的TONEX版本：" + LastVersion, "Registry Manager");

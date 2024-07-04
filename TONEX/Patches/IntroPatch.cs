@@ -24,7 +24,21 @@ class IntroCutscenePatch
     public static void ShowRole_Postfix(IntroCutscene __instance)
     {
         if (!GameStates.IsModHost) return;
-        if (Main.AssistivePluginMode.Value) return;
+        if (Main.AssistivePluginMode.Value)
+        {
+            var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+            var cr = roleType.GetCustomRoleTypes();
+            __instance.YouAreText.color = Utils.GetRoleColor(cr);
+            __instance.RoleText.text = Utils.GetRoleName(cr);
+            __instance.RoleText.color = Utils.GetRoleColor(cr);
+            __instance.RoleText.fontWeight = TMPro.FontWeight.Thin;
+            __instance.RoleText.SetOutlineColor(Utils.ShadeColor(Utils.GetRoleColor(cr), 0.1f).SetAlpha(0.38f));
+            __instance.RoleText.SetOutlineThickness(0.17f);
+            __instance.RoleBlurbText.color = Utils.GetRoleColor(cr);
+            __instance.RoleBlurbText.text = cr.GetRoleInfoForVanilla();
+            return;
+        }
+
         _ = new LateTask(() =>
         {
            if (Options.CurrentGameMode == CustomGameMode.HotPotato)
@@ -48,22 +62,22 @@ class IntroCutscenePatch
             }
            else
             {
-            CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
-            if (!(role.IsVanilla() && Options.DisableVanillaRoles.GetBool()))
-            {
-                __instance.YouAreText.color = Utils.GetRoleColor(role);
-                __instance.RoleText.text = Utils.GetRoleName(role);
-                __instance.RoleText.color = Utils.GetRoleColor(role);
-                __instance.RoleText.fontWeight = TMPro.FontWeight.Thin;
-                __instance.RoleText.SetOutlineColor(Utils.ShadeColor(Utils.GetRoleColor(role), 0.1f).SetAlpha(0.38f));
-                __instance.RoleText.SetOutlineThickness(0.17f);
-                __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
-                __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
-            }
-            foreach (var subRole in PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SubRoles)
-                __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(subRole), GetString($"{subRole}Info"));
+                CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
+                if (!(role.IsVanilla() && Options.DisableVanillaRoles.GetBool()))
+                {
+                    __instance.YouAreText.color = Utils.GetRoleColor(role);
+                    __instance.RoleText.text = Utils.GetRoleName(role);
+                    __instance.RoleText.color = Utils.GetRoleColor(role);
+                    __instance.RoleText.fontWeight = TMPro.FontWeight.Thin;
+                    __instance.RoleText.SetOutlineColor(Utils.ShadeColor(Utils.GetRoleColor(role), 0.1f).SetAlpha(0.38f));
+                    __instance.RoleText.SetOutlineThickness(0.17f);
+                    __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
+                    __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+                }
+                foreach (var subRole in PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SubRoles)
+                    __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(subRole), GetString($"{subRole}Info"));
                 Neptune.Intro(ref __instance);
-            __instance.RoleText.text += Utils.GetSubRolesText(PlayerControl.LocalPlayer.PlayerId, false, true);
+                __instance.RoleText.text += Utils.GetSubRolesText(PlayerControl.LocalPlayer.PlayerId, false, true);
             }
 
         }, 0.0001f, "Override Role Text");
@@ -155,7 +169,23 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate)), HarmonyPostfix]
     public static void BeginCrewmate_Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (Main.AssistivePluginMode.Value)
+        {
+            if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())
+            {
+                __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
+                __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
+                __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
+            }
+            else
+            {
+                __instance.TeamTitle.text = GetString("TeamImpostor");
+                __instance.ImpostorText.text = GetString("ImpostorIntroText");
+                __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
+            }
+            return;
+        }
             //チーム表示変更
             CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
         __instance.ImpostorText.gameObject.SetActive(true);
@@ -389,6 +419,26 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginImpostor)), HarmonyPostfix]
     public static void BeginImpostor_Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
+        if (Main.AssistivePluginMode.Value)
+        {
+            __instance.ImpostorText.gameObject.SetActive(true);
+            if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())
+            {
+
+                __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
+                __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
+                __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
+            }
+            else
+            {
+                __instance.TeamTitle.text = GetString("TeamImpostor");
+                __instance.ImpostorText.text = GetString("ImpostorIntroText");
+                __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
+            }
+            return;
+        }
+
         BeginCrewmate_Postfix(__instance, ref yourTeam);
     }
     [HarmonyPatch(nameof(IntroCutscene.OnDestroy)), HarmonyPostfix]
