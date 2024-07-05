@@ -33,7 +33,8 @@ internal class PingTrackerUpdatePatch
 
         sb.Append($"\r\n").Append($"<color={color}>{ping} <size=60%>Ping</size></color>  <color=#00a4ff>{fps} <size=60%>FPS</size></color>{"  " + (GameStates.IsOnlineGame ? ServerName : GetString("Local"))}");
 
-        if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
+        if (Main.AssistivePluginMode.Value) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Main.ModColor32, GetString("Warning.AssistivePluginMode")) + "</size>");
+        else if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
         else
         {
             sb.Append("<size=110%>");

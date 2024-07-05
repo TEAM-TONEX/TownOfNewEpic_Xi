@@ -29,6 +29,7 @@ using TONEX.Roles.Vanilla;
 using UnityEngine;
 using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace TONEX;
 
@@ -359,7 +360,6 @@ class ReportDeadBodyPatch
     {
         if (Main.AssistivePluginMode.Value) return true;
         if (GameStates.IsMeeting) return false;
-        Logger.Info("1", "test");
         if (Options.DisableMeeting.GetBool()) return false;
         if (Options.CurrentGameMode == CustomGameMode.HotPotato) return false;
         if (Options.CurrentGameMode == CustomGameMode.InfectorMode) return false; 
@@ -484,20 +484,46 @@ class FixedUpdatePatch
     public static void Postfix(PlayerControl __instance)
     {
         var player = __instance;
-        if (Main.AssistivePluginMode.Value && __instance == PlayerControl.LocalPlayer)
+        if (Main.AssistivePluginMode.Value)
         {
-            if (GameStates.IsLobby)
+            if (__instance == PlayerControl.LocalPlayer)
             {
-                __instance.cosmetics.nameText.text =
-                    $"<color=#31D5BA>{__instance?.name}</color>";
+                if (GameStates.IsLobby)
+                {
+                    __instance.cosmetics.nameText.text =
+                        $"<color=#31D5BA>{__instance?.name}</color>";
+                }
+                else
+                {
+                    var roleType = __instance.Data.Role.Role;
+                    var cr = roleType.GetCustomRoleTypes();
+                    var color = Utils.GetRoleColorCode(cr);
+                    __instance.cosmetics.nameText.text = $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
+
+                }
             }
             else
             {
-                var roleType = __instance.Data.Role.Role;
-                var cr = roleType.GetCustomRoleTypes();
-                var color = Utils.GetRoleColorCode(cr);
-                __instance.cosmetics.nameText.text = $"<color={color}>{__instance?.name}</color>";
+                if (GameStates.IsLobby)
+                {
+                    __instance.cosmetics.nameText.text =
+                        $"<color=#E1E0B3>{__instance?.name}</color>";
+                }
+                else
+                {
+                    if (__instance.Data.IsDead)
+                    {
+                        var roleType = __instance.Data.Role.Role;
+                        var cr = roleType.GetCustomRoleTypes();
+                        var color = Utils.GetRoleColorCode(cr);
+                        __instance.cosmetics.nameText.text = $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
+                    }
+                    else __instance.cosmetics.nameText.text =
+                        $"<color=#FFFFFF>{__instance?.name}</color>";
+
+                }
             }
+                
             return;
         }
            
@@ -768,7 +794,7 @@ class CoEnterVentPatch
     public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] int id)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
-
+        if (Main.AssistivePluginMode.Value) return true;
         Logger.Info($"{__instance.myPlayer.GetNameWithRole()} CoEnterVent: {id}", "CoEnterVent");
 
         var user = __instance.myPlayer;
@@ -834,7 +860,7 @@ class CoExitVentPatch
     public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] int id)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
-
+        if (Main.AssistivePluginMode.Value) return true;
         Logger.Info($"{__instance.myPlayer.GetNameWithRole()} CoExitVent: {id}", "CoExitVent");
         
         var user = __instance.myPlayer;

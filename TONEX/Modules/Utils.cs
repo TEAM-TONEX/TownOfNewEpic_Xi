@@ -1513,6 +1513,7 @@ public static class Utils
             LastResultForChat[id] = builder.ToString();
         return builder.ToString();
     }
+
     private static string GetOldRoleName(byte id)
     {
         foreach (var kvp in Main.SetRolesList)

@@ -25,6 +25,7 @@ public static class MeetingHudPatch
         public static bool Prefix()
         {
             if (!AmongUsClient.Instance.AmHost) return true;
+            if (Main.AssistivePluginMode.Value) return true;
             MeetingVoteManager.Instance?.CheckAndEndMeeting();
             return false;
         }
@@ -35,7 +36,7 @@ public static class MeetingHudPatch
         public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] byte srcPlayerId /* 投票者 */ , [HarmonyArgument(1)] byte suspectPlayerId /* 被票者 */ )
         {
             if (!AmongUsClient.Instance.AmHost) return true;
-
+            if (Main.AssistivePluginMode.Value) return true;
             var voter = Utils.GetPlayerById(srcPlayerId);
             var voted = Utils.GetPlayerById(suspectPlayerId);
 
@@ -61,9 +62,10 @@ public static class MeetingHudPatch
     {
         public static void Prefix()
         {
+            Logger.Info("------------会议开始------------", "Phase");
             if (!Main.AssistivePluginMode.Value)
             {
-                Logger.Info("------------会议开始------------", "Phase");
+                
                 ChatUpdatePatch.DoBlockChat = true;
                 GameStates.AlreadyDied |= !Utils.IsAllAlive;
                 Main.AllPlayerControls.Do(x => ReportDeadBodyPatch.WaitReport[x.PlayerId].Clear());
@@ -246,7 +248,8 @@ public static class MeetingHudPatch
     {
         public static void Postfix(MeetingHud __instance)
         {
-            if (!AmongUsClient.Instance.AmHost || !GameStates.IsInGame || __instance == null || __instance.IsDestroyedOrNull()) return;
+            if (Main.AssistivePluginMode.Value) return;
+                if (!AmongUsClient.Instance.AmHost || !GameStates.IsInGame || __instance == null || __instance.IsDestroyedOrNull()) return;
             if (Input.GetMouseButtonUp(1) && Input.GetKey(KeyCode.LeftControl))
             {
                 __instance.playerStates.DoIf(x => x.HighlightedFX.enabled, x =>
@@ -268,15 +271,17 @@ public static class MeetingHudPatch
     {
         public static void Postfix()
         {
-            if (Main.AssistivePluginMode.Value) return;
+
             MeetingStates.FirstMeeting = false;
             Logger.Info("------------会议结束------------", "Phase");
+            if (Main.AssistivePluginMode.Value) return;
             if (AmongUsClient.Instance.AmHost)
             {
                 AntiBlackout.SetIsDead();
                 Main.AllPlayerControls.Do(pc => RandomSpawn.CustomNetworkTransformPatch.FirstTP[pc.PlayerId] = false);
                 EAC.MeetingTimes = 0;
             }
+
             // MeetingVoteManagerを通さずに会議が終了した場合の後処理
             MeetingVoteManager.Instance?.Destroy();
         }

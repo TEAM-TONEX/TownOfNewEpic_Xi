@@ -10,9 +10,11 @@ public class MapRealTimeLocationPatch
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowNormalMap)), HarmonyPrefix]
     public static bool ShowNormalMap(MapBehaviour __instance)
     {
+        var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+        var cr = roleType.GetCustomRoleTypes();
         var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
         if (Main.AssistivePluginMode.Value)
-            color = new Color32(150, 187, 184, 255);
+            color = Utils.GetRoleColor(cr);
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
         if (!ShouldShowRealTime) return true;
@@ -24,9 +26,11 @@ public class MapRealTimeLocationPatch
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowNormalMap)), HarmonyPostfix]
     public static void ShowNormalMapAfter(MapBehaviour __instance)
     {
+        var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+        var cr = roleType.GetCustomRoleTypes();
         var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
         if (Main.AssistivePluginMode.Value)
-            color =new Color32 (150, 187, 184, 255);
+            color =Utils.GetRoleColor(cr);
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
     }

@@ -23,10 +23,12 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.ShowRole)), HarmonyPostfix]
     public static void ShowRole_Postfix(IntroCutscene __instance)
     {
-        if (!GameStates.IsModHost) return;
+
         if (Main.AssistivePluginMode.Value)
         {
-            var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+            _ = new LateTask(() =>
+            {
+                var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
             var cr = roleType.GetCustomRoleTypes();
             __instance.YouAreText.color = Utils.GetRoleColor(cr);
             __instance.RoleText.text = Utils.GetRoleName(cr);
@@ -36,12 +38,14 @@ class IntroCutscenePatch
             __instance.RoleText.SetOutlineThickness(0.17f);
             __instance.RoleBlurbText.color = Utils.GetRoleColor(cr);
             __instance.RoleBlurbText.text = cr.GetRoleInfoForVanilla();
+            
+            }, 0.0001f, "Override Role Text");
             return;
         }
-
+        if (!GameStates.IsModHost) return;
         _ = new LateTask(() =>
         {
-           if (Options.CurrentGameMode == CustomGameMode.HotPotato)
+            if (Options.CurrentGameMode == CustomGameMode.HotPotato)
             {
                 var color = ColorUtility.TryParseHtmlString("#FF9900", out var c) ? c : new(255, 255, 255, 255);
                 CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
@@ -174,7 +178,8 @@ class IntroCutscenePatch
             if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())
             {
                 __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
-                __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                
+                __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
                 __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
                 __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
             }

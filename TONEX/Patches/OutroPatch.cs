@@ -23,10 +23,13 @@ class EndGamePatch
         GameStates.InGame = false;
         //SetRolePatch.playanima = true;
         HudSpritePatch.IsEnd = true;
-        if (Main.AssistivePluginMode.Value) return;
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         Logger.Info("-----------游戏结束-----------", "Phase");
+            
+        if (Main.AssistivePluginMode.Value) return;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         
+
         if (!GameStates.IsModHost) return;
         SummaryText = new();
         foreach (var id in PlayerState.AllPlayerStates.Keys)
@@ -93,6 +96,7 @@ class SetEverythingUpPatch
 
     public static void Postfix(EndGameManager __instance)
     {
+        var showInitially = Main.ShowResults.Value;
         if (Main.AssistivePluginMode.Value) return;
         if (!Main.playerVersion.ContainsKey(0)) return;
         //#######################################
@@ -112,8 +116,8 @@ class SetEverythingUpPatch
         string EndWinnerText = "";
         var AdditionalWinnerText = new StringBuilder(32);
         var EndAdditionalWinnerText = new StringBuilder(32);
-        string CustomWinnerColor = Utils.GetRoleColorCode(CustomRoles.Crewmate);
-        string EndWinnerColor = Utils.GetRoleColorCode(CustomRoles.Crewmate);
+        string CustomWinnerColor = "#ffffff";
+        string EndWinnerColor = "#ffffff";
 
         var winnerRole = (CustomRoles)CustomWinnerHolder.WinnerTeam;
         if (winnerRole >= 0)
@@ -137,8 +141,8 @@ class SetEverythingUpPatch
         {
             //通常勝利
             case CustomWinner.Crewmate:
-                CustomWinnerColor = Utils.GetRoleColorCode(CustomRoles.Engineer);
-                EndWinnerColor = Utils.GetRoleColorCode(CustomRoles.Engineer);
+                CustomWinnerColor = "#8cffff";
+                EndWinnerColor = "#8cffff";
                 break;
             //特殊勝利
             case CustomWinner.Terrorist:
@@ -222,8 +226,7 @@ class SetEverythingUpPatch
         //#######################################
         //           ==最終結果表示==
         //#######################################
-
-        var showInitially = Main.ShowResults.Value;
+        
         showHideButton = new SimpleButton(
            __instance.transform,
            "ShowHideResultsButton",
