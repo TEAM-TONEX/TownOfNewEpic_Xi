@@ -486,7 +486,18 @@ class FixedUpdatePatch
         var player = __instance;
         if (Main.AssistivePluginMode.Value)
         {
-            if (__instance == PlayerControl.LocalPlayer)
+            if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
+            {
+                if (GameStates.IsLobby)
+                {
+                    if (Main.ForkId != ver.forkId) // フォークIDが違う場合
+                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
+                    else if (Main.version.CompareTo(ver.version) == 0)
+                        __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
+                    else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
+                }
+            }
+            else if (player == PlayerControl.LocalPlayer)
             {
                 if (GameStates.IsLobby)
                 {
@@ -502,6 +513,7 @@ class FixedUpdatePatch
 
                 }
             }
+
             else
             {
                 if (GameStates.IsLobby)
@@ -1355,7 +1367,6 @@ class CmdCheckNameVersionCheckPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
         RPC.RpcVersionCheck();
     }
 }

@@ -22,10 +22,11 @@ class OnGameJoinedPatch
         
         while (!Options.IsLoaded) System.Threading.Tasks.Task.Delay(1);
         Logger.Info($"{__instance.GameId} 加入房间", "OnGameJoined");
-        if (Main.AssistivePluginMode.Value) return;
         Main.playerVersion = new Dictionary<byte, PlayerVersion>();
+        Main.YuAntiCheatList = new();
         if (!Main.VersionCheat.Value) RPC.RpcVersionCheck();
         SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
+        if (Main.AssistivePluginMode.Value) return;
 
         Main.AllPlayerNames = new();
         ShowDisconnectPopupPatch.ReasonByHost = string.Empty;
@@ -90,7 +91,11 @@ class OnPlayerJoinedPatch
     {
 
         Logger.Info($"{client.PlayerName}(ClientID:{client.Id}/FriendCode:{client.FriendCode}) 加入房间", "Session");
-        if (Main.AssistivePluginMode.Value) return;
+        if (Main.AssistivePluginMode.Value)
+        {
+            RPC.RpcVersionCheck();
+            return;
+        }
         if (AmongUsClient.Instance.AmHost && client.FriendCode == "" && Options.KickPlayerFriendCodeNotExist.GetBool())
         {
             Utils.KickPlayer(client.Id, false, "NotLogin");
@@ -168,6 +173,7 @@ class OnPlayerLeftPatch
                 AntiBlackout.OnDisconnect(data.Character.Data);
                 PlayerGameOptionsSender.RemoveSender(data.Character);
             }
+            Main.YuAntiCheatList.Remove(data.Character.PlayerId);
             Main.playerVersion.Remove(data.Character.PlayerId);
         }
         Logger.Info($"{data?.PlayerName}(ClientID:{data?.Id}/FriendCode:{data?.FriendCode}/Role:{data?.Character?.GetNameWithRole()})断开连接(理由:{reason}，Ping:{AmongUsClient.Instance.Ping})", "Session");

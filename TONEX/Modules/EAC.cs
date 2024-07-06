@@ -250,6 +250,10 @@ internal class EAC
                 Report(pc, "AUM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
+            case unchecked((byte)520)://YAC
+                Report(pc, "YM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return false;
         }
         return true;
     }

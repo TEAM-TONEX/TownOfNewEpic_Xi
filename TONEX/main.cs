@@ -90,6 +90,8 @@ public class Main : BasePlugin
 
 
     public static Dictionary<byte, PlayerVersion> playerVersion = new();
+
+    public static List<byte> YuAntiCheatList = new();
     //Preset Name Options
     public static ConfigEntry<string> Preset1 { get; private set; }
     public static ConfigEntry<string> Preset2 { get; private set; }
