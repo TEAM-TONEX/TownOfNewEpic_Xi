@@ -58,7 +58,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
     public int ShieldsCount;
     public static List<byte> Feeble;
     private float KillCooldown;
-    public int UsePetCooldown;
+    public new int UsePetCooldown;
     #endregion
     public override bool GetGameStartSound(out string sound)
     {
