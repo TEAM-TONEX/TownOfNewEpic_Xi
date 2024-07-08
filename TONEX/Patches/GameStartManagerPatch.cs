@@ -27,7 +27,7 @@ public class GameStartManagerPatch
     private static float timer = 600f;
     private static TextMeshPro warningText;
     public static TextMeshPro HideName;
-    private static TextMeshPro timerText;
+    public static TextMeshPro GameCountdown;
     private static PassiveButton cancelButton;
 
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
@@ -56,7 +56,7 @@ public class GameStartManagerPatch
             warningText.transform.localPosition = new(0f, 0f - __instance.transform.localPosition.y, -1f);
             warningText.gameObject.SetActive(false);
 
-            //Logger.Info("WarningText instantiated and configured", "test");
+            Logger.Info("WarningText instantiated and configured", "test");
 
             //timerText = Object.Instantiate(__instance.PlayerCounter, __instance.PlayerCounter.transform.parent);
             //timerText.autoSizeTextContainer = true;
@@ -66,7 +66,7 @@ public class GameStartManagerPatch
             //timerText.transform.localPosition += Vector3.down * 0.2f;
             //timerText.gameObject.SetActive(AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame && AmongUsClient.Instance.AmHost);
 
-            Logger.Info("TimerText instantiated and configured", "test");
+            //Logger.Info("TimerText instantiated and configured", "test");
 
             cancelButton = Object.Instantiate(__instance.StartButton, __instance.transform);
             var cancelLabel = cancelButton.GetComponentInChildren<TextMeshPro>();
@@ -139,7 +139,6 @@ public class GameStartManagerPatch
         public static void Postfix(GameStartManager __instance)
         {
             if (!AmongUsClient.Instance) return;
-            if (Main.AssistivePluginMode.Value) return;
             string warningMessage = "";
             if (AmongUsClient.Instance.AmHost)
             {
@@ -304,6 +303,7 @@ class UnrestrictedNumImpostorsPatch
 {
     public static bool Prefix(ref int __result)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         __result = Main.NormalOptions.NumImpostors;
         return false;
     }

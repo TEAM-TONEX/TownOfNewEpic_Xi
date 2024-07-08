@@ -27,65 +27,67 @@ public class GameSettingMenuPatch
     [HarmonyPriority(Priority.First)]
     public static void StartPostfix(GameSettingMenu __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
-        ModSettingsButtons = [];
-        foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
+        if (!Main.AssistivePluginMode.Value)
         {
-            var button = Object.Instantiate(TemplateGameSettingsButton, __instance.GameSettingsButton.transform.parent);
-            button.gameObject.SetActive(true);
-            button.name = "Button_" + tab;
-            var label = button.GetComponentInChildren<TextMeshPro>();
-            label.DestroyTranslator();
-            string htmlcolor = tab switch
+            ModSettingsButtons = [];
+            foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
             {
-                TabGroup.SystemSettings => Main.ModColor,
-                TabGroup.ModSettings => "#59ef83",
-                TabGroup.ImpostorRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Impostor),
-                TabGroup.CrewmateRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Crewmate),
-                TabGroup.NeutralRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Neutral),
-                TabGroup.Addons => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Addon),
-                TabGroup.OtherRoles => "#76b8e0",
-                _ => "#ffffff",
-            };
-            label.fontStyle = FontStyles.UpperCase;
-            label.text = $"<color={htmlcolor}>{GetString("TabGroup." + tab)}</color>";
+                var button = Object.Instantiate(TemplateGameSettingsButton, __instance.GameSettingsButton.transform.parent);
+                button.gameObject.SetActive(true);
+                button.name = "Button_" + tab;
+                var label = button.GetComponentInChildren<TextMeshPro>();
+                label.DestroyTranslator();
+                string htmlcolor = tab switch
+                {
+                    TabGroup.SystemSettings => Main.ModColor,
+                    TabGroup.ModSettings => "#59ef83",
+                    TabGroup.ImpostorRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Impostor),
+                    TabGroup.CrewmateRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Crewmate),
+                    TabGroup.NeutralRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Neutral),
+                    TabGroup.Addons => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Addon),
+                    TabGroup.OtherRoles => "#76b8e0",
+                    _ => "#ffffff",
+                };
+                label.fontStyle = FontStyles.UpperCase;
+                label.text = $"<color={htmlcolor}>{GetString("TabGroup." + tab)}</color>";
 
-            _ = ColorUtility.TryParseHtmlString(htmlcolor, out Color tabColor);
-            button.inactiveSprites.GetComponent<SpriteRenderer>().color = tabColor;
-            button.activeSprites.GetComponent<SpriteRenderer>().color = tabColor;
-            button.selectedSprites.GetComponent<SpriteRenderer>().color = tabColor;
+                _ = ColorUtility.TryParseHtmlString(htmlcolor, out Color tabColor);
+                button.inactiveSprites.GetComponent<SpriteRenderer>().color = tabColor;
+                button.activeSprites.GetComponent<SpriteRenderer>().color = tabColor;
+                button.selectedSprites.GetComponent<SpriteRenderer>().color = tabColor;
 
-            Vector3 offset = new(0.0f, 0.5f * (((int)tab + 1) / 2), 0.0f);
-            button.transform.localPosition = ((((int)tab + 1) % 2 == 0) ? ButtonPositionLeft : ButtonPositionRight) - offset;
-            button.transform.localScale = ButtonSize;
+                Vector3 offset = new(0.0f, 0.5f * (((int)tab + 1) / 2), 0.0f);
+                button.transform.localPosition = ((((int)tab + 1) % 2 == 0) ? ButtonPositionLeft : ButtonPositionRight) - offset;
+                button.transform.localScale = ButtonSize;
 
-            var buttonComponent = button.GetComponent<PassiveButton>();
-            buttonComponent.OnClick = new();
-            buttonComponent.OnClick.AddListener(
-                (Action)(() => __instance.ChangeTab((int)tab + 3, false)));
+                var buttonComponent = button.GetComponent<PassiveButton>();
+                buttonComponent.OnClick = new();
+                buttonComponent.OnClick.AddListener(
+                    (Action)(() => __instance.ChangeTab((int)tab + 3, false)));
 
-            ModSettingsButtons.Add(tab, button);
-        }
+                ModSettingsButtons.Add(tab, button);
+            }
 
-        ModGameOptionsMenu.OptionList = new();
-        ModGameOptionsMenu.BehaviourList = new();
-        ModGameOptionsMenu.CategoryHeaderList = new();
+            ModGameOptionsMenu.OptionList = new();
+            ModGameOptionsMenu.BehaviourList = new();
+            ModGameOptionsMenu.CategoryHeaderList = new();
 
-        ModSettingsTabs = [];
-        foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
-        {
-            var setTab = Object.Instantiate(TemplateGameOptionsMenu, __instance.GameSettingsTab.transform.parent);
-            setTab.name = "tab_" + tab;
-            setTab.gameObject.SetActive(false);
-
-            ModSettingsTabs.Add(tab, setTab);
-        }
-
-        foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
-        {
-            if (ModSettingsButtons.TryGetValue(tab, out var button))
+            ModSettingsTabs = [];
+            foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
             {
-                __instance.ControllerSelectable.Add(button);
+                var setTab = Object.Instantiate(TemplateGameOptionsMenu, __instance.GameSettingsTab.transform.parent);
+                setTab.name = "tab_" + tab;
+                setTab.gameObject.SetActive(false);
+
+                ModSettingsTabs.Add(tab, setTab);
+            }
+
+            foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
+            {
+                if (ModSettingsButtons.TryGetValue(tab, out var button))
+                {
+                    __instance.ControllerSelectable.Add(button);
+                }
             }
         }
     }

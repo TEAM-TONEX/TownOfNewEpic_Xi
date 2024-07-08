@@ -69,7 +69,6 @@ class DisconnectInternalPatch
     {
         ShowDisconnectPopupPatch.Reason = reason;
         ShowDisconnectPopupPatch.StringReason = stringReason;
-        HudSpritePatch.IsEnd = true;
 
         Logger.Info($"断开连接(理由:{reason}:{stringReason}，Ping:{__instance.Ping})", "Session");
 
@@ -133,9 +132,11 @@ class OnPlayerLeftPatch
 {
     static void Prefix([HarmonyArgument(0)] ClientData data)
     {
-        
-        if (!GameStates.IsInGame || !AmongUsClient.Instance.AmHost) return;
-        CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnPlayerDeath(data.Character, PlayerState.GetByPlayerId(data.Character.PlayerId).DeathReason, GameStates.IsMeeting));
+        if (!Main.AssistivePluginMode.Value)
+        {
+            if (!GameStates.IsInGame || !AmongUsClient.Instance.AmHost) return;
+            CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnPlayerDeath(data.Character, PlayerState.GetByPlayerId(data.Character.PlayerId).DeathReason, GameStates.IsMeeting));
+        }
     }
     public static List<int> ClientsProcessed = new();
     public static void Add(int id)
@@ -149,9 +150,9 @@ class OnPlayerLeftPatch
         {
             Logger.Error("错误的客户端数据：数据为空", "Session");
         }
-        else if (data != null && data.Character != null)
+        else if (data.Character != null)
         {
-            if (GameStates.IsInGame)
+            if (GameStates.IsInGame && !Main.AssistivePluginMode.Value)
             {
                 Lovers.OnPlayerLeft(data);
                 AdmirerLovers.OnPlayerLeft(data);
@@ -173,10 +174,12 @@ class OnPlayerLeftPatch
                 AntiBlackout.OnDisconnect(data.Character.Data);
                 PlayerGameOptionsSender.RemoveSender(data.Character);
             }
-            Main.YuAntiCheatList.Remove(data.Character.PlayerId);
             Main.playerVersion.Remove(data.Character.PlayerId);
         }
+        if (!Main.AssistivePluginMode.Value)
         Logger.Info($"{data?.PlayerName}(ClientID:{data?.Id}/FriendCode:{data?.FriendCode}/Role:{data?.Character?.GetNameWithRole()})断开连接(理由:{reason}，Ping:{AmongUsClient.Instance.Ping})", "Session");
+        else
+            Logger.Info($"{data?.PlayerName}(ClientID:{data?.Id}/FriendCode:{data?.FriendCode})断开连接(理由:{reason}，Ping:{AmongUsClient.Instance.Ping})", "Session");
 
         if (AmongUsClient.Instance.AmHost)
         {
@@ -210,63 +213,65 @@ class InnerNetClientSpawnPatch
 {
     public static void Prefix([HarmonyArgument(1)] int ownerId, [HarmonyArgument(2)] SpawnFlags flags)
     {
-        if (Main.AssistivePluginMode.Value) return;//辅助插件模式
-        if (!AmongUsClient.Instance.AmHost || flags != SpawnFlags.IsClientCharacter) return;
-        
-        ClientData client = Utils.GetClientById(ownerId);
-        
-
-        //规范昵称
-
-        _ = new LateTask(() => { if (client.Character == null || !GameStates.IsLobby) return; OptionItem.SyncAllOptions(client.Id); }, 3f, "Sync All Options For New Player");
-
-        _ = new LateTask(() =>
+        if (!Main.AssistivePluginMode.Value)
         {
-            if (client.Character == null) return;
-            if (Main.OverrideWelcomeMsg != "") Utils.SendMessage(Main.OverrideWelcomeMsg, client.Character.PlayerId);
-            else TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
-        }, 3f, "Welcome Message");
-        if (Main.OverrideWelcomeMsg == "" && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
-        {
-            if (Options.AutoDisplayKillLog.GetBool() && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
+            if (!AmongUsClient.Instance.AmHost || flags != SpawnFlags.IsClientCharacter) return;
+
+            ClientData client = Utils.GetClientById(ownerId);
+
+
+            //规范昵称
+
+            _ = new LateTask(() => { if (client.Character == null || !GameStates.IsLobby) return; OptionItem.SyncAllOptions(client.Id); }, 3f, "Sync All Options For New Player");
+
+            _ = new LateTask(() =>
             {
-                _ = new LateTask(() =>
-                {
-                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
-                    {
-                        Utils.ShowKillLog(client.Character.PlayerId);
-                    }
-                }, 3f, "DisplayKillLog");
-            }
-            if (Options.AutoDisplayLastResult.GetBool())
+                if (client.Character == null) return;
+                if (Main.OverrideWelcomeMsg != "") Utils.SendMessage(Main.OverrideWelcomeMsg, client.Character.PlayerId);
+                else TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
+            }, 3f, "Welcome Message");
+            if (Main.OverrideWelcomeMsg == "" && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
             {
-                _ = new LateTask(() =>
+                if (Options.AutoDisplayKillLog.GetBool() && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
                 {
-                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                    _ = new LateTask(() =>
                     {
-                        Utils.ShowLastResult(client.Character.PlayerId);
-                    }
-                }, 3.1f, "DisplayLastResult");
-            }
-            if (Options.EnableDirectorMode.GetBool())
-            {
-                _ = new LateTask(() =>
+                        if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                        {
+                            Utils.ShowKillLog(client.Character.PlayerId);
+                        }
+                    }, 3f, "DisplayKillLog");
+                }
+                if (Options.AutoDisplayLastResult.GetBool())
                 {
-                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                    _ = new LateTask(() =>
                     {
-                        Utils.SendMessage($"{GetString("Message.DirectorModeNotice")}", client.Character.PlayerId);
-                    }
-                }, 3.2f, "DisplayDirectorModeWarnning");
-            }
-            if (Options.UsePets.GetBool())
-            {
-                _ = new LateTask(() =>
+                        if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                        {
+                            Utils.ShowLastResult(client.Character.PlayerId);
+                        }
+                    }, 3.1f, "DisplayLastResult");
+                }
+                if (Options.EnableDirectorMode.GetBool())
                 {
-                    if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                    _ = new LateTask(() =>
                     {
-                        Utils.SendMessage($"{GetString("Message.PetModeNotice")}", client.Character.PlayerId);
-                    }
-                }, 3.2f, "DisplayDirectorModeWarnning");
+                        if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                        {
+                            Utils.SendMessage($"{GetString("Message.DirectorModeNotice")}", client.Character.PlayerId);
+                        }
+                    }, 3.2f, "DisplayDirectorModeWarnning");
+                }
+                if (Options.UsePets.GetBool())
+                {
+                    _ = new LateTask(() =>
+                    {
+                        if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
+                        {
+                            Utils.SendMessage($"{GetString("Message.PetModeNotice")}", client.Character.PlayerId);
+                        }
+                    }, 3.2f, "DisplayDirectorModeWarnning");
+                }
             }
         }
     }

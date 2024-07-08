@@ -50,6 +50,8 @@ GuardianAngel: "守护天使"
 Impostor: "伪装者"
 Shapeshifter: "变形者"
 Phantom: "幻象师"
+CrewmateGhost: "船员灵魂"
+ImpostorGhost: "内鬼灵魂"
 
 ## 内鬼阵营 / Impostors
 BountyHunter: "赏金猎人"
@@ -1871,6 +1873,7 @@ Warning.AssistivePluginMode: "辅助插件模式"
 Warning.MismatchedVersion: "{0}\n安装了其它版本的 {1}"
 Warning.AutoExitAtMismatchedVersion: "您的 {0} 版本与房主不同\n您将在 {1} 秒内被踢出"
 Warning.CantKickDev: "很抱歉，您无法踢出开发者"
+Warning.RoomBroken: "很抱歉，该房间遭受炸房攻击，请到其他房间进行游戏"
 
 # 错误 / Error
 Error.MeetingException: "错误: {0}\n使用 Shift+M+Enter 强制结束会议"

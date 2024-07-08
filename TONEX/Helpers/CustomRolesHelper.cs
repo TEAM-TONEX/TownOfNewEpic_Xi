@@ -27,7 +27,7 @@ static class CustomRolesHelper
         if (roleInfo != null && (int)role >= 100 && (int)role < 400)
             return roleInfo.CustomRoleType == CustomRoleTypes.Impostor;
         return role is CustomRoles.Impostor or CustomRoles.Shapeshifter or
-            CustomRoles.Phantom;
+            CustomRoles.Phantom or CustomRoles.ImpostorGhost;
     }
     public static bool IsImpostorTeam(this CustomRoles role) => role.IsImpostor() || role is CustomRoles.Madmate;
     public static bool IsNeutral(this CustomRoles role)
@@ -62,6 +62,8 @@ static class CustomRolesHelper
             CustomRoles.Engineer or
             CustomRoles.Tracker or
             CustomRoles.Noisemaker or
+            CustomRoles.CrewmateGhost or
+            CustomRoles.GuardianAngel or
             CustomRoles.Scientist;
     }
     public static bool IsAddon(this CustomRoles role) => (int)role > 1500;
@@ -71,10 +73,13 @@ static class CustomRolesHelper
     {
         return
             role is 
+            
             CustomRoles.Crewmate or
             CustomRoles.Engineer or
             CustomRoles.Scientist or
             CustomRoles.GuardianAngel or
+            CustomRoles.ImpostorGhost or
+            CustomRoles.CrewmateGhost or
             CustomRoles.Impostor or
             CustomRoles.Shapeshifter or
             CustomRoles.Tracker or
@@ -211,6 +216,8 @@ static class CustomRolesHelper
             RoleTypes.Tracker => CustomRoles.Tracker,
             RoleTypes.Noisemaker => CustomRoles.Noisemaker,
             RoleTypes.GuardianAngel => CustomRoles.GuardianAngel,
+            RoleTypes.ImpostorGhost =>CustomRoles.ImpostorGhost,
+            RoleTypes.CrewmateGhost => CustomRoles.CrewmateGhost,
             RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,
             RoleTypes.Phantom => CustomRoles.Phantom,
             RoleTypes.Impostor => CustomRoles.Impostor,

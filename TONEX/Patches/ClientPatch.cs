@@ -13,7 +13,7 @@ internal class MakePublicPatch
     public static bool Prefix(GameStartManager __instance)
     {
         // 定数設定による公開ルームブロック
-        if (Main.AssistivePluginMode.Value) return true;
+
         //#if RELEASE
 
         if (!Main.AllowPublicRoom)
@@ -166,7 +166,7 @@ internal class InnerNetObjectSerializePatch
 {
     public static void Prefix()
     {
-        if (AmongUsClient.Instance.AmHost &&!Main.AssistivePluginMode.Value)
+        if (AmongUsClient.Instance.AmHost && !Main.AssistivePluginMode.Value)
             GameOptionsSender.SendAllGameOptions();
     }
 }

@@ -650,9 +650,9 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 更改摸宠物的图标
     /// </summary>
-    public virtual bool GetPetButtonSprite(out string text)
+    public virtual bool GetPetButtonSprite(out string buttonName)
     {
-        text = default;
+        buttonName = default;
         return false;
     }
     /// <summary>

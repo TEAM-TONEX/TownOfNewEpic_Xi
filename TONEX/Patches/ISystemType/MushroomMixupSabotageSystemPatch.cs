@@ -7,6 +7,8 @@ namespace TONEX.Patches.ISystemType;
 public static class MushroomMixupSabotageSystemUpdateSystemPatch
 {
     public static void Prefix([HarmonyArgument(1)] MessageReader msgReader, ref byte __state /* amount */)
+    {
+        if (Main.AssistivePluginMode.Value)
         {
             byte amount;
             {
@@ -16,6 +18,7 @@ public static class MushroomMixupSabotageSystemUpdateSystemPatch
             }
             __state = amount;
         }
+    }
         public static void Postfix(MushroomMixupSabotageSystem __instance, byte __state /* amount */)
         {
             var operation = (MushroomMixupSabotageSystem.Operation)__state;
@@ -32,7 +35,10 @@ public static class MushroomMixupSabotageSystemDeterioratePatch
 {
     public static void Prefix(MushroomMixupSabotageSystem __instance, ref bool __state /* 本体処理前のIsActive */)
     {
-        __state = __instance.IsActive;
+        if (!Main.AssistivePluginMode.Value)
+        {
+            __state = __instance.IsActive;
+        }
     }
     public static void Postfix(MushroomMixupSabotageSystem __instance, bool __state)
     {

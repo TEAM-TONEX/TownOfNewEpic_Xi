@@ -101,7 +101,7 @@ internal class ChangeRoleSettings
 
             //名前の記録
             RPC.SyncAllPlayerNames();
-            HudSpritePatch.IsEnd = false ;
+            
             ConfirmEjections.LatestEjec = null;
             //var invalidColor = Main.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
             //if (invalidColor.Any())
@@ -451,6 +451,7 @@ internal class SelectRolesPatch
         public static List<CustomRpcSender> OverriddenSenderList;
         public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType, [HarmonyArgument(1)] bool canOverrideRole = false)
         {
+            if (Main.AssistivePluginMode.Value) return true;
             if (doReplace && senders != null)
             {
                 StoragedData.Add((__instance, roleType));

@@ -10,16 +10,19 @@ class TryPetPatch
 {
     public static void Prefix(PlayerControl __instance)
     {
-        if (AmongUsClient.Instance.AmHost && AmongUsClient.Instance.AmClient && !GameStates.IsLobby && (Options.IsStandard || Options.CurrentGameMode == CustomGameMode.AllCrewModMode))
+        if (!Main.AssistivePluginMode.Value)
         {
-            __instance.petting = true;
-            ExternalRpcPetPatch.Prefix(__instance.MyPhysics, 51, new MessageReader());
+            if (AmongUsClient.Instance.AmHost && AmongUsClient.Instance.AmClient && !GameStates.IsLobby && (Options.IsStandard || Options.CurrentGameMode == CustomGameMode.AllCrewModMode))
+            {
+                __instance.petting = true;
+                ExternalRpcPetPatch.Prefix(__instance.MyPhysics, 51, new MessageReader());
+            }
         }
     }
 
     public static void Postfix(PlayerControl __instance)
     {
-        if (!AmongUsClient.Instance.AmHost || GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool()) return;
+        if (!AmongUsClient.Instance.AmHost || GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool() ||Main.AssistivePluginMode.Value) return;
         var cancel = Options.IsStandard;
 
             __instance.petting = false;

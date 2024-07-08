@@ -9,7 +9,6 @@ public class NotificationPopperPatch
     private static List<string> WaitToSend = new();
     private static bool Prefix(NotificationPopper __instance, string item)
     {
-        if (Main.AssistivePluginMode.Value) return true;
         if (!WaitToSend.Contains(item)) return false;
         WaitToSend.Remove(item);
         return true;

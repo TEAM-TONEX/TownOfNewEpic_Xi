@@ -246,7 +246,7 @@ public static class CustomRoleManager
                 Mini.OnSecondsUpdate(player,now);
                 Chameleon.OnSecondsUpdate(player, now);
             }
-            var roleclass = (player.GetRoleClass());
+            var roleclass = player.GetRoleClass();
             if (player.IsAlive() && roleclass?.CountdownList != null && roleclass?.CooldownList != null)
             {
                 for (int i= 0; i< roleclass.CountdownList.Count; i++)
@@ -586,7 +586,8 @@ public enum CustomRoles
     //Default
     Crewmate = 0,
     //Impostor(Vanilla)
-    Impostor=100,
+    ImpostorGhost =100,
+    Impostor,
     Shapeshifter,
     Phantom,
     //Impostor
@@ -654,7 +655,8 @@ public enum CustomRoles
     EvilGrenadier,
 
     //Crewmate(Vanilla)
-    Engineer = 400,
+    CrewmateGhost = 400,
+    Engineer,
     Scientist,
     GuardianAngel,
     Noisemaker,

@@ -41,7 +41,7 @@ class CheckMurderPatch
     public static Dictionary<byte, float> TimeSinceLastKill = new();
     public static void Update()
     {
-
+        if (Main.AssistivePluginMode.Value) return;
         for (byte i = 0; i < 15; i++)
         {
             if (TimeSinceLastKill.ContainsKey(i))
@@ -53,8 +53,9 @@ class CheckMurderPatch
     }
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (!AmongUsClient.Instance.AmHost) return false;
+        
         if (Main.AssistivePluginMode.Value) return true;
+        if (!AmongUsClient.Instance.AmHost) return false;
         // 処理は全てCustomRoleManager側で行う
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
         {
@@ -129,57 +130,62 @@ class MurderPlayerPatch
     private static readonly LogHandler logger = Logger.Handler(nameof(PlayerControl.MurderPlayer));
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] MurderResultFlags resultFlags, ref bool __state /* 成功したキルかどうか */ )
     {
+        //if (GameStates.IsLobby && !GameStates.IsFreePlay)
+        //{
+        //    RPC.NotificationPop(GetString("Warning.RoomBroken"));
+        //    return false;
+        //}
         if (Main.AssistivePluginMode.Value) return true;
         logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
-            var isProtectedByClient = resultFlags.HasFlag(MurderResultFlags.DecisionByHost) && target.IsProtected();
-            var isProtectedByHost = resultFlags.HasFlag(MurderResultFlags.FailedProtected);
-            var isFailed = resultFlags.HasFlag(MurderResultFlags.FailedError);
-            var isSucceeded = __state = !isProtectedByClient && !isProtectedByHost && !isFailed;
-            if (isProtectedByClient)
-            {
-                logger.Info("守護されているため，キルは失敗します");
-            }
-            if (isProtectedByHost)
-            {
-                logger.Info("守護されているため，キルはホストによってキャンセルされました");
-            }
-            if (isFailed)
-            {
-                logger.Info("キルはホストによってキャンセルされました");
-            }
+        var isProtectedByClient = resultFlags.HasFlag(MurderResultFlags.DecisionByHost) && target.IsProtected();
+        var isProtectedByHost = resultFlags.HasFlag(MurderResultFlags.FailedProtected);
+        var isFailed = resultFlags.HasFlag(MurderResultFlags.FailedError);
+        var isSucceeded = __state = !isProtectedByClient && !isProtectedByHost && !isFailed;
+        if (isProtectedByClient)
+        {
+            logger.Info("守護されているため，キルは失敗します");
+        }
+        if (isProtectedByHost)
+        {
+            logger.Info("守護されているため，キルはホストによってキャンセルされました");
+        }
+        if (isFailed)
+        {
+            logger.Info("キルはホストによってキャンセルされました");
+        }
 
-            if (isSucceeded)
+        if (isSucceeded)
+        {
+            if (target.shapeshifting)
             {
-                if (target.shapeshifting)
-                {
-                    //シェイプシフトアニメーション中
-                    //アニメーション時間を考慮して1s、加えてクライアントとのラグを考慮して+0.5s遅延する
-                    _ = new LateTask(
-                        () =>
-                        {
-                            if (GameStates.IsInTask)
-                            {
-                                target.RpcShapeshift(target, false);
-                            }
-                        },
-                        1.5f, "RevertShapeshift");
-                }
-                else
-                {
-                    if (Main.CheckShapeshift.TryGetValue(target.PlayerId, out var shapeshifting) && shapeshifting)
+                //シェイプシフトアニメーション中
+                //アニメーション時間を考慮して1s、加えてクライアントとのラグを考慮して+0.5s遅延する
+                _ = new LateTask(
+                    () =>
                     {
-                        //シェイプシフト強制解除
-                        target.RpcShapeshift(target, false);
-                    }
-                }
-                if (target.GetRealKiller() == null || !target.GetRealKiller().Is(CustomRoles.Skinwalker))
-                   Camouflage.RpcSetSkin(target, ForceRevert: true, RevertToDefault: true);
-                
+                        if (GameStates.IsInTask)
+                        {
+                            target.RpcShapeshift(target, false);
+                        }
+                    },
+                    1.5f, "RevertShapeshift");
             }
+            else
+            {
+                if (Main.CheckShapeshift.TryGetValue(target.PlayerId, out var shapeshifting) && shapeshifting)
+                {
+                    //シェイプシフト強制解除
+                    target.RpcShapeshift(target, false);
+                }
+            }
+            if (target.GetRealKiller() == null || !target.GetRealKiller().Is(CustomRoles.Skinwalker))
+                Camouflage.RpcSetSkin(target, ForceRevert: true, RevertToDefault: true);
 
-            return true;
-        
-        
+        }
+
+        return true;
+
+
     }
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, bool __state)
     {
@@ -229,6 +235,7 @@ public static class PlayerControlCheckShapeshiftPatch
 
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool shouldAnimate)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         if (AmongUsClient.Instance.IsGameOver || !AmongUsClient.Instance.AmHost)
         {
             return false;
@@ -486,57 +493,81 @@ class FixedUpdatePatch
         var player = __instance;
         if (Main.AssistivePluginMode.Value)
         {
-            if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
+            if (__instance != null)
             {
                 if (GameStates.IsLobby)
                 {
-                    if (Main.ForkId != ver.forkId) // フォークIDが違う場合
-                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
-                    else if (Main.version.CompareTo(ver.version) == 0)
-                        __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
-                    else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
+                    if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
+                    {
+
+                        if (Main.ForkId != ver.forkId) // フォークIDが違う場合
+                            __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
+                        else if (Main.version.CompareTo(ver.version) == 0)
+                            __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
+                        else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
+
+                    }
+                    else if (__instance == PlayerControl.LocalPlayer)
+                    {
+
+                        __instance.cosmetics.nameText.text =
+                            $"<color=#31D5BA>{__instance?.name}</color>";
+                    }
+                    else
+                    {
+                        __instance.cosmetics.nameText.text =
+                            $"<color=#E1E0B3>{__instance?.name}</color>";
+                    }
                 }
-            }
-            else if (player == PlayerControl.LocalPlayer)
-            {
-                if (GameStates.IsLobby)
-                {
-                    __instance.cosmetics.nameText.text =
-                        $"<color=#31D5BA>{__instance?.name}</color>";
-                }
-                else
+                else if (GameStates.IsInGame)
                 {
                     var roleType = __instance.Data.Role.Role;
                     var cr = roleType.GetCustomRoleTypes();
                     var color = Utils.GetRoleColorCode(cr);
-                    __instance.cosmetics.nameText.text = $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
-
-                }
-            }
-
-            else
-            {
-                if (GameStates.IsLobby)
-                {
-                    __instance.cosmetics.nameText.text =
-                        $"<color=#E1E0B3>{__instance?.name}</color>";
-                }
-                else
-                {
-                    if (__instance.Data.IsDead)
+                    if (__instance == PlayerControl.LocalPlayer)
                     {
-                        var roleType = __instance.Data.Role.Role;
-                        var cr = roleType.GetCustomRoleTypes();
-                        var color = Utils.GetRoleColorCode(cr);
-                        __instance.cosmetics.nameText.text = $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
+                        __instance.cosmetics.nameText.text =
+                            $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
                     }
-                    else __instance.cosmetics.nameText.text =
-                        $"<color=#FFFFFF>{__instance?.name}</color>";
+                    else
+                    {
 
+                        if (PlayerControl.LocalPlayer.Data.IsDead && __instance.Data.IsDead)
+                        {
+
+                            __instance.cosmetics.nameText.text =
+                                $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
+                        }
+                        else if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsImpostor() && cr.IsImpostor())
+                        {
+                            if (PlayerControl.LocalPlayer.Data.IsDead)
+                            {
+                                __instance.cosmetics.nameText.text =
+                                       $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
+                            }
+                            else
+                            {
+
+                                __instance.cosmetics.nameText.text =
+                                $"<color=#FF1919>{__instance?.name}</color>";
+
+                            }
+                        }
+                        else
+                        {
+
+                            __instance.cosmetics.nameText.text =
+                            $"<color=#FFFFFF>{__instance?.name}</color>";
+
+
+
+                        }
+
+                    }
                 }
-            }
                 
             return;
+            } 
         }
            
 
@@ -948,6 +979,7 @@ class PlayerControlCompleteTaskPatch
     }
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         //人外のタスクを排除して再計算
         GameData.Instance.RecomputeTaskCounts();
         Logger.Info($"TotalTaskCounts = {GameData.Instance.CompletedTasks}/{GameData.Instance.TotalTasks}", "TaskState.Update");
@@ -960,6 +992,7 @@ class PlayerControlProtectPlayerPatch
 {
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
+        if (Main.AssistivePluginMode.Value) return;
         var player = __instance;
         if (!target.IsEaten())
         {
@@ -979,6 +1012,7 @@ class PlayerControlRemoveProtectionPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         Logger.Info($"{__instance.GetNameWithRole()}", "RemoveProtection");
     }
 }
@@ -987,6 +1021,7 @@ class CheckProtectPatch
 {
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         if (!AmongUsClient.Instance.AmHost) return false;
         Logger.Info("CheckProtect発生: " + __instance.GetNameWithRole() + "=>" + target.GetNameWithRole(), "CheckProtect");
         if (__instance.Is(CustomRoles.Sheriff))
@@ -1154,6 +1189,18 @@ public static class PlayerControlSetRolePatch
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
 public static class PlayerControlDiePatch
 {
+    //public static bool Prefix(PlayerControl __instance)
+    //{
+
+    //    if (GameStates.IsLobby &&!GameStates.IsFreePlay)
+    //    {
+    //        RPC.NotificationPop(GetString("Warning.RoomBroken")); 
+    //        return false; 
+    //    }
+    //    return true;
+    //}
+
+
     public static void Postfix(PlayerControl __instance)
     {
         if (Main.AssistivePluginMode.Value) return;
@@ -1250,6 +1297,7 @@ public static class PlayerControlMixupOutfitPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (!__instance.IsAlive())
         {
             return;
@@ -1270,6 +1318,7 @@ public static class PlayerControlCheckSporeTriggerPatch
 {
     public static bool Prefix()
     {
+        if (Main.AssistivePluginMode.Value) return true;
         if (Options.DisableFungleSporeTrigger.GetBool())
         {
             return false;

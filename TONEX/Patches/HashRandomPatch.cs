@@ -9,6 +9,7 @@ class HashRandomPatch
     [HarmonyPatch(nameof(HashRandom.FastNext)), HarmonyPrefix]
     static bool FastNext([HarmonyArgument(0)] int maxInt, ref int __result)
     {
+
         if (IRandom.Instance is HashRandomWrapper) return true;
 
         __result = IRandom.Instance.Next(maxInt);

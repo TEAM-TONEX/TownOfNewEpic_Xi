@@ -22,7 +22,6 @@ class EndGamePatch
     {
         GameStates.InGame = false;
         //SetRolePatch.playanima = true;
-        HudSpritePatch.IsEnd = true;
         Logger.Info("-----------游戏结束-----------", "Phase");
             
         if (Main.AssistivePluginMode.Value) return;

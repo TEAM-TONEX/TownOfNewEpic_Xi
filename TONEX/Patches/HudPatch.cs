@@ -61,7 +61,7 @@ class HudManagerPatch
 
         Utils.CountAlivePlayers();
 
-        if (SetHudActivePatch.IsActive)
+        if (SetHudActivePatch.IsActive && !Main.AssistivePluginMode.Value)
         {
             if (player.IsAlive())
             {
@@ -93,15 +93,12 @@ class HudManagerPatch
                             else __instance.AbilityButton.SetInfiniteUses();
                         }
 
-                        if (Options.UsePets.GetBool())
+                        if (Options.UsePets.GetBool() && roleClass.EnablePetSkill())
                         {
-                            if (roleClass?.GetPetButtonText(out string name) == true)
-                            {
-                                __instance.PetButton.OverrideText(Utils.ColorString(Utils.GetRoleColor(player.GetCustomRole()), name));
-                            }
-                            else if (roleClass?.GetPetButtonText(out string petlabel) == false)
+                            if (roleClass?.GetPetButtonText(out string petlabel) ?? false)
                             {
                                 __instance.PetButton.OverrideText(Utils.ColorString(Utils.GetRoleColor(player.GetCustomRole()), petlabel));
+                                __instance.PetButton.ToggleVisible(GameStates.IsInTask);
                             }
                         }
 
@@ -234,10 +231,11 @@ class SetVentOutlinePatch
 class SetHudActivePatch
 {
     public static bool IsActive = false;
-    public static void Prefix(HudManager __instance, [HarmonyArgument(2)] ref bool isActive)
+    public static bool Prefix(HudManager __instance, [HarmonyArgument(2)] ref bool isActive)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         isActive &= !GameStates.IsMeeting;
-        return;
+        return false;
     }
     public static void Postfix(HudManager __instance, [HarmonyArgument(2)] bool isActive)
     {

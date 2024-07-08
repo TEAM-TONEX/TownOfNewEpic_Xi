@@ -48,6 +48,8 @@ GuardianAngel: "Guardian Angel"
 Impostor: "Impostor"
 Shapeshifter: "Shapeshifter"
 Phantom: "Phantom"
+CrewmateGhost: "Crewmate Ghost"
+ImpostorGhost: "Impostor Ghost"
 
 ## 内鬼阵营 / Impostors
 BountyHunter: "Bounty Hunter"
@@ -1828,6 +1830,7 @@ Warning.AssistivePluginMode: "Assistive Plugin Mode"
 Warning.MismatchedVersion: "{0}\nhave a different version of {1}"
 Warning.AutoExitAtMismatchedVersion: "The host has no or a different version of {0}\nYou will be kicked in {1}"
 Warning.CantKickDev: "Sorry, you cannot kick the developer"
+Warning.RoomBroken: "Sorry, this room has been bombed. Please proceed to another room to continue your game."
 # 错误 / Error
 Error.MeetingException: "Error: {0}\nPlease use SHIFT+M+ENTER to end the meeting"
 Error.InvalidRoleAssignment: "Error: Invalid role found for a player during role assignment({0})"

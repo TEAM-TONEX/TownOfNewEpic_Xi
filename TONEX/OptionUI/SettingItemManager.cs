@@ -18,40 +18,40 @@ public class SettingItemManager : UIBase
         {
             if (option.Tab != tab) continue;
             continue;
-            if (option.OptionBehaviour == null)
-            {
-                GameObject settingsContent = new GameObject($"SettingsContent{tab}");
-                settingsContent.AddComponent<RectTransform>();
-                settingsContent.AddComponent<CanvasRenderer>();
-                settingsContent.AddComponent<VerticalLayoutGroup>();
+            //if (option.OptionBehaviour == null)
+            //{
+            //    GameObject settingsContent = new GameObject($"SettingsContent{tab}");
+            //    settingsContent.AddComponent<RectTransform>();
+            //    settingsContent.AddComponent<CanvasRenderer>();
+            //    settingsContent.AddComponent<VerticalLayoutGroup>();
 
-                settingsContent.GetComponent<RectTransform>().SetParent(GetInstance().mainUI.transform);
-                settingsContent.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
-                settingsContent.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width * 0.7f, Screen.height * 0.8f);
+            //    settingsContent.GetComponent<RectTransform>().SetParent(GetInstance().mainUI.transform);
+            //    settingsContent.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 0);
+            //    settingsContent.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width * 0.7f, Screen.height * 0.8f);
 
-                GameObject scrollbar = new GameObject($"Scrollbar{tab}");
-                scrollbar.AddComponent<RectTransform>();
-                scrollbar.AddComponent<CanvasRenderer>();
-                scrollbar.AddComponent<Image>();
-                scrollbar.AddComponent<UnityEngine.UI.Scrollbar>();
+            //    GameObject scrollbar = new GameObject($"Scrollbar{tab}");
+            //    scrollbar.AddComponent<RectTransform>();
+            //    scrollbar.AddComponent<CanvasRenderer>();
+            //    scrollbar.AddComponent<Image>();
+            //    scrollbar.AddComponent<UnityEngine.UI.Scrollbar>();
 
-                scrollbar.GetComponent<RectTransform>().SetParent(GetInstance().mainUI.transform);
-                scrollbar.GetComponent<RectTransform>().anchoredPosition = new Vector2(Screen.width * 0.35f - 10, 0);
-                scrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(20, Screen.height * 0.8f);
+            //    scrollbar.GetComponent<RectTransform>().SetParent(GetInstance().mainUI.transform);
+            //    scrollbar.GetComponent<RectTransform>().anchoredPosition = new Vector2(Screen.width * 0.35f - 10, 0);
+            //    scrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(20, Screen.height * 0.8f);
 
-                Image scrollbarImage = scrollbar.GetComponent<Image>();
-                scrollbarImage.color = Color.white;
+            //    Image scrollbarImage = scrollbar.GetComponent<Image>();
+            //    scrollbarImage.color = Color.white;
 
-                UnityEngine.UI.Scrollbar scrollbarComponent = scrollbar.GetComponent<UnityEngine.UI.Scrollbar>();
-                scrollbarComponent.direction = UnityEngine.UI.Scrollbar.Direction.BottomToTop;
+            //    UnityEngine.UI.Scrollbar scrollbarComponent = scrollbar.GetComponent<UnityEngine.UI.Scrollbar>();
+            //    scrollbarComponent.direction = UnityEngine.UI.Scrollbar.Direction.BottomToTop;
 
-                // 关联滚动条和设置内容
-                ScrollRect scrollRect = settingsContent.AddComponent<ScrollRect>();
-                scrollRect.verticalScrollbar = scrollbarComponent;
-                scrollRect.content = settingsContent.GetComponent<RectTransform>();
-                //option.OptionBehaviour = stringOption;
-            }
-            option.OptionBehaviour.gameObject.SetActive(true);
+            //    // 关联滚动条和设置内容
+            //    ScrollRect scrollRect = settingsContent.AddComponent<ScrollRect>();
+            //    scrollRect.verticalScrollbar = scrollbarComponent;
+            //    scrollRect.content = settingsContent.GetComponent<RectTransform>();
+            //    //option.OptionBehaviour = stringOption;
+            //}
+            //option.OptionBehaviour.gameObject.SetActive(true);
         }
     }
     public void CreateSettingItem(TabGroup tab)

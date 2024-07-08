@@ -74,7 +74,83 @@ public static class MeetingHudPatch
         }
         public static void Postfix(MeetingHud __instance)
         {
-            if (Main.AssistivePluginMode.Value) return;
+            if (Main.AssistivePluginMode.Value)
+            {
+                foreach (var pva in __instance.playerStates)
+                {
+                    var pc = Utils.GetPlayerById(pva.TargetPlayerId);
+                    if (pc == null) continue;
+                    var roleTextMeeting = UnityEngine.Object.Instantiate(pva.NameText);
+                    roleTextMeeting.text = "";
+                    roleTextMeeting.enabled = false;
+                    roleTextMeeting.transform.SetParent(pva.NameText.transform);
+                    roleTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
+                    roleTextMeeting.fontSize = 1.5f;
+                    roleTextMeeting.gameObject.name = "RoleTextMeeting";
+                    roleTextMeeting.enableWordWrapping = false;
+
+                    // 役職とサフィックスを同時に表示する必要が出たら要改修
+                    var suffixBuilder = new StringBuilder(32);
+                    var roleType = pc.Data.Role.Role;
+                    var cr = roleType.GetCustomRoleTypes();
+                    var color = Utils.GetRoleColorCode(cr);
+                    if (pc == PlayerControl.LocalPlayer)
+                    {
+                        pva.NameText.text =
+        $"<color={color}>{pva.NameText.text}</color>";
+                        suffixBuilder.Append
+                            (
+                            $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size></color>"
+                            );
+                    }
+                    else
+                    {
+
+                        if (PlayerControl.LocalPlayer.Data.IsDead && pc.Data.IsDead)
+                        {
+                            pva.NameText.text =
+                                $"<color={color}>{pva.NameText.text}</color>";
+                            suffixBuilder.Append
+                            (
+                                $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size></color>");
+                        }
+                        else if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsImpostor() && cr.IsImpostor())
+                        {
+                            if (PlayerControl.LocalPlayer.Data.IsDead)
+                            {
+                                pva.NameText.text =
+        $"<color=#ff1919>{pva.NameText.text}</color>";
+                                suffixBuilder.Append
+                            (
+                                       $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size></color>");
+                            }
+                            else
+                            {
+
+                                pva.NameText.text =
+                                $"<color=#FF1919>{pc?.name}</color>";
+
+                            }
+                        }
+                        else
+                        {
+
+                            pva.NameText.text =
+                            $"<color=#FFFFFF>{pc?.name}</color>";
+
+
+
+                        }
+
+                    }
+                    if (suffixBuilder.Length > 0)
+                    {
+                        roleTextMeeting.text = suffixBuilder.ToString();
+                        roleTextMeeting.enabled = true;
+                    }
+                }
+                return;
+            }
             MeetingVoteManager.Start();
 
             SoundManager.Instance.ChangeAmbienceVolume(0f);

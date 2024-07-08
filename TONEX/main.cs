@@ -39,11 +39,11 @@ public class Main : BasePlugin
     public const string DebugKeySalt = "59687b";
     public static ConfigEntry<string> DebugKeyInput { get; private set; }
     // == 版本相关设定 / Version Config ==
-    public const string LowestSupportedVersion = "2024.3.5";
+    public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.40";
-    public const string PluginShowVersionPrefix = "1.3_20240707";
-    public const string PluginShowVersionPostfix = "_Debug_30";
+    public const string PluginVersion = "1.2.44";
+    public const string PluginShowVersionPrefix = "1.3_20240708";
+    public const string PluginShowVersionPostfix = "_Debug_34";
     public const string PluginShowVersion = PluginShowVersionPrefix + PluginShowVersionPostfix;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
@@ -243,6 +243,10 @@ public class Main : BasePlugin
         {
             roleColors = new Dictionary<CustomRoles, string>()
             {
+                //Vanilla
+                {CustomRoles.CrewmateGhost, "#8cffff"},
+                {CustomRoles.ImpostorGhost, "#ff1919"},
+
                 //GM
                 {CustomRoles.GM, "#ff5b70"},
 

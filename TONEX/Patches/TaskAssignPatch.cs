@@ -50,8 +50,7 @@ class RpcSetTasksPatch
     public static void Prefix(NetworkedPlayerInfo __instance,
     [HarmonyArgument(0)] ref Il2CppStructArray<byte> taskTypeIds)
     {
-        var ignore = true;
-        if (!Main.AssistivePluginMode.Value &&!ignore)
+        if (!Main.AssistivePluginMode.Value)
         {
             //null対策
             if (Main.RealOptionsData == null)

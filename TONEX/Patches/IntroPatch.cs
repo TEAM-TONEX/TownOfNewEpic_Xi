@@ -137,8 +137,9 @@ class IntroCutscenePatch
 
             Utils.NotifyRoles();
 
-            GameStates.InGame = true;
+            
         }
+        GameStates.InGame = true;
     }
     [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate)), HarmonyPrefix]
     public static bool BeginCrewmate_Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)

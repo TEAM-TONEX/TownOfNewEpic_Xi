@@ -40,40 +40,42 @@ public class MeetingButtonManager
     [HarmonyPatch(nameof(MeetingHud.Update)), HarmonyPostfix, HarmonyPriority(Priority.LowerThanNormal)]
     public static void Update(MeetingHud __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
-        if (__instance == null || !GameStates.IsInGame || __instance.IsDestroyedOrNull()) return;
-
-        Count = Count > 20 ? 0 : ++Count;
-        if (Count != 0) return;
-
-        //若某玩家死亡则修复会议该玩家状态
-        __instance.playerStates.Where(x => (!PlayerState.AllPlayerStates.TryGetValue(x.TargetPlayerId, out var ps) || ps.IsDead) && !x.AmDead).Do(x => x.SetDead(x.DidReport, true));
-
-        //本地玩家并没有会议技能按钮
-        if (PlayerControl.LocalPlayer.GetRoleClass() is not IMeetingButton meetingButton) return;
-
-        //投票结束时销毁全部技能按钮
-        if (!GameStates.IsVoting && __instance.lastSecond < 1)
+        if (!Main.AssistivePluginMode.Value)
         {
-            if (GameObject.Find("Custom Meeting Button") != null) ClearMeetingButton(__instance, true);
-            return;
-        }
+            if (__instance == null || !GameStates.IsInGame || __instance.IsDestroyedOrNull()) return;
 
-        //检查是否应该清除全部按钮
-        if (ButtonCreated && !meetingButton.ShouldShowButton())
-        {
-            ClearMeetingButton(__instance, true);
-            ButtonCreated = false;
-        }
+            Count = Count > 20 ? 0 : ++Count;
+            if (Count != 0) return;
 
-        //检查是否应该创建按钮
-        if (!ButtonCreated && meetingButton.ShouldShowButton())
-        {
-            CreateMeetingButton(__instance, meetingButton);
-        }
+            //若某玩家死亡则修复会议该玩家状态
+            __instance.playerStates.Where(x => (!PlayerState.AllPlayerStates.TryGetValue(x.TargetPlayerId, out var ps) || ps.IsDead) && !x.AmDead).Do(x => x.SetDead(x.DidReport, true));
 
-        //销毁死亡玩家身上的技能按钮
-        ClearMeetingButton(__instance);
+            //本地玩家并没有会议技能按钮
+            if (PlayerControl.LocalPlayer.GetRoleClass() is not IMeetingButton meetingButton) return;
+
+            //投票结束时销毁全部技能按钮
+            if (!GameStates.IsVoting && __instance.lastSecond < 1)
+            {
+                if (GameObject.Find("Custom Meeting Button") != null) ClearMeetingButton(__instance, true);
+                return;
+            }
+
+            //检查是否应该清除全部按钮
+            if (ButtonCreated && !meetingButton.ShouldShowButton())
+            {
+                ClearMeetingButton(__instance, true);
+                ButtonCreated = false;
+            }
+
+            //检查是否应该创建按钮
+            if (!ButtonCreated && meetingButton.ShouldShowButton())
+            {
+                CreateMeetingButton(__instance, meetingButton);
+            }
+
+            //销毁死亡玩家身上的技能按钮
+            ClearMeetingButton(__instance);
+        }
     }
     public static void CreateMeetingButton(MeetingHud __instance, IMeetingButton meetingButton)
     {

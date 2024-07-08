@@ -489,7 +489,7 @@ static class ExtendedPlayerControl
     }
     public static string GetNameWithRole(this PlayerControl player, bool forUser = false)
     {
-        var ret = $"{player?.Data?.PlayerName}" + (GameStates.IsInGame ? $"({player?.GetAllRoleName()})" : "");
+        var ret = $"{player?.Data?.PlayerName}" + (GameStates.IsInGame&& !Main.AssistivePluginMode.Value ? $"({player?.GetAllRoleName()})" : "");
         return (forUser ? ret : ret.RemoveHtmlTags());
     }
     public static string GetRoleColorCode(this PlayerControl player)

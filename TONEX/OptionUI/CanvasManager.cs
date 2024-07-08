@@ -11,7 +11,6 @@ public class CanvasManager : UIBase
 {
     public static CanvasManager Instance;
     public new void Awake()
-
     {
         Init();
         DontDestroyOnLoad(gameObject);

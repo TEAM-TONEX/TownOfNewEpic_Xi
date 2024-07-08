@@ -126,7 +126,7 @@ internal class Cloud
             {
                 LastRepotTimeStamp = 0;
                 StopConnect();
-                Logger.Warn("超时自动断开与TONX服务器的连接", "EAC Cloud");
+                Logger.Warn("超时自动断开与TOENX服务器的连接", "EAC Cloud");
             }
         }
     }
