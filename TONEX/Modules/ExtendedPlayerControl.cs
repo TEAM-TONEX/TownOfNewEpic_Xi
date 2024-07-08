@@ -181,7 +181,10 @@ static class ExtendedPlayerControl
         Logger.Info($"Set:{player?.Data?.PlayerName}:{name} for All", "RpcSetNameEx");
         player.RpcSetName(name);
     }
-    public static void SetOutFitStatic(this PlayerControl target, int colorId = 255, string hatId = "", string skinId = "", string visorId = "", string petId = "")
+    public static void SetOutFit(
+        this PlayerControl target, 
+        int colorId = 255, 
+        string hatId = "null", string skinId = "null", string visorId = "null", string petId = "null")
     {
         var sender = CustomRpcSender.Create(name: $"Camouflage.RpcSetSkin({target.Data.PlayerName})");
         if (colorId != 255)
@@ -192,7 +195,7 @@ static class ExtendedPlayerControl
                 .Write((byte)colorId)
             .EndRpc();
         }
-        if (hatId != "")
+        if (hatId != "null")
         {
             target.SetHat(hatId, colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
@@ -200,7 +203,7 @@ static class ExtendedPlayerControl
                 .Write(target.GetNextRpcSequenceId(RpcCalls.SetHatStr))
             .EndRpc();
         }
-        if (skinId != "")
+        if (skinId != "null")
         {
             target.SetSkin(skinId, colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
@@ -208,7 +211,7 @@ static class ExtendedPlayerControl
                 .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
             .EndRpc();
         }
-        if (visorId != "")
+        if (visorId != "null")
         {
             target.SetVisor(visorId, colorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetVisorStr)
@@ -216,7 +219,7 @@ static class ExtendedPlayerControl
                 .Write(target.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
             .EndRpc();
         }
-        if (petId != "")
+        if (petId != "null")
         {
             target.SetPet(petId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
@@ -370,7 +373,7 @@ static class ExtendedPlayerControl
     public static void RpcSpecificShapeshift(this PlayerControl player, PlayerControl target, bool shouldAnimate)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (player.PlayerId == 0)
+        if (player.OwnerId == AmongUsClient.Instance.HostId)
         {
             player.Shapeshift(target, shouldAnimate);
             return;

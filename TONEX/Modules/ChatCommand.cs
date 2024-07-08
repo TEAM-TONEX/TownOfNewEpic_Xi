@@ -287,7 +287,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                     var color = Utils.MsgToColor(mc.Args, mc.IsFromSelf);
                     if (color != byte.MaxValue)
                     {
-                        mc.Player.SetOutFitStatic(color);
+                        mc.Player.SetOutFit(color);
                         text = string.Format(GetString("Message.SetColor"), mc.Args);
                     }
                 }

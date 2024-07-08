@@ -46,7 +46,7 @@ public sealed class Infector : RoleBase
             var dis = Vector2.Distance(pos, pc.transform.position);
             if (dis > 0.3f) continue;
             pc.RpcSetCustomRole(CustomRoles.Infector);
-            pc.SetOutFitStatic(1);
+            pc.SetOutFit(1);
             Utils.NotifyRoles();
         }
     }

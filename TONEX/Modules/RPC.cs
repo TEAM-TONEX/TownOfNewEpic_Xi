@@ -19,8 +19,8 @@ namespace TONEX;
 public enum CustomRPC
 {
     VersionCheck = 80,
-    
     RequestRetryVersionCheck = 81,
+
     SyncCustomSettings = 100,
     SetDeathReason,
     EndGame,
@@ -63,6 +63,7 @@ public enum CustomRPC
     SetYinPlayer,
     SuicideWithAnime,
     SetMarkedPlayer,
+
     //医生
     SetMedicProtectList,
 
@@ -130,7 +131,7 @@ internal class RPCHandlerPatch
         var rpcType = (RpcCalls)callId;
         MessageReader subReader = MessageReader.Get(reader);
         if (EAC.ReceiveRpc(__instance, callId, reader)) return false;
-        Logger.Info($"{__instance?.Data?.PlayerId}({(__instance?.Data?.PlayerId == 0 ? "Host" : __instance?.Data?.PlayerName)}):{callId}({RPC.GetRpcName(callId)})", "ReceiveRPC");
+        Logger.Info($"{__instance?.Data?.PlayerId}({(__instance?.Data?.OwnerId == AmongUsClient.Instance.HostId ? "Host" : __instance?.Data?.PlayerName)}):{callId}({RPC.GetRpcName(callId)})", "ReceiveRPC");
 
         switch (rpcType)
         {
@@ -223,7 +224,7 @@ internal class RPCHandlerPatch
                     string forkId = reader.ReadString();
                     Main.playerVersion[__instance.PlayerId] = new PlayerVersion(version, tag, forkId);
 
-                    if (Main.VersionCheat.Value && __instance.PlayerId == 0) RPC.RpcVersionCheck();
+                    if (Main.VersionCheat.Value && __instance.OwnerId == AmongUsClient.Instance.HostId) RPC.RpcVersionCheck();
 
                     if (Main.VersionCheat.Value && AmongUsClient.Instance.AmHost)
                         Main.playerVersion[__instance.PlayerId] = Main.playerVersion[0];

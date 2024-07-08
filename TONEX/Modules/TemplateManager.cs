@@ -98,7 +98,7 @@ public static class TemplateManager
         }
         if (sendList.Count == 0 && !noErr)
         {
-            if (playerId == 0xff)
+            if (Utils.GetPlayerById(playerId).OwnerId == AmongUsClient.Instance.HostId)
                 Utils.AddChatMessage(string.Format(GetString("Message.TemplateNotFoundHost"), str, tags.Join(delimiter: ", ")));
             else Utils.SendMessage(string.Format(GetString("Message.TemplateNotFoundClient"), str), playerId);
         }

@@ -36,7 +36,7 @@ public sealed class Survivor : RoleBase
     { }
     public override void Add()
     {
-        Player.SetOutFitStatic(2);
+        Player.SetOutFit(2);
     }
     public override bool OnCompleteTask(out bool cancel)
     {

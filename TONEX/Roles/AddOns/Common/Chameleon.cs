@@ -33,7 +33,7 @@ public static class Chameleon
         if (player.Is(CustomRoles.Chameleon))
         {
             var color = IRandom.Instance.Next(0, 18);
-            player.SetOutFitStatic(color);
+            player.SetOutFit(color);
         }
     }
 }

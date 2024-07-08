@@ -102,7 +102,7 @@ class CheckMurderPatch
             Logger.Info("会議が始まっていたため、キルをキャンセルしました。", "CheckMurder");
             return false;
         }
-        var divice = Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.InfectorMode ? 3000f : 2000f;
+        var divice = Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode ? 3000f : 2000f;
         // 連打キルでないか
         float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / divice * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
                                                                                     //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
@@ -130,11 +130,11 @@ class MurderPlayerPatch
     private static readonly LogHandler logger = Logger.Handler(nameof(PlayerControl.MurderPlayer));
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] MurderResultFlags resultFlags, ref bool __state /* 成功したキルかどうか */ )
     {
-        //if (GameStates.IsLobby && !GameStates.IsFreePlay)
-        //{
-        //    RPC.NotificationPop(GetString("Warning.RoomBroken"));
-        //    return false;
-        //}
+        if (GameStates.IsLobby && !GameStates.IsFreePlay)
+        {
+            RPC.NotificationPop(GetString("Warning.RoomBroken"));
+            return false;
+        }
         if (Main.AssistivePluginMode.Value) return true;
         logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
         var isProtectedByClient = resultFlags.HasFlag(MurderResultFlags.DecisionByHost) && target.IsProtected();
@@ -178,7 +178,7 @@ class MurderPlayerPatch
                     target.RpcShapeshift(target, false);
                 }
             }
-            if (target.GetRealKiller() == null || !target.GetRealKiller().Is(CustomRoles.Skinwalker))
+            if (!(target.GetRealKiller()?.Is(CustomRoles.Skinwalker) ?? false))
                 Camouflage.RpcSetSkin(target, ForceRevert: true, RevertToDefault: true);
 
         }
@@ -368,8 +368,7 @@ class ReportDeadBodyPatch
         if (Main.AssistivePluginMode.Value) return true;
         if (GameStates.IsMeeting) return false;
         if (Options.DisableMeeting.GetBool()) return false;
-        if (Options.CurrentGameMode == CustomGameMode.HotPotato) return false;
-        if (Options.CurrentGameMode == CustomGameMode.InfectorMode) return false; 
+        if (Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode) return false; 
         if (__instance.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Report, ExtendedPlayerControl.PlayerActionInUse.All))
         {
             WaitReport[__instance.PlayerId].Add(target);
@@ -1285,7 +1284,7 @@ public static class PlayerControlDiePatch
                 }
             }
             // 死者の最終位置にペットが残るバグ対応
-            __instance.SetOutFitStatic(petId:"");
+            __instance.SetOutFit(petId:"");
         }
     }
 }

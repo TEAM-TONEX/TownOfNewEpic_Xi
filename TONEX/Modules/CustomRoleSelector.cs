@@ -71,7 +71,7 @@ internal static class CustomRoleSelector
                    RoleResult.Add(pc, CustomRoles.Survivor);
             }
             RoleResult.Add(Zb, CustomRoles.Infector);
-            Zb.SetOutFitStatic(2);
+            Zb.SetOutFit(2);
             return;
         }
         
