@@ -8,7 +8,7 @@ class GameManagerSerializeFix
 {
     public static bool Prefix(GameManager __instance, [HarmonyArgument(0)] MessageWriter writer, [HarmonyArgument(1)] bool initialState, ref bool __result)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         bool flag = false;
         for (int index = 0; index < __instance.LogicComponents.Count; ++index)
         {
@@ -34,7 +34,7 @@ class LogicOptionsSerializePatch
     public static bool Prefix(LogicOptions __instance, ref bool __result, MessageWriter writer, bool initialState)
     {
         // 初回以外はブロックし、CustomSyncSettingsでのみ同期する
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (!initialState)
         {
             __result = false;

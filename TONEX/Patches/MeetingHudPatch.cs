@@ -25,7 +25,7 @@ public static class MeetingHudPatch
         public static bool Prefix()
         {
             if (!AmongUsClient.Instance.AmHost) return true;
-            if (/* Main.AssistivePluginMode.Value */ false) return true;
+            if (Main.AssistivePluginMode.Value) return true;
             MeetingVoteManager.Instance?.CheckAndEndMeeting();
             return false;
         }
@@ -36,7 +36,7 @@ public static class MeetingHudPatch
         public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] byte srcPlayerId /* 投票者 */ , [HarmonyArgument(1)] byte suspectPlayerId /* 被票者 */ )
         {
             if (!AmongUsClient.Instance.AmHost) return true;
-            if (/* Main.AssistivePluginMode.Value */ false) return true;
+            if (Main.AssistivePluginMode.Value) return true;
             var voter = Utils.GetPlayerById(srcPlayerId);
             var voted = Utils.GetPlayerById(suspectPlayerId);
 
@@ -63,7 +63,7 @@ public static class MeetingHudPatch
         public static void Prefix()
         {
             Logger.Info("------------会议开始------------", "Phase");
-            if (!/* Main.AssistivePluginMode.Value */ false)
+            if (!Main.AssistivePluginMode.Value)
             {
                 
                 ChatUpdatePatch.DoBlockChat = true;
@@ -74,7 +74,7 @@ public static class MeetingHudPatch
         }
         public static void Postfix(MeetingHud __instance)
         {
-            if (/* Main.AssistivePluginMode.Value */ false)
+            if (Main.AssistivePluginMode.Value)
             {
                 foreach (var pva in __instance.playerStates)
                 {
@@ -324,7 +324,7 @@ public static class MeetingHudPatch
     {
         public static void Postfix(MeetingHud __instance)
         {
-            if (/* Main.AssistivePluginMode.Value */ false) return;
+            if (Main.AssistivePluginMode.Value) return;
                 if (!AmongUsClient.Instance.AmHost || !GameStates.IsInGame || __instance == null || __instance.IsDestroyedOrNull()) return;
             if (Input.GetMouseButtonUp(1) && Input.GetKey(KeyCode.LeftControl))
             {
@@ -350,7 +350,7 @@ public static class MeetingHudPatch
 
             MeetingStates.FirstMeeting = false;
             Logger.Info("------------会议结束------------", "Phase");
-            if (/* Main.AssistivePluginMode.Value */ false) return;
+            if (Main.AssistivePluginMode.Value) return;
             if (AmongUsClient.Instance.AmHost)
             {
                 AntiBlackout.SetIsDead();

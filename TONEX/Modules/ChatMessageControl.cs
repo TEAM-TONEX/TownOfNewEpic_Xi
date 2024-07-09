@@ -160,7 +160,7 @@ public class MessageControl
 
     public static void SendMessageAsPlayerImmediately(PlayerControl player, string text, bool hostCanSee = true, bool sendToModded = true)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         if (hostCanSee) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, text);
         if (!sendToModded) text += "\0";
 

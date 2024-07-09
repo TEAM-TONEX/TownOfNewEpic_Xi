@@ -168,7 +168,7 @@ class BanMenuSelectPatch
 {
     public static void Postfix(BanMenu __instance, int clientId)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         ClientData recentClient = AmongUsClient.Instance.GetRecentClient(clientId);
         if (recentClient == null) return;
         if (recentClient.IsBannedPlayer())

@@ -24,7 +24,7 @@ class IntroCutscenePatch
     public static void ShowRole_Postfix(IntroCutscene __instance)
     {
 
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
         {
             _ = new LateTask(() =>
             {
@@ -89,7 +89,7 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.CoBegin)), HarmonyPrefix]
     public static void CoBegin_Prefix()
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             var logger = Logger.Handler("Info");
             Logger.Info("------------显示名称------------", "CoBegin");
@@ -144,7 +144,7 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate)), HarmonyPrefix]
     public static bool BeginCrewmate_Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         
             if (PlayerControl.LocalPlayer.Is(CustomRoles.CrewPostor))
             {
@@ -174,7 +174,7 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate)), HarmonyPostfix]
     public static void BeginCrewmate_Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
     {
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
         {
             if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())
             {
@@ -391,7 +391,7 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginImpostor)), HarmonyPrefix]
     public static bool BeginImpostor_Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
 
         var role = PlayerControl.LocalPlayer.GetCustomRole();
             if (role is CustomRoles.CrewPostor)
@@ -425,7 +425,7 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginImpostor)), HarmonyPostfix]
     public static void BeginImpostor_Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
         {
             __instance.ImpostorText.gameObject.SetActive(true);
             if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())

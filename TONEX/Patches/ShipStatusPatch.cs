@@ -23,7 +23,7 @@ class ShipStatusUpdateSystemPatch
         [HarmonyArgument(1)] PlayerControl player,
         [HarmonyArgument(2)] byte amount)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             if (systemType != SystemTypes.Sabotage)
             {
@@ -58,7 +58,7 @@ class CloseDoorsPatch
 {
     public static bool Prefix(ShipStatus __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         return !(Options.DisableSabotage.GetBool());
     }
 }
@@ -67,7 +67,7 @@ class StartPatch
 {
     public static void Postfix()
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         Logger.CurrentMethod();
         Logger.Info("-----------游戏开始-----------", "Phase");
 
@@ -93,7 +93,7 @@ class StartMeetingPatch
 {
     public static bool Prefix(ShipStatus __instance, PlayerControl reporter, NetworkedPlayerInfo target)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         MeetingStates.ReportTarget = target;
         MeetingStates.DeadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
         return true;
@@ -114,7 +114,7 @@ class CheckTaskCompletionPatch
 {
     public static bool Prefix(ref bool __result)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (Options.DisableTaskWin.GetBool() || Options.NoGameEnd.GetBool() || TaskState.InitialTotalTasks == 0)
         {
             __result = false;

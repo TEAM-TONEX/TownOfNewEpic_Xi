@@ -11,7 +11,7 @@ class CanUsePatch
     {
         
         canUse = couldUse = default;
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         canUse = couldUse = false;
 
         //こいつをfalseでreturnしても、タスク(サボ含む)以外の使用可能な物は使えるまま(ボタンなど)
@@ -35,7 +35,7 @@ class CanUseVentPatch
         ref float __result)
 
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         PlayerControl playerControl = pc.Object;
 
         // 前半，Mod独自の処理

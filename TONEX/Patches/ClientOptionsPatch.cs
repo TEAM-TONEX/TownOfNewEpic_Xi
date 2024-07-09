@@ -87,7 +87,7 @@ public static class OptionsMenuBehaviourStartPatch
             {
                 if (Main.AutoStartGame.Value == false && GameStates.IsCountDown)
                 {
-                    if (!/* Main.AssistivePluginMode.Value */ false)
+                    if (!Main.AssistivePluginMode.Value)
                     GameStartManager.Instance.ResetStartState();
                 }
             }
@@ -151,7 +151,7 @@ public static class OptionsMenuBehaviourStartPatch
             {
                 try
                 {
-                    if (!GameStates.IsNotJoined && !/* Main.AssistivePluginMode.Value */ false)
+                    if (!GameStates.IsNotJoined && !Main.AssistivePluginMode.Value)
                     {
                         
                         Utils.LocalPlayerLastTp = PlayerControl.LocalPlayer.GetTruePosition();

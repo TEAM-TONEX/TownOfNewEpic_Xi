@@ -122,7 +122,7 @@ public class GameStartManagerPatch
                 HideName.enabled = false;
             }
 
-            if (Main.AutoStartGame.Value && !/* Main.AssistivePluginMode.Value */ false)
+            if (Main.AutoStartGame.Value && !Main.AssistivePluginMode.Value)
             {
                 updateTimer++;
                 if (updateTimer >= 50)
@@ -303,7 +303,7 @@ class UnrestrictedNumImpostorsPatch
 {
     public static bool Prefix(ref int __result)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         __result = Main.NormalOptions.NumImpostors;
         return false;
     }

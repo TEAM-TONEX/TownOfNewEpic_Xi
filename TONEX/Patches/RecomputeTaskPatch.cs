@@ -7,7 +7,7 @@ class CustomTaskCountsPatch
 {
     public static bool Prefix(GameData __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
 
         __instance.TotalTasks = 0;
         __instance.CompletedTasks = 0;

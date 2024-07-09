@@ -8,7 +8,7 @@ public static class SecurityCameraSystemTypeUpdateSystemPatch
 {
     public static bool Prefix([HarmonyArgument(1)] MessageReader msgReader)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);

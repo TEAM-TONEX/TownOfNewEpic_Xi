@@ -10,7 +10,7 @@ class TryPetPatch
 {
     public static void Prefix(PlayerControl __instance)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             if (AmongUsClient.Instance.AmHost && AmongUsClient.Instance.AmClient && !GameStates.IsLobby && (Options.IsStandard || Options.CurrentGameMode == CustomGameMode.AllCrewModMode))
             {
@@ -22,7 +22,7 @@ class TryPetPatch
 
     public static void Postfix(PlayerControl __instance)
     {
-        if (!AmongUsClient.Instance.AmHost || GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool() ||/* Main.AssistivePluginMode.Value */ false) return;
+        if (!AmongUsClient.Instance.AmHost || GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool() ||Main.AssistivePluginMode.Value) return;
         var cancel = Options.IsStandard;
 
             __instance.petting = false;
@@ -37,7 +37,7 @@ class ExternalRpcPetPatch
 {
     public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
-        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool() || !/* Main.AssistivePluginMode.Value */ false) return true;
+        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool() || !Main.AssistivePluginMode.Value) return true;
         {
             var rpcType = callId == 51 ? RpcCalls.Pet : (RpcCalls)callId;
             if (rpcType != RpcCalls.Pet) return false;

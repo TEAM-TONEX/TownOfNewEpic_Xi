@@ -10,7 +10,7 @@ public static class HeliSabotageSystemUpdateSystemPatch
 {
     public static bool Prefix(HeliSabotageSystem __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -34,7 +34,7 @@ public static class HeliSabotageSystemPatch
 {
     public static void Prefix(HeliSabotageSystem __instance)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             if (!__instance.IsActive || !Options.SabotageTimeControl.GetBool())
                 return;

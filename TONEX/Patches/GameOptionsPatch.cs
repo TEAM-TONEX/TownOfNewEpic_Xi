@@ -11,7 +11,7 @@ namespace TONEX.Patches;
 //{
 //    public static void Postfix(RoleOptionSetting __instance)
 //    {
-//        if (/* Main.AssistivePluginMode.Value */ false) return;
+//        if (Main.AssistivePluginMode.Value) return;
 //        string DisableText = $" ({GetString("Disabled")})";
 //        if (__instance.Role.Role == RoleTypes.Scientist)
 //        {
@@ -48,7 +48,7 @@ class SwitchGameModePatch
 {
     public static void Postfix(GameModes gameMode)
     {
-        if (gameMode == GameModes.HideNSeek && !/* Main.AssistivePluginMode.Value */ false)
+        if (gameMode == GameModes.HideNSeek && !Main.AssistivePluginMode.Value)
         {
             ErrorText.Instance.HnSFlag = true;
             ErrorText.Instance.AddError(ErrorCode.HnsUnload);

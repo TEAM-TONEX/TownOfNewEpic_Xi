@@ -61,7 +61,7 @@ class HudManagerPatch
 
         Utils.CountAlivePlayers();
 
-        if (SetHudActivePatch.IsActive && !/* Main.AssistivePluginMode.Value */ false)
+        if (SetHudActivePatch.IsActive && !Main.AssistivePluginMode.Value)
         {
             if (player.IsAlive())
             {
@@ -233,13 +233,13 @@ class SetHudActivePatch
     public static bool IsActive = false;
     public static bool Prefix(HudManager __instance, [HarmonyArgument(2)] ref bool isActive)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         isActive &= !GameStates.IsMeeting;
         return false;
     }
     public static void Postfix(HudManager __instance, [HarmonyArgument(2)] bool isActive)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         __instance.ReportButton.ToggleVisible(!GameStates.IsLobby && isActive);
         __instance.PetButton.ToggleVisible(!GameStates.IsLobby && isActive);
         if (!GameStates.IsModHost) return;
@@ -257,7 +257,7 @@ class MapBehaviourShowPatch
 {
     public static void Prefix(MapBehaviour __instance, ref MapOptions opts)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             if (GameStates.IsMeeting) return;
 

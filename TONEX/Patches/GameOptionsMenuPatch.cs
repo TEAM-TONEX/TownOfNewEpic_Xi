@@ -25,7 +25,7 @@ public static class GameOptionsMenuPatch
     [HarmonyPatch(nameof(GameOptionsMenu.Initialize)), HarmonyPrefix]
     private static bool InitializePrefix(GameOptionsMenu __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         Instance ??= __instance;
         if (ModGameOptionsMenu.TabIndex < 3) return true;
 
@@ -49,14 +49,14 @@ public static class GameOptionsMenuPatch
     [HarmonyPatch(nameof(GameOptionsMenu.Initialize)), HarmonyPostfix]
     private static void InitializePostfix()
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         GameObject.Find("PlayerOptionsMenu(Clone)")?.transform.FindChild("Background")?.gameObject.SetActive(false);
     }
 
     [HarmonyPatch(nameof(GameOptionsMenu.CreateSettings)), HarmonyPrefix]
     private static bool CreateSettingsPrefix(GameOptionsMenu __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         Instance ??= __instance;
         // When is vanilla tab, run vanilla code
         if (ModGameOptionsMenu.TabIndex < 3) return true;
@@ -282,7 +282,7 @@ public static class GameOptionsMenuPatch
     [HarmonyPatch(nameof(GameOptionsMenu.ValueChanged)), HarmonyPrefix]
     private static bool ValueChangedPrefix(GameOptionsMenu __instance, OptionBehaviour option)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (__instance == null || ModGameOptionsMenu.TabIndex < 3) return true;
 
         if (ModGameOptionsMenu.OptionList.TryGetValue(option, out var index))
@@ -372,7 +372,7 @@ public static class ToggleOptionPatch
     [HarmonyPatch(nameof(ToggleOption.Initialize)), HarmonyPrefix]
     private static bool InitializePrefix(ToggleOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -386,7 +386,7 @@ public static class ToggleOptionPatch
     [HarmonyPatch(nameof(ToggleOption.UpdateValue)), HarmonyPrefix]
     private static bool UpdateValuePrefix(ToggleOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -412,7 +412,7 @@ public static class NumberOptionPatch
     [HarmonyPatch(nameof(NumberOption.Initialize)), HarmonyPrefix]
     private static bool InitializePrefix(NumberOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         switch (__instance.Title)
         {
             case StringNames.GameVotingTime:
@@ -453,7 +453,7 @@ public static class NumberOptionPatch
     [HarmonyPatch(nameof(NumberOption.UpdateValue)), HarmonyPrefix]
     private static bool UpdateValuePrefix(NumberOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -475,7 +475,7 @@ public static class NumberOptionPatch
     [HarmonyPatch(nameof(NumberOption.FixedUpdate)), HarmonyPrefix]
     private static bool FixedUpdatePrefix(NumberOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -498,7 +498,7 @@ public static class NumberOptionPatch
     [HarmonyPatch(nameof(NumberOption.Increase)), HarmonyPrefix]
     public static bool IncreasePrefix(NumberOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (__instance.Value == __instance.ValidRange.max)
         {
             __instance.Value = __instance.ValidRange.min;
@@ -521,7 +521,7 @@ public static class NumberOptionPatch
     [HarmonyPatch(nameof(NumberOption.Decrease)), HarmonyPrefix]
     public static bool DecreasePrefix(NumberOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (__instance.Value == __instance.ValidRange.min)
         {
             __instance.Value = __instance.ValidRange.max;
@@ -548,7 +548,7 @@ public static class StringOptionPatch
     [HarmonyPatch(nameof(StringOption.Initialize)), HarmonyPrefix]
     private static bool InitializePrefix(StringOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -574,7 +574,7 @@ public static class StringOptionPatch
     [HarmonyPatch(nameof(StringOption.UpdateValue)), HarmonyPrefix]
     private static bool UpdateValuePrefix(StringOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -592,7 +592,7 @@ public static class StringOptionPatch
     [HarmonyPatch(nameof(StringOption.FixedUpdate)), HarmonyPrefix]
     private static bool FixedUpdatePrefix(StringOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
             var item = OptionItem.AllOptions[index];
@@ -620,7 +620,7 @@ public static class StringOptionPatch
     [HarmonyPatch(nameof(StringOption.Increase)), HarmonyPrefix]
     public static bool IncreasePrefix(StringOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (__instance.Value == __instance.Values.Length - 1)
         {
             __instance.Value = 0;
@@ -633,7 +633,7 @@ public static class StringOptionPatch
     [HarmonyPatch(nameof(StringOption.Decrease)), HarmonyPrefix]
     public static bool DecreasePrefix(StringOption __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (__instance.Value == 0)
         {
             __instance.Value = __instance.Values.Length - 1;

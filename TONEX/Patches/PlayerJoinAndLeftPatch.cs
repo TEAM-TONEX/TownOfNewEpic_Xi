@@ -26,7 +26,7 @@ class OnGameJoinedPatch
         Main.YuAntiCheatList = new();
         if (!Main.VersionCheat.Value) RPC.RpcVersionCheck();
         SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
 
         Main.AllPlayerNames = new();
         ShowDisconnectPopupPatch.ReasonByHost = string.Empty;
@@ -57,7 +57,7 @@ class OnBecomeHostPatch
 {
     public static void Postfix()
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         if (GameStates.InGame)
             GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
     }
@@ -90,7 +90,7 @@ class OnPlayerJoinedPatch
     {
 
         Logger.Info($"{client.PlayerName}(ClientID:{client.Id}/FriendCode:{client.FriendCode}) 加入房间", "Session");
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
         {
             RPC.RpcVersionCheck();
             return;
@@ -132,7 +132,7 @@ class OnPlayerLeftPatch
 {
     static void Prefix([HarmonyArgument(0)] ClientData data)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             if (!GameStates.IsInGame || !AmongUsClient.Instance.AmHost) return;
             CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnPlayerDeath(data.Character, PlayerState.GetByPlayerId(data.Character.PlayerId).DeathReason, GameStates.IsMeeting));
@@ -152,7 +152,7 @@ class OnPlayerLeftPatch
         }
         else if (data.Character != null)
         {
-            if (GameStates.IsInGame && !/* Main.AssistivePluginMode.Value */ false)
+            if (GameStates.IsInGame && !Main.AssistivePluginMode.Value)
             {
                 Lovers.OnPlayerLeft(data);
                 AdmirerLovers.OnPlayerLeft(data);
@@ -176,7 +176,7 @@ class OnPlayerLeftPatch
             }
             Main.playerVersion.Remove(data.Character.PlayerId);
         }
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         Logger.Info($"{data?.PlayerName}(ClientID:{data?.Id}/FriendCode:{data?.FriendCode}/Role:{data?.Character?.GetNameWithRole()})断开连接(理由:{reason}，Ping:{AmongUsClient.Instance.Ping})", "Session");
         else
             Logger.Info($"{data?.PlayerName}(ClientID:{data?.Id}/FriendCode:{data?.FriendCode})断开连接(理由:{reason}，Ping:{AmongUsClient.Instance.Ping})", "Session");
@@ -213,7 +213,7 @@ class InnerNetClientSpawnPatch
 {
     public static void Prefix([HarmonyArgument(1)] int ownerId, [HarmonyArgument(2)] SpawnFlags flags)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             if (!AmongUsClient.Instance.AmHost || flags != SpawnFlags.IsClientCharacter) return;
 

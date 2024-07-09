@@ -10,7 +10,7 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
 {
     public static bool Prefix(HudOverrideSystemType __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -28,7 +28,7 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
     }
     public static void Postfix()
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         Camouflage.CheckCamouflage();
         Utils.NotifyRoles();
     }

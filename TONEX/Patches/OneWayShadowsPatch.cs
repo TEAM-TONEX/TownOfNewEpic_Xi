@@ -8,7 +8,7 @@ public static class OneWayShadowsIsIgnoredPatch
 {
     public static bool Prefix(OneWayShadows __instance, ref bool __result)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
         var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
         if (__instance.IgnoreImpostor && amDesyncImpostor)

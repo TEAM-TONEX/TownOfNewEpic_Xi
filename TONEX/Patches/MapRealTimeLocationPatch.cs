@@ -13,7 +13,7 @@ public class MapRealTimeLocationPatch
         var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
         var cr = roleType.GetCustomRoleTypes();
         var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
             color = Utils.GetRoleColor(cr);
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
@@ -29,7 +29,7 @@ public class MapRealTimeLocationPatch
         var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
         var cr = roleType.GetCustomRoleTypes();
         var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
             color =Utils.GetRoleColor(cr);
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
@@ -38,7 +38,7 @@ public class MapRealTimeLocationPatch
     public static bool ShowSabotageMap(MapBehaviour __instance)
     {
         var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ? Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
             color = Palette.DisabledGrey;
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);
@@ -51,7 +51,7 @@ public class MapRealTimeLocationPatch
     public static void ShowSabotageMapAfter(MapBehaviour __instance)
     {
         var color = PlayerControl.LocalPlayer.GetRoleColor() == Color.white ?  Palette.DisabledGrey : PlayerControl.LocalPlayer.GetRoleColor();
-        if (/* Main.AssistivePluginMode.Value */ false)
+        if (Main.AssistivePluginMode.Value)
             color = Palette.DisabledGrey;
         if (Main.EnableMapBackGround.Value)
             __instance.ColorControl.SetColor(color);

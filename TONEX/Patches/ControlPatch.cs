@@ -16,7 +16,7 @@ internal class ControllerManagerUpdatePatch
 
     public static void Postfix(ControllerManager __instance)
     {
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         //切换自定义设置的页面
         {
             if (GameStates.IsLobby && !ChatUpdatePatch.Active)
@@ -104,7 +104,7 @@ internal class ControllerManagerUpdatePatch
 
         //-- 下面是主机专用的命令--//
         if (!AmongUsClient.Instance.AmHost) return;
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
 
 
@@ -180,7 +180,7 @@ internal class ControllerManagerUpdatePatch
 
         //--下面是调试模式的命令--//
         if (!DebugModeManager.IsDebugMode) return;
-        if (!/* Main.AssistivePluginMode.Value */ false)
+        if (!Main.AssistivePluginMode.Value)
         {
             //杀戮闪烁
             if (GetKeysDown(KeyCode.Return, KeyCode.F, KeyCode.LeftShift))
@@ -303,7 +303,7 @@ internal class HandleHUDPatch
 {
     public static void Postfix(Rewired.Player player)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         if (player.GetButtonDown(8) && // 8:キルボタンのactionId
         PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == false &&
         PlayerControl.LocalPlayer.CanUseKillButton())

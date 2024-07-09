@@ -12,7 +12,7 @@ class ShowFolderPatch
     private static TaskFolder CustomRolesFolder;
     public static bool Prefix(TaskAdderGame __instance, [HarmonyArgument(0)] TaskFolder taskFolder)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         if (__instance.Root == taskFolder && CustomRolesFolder == null)
         {
             TaskFolder rolesFolder = UnityEngine.Object.Instantiate<TaskFolder>(
@@ -70,7 +70,7 @@ class TaskAddButtonUpdatePatch
 {
     public static bool Prefix(TaskAddButton __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         try
         {
             if ((int)__instance.Role.Role >= 1000)
@@ -89,7 +89,7 @@ class AddTaskButtonPatch
 {
     public static bool Prefix(TaskAddButton __instance)
     {
-        if (/* Main.AssistivePluginMode.Value */ false) return true;
+        if (Main.AssistivePluginMode.Value) return true;
         try
         {
             if ((int)__instance.Role.Role >= 1000)

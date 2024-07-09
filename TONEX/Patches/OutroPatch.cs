@@ -24,7 +24,7 @@ class EndGamePatch
         //SetRolePatch.playanima = true;
         Logger.Info("-----------游戏结束-----------", "Phase");
             
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
          
@@ -96,7 +96,7 @@ class SetEverythingUpPatch
     public static void Postfix(EndGameManager __instance)
     {
         var showInitially = Main.ShowResults.Value;
-        if (/* Main.AssistivePluginMode.Value */ false) return;
+        if (Main.AssistivePluginMode.Value) return;
         if (!Main.playerVersion.ContainsKey(0)) return;
         //#######################################
         //          ==勝利陣営表示==

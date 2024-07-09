@@ -49,7 +49,7 @@ internal static class InfectorManager
     private static long LastFixedUpdate = new();
         public static void Postfix(PlayerControl __instance)
         {
-            if (/* Main.AssistivePluginMode.Value */ false) return;
+            if (Main.AssistivePluginMode.Value) return;
             if (!GameStates.IsInTask || Options.CurrentGameMode != CustomGameMode.InfectorMode || !AmongUsClient.Instance.AmHost || Main.AllAlivePlayerControls.ToList().Count == 0) return;
 
             var playerList = Main.AllAlivePlayerControls.ToList();
