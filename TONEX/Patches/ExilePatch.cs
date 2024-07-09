@@ -33,6 +33,7 @@ class ExileControllerWrapUpPatch
     {
         public static void Postfix(AirshipExileController __instance)
         {
+            if (Main.AssistivePluginMode.Value) return;
             try
             {
                 WrapUpPostfix(__instance.exiled);
@@ -45,6 +46,7 @@ class ExileControllerWrapUpPatch
     }
     static void WrapUpPostfix(NetworkedPlayerInfo exiled)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (AntiBlackout.OverrideExiledPlayer)
         {
             exiled = AntiBlackout_LastExiled;

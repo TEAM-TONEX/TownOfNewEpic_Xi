@@ -56,9 +56,20 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             {
                 var id = Convert.ToByte(mc.Args);
                 var player = Utils.GetPlayerById(id);
-                player.RpcSetRole(RoleTypes.CrewmateGhost, true);
+                player.RpcSetRole(RoleTypes.Crewmate, true);
                 
                 return (MsgRecallMode.Block, null);
+            }),
+            new(["mw", "messagewait"], CommandAccess.Host, mc =>
+            {
+                string text = $"{GetString("Message.MessageWaitHelp")}\n{GetString("ForExample")}:\nmw 3";
+                if (int.TryParse(mc.Args, out int sec))
+                {
+                    Main.MessageWait.Value = sec;
+                    text = string.Format(GetString("Message.SetToSeconds"), sec);
+                }
+                mc.SendToList.Add(mc.Player.PlayerId);
+                return (MsgRecallMode.Block, text);
             }),
             new(["dump"], CommandAccess.LocalMod, mc =>
             {
@@ -112,7 +123,12 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                 GameStartManagerPatch.HideName.text = Main.HideName.Value;
                 return (MsgRecallMode.Block, null);
             }),
-
+            new(["hy", "mt", "meeting"], CommandAccess.Host, mc =>
+            {
+                if (GameStates.IsMeeting) MeetingHud.Instance.RpcClose();
+                else mc.Player.NoCheckStartMeeting(null, true);
+                return (MsgRecallMode.Block, null);
+            }),
             new(["now","n"], CommandAccess.All, mc =>
             {
                 switch (mc.Args)
@@ -219,17 +235,6 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                 else Utils.AddChatMessage($"{GetString("ForExample")}:\nt test");
                 return (MsgRecallMode.Block, null);
             }),
-            new(["mw", "messagewait"], CommandAccess.Host, mc =>
-            {
-                string text = $"{GetString("Message.MessageWaitHelp")}\n{GetString("ForExample")}:\nmw 3";
-                if (int.TryParse(mc.Args, out int sec))
-                {
-                    Main.MessageWait.Value = sec;
-                    text = string.Format(GetString("Message.SetToSeconds"), sec);
-                }
-                mc.SendToList.Add(mc.Player.PlayerId);
-                return (MsgRecallMode.Block, text);
-            }),
             new(["exe", "execute"], CommandAccess.Host, mc =>
             {
                 string text = GetString("Message.CanNotUseInLobby");
@@ -327,12 +332,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                 GameManager.Instance.LogicFlow.CheckEndCriteria();
                 return (MsgRecallMode.Block, null);
             }),
-            new(["hy", "mt", "meeting"], CommandAccess.Host, mc =>
-            {
-                if (GameStates.IsMeeting) MeetingHud.Instance.RpcClose();
-                else mc.Player.NoCheckStartMeeting(null, true);
-                return (MsgRecallMode.Block, null);
-            }),
+
             new(["cosid"], CommandAccess.Host, mc =>
             {
                 var of =mc.Player.Data.DefaultOutfit;

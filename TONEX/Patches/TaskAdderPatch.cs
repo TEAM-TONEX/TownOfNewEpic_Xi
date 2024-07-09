@@ -28,6 +28,7 @@ class ShowFolderPatch
     }
     public static void Postfix(TaskAdderGame __instance, [HarmonyArgument(0)] TaskFolder taskFolder)
     {
+        if (Main.AssistivePluginMode.Value) return;
         Logger.Info("Opened " + taskFolder.FolderName, "TaskFolder");
         float xCursor = 0f;
         float yCursor = 0f;

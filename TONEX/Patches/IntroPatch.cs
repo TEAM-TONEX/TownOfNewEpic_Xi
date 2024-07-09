@@ -176,20 +176,14 @@ class IntroCutscenePatch
     {
         if (Main.AssistivePluginMode.Value)
         {
-            if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())
-            {
-                __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
-                
-                __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
-                __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
-                __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
-            }
-            else
-            {
-                __instance.TeamTitle.text = GetString("TeamImpostor");
-                __instance.ImpostorText.text = GetString("ImpostorIntroText");
-                __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
-            }
+
+            __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
+
+            __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
+            __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
+            __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
+
+
             return;
         }
             //チーム表示変更
@@ -428,20 +422,11 @@ class IntroCutscenePatch
         if (Main.AssistivePluginMode.Value)
         {
             __instance.ImpostorText.gameObject.SetActive(true);
-            if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsCrewmate())
-            {
 
-                __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
-                __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
-                __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
-                __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
-            }
-            else
-            {
-                __instance.TeamTitle.text = GetString("TeamImpostor");
-                __instance.ImpostorText.text = GetString("ImpostorIntroText");
-                __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
-            }
+            __instance.TeamTitle.text = GetString("TeamImpostor");
+            __instance.ImpostorText.text = GetString("ImpostorIntroText");
+            __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
+
             return;
         }
 
@@ -450,6 +435,7 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.OnDestroy)), HarmonyPostfix]
     public static void OnDestroy_Postfix(IntroCutscene __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (!GameStates.IsInGame) return;
 
         Main.introDestroyed = true;

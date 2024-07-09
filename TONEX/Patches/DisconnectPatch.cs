@@ -8,6 +8,7 @@ internal class OnDisconnectedPatch
 {
     public static void Postfix(AmongUsClient __instance)
     {
+
         Main.VisibleTasksCount = false;
     }
 }

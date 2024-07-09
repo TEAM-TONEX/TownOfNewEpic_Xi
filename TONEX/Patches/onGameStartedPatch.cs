@@ -22,9 +22,10 @@ internal class ChangeRoleSettings
 
     public static void Postfix(AmongUsClient __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         try
         {
-            if (Main.AssistivePluginMode.Value) return;
+            
 
             //注:この時点では役職は設定されていません。
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);

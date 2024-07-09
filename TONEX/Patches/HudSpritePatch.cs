@@ -30,6 +30,7 @@ class HudSpritePatch
     private static Sprite? Defalt_Chat => DestroyableSingleton<HudManager>.Instance?.Chat?.chatButton?.HeldButtonSprite?.sprite;
     public static void Postfix(HudManager __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         var player = PlayerControl.LocalPlayer;
         if (__instance == null || player == null || !GameStates.IsModHost) return;
         if (!SetHudActivePatch.IsActive || !player.IsAlive()) return;

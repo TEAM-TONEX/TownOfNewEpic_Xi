@@ -287,6 +287,7 @@ internal class ConsoleJoystickHandleHUDPatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         HandleHUDPatch.Postfix(ConsoleJoystick.player);
     }
 }
@@ -295,6 +296,7 @@ internal class KeyboardJoystickHandleHUDPatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         HandleHUDPatch.Postfix(KeyboardJoystick.player);
     }
 }

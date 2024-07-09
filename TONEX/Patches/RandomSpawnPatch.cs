@@ -74,6 +74,7 @@ class RandomSpawn
         public static Dictionary<byte, bool> FirstTP = new();
         public static void Postfix(CustomNetworkTransform __instance, Vector2 position, ushort minSid)
         {
+            if (Main.AssistivePluginMode.Value) return;
             var player = Main.AllPlayerControls.Where(p => p.NetTransform == __instance).FirstOrDefault();
             if (player == null)
             {

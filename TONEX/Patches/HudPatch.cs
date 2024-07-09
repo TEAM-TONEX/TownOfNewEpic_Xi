@@ -26,6 +26,7 @@ class HudManagerPatch
     public static TMPro.TextMeshPro LowerInfoText;
     public static void Postfix(HudManager __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         var pc = PlayerControl.LocalPlayer;
         if (GameStates.IsInGame)
         {
@@ -153,12 +154,12 @@ class HudManagerPatch
                 __instance.KillButton.Hide();
                 if (player.Is(CustomRoles.EvilAngle))
                 {
-                   __instance.AbilityButton.OverrideText(GetString("KillButtonText"));
+                   __instance.AbilityButton.OverrideText(GetString(StringNames.KillLabel));
                     __instance.AbilityButton.Show();
                 }
                 else
                 {
-                    __instance.AbilityButton.OverrideText(GetString(StringNames.SeekButton));
+                    __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
                     __instance.AbilityButton.Show();
                 }
                 __instance.PetButton.Hide();
@@ -207,6 +208,7 @@ class ToggleHighlightPatch
 {
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] bool active, [HarmonyArgument(1)] RoleTeamTypes team)
     {
+        if (Main.AssistivePluginMode.Value) return;
         var player = PlayerControl.LocalPlayer;
         if (!GameStates.IsInTask) return;
 
@@ -279,6 +281,7 @@ class TaskPanelBehaviourPatch
     public static void Postfix(TaskPanelBehaviour __instance)
     {
         if (!GameStates.IsModHost) return;
+        if (Main.AssistivePluginMode.Value) return;
         PlayerControl player = PlayerControl.LocalPlayer;
 
         var taskText = __instance.taskText.text;

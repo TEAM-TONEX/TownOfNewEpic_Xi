@@ -67,9 +67,10 @@ class StartPatch
 {
     public static void Postfix()
     {
+        Logger.Info("-----------游戏开始-----------", "Phase");
         if (Main.AssistivePluginMode.Value) return;
         Logger.CurrentMethod();
-        Logger.Info("-----------游戏开始-----------", "Phase");
+        
 
         Utils.CountAlivePlayers(true);
 
@@ -104,6 +105,7 @@ class BeginPatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Logger.CurrentMethod();
 
         //ホストの役職初期設定はここで行うべき？

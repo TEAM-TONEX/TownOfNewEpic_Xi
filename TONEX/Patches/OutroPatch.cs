@@ -21,7 +21,6 @@ class EndGamePatch
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ref EndGameResult endGameResult)
     {
         GameStates.InGame = false;
-        //SetRolePatch.playanima = true;
         Logger.Info("-----------游戏结束-----------", "Phase");
             
         if (Main.AssistivePluginMode.Value) return;
@@ -95,8 +94,9 @@ class SetEverythingUpPatch
 
     public static void Postfix(EndGameManager __instance)
     {
-        var showInitially = Main.ShowResults.Value;
         if (Main.AssistivePluginMode.Value) return;
+        var showInitially = Main.ShowResults.Value;
+       
         if (!Main.playerVersion.ContainsKey(0)) return;
         //#######################################
         //          ==勝利陣営表示==

@@ -34,6 +34,7 @@ public static class ReactorSystemDetetiorateTypePatch
 {
     public static void Postfix(ReactorSystemType __instance, byte __state /* amount */ )
     {
+        if (Main.AssistivePluginMode.Value) return;
         // サボタージュ発動時
         if (__state == ReactorSystemType.StartCountdown)
         {
