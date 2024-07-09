@@ -35,13 +35,12 @@ class TryPetPatch
 [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.HandleRpc))]
 class ExternalRpcPetPatch
 {
-    public static void Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+    public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
-        if ((AmongUsClient.Instance.AmHost || !GameStates.IsLobby && Options.IsStandard && Options.UsePets.GetBool()) && !Main.AssistivePluginMode.Value)
-
+        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || !Options.IsStandard || !Options.UsePets.GetBool() || !Main.AssistivePluginMode.Value) return true;
         {
             var rpcType = callId == 51 ? RpcCalls.Pet : (RpcCalls)callId;
-            if (rpcType != RpcCalls.Pet) return;
+            if (rpcType != RpcCalls.Pet) return false;
 
             PlayerControl pc = __instance.myPlayer;
 
@@ -54,11 +53,11 @@ class ExternalRpcPetPatch
                     AmongUsClient.Instance.FinishRpcImmediately(AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, 50, SendOption.None, player.GetClientId()));
             }
             if (pc.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Pet, ExtendedPlayerControl.PlayerActionInUse.Skill) 
-                || pc.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Pet)) return;
+                || pc.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Pet)) return false;
 
             var roleClass = pc.GetRoleClass();
 
-            if (!roleClass.EnablePetSkill()) return;
+            if (!roleClass.EnablePetSkill()) return false;
             var petCooldown = roleClass.UsePetCooldown_Timer;
             var totalCooldown = roleClass.UsePetCooldown;
             
@@ -67,7 +66,7 @@ class ExternalRpcPetPatch
                 var cooldown = petCooldown + totalCooldown - Utils.GetTimeStamp();
                 pc.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
                 Logger.Info($"使用宠物冷却时间：{cooldown}", "Pet");
-                return;
+                return false;
             }
             roleClass?.OnUsePet();
             if (!roleClass.OnEnterVentWithUsePet())
@@ -80,6 +79,8 @@ class ExternalRpcPetPatch
             }
             roleClass.OnShapeshiftWithUsePet();
         }
+        return true;
     }
+    
 }
 
