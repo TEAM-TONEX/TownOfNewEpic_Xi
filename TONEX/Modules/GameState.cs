@@ -86,7 +86,7 @@ public class PlayerState
             SubRoles.Remove(CustomRoles.Charmed);
             SubRoles.Remove(CustomRoles.LastImpostor);
         }
-        if (role is CustomRoles.EvilAngle)
+        if (role is CustomRoles.EvilAngel)
         {
             SubRoles.Remove(CustomRoles.Madmate);
             SubRoles.Remove(CustomRoles.LastImpostor);

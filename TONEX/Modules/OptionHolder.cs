@@ -523,7 +523,7 @@ public static class Options
             .SetGameMode(CustomGameMode.Standard);
 
 #if DEBUG
-        EvilAngle.SetupOptionItem();
+        EvilAngel.SetupOptionItem();
         InjusticeSpirit.SetupOptionItem();
 #endif
         GuardianAngel.SetupCustomOptionItem();

@@ -152,7 +152,7 @@ class HudManagerPatch
                 __instance.ReportButton.Hide();
                 __instance.ImpostorVentButton.Hide();
                 __instance.KillButton.Hide();
-                if (player.Is(CustomRoles.EvilAngle))
+                if (player.Is(CustomRoles.EvilAngel))
                 {
                    __instance.AbilityButton.OverrideText(GetString(StringNames.KillLabel));
                     __instance.AbilityButton.Show();

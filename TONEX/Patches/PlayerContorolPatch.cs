@@ -1080,7 +1080,7 @@ class PlayerControlRpcSetRolePatch
                 var seerIsKiller = seer.GetRoleClass() is IKiller;
 
                 
-                if(target.Is(CustomRoles.EvilAngle) || target.Is(CustomRoles.Specterraid) || target.Is(CustomRoles.InjusticeSpirit))
+                if(target.Is(CustomRoles.EvilAngel) || target.Is(CustomRoles.Specterraid) || target.Is(CustomRoles.InjusticeSpirit))
                 {
                    ghostRoles[seer] = RoleTypes.GuardianAngel;
                 }
@@ -1130,79 +1130,79 @@ public static class PlayerControlSetRolePatch
         InGameSetRole = false;
 
     }
-    /*public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes role, [HarmonyArgument(1)] bool canOverride)
-    {
-        bool ghostRole = RoleManager.IsGhostRole(role);
-        if (!DestroyableSingleton<TutorialManager>.InstanceExists && __instance.roleAssigned && !ghostRole)
-        {
-            return;
-        }
-        if (!canOverride)
-        {
-            __instance.roleAssigned = true;
-        }
-        int attempts = 0;
-        while ((!__instance.Data || GameManager.Instance == null || !GameManager.Instance) && attempts < 60)
-        {
-            attempts++;
-            Effects.Wait(0.1f);
-        }
-        if (!__instance.Data)
-        {
-            Debug.LogWarning("CoSetRole timed out waiting for NetworkedPlayerInfo");
-            return;
-        }
-        if (GameManager.Instance == null || !GameManager.Instance)
-        {
-            Debug.LogWarning("CoSetRole timed out waiting for GameManager");
-            return;
-        }
-        if (ghostRole)
-        {
-            DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
-            __instance.Data.Role.SpawnTaskHeader(__instance);
-            if (__instance.AmOwner)
-            {
-                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
-            }
-        }
-        else
-        {
-            __instance.RemainingEmergencies = GameManager.Instance.LogicOptions.GetNumEmergencyMeetings();
-            DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
-            __instance.Data.Role.SpawnTaskHeader(__instance);
-            __instance.MyPhysics.SetBodyType(__instance.BodyType);
-            if (__instance.AmOwner)
-            {
-                if (__instance.Data.Role.IsImpostor)
-                {
-                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
-                    StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
-                }
-                else
-                {
-                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
-                    StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
-                }
-                DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
-                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);
-                DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(true);
-            }
-            if (!DestroyableSingleton<TutorialManager>.InstanceExists)
-            {
-                if (Enumerable.All<PlayerControl>(Main.AllPlayerControls, (PlayerControl pc) => pc.Data != null && (pc.roleAssigned || pc.Data.Disconnected)))
-                {
-                    foreach (var pc in Main.AllPlayerControls)
-                    {
-                        PlayerNameColor.Set(pc);
-                    }
-                    __instance.StopAllCoroutines();
-                    DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
-                    DestroyableSingleton<HudManager>.Instance.HideGameLoader();
-                }
-            }
-        }
-}*/
+//    public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes role, [HarmonyArgument(1)] bool canOverride)
+//    {
+//        bool ghostRole = RoleManager.IsGhostRole(role);
+//        if (!DestroyableSingleton<TutorialManager>.InstanceExists && __instance.roleAssigned && !ghostRole)
+//        {
+//            return;
+//        }
+//        if (!canOverride)
+//        {
+//            __instance.roleAssigned = true;
+//        }
+//        int attempts = 0;
+//        while ((!__instance.Data || GameManager.Instance == null || !GameManager.Instance) && attempts < 60)
+//        {
+//            attempts++;
+//            Effects.Wait(0.1f);
+//        }
+//        if (!__instance.Data)
+//        {
+//            Debug.LogWarning("CoSetRole timed out waiting for NetworkedPlayerInfo");
+//            return;
+//        }
+//        if (GameManager.Instance == null || !GameManager.Instance)
+//        {
+//            Debug.LogWarning("CoSetRole timed out waiting for GameManager");
+//            return;
+//        }
+//        if (ghostRole)
+//        {
+//            DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
+//            __instance.Data.Role.SpawnTaskHeader(__instance);
+//            if (__instance.AmOwner)
+//            {
+//                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
+//            }
+//        }
+//        else
+//        {
+//            __instance.RemainingEmergencies = GameManager.Instance.LogicOptions.GetNumEmergencyMeetings();
+//            DestroyableSingleton<RoleManager>.Instance.SetRole(__instance, role);
+//            __instance.Data.Role.SpawnTaskHeader(__instance);
+//            __instance.MyPhysics.SetBodyType(__instance.BodyType);
+//            if (__instance.AmOwner)
+//            {
+//                if (__instance.Data.Role.IsImpostor)
+//                {
+//                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
+//                    StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
+//                }
+//                else
+//                {
+//                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
+//                    StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
+//                }
+//                DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
+//                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);
+//                DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(true);
+//            }
+//            if (!DestroyableSingleton<TutorialManager>.InstanceExists)
+//            {
+//                if (Enumerable.All<PlayerControl>(Main.AllPlayerControls, (PlayerControl pc) => pc.Data != null && (pc.roleAssigned || pc.Data.Disconnected)))
+//                {
+//                    foreach (var pc in Main.AllPlayerControls)
+//                    {
+//                        PlayerNameColor.Set(pc);
+//                    }
+//                    __instance.StopAllCoroutines();
+//                    DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+//                    DestroyableSingleton<HudManager>.Instance.HideGameLoader();
+//                }
+//            }
+//        }
+//}
 }
     #endregion
 
@@ -1233,11 +1233,11 @@ public static class PlayerControlDiePatch
 #if DEBUG
             if (__instance.Is(CustomRoles.Madmate))
             {
-                if (!EvilAngle.SetYet && EvilAngle.EnableEvilAngle.GetBool())
+                if (!EvilAngel.SetYet && EvilAngel.EnableEvilAngel.GetBool())
                 {
-                    EvilAngle.SetYet = true;
+                    EvilAngel.SetYet = true;
                     __instance.Notify(GetString("Surprise"));
-                    EvilAngle.SetPlayer = __instance;
+                    EvilAngel.SetPlayer = __instance;
                 }
             }
             else if (__instance.Is(CustomRoles.Wolfmate) || __instance.Is(CustomRoles.Charmed))
@@ -1282,11 +1282,11 @@ public static class PlayerControlDiePatch
                         }
                         break;
                     case CustomRoleTypes.Impostor:
-                        if (!EvilAngle.SetYet && EvilAngle.EnableEvilAngle.GetBool())
+                        if (!EvilAngel.SetYet && EvilAngel.EnableEvilAngel.GetBool())
                         {
-                            EvilAngle.SetYet = true;
+                            EvilAngel.SetYet = true;
                             __instance.Notify(GetString("Surprise"));
-                            EvilAngle.SetPlayer = __instance;
+                            EvilAngel.SetPlayer = __instance;
                         }
                         break;
                 }

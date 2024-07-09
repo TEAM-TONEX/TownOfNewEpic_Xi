@@ -829,7 +829,7 @@ public static class Utils
             {
                 sb.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.ImpostorRoles")));
 #if DEBUG
-                sb.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.EvilAngle), GetRoleName(CustomRoles.EvilAngle)), EvilAngle.EnableEvilAngle.GetString().RemoveHtmlTags());
+                sb.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.EvilAngel), GetRoleName(CustomRoles.EvilAngel)), EvilAngel.EnableEvilAngel.GetString().RemoveHtmlTags());
 #endif
             }
             else if (role.IsCrewmate() && headCount == 1)
@@ -1337,11 +1337,11 @@ public static class Utils
             Specterraid.SetPlayer = null;
 
         }
-        if (EvilAngle.SetPlayer != null)
+        if (EvilAngel.SetPlayer != null)
         {
             
-            EvilAngle.SetPlayer.RpcSetCustomRole(CustomRoles.EvilAngle);
-            EvilAngle.SetPlayer = null;
+            EvilAngel.SetPlayer.RpcSetCustomRole(CustomRoles.EvilAngel);
+            EvilAngel.SetPlayer = null;
 
         }
 
