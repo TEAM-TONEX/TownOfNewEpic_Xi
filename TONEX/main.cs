@@ -41,9 +41,9 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.44";
-    public const string PluginShowVersionPrefix = "1.3_20240708";
-    public const string PluginShowVersionPostfix = "_Debug_34";
+    public const string PluginVersion = "1.2.45";
+    public const string PluginShowVersionPrefix = "1.3_20240709";
+    public const string PluginShowVersionPostfix = "_Debug_35";
     public const string PluginShowVersion = PluginShowVersionPrefix + PluginShowVersionPostfix;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
@@ -326,17 +326,17 @@ public class Main : BasePlugin
         handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
-     //   AddComponent<CanvasManager>();
-     //   AddComponent<MainUIManager>();
-     //   AddComponent<OpenButtonManager>();
-     //   AddComponent<SettingItemManager>();
-     //   AddComponent<SidebarManager>();
-     //   AddComponent<TabGroupManager>();
-     //   AddComponent<UIBase>();
-     //   UI = AddComponent<CreateUIElements>();
+        //   AddComponent<CanvasManager>();
+        //   AddComponent<MainUIManager>();
+        //   AddComponent<OpenButtonManager>();
+        //   AddComponent<SettingItemManager>();
+        //   AddComponent<SidebarManager>();
+        //   AddComponent<TabGroupManager>();
+        //   AddComponent<UIBase>();
+        //   UI = AddComponent<CreateUIElements>();
 
 
-        //SystemEnvironment.SetEnvironmentVariables();
+        SystemEnvironment.SetEnvironmentVariables();
 
         Harmony.PatchAll();
 

@@ -89,7 +89,7 @@ class OnPlayerJoinedPatch
     {
 
         Logger.Info($"{client.PlayerName}(ClientID:{client.Id}/FriendCode:{client.FriendCode}) 加入房间", "Session");
-        if (Main.AssistivePluginMode.Value)
+        if (AmongUsClient.Instance.AmHost && Main.AssistivePluginMode.Value)
         {
             RPC.RpcVersionCheck();
             return;

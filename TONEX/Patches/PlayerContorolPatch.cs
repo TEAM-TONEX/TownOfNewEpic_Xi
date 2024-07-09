@@ -1437,6 +1437,7 @@ class CmdCheckNameVersionCheckPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
+        if (AmongUsClient.Instance.AmHost)
         RPC.RpcVersionCheck();
     }
 }
