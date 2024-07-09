@@ -10,44 +10,44 @@ using System.Linq;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 
 namespace TONEX.Roles.Impostor;
-public sealed class EvilTimeStopper : RoleBase, IImpostor
+public sealed class EvilTimePauser : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(EvilTimeStopper),
-            player => new EvilTimeStopper(player),
-            CustomRoles.EvilTimeStopper,
+            typeof(EvilTimePauser),
+            player => new EvilTimePauser(player),
+            CustomRoles.EvilTimePauser,
             () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
             75_1_2_0300,
             SetupOptionItem,
             "shi|时停"
         );
-    public EvilTimeStopper(PlayerControl player)
+    public EvilTimePauser(PlayerControl player)
     : base(
         RoleInfo,
         player
     )
     {
-        EvilTimeStopperstop = new();
+        EvilTimePauserstop = new();
     }
 
     static OptionItem OptionSkillCooldown;
     static OptionItem OptionSkillDuration;
     enum OptionName
     {
-        NiceTimeStopperSkillCooldown,
-        NiceTimeStopperSkillDuration,
+        NiceTimePauserSkillCooldown,
+        NiceTimePauserSkillDuration,
     }
-    private List<byte> EvilTimeStopperstop;
+    private List<byte> EvilTimePauserstop;
     private long ProtectStartTime;
     private float Cooldown;
     
     private static void SetupOptionItem()
     {
-        OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimeStopperSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
+        OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimePauserSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionSkillDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.NiceTimeStopperSkillDuration, new(2.5f, 180f, 2.5f), 20f, false)
+        OptionSkillDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.NiceTimePauserSkillDuration, new(2.5f, 180f, 2.5f), 20f, false)
             .SetValueFormat(OptionFormat.Seconds);
         
     }
@@ -67,7 +67,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     }
     public override bool GetAbilityButtonText(out string text)
     {
-        text = GetString("NiceTimeStopperVetnButtonText");
+        text = GetString("NiceTimePauserVetnButtonText");
         return true;
     }
     public override bool GetAbilityButtonSprite(out string buttonName)
@@ -82,7 +82,7 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
     }
     public override bool GetPetButtonText(out string text)
     {
-        text = GetString("NiceTimeStopperVetnButtonText");
+        text = GetString("NiceTimePauserVetnButtonText");
         return PetUnSet();
     }
     public override bool GetGameStartSound(out string sound)
@@ -98,22 +98,22 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
         ResetCountdown(0);
         
         foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
-            pc.Notify(GetString("NiceTimeStopperOnGuard"));
+            pc.Notify(GetString("NiceTimePauserOnGuard"));
         foreach (var player in Main.AllAlivePlayerControls)
         {
             if (Player == player) continue;
             if (!player.IsAlive() || Pelican.IsEaten(player.PlayerId)) continue;
-            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimeStopper), GetString("ForNiceTimeStopper")));
-            EvilTimeStopperstop.Add(player.PlayerId);
+            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimePauser), GetString("ForNiceTimePauser")));
+            EvilTimePauserstop.Add(player.PlayerId);
             Player.DisableAction(player, ExtendedPlayerControl.PlayerActionType.All);
 
 
             new LateTask(() =>
             {
                 Player.EnableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-                EvilTimeStopperstop.Remove(player.PlayerId);
+                EvilTimePauserstop.Remove(player.PlayerId);
                 RPC.PlaySoundRPC(player.PlayerId, Sounds.TaskComplete);
-            }, OptionSkillDuration.GetFloat(), "Time Stopper");
+            }, OptionSkillDuration.GetFloat(), "Time Pauser");
         }
         return false;
     }
@@ -124,27 +124,27 @@ public sealed class EvilTimeStopper : RoleBase, IImpostor
         ResetCountdown(0);
         
         foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
-            pc.Notify(GetString("NiceTimeStopperOnGuard"));
+            pc.Notify(GetString("NiceTimePauserOnGuard"));
         foreach (var player in Main.AllAlivePlayerControls)
         {
             if (Player == player) continue;
             if (!player.IsAlive() || Pelican.IsEaten(player.PlayerId)) continue;
-            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimeStopper), GetString("ForNiceTimeStopper")));
-            EvilTimeStopperstop.Add(player.PlayerId);
+            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimePauser), GetString("ForNiceTimePauser")));
+            EvilTimePauserstop.Add(player.PlayerId);
             Player.DisableAction(player, ExtendedPlayerControl.PlayerActionType.All);
 
 
             new LateTask(() =>
             {
                 Player.EnableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-                EvilTimeStopperstop.Remove(player.PlayerId);
+                EvilTimePauserstop.Remove(player.PlayerId);
                 RPC.PlaySoundRPC(player.PlayerId, Sounds.TaskComplete);
-            }, OptionSkillDuration.GetFloat(), "Time Stopper");
+            }, OptionSkillDuration.GetFloat(), "Time Pauser");
         }
     }
     public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
-        if (EvilTimeStopperstop.Contains(reporter.PlayerId))    return false;
+        if (EvilTimePauserstop.Contains(reporter.PlayerId))    return false;
         return true;
     }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)

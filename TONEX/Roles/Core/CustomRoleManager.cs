@@ -642,7 +642,7 @@ public enum CustomRoles
     Skinwalker,
     ViciousSeeker,
     EvilAngel,
-    EvilTimeStopper,
+    EvilTimePauser,
     MirrorSpirit,//TODO 镜妖
     Assaulter,
     MimicTeam,//TODO 模仿者团队
@@ -691,7 +691,7 @@ public enum CustomRoles
     Medium,
     Observer,
     DoveOfPeace,
-    NiceTimeStopper,
+    NiceTimePauser,
     TimeMaster,
     Prophet,
     Instigator,

@@ -252,7 +252,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
                         var ProtectStartTime = Utils.GetTimeStamp();
                         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
                         Player.Notify(GetString("BeGeo"));
-                        List<byte> NiceTimeStopperstop = new();
+                        List<byte> NiceTimePauserstop = new();
                         if (!pc.IsAlive() || Pelican.IsEaten(pc.PlayerId)) continue;
                         NameNotifyManager.Notify(pc, Utils.ColorString(Utils.GetRoleColor(CustomRoles.Vagator), GetString("ForZhongLi")));
                         Player.DisableAction(pc, ExtendedPlayerControl.PlayerActionType.All, ExtendedPlayerControl.PlayerActionInUse.All);

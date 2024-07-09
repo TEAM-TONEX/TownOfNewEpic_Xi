@@ -36,7 +36,7 @@ class VentButtonDoClickPatch
                 return false;
             }
             if (pc == null || pc.inVent || __instance.currentTarget == null || !pc.CanMove || !__instance.isActiveAndEnabled) return true;
-            if (pc.GetCustomRole() is CustomRoles.EvilInvisibler or CustomRoles.Arsonist or CustomRoles.Veteran or CustomRoles.NiceTimeStopper
+            if (pc.GetCustomRole() is CustomRoles.EvilInvisibler or CustomRoles.Arsonist or CustomRoles.Veteran or CustomRoles.NiceTimePauser
                 or CustomRoles.TimeMaster or CustomRoles.Instigator or CustomRoles.Paranoia or CustomRoles.Mayor or CustomRoles.DoveOfPeace
                 or CustomRoles.NiceGrenadier or CustomRoles.Akujo || pc.HasDisabledAction(PlayerActionType.EnterVent))
             {

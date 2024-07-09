@@ -8,13 +8,13 @@ using TONEX.Roles.Neutral;
 using TONEX.Modules.SoundInterface;
 
 namespace TONEX.Roles.Crewmate;
-public sealed class NiceTimeStopper : RoleBase
+public sealed class NiceTimePauser : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(NiceTimeStopper),
-            player => new NiceTimeStopper(player),
-            CustomRoles.NiceTimeStopper,
+            typeof(NiceTimePauser),
+            player => new NiceTimePauser(player),
+            CustomRoles.NiceTimePauser,
             () => Options.UsePets.GetBool() ? RoleTypes.Crewmate : RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
             15546396,
@@ -22,13 +22,13 @@ public sealed class NiceTimeStopper : RoleBase
             "shi|时停",
             "#f6f657"
         );
-    public NiceTimeStopper(PlayerControl player)
+    public NiceTimePauser(PlayerControl player)
     : base(
         RoleInfo,
         player
     )
     {
-        NiceTimeStopperstop = new();
+        NiceTimePauserstop = new();
     }
 
     static OptionItem OptionSkillCooldown;
@@ -37,24 +37,24 @@ public sealed class NiceTimeStopper : RoleBase
     static OptionItem MaxCooldown;
     enum OptionName
     {
-        NiceTimeStopperSkillCooldown,
-        NiceTimeStopperSkillDuration,
+        NiceTimePauserSkillCooldown,
+        NiceTimePauserSkillDuration,
         ReduceCooldown,
         MaxCooldown,
     }
-    private List<byte> NiceTimeStopperstop;
+    private List<byte> NiceTimePauserstop;
     private float Cooldown;
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {
-        OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimeStopperSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
+        OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTimePauserSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
             .SetValueFormat(OptionFormat.Seconds);
         ReduceCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.ReduceCooldown, new(2.5f, 180f, 2.5f), 10f, false)
             .SetValueFormat(OptionFormat.Seconds);
         MaxCooldown = FloatOptionItem.Create(RoleInfo, 12, OptionName.MaxCooldown, new(2.5f, 250f, 2.5f), 60f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionSkillDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.NiceTimeStopperSkillDuration, new(2.5f, 180f, 2.5f), 20f, false)
+        OptionSkillDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.NiceTimePauserSkillDuration, new(2.5f, 180f, 2.5f), 20f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
     public override List<long> CooldownList { get; set; } = new();
@@ -62,7 +62,7 @@ public sealed class NiceTimeStopper : RoleBase
 
     public override bool SetOffGuardProtect(out string notify, out int format_int, out float format_float)
     {
-        notify = GetString("NiceTimeStopperOffGuard");
+        notify = GetString("NiceTimePauserOffGuard");
         format_int = -255;
         format_float = -255;
         return true;
@@ -80,7 +80,7 @@ public sealed class NiceTimeStopper : RoleBase
     }
     public override bool GetAbilityButtonText(out string text)
     {
-        text = GetString("NiceTimeStopperVetnButtonText");
+        text = GetString("NiceTimePauserVetnButtonText");
         return true;
     }
     public override bool GetAbilityButtonSprite(out string buttonName)
@@ -95,7 +95,7 @@ public sealed class NiceTimeStopper : RoleBase
     }
     public override bool GetPetButtonText(out string text)
     {
-        text = GetString("NiceTimeStopperVetnButtonText");
+        text = GetString("NiceTimePauserVetnButtonText");
         return PetUnSet();
     }
     public override bool GetGameStartSound(out string sound)
@@ -117,30 +117,30 @@ public sealed class NiceTimeStopper : RoleBase
         Player.RpcResetAbilityCooldown();
         CountdownList[0] = Utils.GetTimeStamp();
         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
-        Player.Notify(GetString("NiceTimeStopperOnGuard"));
+        Player.Notify(GetString("NiceTimePauserOnGuard"));
         Player.ColorFlash(Utils.GetRoleColor(CustomRoles.SchrodingerCat));
         CustomSoundsManager.RPCPlayCustomSoundAll("TheWorld");
         foreach (var player in Main.AllAlivePlayerControls)
         {
             if (Player == player) continue;
             if (!player.IsAlive() || Pelican.IsEaten(player.PlayerId)) continue;
-            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimeStopper), GetString("ForNiceTimeStopper")));
-            NiceTimeStopperstop.Add(player.PlayerId);
+            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimePauser), GetString("ForNiceTimePauser")));
+            NiceTimePauserstop.Add(player.PlayerId);
             Player.DisableAction(player, ExtendedPlayerControl.PlayerActionType.All);
 
 
             new LateTask(() =>
             {
                 Player.EnableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-                NiceTimeStopperstop.Remove(player.PlayerId);
+                NiceTimePauserstop.Remove(player.PlayerId);
                 RPC.PlaySoundRPC(player.PlayerId, Sounds.TaskComplete);
-            }, OptionSkillDuration.GetFloat(), "Time Stopper");
+            }, OptionSkillDuration.GetFloat(), "Time Pauser");
         }
         return true;
     }
     public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
-        if (NiceTimeStopperstop.Contains(reporter.PlayerId))    
+        if (NiceTimePauserstop.Contains(reporter.PlayerId))    
             return false;
         return true;
     }

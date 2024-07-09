@@ -864,7 +864,7 @@ class CoEnterVentPatch
         var user = __instance.myPlayer;
         if (user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.EnterVent) 
             || user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.EnterVent, ExtendedPlayerControl.PlayerActionInUse.Skill) 
-            && user.GetCustomRole() is CustomRoles.EvilInvisibler or CustomRoles.Arsonist or CustomRoles.Veteran or CustomRoles.NiceTimeStopper
+            && user.GetCustomRole() is CustomRoles.EvilInvisibler or CustomRoles.Arsonist or CustomRoles.Veteran or CustomRoles.NiceTimePauser
             or CustomRoles.TimeMaster or CustomRoles.Instigator or CustomRoles.Paranoia or CustomRoles.Mayor or CustomRoles.DoveOfPeace
             or CustomRoles.NiceGrenadier or CustomRoles.Akujo or CustomRoles.Miner)
         {

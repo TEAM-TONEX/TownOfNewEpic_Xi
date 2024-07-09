@@ -40,8 +40,8 @@ public sealed class Instigator : RoleBase
     static OptionItem MaxCooldown;
     enum OptionName
     {
-        NiceTimeStopperSkillCooldown,
-        NiceTimeStopperSkillDuration,
+        NiceTimePauserSkillCooldown,
+        NiceTimePauserSkillDuration,
         ReduceCooldown,
         MaxCooldown,
     }
