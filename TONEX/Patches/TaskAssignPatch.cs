@@ -17,7 +17,7 @@ class AddTasksFromListPatch
     public static void Prefix(ShipStatus __instance,
         [HarmonyArgument(4)] Il2CppSystem.Collections.Generic.List<NormalPlayerTask> unusedTasks)
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
             if (!AmongUsClient.Instance.AmHost) return;
 
@@ -50,7 +50,7 @@ class RpcSetTasksPatch
     public static void Prefix(NetworkedPlayerInfo __instance,
     [HarmonyArgument(0)] ref Il2CppStructArray<byte> taskTypeIds)
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
             //null対策
             if (Main.RealOptionsData == null)

@@ -27,7 +27,7 @@ public class GameSettingMenuPatch
     [HarmonyPriority(Priority.First)]
     public static void StartPostfix(GameSettingMenu __instance)
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
             ModSettingsButtons = [];
             foreach (var tab in EnumHelper.GetAllValues<TabGroup>())
@@ -123,7 +123,7 @@ public class GameSettingMenuPatch
     [HarmonyPatch(nameof(GameSettingMenu.ChangeTab)), HarmonyPrefix]
     public static bool ChangeTabPrefix(GameSettingMenu __instance, ref int tabNum, [HarmonyArgument(1)] bool previewOnly)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         ModGameOptionsMenu.TabIndex = tabNum;
 
         GameOptionsMenu settingsTab;
@@ -203,7 +203,7 @@ public class GameSettingMenuPatch
     [HarmonyPatch(nameof(GameSettingMenu.OnEnable)), HarmonyPrefix]
     private static bool OnEnablePrefix(GameSettingMenu __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (TemplateGameOptionsMenu == null)
         {
             TemplateGameOptionsMenu = Object.Instantiate(__instance.GameSettingsTab, __instance.GameSettingsTab.transform.parent);
@@ -230,7 +230,7 @@ public class GameSettingMenuPatch
     [HarmonyPatch(nameof(GameSettingMenu.Close)), HarmonyPostfix]
     private static void ClosePostfix(GameSettingMenu __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         foreach (var button in ModSettingsButtons.Values)
             Object.Destroy(button);
         foreach (var tab in ModSettingsTabs.Values)

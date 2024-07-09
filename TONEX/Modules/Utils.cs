@@ -938,7 +938,7 @@ public static class Utils
     }
     public static void ShowLastResult(byte PlayerId = byte.MaxValue)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         if (AmongUsClient.Instance.IsGameStarted)
         {
             SendMessage(GetString("CantUse.lastresult"), PlayerId);
@@ -1303,7 +1303,7 @@ public static class Utils
     }
     public static void AfterMeetingTasks()
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
             roleClass.AfterMeetingTasks();
         Signal.AfterMeet();

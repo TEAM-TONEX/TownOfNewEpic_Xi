@@ -8,7 +8,7 @@ public static class MushroomMixupSabotageSystemUpdateSystemPatch
 {
     public static void Prefix([HarmonyArgument(1)] MessageReader msgReader, ref byte __state /* amount */)
     {
-        if (Main.AssistivePluginMode.Value)
+        if (/* Main.AssistivePluginMode.Value */ false)
         {
             byte amount;
             {
@@ -35,7 +35,7 @@ public static class MushroomMixupSabotageSystemDeterioratePatch
 {
     public static void Prefix(MushroomMixupSabotageSystem __instance, ref bool __state /* 本体処理前のIsActive */)
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
             __state = __instance.IsActive;
         }

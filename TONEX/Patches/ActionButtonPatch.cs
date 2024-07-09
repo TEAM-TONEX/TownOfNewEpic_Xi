@@ -9,7 +9,7 @@ public static class SabotageButtonDoClickPatch
 {
     public static bool Prefix()
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         
             if (!PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
             {
@@ -27,7 +27,7 @@ class VentButtonDoClickPatch
 {
     public static bool Prefix(VentButton __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
 
         var pc = PlayerControl.LocalPlayer;
             if (pc.inVent && (pc.HasDisabledAction(PlayerActionType.ExitVent)))
@@ -52,7 +52,7 @@ class KillButtonDoClickPatch
 {
     public static bool Prefix(KillButton __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
 
         var pc = PlayerControl.LocalPlayer;
             if (pc == null || pc.inVent || __instance.currentTarget == null || !__instance.isActiveAndEnabled) return true;

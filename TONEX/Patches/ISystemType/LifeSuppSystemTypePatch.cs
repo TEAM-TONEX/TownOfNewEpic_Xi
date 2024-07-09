@@ -10,7 +10,7 @@ public static class LifeSuppSystemUpdateSystemPatch
 {
     public static bool Prefix(LifeSuppSystemType __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);

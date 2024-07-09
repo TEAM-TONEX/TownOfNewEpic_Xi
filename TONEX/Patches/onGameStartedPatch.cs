@@ -24,7 +24,7 @@ internal class ChangeRoleSettings
     {
         try
         {
-            if (Main.AssistivePluginMode.Value) return;
+            if (/* Main.AssistivePluginMode.Value */ false) return;
 
             //注:この時点では役職は設定されていません。
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
@@ -192,7 +192,7 @@ internal class SelectRolesPatch
 {
     public static void Prefix()
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
 
             if (AmongUsClient.Instance.AmHost)
@@ -262,7 +262,7 @@ internal class SelectRolesPatch
     public static void Postfix()
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         try
         {
             List<(PlayerControl, RoleTypes)> newList = new();
@@ -394,7 +394,7 @@ internal class SelectRolesPatch
     private static void AssignDesyncRole(CustomRoles role, PlayerControl player, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
     {
         //if (!role.IsEnable()) return;
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         var hostId = PlayerControl.LocalPlayer.PlayerId;
 
         PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role);
@@ -451,7 +451,7 @@ internal class SelectRolesPatch
         public static List<CustomRpcSender> OverriddenSenderList;
         public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType, [HarmonyArgument(1)] bool canOverrideRole = false)
         {
-            if (Main.AssistivePluginMode.Value) return true;
+            if (/* Main.AssistivePluginMode.Value */ false) return true;
             if (doReplace && senders != null)
             {
                 StoragedData.Add((__instance, roleType));

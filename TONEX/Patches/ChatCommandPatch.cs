@@ -18,7 +18,7 @@ internal class ChatCommands
     public static List<string> SentHistory = new();
     public static bool Prefix(ChatController __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
 
         // クイックチャットなら横流し
         if (__instance.quickChatField.Visible)
@@ -96,7 +96,7 @@ internal class ChatUpdatePatch
     public static bool DoBlockChat = false;
     public static void Postfix(ChatController __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         Active = __instance.IsOpenOrOpening;
         __instance.freeChatField.textArea.AllowPaste = true;
         __instance.chatBubblePool.Prefab.Cast<ChatBubble>().TextArea.overrideColorTags = false;
@@ -167,7 +167,7 @@ internal class RpcSendChatPatch
 {
     public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
 
         if (string.IsNullOrWhiteSpace(chatText))
             {

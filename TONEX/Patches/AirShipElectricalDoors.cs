@@ -43,7 +43,7 @@ class ElectricalDoorsInitializePatch
 {
     public static void Postfix(ElectricalDoors __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         if (!GameStates.IsInGame) return;
         var closedoors = "";
         bool isFirst = true;

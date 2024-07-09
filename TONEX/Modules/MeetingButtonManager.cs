@@ -22,7 +22,7 @@ public class MeetingButtonManager
     [HarmonyPatch(nameof(MeetingHud.Start)), HarmonyPrefix]
     public static void Start(MeetingHud __instance)
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
             //提前储存赌怪游戏组件的模板
             GuesserHelper.textTemplate = UnityEngine.Object.Instantiate(__instance.playerStates[0].NameText);
@@ -40,7 +40,7 @@ public class MeetingButtonManager
     [HarmonyPatch(nameof(MeetingHud.Update)), HarmonyPostfix, HarmonyPriority(Priority.LowerThanNormal)]
     public static void Update(MeetingHud __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
 
         if (__instance == null || !GameStates.IsInGame || __instance.IsDestroyedOrNull()) return;
 

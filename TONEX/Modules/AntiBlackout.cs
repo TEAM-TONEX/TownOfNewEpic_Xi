@@ -97,7 +97,7 @@ public static class AntiBlackout
 
     public static void SendGameData([CallerMemberName] string callerMethodName = "")
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         logger.Info($"SendGameData is called from {callerMethodName}");
         foreach (var innerNetObject in GameData.Instance.AllPlayers)
         {

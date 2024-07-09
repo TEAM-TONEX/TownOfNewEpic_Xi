@@ -10,7 +10,7 @@ public static class MovingPlatformBehaviourPatch
     [HarmonyPatch(nameof(MovingPlatformBehaviour.Start)), HarmonyPrefix]
     public static bool StartPrefix(MovingPlatformBehaviour __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         isDisabled = Options.DisableAirshipMovingPlatform.GetBool();
 
         if (isDisabled)
@@ -23,7 +23,7 @@ public static class MovingPlatformBehaviourPatch
     [HarmonyPatch(nameof(MovingPlatformBehaviour.IsDirty), MethodType.Getter), HarmonyPrefix]
     public static bool GetIsDirtyPrefix(ref bool __result)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (isDisabled)
         {
             __result = false;
@@ -34,7 +34,7 @@ public static class MovingPlatformBehaviourPatch
     [HarmonyPatch(nameof(MovingPlatformBehaviour.Use), typeof(PlayerControl)), HarmonyPrefix]
     public static bool UsePrefix([HarmonyArgument(0)] PlayerControl player)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         // プレイヤーがぬーん使用不可状態のときに使用をブロック
         if (!PlayerState.GetByPlayerId(player.PlayerId).CanUseMovingPlatform)
         {
@@ -45,7 +45,7 @@ public static class MovingPlatformBehaviourPatch
     [HarmonyPatch(nameof(MovingPlatformBehaviour.SetSide)), HarmonyPrefix]
     public static bool SetSidePrefix()
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         return !isDisabled;
     }
 }

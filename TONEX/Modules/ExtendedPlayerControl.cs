@@ -492,7 +492,7 @@ static class ExtendedPlayerControl
     }
     public static string GetNameWithRole(this PlayerControl player, bool forUser = false)
     {
-        var ret = $"{player?.Data?.PlayerName}" + (GameStates.IsInGame&& !Main.AssistivePluginMode.Value ? $"({player?.GetAllRoleName()})" : "");
+        var ret = $"{player?.Data?.PlayerName}" + (GameStates.IsInGame&& !/* Main.AssistivePluginMode.Value */ false ? $"({player?.GetAllRoleName()})" : "");
         return (forUser ? ret : ret.RemoveHtmlTags());
     }
     public static string GetRoleColorCode(this PlayerControl player)
@@ -915,7 +915,7 @@ static class ExtendedPlayerControl
         PlayerActionInUse actionInUses = PlayerActionInUse.All, 
         bool isIntentional = false)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         // 瘟疫之源处理
         if (CustomRoles.Plaguebearer.IsExist() && !isIntentional)
         {

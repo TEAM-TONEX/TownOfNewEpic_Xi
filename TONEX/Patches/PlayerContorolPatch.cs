@@ -41,7 +41,7 @@ class CheckMurderPatch
     public static Dictionary<byte, float> TimeSinceLastKill = new();
     public static void Update()
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         for (byte i = 0; i < 15; i++)
         {
             if (TimeSinceLastKill.ContainsKey(i))
@@ -54,7 +54,7 @@ class CheckMurderPatch
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
         
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (!AmongUsClient.Instance.AmHost) return false;
         // 処理は全てCustomRoleManager側で行う
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
@@ -135,7 +135,7 @@ class MurderPlayerPatch
             RPC.NotificationPop(GetString("Warning.RoomBroken"));
             return false;
         }
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
         var isProtectedByClient = resultFlags.HasFlag(MurderResultFlags.DecisionByHost) && target.IsProtected();
         var isProtectedByHost = resultFlags.HasFlag(MurderResultFlags.FailedProtected);
@@ -190,7 +190,7 @@ class MurderPlayerPatch
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, bool __state)
     {
         // キルが成功していない場合，何もしない
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         if (!__state)
         {
             return;
@@ -221,7 +221,7 @@ class UsePatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if ((!__instance.GetRoleClass()?.OnUse() ?? false)) return false;
         else return true;
     }
@@ -235,7 +235,7 @@ public static class PlayerControlCheckShapeshiftPatch
 
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool shouldAnimate)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (AmongUsClient.Instance.IsGameOver || !AmongUsClient.Instance.AmHost)
         {
             return false;
@@ -315,7 +315,7 @@ class ShapeshiftPatch
 {
     public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         {
             Logger.Info($"{__instance?.GetNameWithRole()} => {target?.GetNameWithRole()}", "Shapeshift");
 
@@ -365,7 +365,7 @@ class ReportDeadBodyPatch
     public static Dictionary<byte, List<NetworkedPlayerInfo>> WaitReport = new();
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (GameStates.IsMeeting) return false;
         if (Options.DisableMeeting.GetBool()) return false;
         if (Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode) return false; 
@@ -470,7 +470,7 @@ public static class PlayerControlStartMeetingPatch
 {
     public static void Prefix()
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (!/* Main.AssistivePluginMode.Value */ false)
         foreach (var kvp in PlayerState.AllPlayerStates)
         {
             var pc = Utils.GetPlayerById(kvp.Key);
@@ -490,7 +490,7 @@ class FixedUpdatePatch
     public static void Postfix(PlayerControl __instance)
     {
         var player = __instance;
-        if (Main.AssistivePluginMode.Value)
+        if (/* Main.AssistivePluginMode.Value */ false)
         {
             if (__instance != null)
             {
@@ -836,7 +836,7 @@ class CoEnterVentPatch
     public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] int id)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         Logger.Info($"{__instance.myPlayer.GetNameWithRole()} CoEnterVent: {id}", "CoEnterVent");
 
         var user = __instance.myPlayer;
@@ -902,7 +902,7 @@ class CoExitVentPatch
     public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] int id)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         Logger.Info($"{__instance.myPlayer.GetNameWithRole()} CoExitVent: {id}", "CoExitVent");
         
         var user = __instance.myPlayer;
@@ -956,7 +956,7 @@ class PlayerControlCompleteTaskPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         var pc = __instance;
 
         Logger.Info($"TaskComplete:{pc.GetNameWithRole()}", "CompleteTask");
@@ -978,7 +978,7 @@ class PlayerControlCompleteTaskPatch
     }
     public static void Postfix()
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         //人外のタスクを排除して再計算
         GameData.Instance.RecomputeTaskCounts();
         Logger.Info($"TotalTaskCounts = {GameData.Instance.CompletedTasks}/{GameData.Instance.TotalTasks}", "TaskState.Update");
@@ -991,7 +991,7 @@ class PlayerControlProtectPlayerPatch
 {
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         var player = __instance;
         if (!target.IsEaten())
         {
@@ -1011,7 +1011,7 @@ class PlayerControlRemoveProtectionPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         Logger.Info($"{__instance.GetNameWithRole()}", "RemoveProtection");
     }
 }
@@ -1020,7 +1020,7 @@ class CheckProtectPatch
 {
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (!AmongUsClient.Instance.AmHost) return false;
         Logger.Info("CheckProtect発生: " + __instance.GetNameWithRole() + "=>" + target.GetNameWithRole(), "CheckProtect");
         if (__instance.Is(CustomRoles.Sheriff))
@@ -1042,7 +1042,7 @@ class PlayerControlRpcSetRolePatch
 {
     public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, ref bool canOverrideRole )
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         canOverrideRole = false;
         var target = __instance;
         var targetName = __instance.GetNameWithRole();
@@ -1202,7 +1202,7 @@ public static class PlayerControlDiePatch
 
     public static void Postfix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         if (AmongUsClient.Instance.AmHost)
         {
             __instance.RpcSetScanner(false);
@@ -1296,7 +1296,7 @@ public static class PlayerControlMixupOutfitPatch
 {
     public static void Postfix(PlayerControl __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        if (/* Main.AssistivePluginMode.Value */ false) return;
         if (!__instance.IsAlive())
         {
             return;
@@ -1317,7 +1317,7 @@ public static class PlayerControlCheckSporeTriggerPatch
 {
     public static bool Prefix()
     {
-        if (Main.AssistivePluginMode.Value) return true;
+        if (/* Main.AssistivePluginMode.Value */ false) return true;
         if (Options.DisableFungleSporeTrigger.GetBool())
         {
             return false;
@@ -1364,7 +1364,7 @@ class PlayerControlCheckNamePatch
 {
     public static void Postfix(PlayerControl __instance, string playerName)
     {
-        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || Main.AssistivePluginMode.Value) return;
+        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || /* Main.AssistivePluginMode.Value */ false) return;
 
         var name = playerName;
         if (Options.FormatNameMode.GetInt() == 2)

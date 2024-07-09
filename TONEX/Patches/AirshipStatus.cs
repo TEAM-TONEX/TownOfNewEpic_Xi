@@ -10,7 +10,7 @@ public static class AirshipStatusPrespawnStepPatch
 {
     public static bool Prefix()
     {
-        if (Main.AssistivePluginMode.Value) return true; 
+        if (/* Main.AssistivePluginMode.Value */ false) return true; 
         return !PlayerControl.LocalPlayer.Is(CustomRoles.GM); // GMは湧き画面をスキップ
     }
 }
