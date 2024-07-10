@@ -23,10 +23,15 @@ class OnGameJoinedPatch
         while (!Options.IsLoaded) System.Threading.Tasks.Task.Delay(1);
         Logger.Info($"{__instance.GameId} 加入房间", "OnGameJoined");
         Main.playerVersion = new Dictionary<byte, PlayerVersion>();
-        if (!Main.VersionCheat.Value) RPC.RpcVersionCheck();
-        SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
-        if (Main.AssistivePluginMode.Value) return;
 
+        SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
+        if (Main.AssistivePluginMode.Value)
+        {
+            if (AmongUsClient.Instance.AmHost)
+                RPC.RpcVersionCheck();
+            return; 
+        }
+        if (!Main.VersionCheat.Value) RPC.RpcVersionCheck();
         Main.AllPlayerNames = new();
         ShowDisconnectPopupPatch.ReasonByHost = string.Empty;
         ChatUpdatePatch.DoBlockChat = false;

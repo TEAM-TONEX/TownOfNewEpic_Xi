@@ -184,6 +184,7 @@ internal class RPCHandlerPatch
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
 
+        if (Main.AssistivePluginMode.Value && (CustomRPC)callId is not CustomRPC.VersionCheck and not CustomRPC.RequestRetryVersionCheck) return;
         //CustomRPC以外は処理しない
         if (callId < (byte)CustomRPC.VersionCheck) return;
 
@@ -539,6 +540,11 @@ internal static class RPC
     }
     public static async void RpcVersionCheck()
     {
+        if (Main.AssistivePluginMode.Value)
+        {
+            Main.playerVersion.TryGetValue(0, out var ver);
+            if (Main.ForkId != ver.forkId) return;
+        }
         while (PlayerControl.LocalPlayer == null) await Task.Delay(500);
         if (Main.playerVersion.ContainsKey(0) || !Main.VersionCheat.Value)
         {

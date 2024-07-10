@@ -541,6 +541,8 @@ class FixedUpdatePatch
                 }
                 else if (GameStates.IsInGame)
                 {
+                    Main.playerVersion.TryGetValue(0, out var ver);
+                    if (Main.ForkId != ver.forkId) return;
                     var roleType = __instance.Data.Role.Role;
                     var cr = roleType.GetCustomRoleTypes();
                     var color = Utils.GetRoleColorCode(cr);
