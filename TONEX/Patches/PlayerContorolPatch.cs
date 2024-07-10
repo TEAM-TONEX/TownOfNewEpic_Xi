@@ -1212,16 +1212,16 @@ public static class PlayerControlSetRolePatch
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]
 public static class PlayerControlDiePatch
 {
-    //public static bool Prefix(PlayerControl __instance)
-    //{
+    public static bool Prefix(PlayerControl __instance)
+    {
 
-    //    if (GameStates.IsLobby &&!GameStates.IsFreePlay)
-    //    {
-    //        RPC.NotificationPop(GetString("Warning.RoomBroken")); 
-    //        return false; 
-    //    }
-    //    return true;
-    //}
+        if (GameStates.IsLobby && !GameStates.IsFreePlay)
+        {
+            RPC.NotificationPop(GetString("Warning.RoomBroken"));
+            return false;
+        }
+        return true;
+    }
 
 
     public static void Postfix(PlayerControl __instance)

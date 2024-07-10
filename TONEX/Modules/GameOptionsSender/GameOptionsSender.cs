@@ -79,7 +79,7 @@ public abstract class GameOptionsSender
             if (targetClientId != -1) writer.WritePacked(targetClientId);
             writer.StartMessage(1);
             {
-                writer.WritePacked(PlayerControl.LocalPlayer.Data.NetId);//undecided
+                writer.WritePacked(GameManager.Instance.NetId);
                 writer.StartMessage(LogicOptionsIndex);
                 {
                     writer.WriteBytesAndSize(optionArray);
