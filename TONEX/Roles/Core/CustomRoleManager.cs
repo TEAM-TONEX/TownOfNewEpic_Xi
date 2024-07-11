@@ -436,6 +436,9 @@ public static class CustomRoleManager
                 case CustomRoles.Nihility:
                     Nihility.Add(pc.PlayerId);
                     break;
+                case CustomRoles.Guesser:
+                    Guesser.Add(pc.PlayerId);
+                    break;
             }
         }
     }
@@ -829,6 +832,7 @@ public enum CustomRoles
     VIP,//TODO VIP
     Believer,
     PublicOpinionShaper,
+    Guesser,
 
 }
 public enum CustomRoleTypes

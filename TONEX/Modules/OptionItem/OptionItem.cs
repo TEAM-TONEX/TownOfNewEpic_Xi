@@ -110,7 +110,7 @@ public abstract class OptionItem
         }
         else
         {
-            Logger.Error($"ID:{id},{name}が重複しています", "OptionItem");
+            Logger.Error($"ID:{id},{name}与ID:{_fastOptions[id].Name}重合", "OptionItem");
         }
     }
 

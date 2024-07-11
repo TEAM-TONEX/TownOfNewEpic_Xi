@@ -72,8 +72,8 @@ internal class VersionShowerStartPatch
     {
         TMPTemplate.SetBase(__instance.text);
        
-        //Main.CredentialsText = $"\r\n<color={Main.ModColor}>T</color><color=#FFC0CB>O</color><color={Main.ModColor}>N</color><color=#fffcbe>E</color><color={Main.ModColor}>X</color> - <color=#ffff00>v{Main.PluginShowVersion}</color>";
-        Main.CredentialsText = $"\r\n<color={Main.ModColor}>{Main.ModName}</color> - <color=#ffff00>v{Main.PluginShowVersion}</color>";
+        //Main.CredentialsText = $"\r\n<color={Main.ModColor}>T</color><color=#FFC0CB>O</color><color={Main.ModColor}>N</color><color=#fffcbe>E</color><color={Main.ModColor}>X</color> - <color=#ffff00>v{Main.ShowVersion}</color>";
+        Main.CredentialsText = $"\r\n<color={Main.ModColor}>{Main.ModName}</color> - <color=#ffff00>v{Main.ShowVersion}</color>";
 
 #if DEBUG
         Main.CredentialsText += $"\r\n<color={Main.ModColor}>{ThisAssembly.Git.Branch}</color> - {ThisAssembly.Git.Commit}";

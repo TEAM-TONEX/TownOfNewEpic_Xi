@@ -14,6 +14,7 @@ using static TONEX.Translator;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Modules.SoundInterface;
 using TONEX.Roles.Neutral;
+using TONEX.Roles.Core.Interfaces;
 
 namespace TONEX;
 public static class GuesserHelper
@@ -77,7 +78,7 @@ public static class GuesserHelper
         spam = false;
 
         if (!GameStates.IsInGame || pc == null) return false;
-        if (!pc.Is(CustomRoles.NiceGuesser) && !pc.Is(CustomRoles.EvilGuesser)) return false;
+        if (!pc.Is(CustomRoles.NiceGuesser) && !pc.Is(CustomRoles.EvilGuesser) && !pc.Is(CustomRoles.Guesser)) return false;
 
         int operate; // 1:ID 2:猜测
         msg = msg.ToLower().Trim();
@@ -94,7 +95,9 @@ public static class GuesserHelper
         if (operate == 1)
         {
             spam = true;
-            Utils.ShowActiveRoles(pc.PlayerId, pc.GetCustomRole() ==CustomRoles.NiceGuesser && NiceGuesser.OptionJustShowExist.GetBool()|| pc.GetCustomRole() == CustomRoles.EvilGuesser && EvilGuesser.OptionJustShowExist.GetBool());
+            Utils.ShowActiveRoles(pc.PlayerId, pc.GetCustomRole() ==CustomRoles.NiceGuesser && NiceGuesser.OptionJustShowExist.GetBool()
+                || pc.GetCustomRole() == CustomRoles.EvilGuesser && EvilGuesser.OptionJustShowExist.GetBool()
+                || pc.Is(CustomRoles.Guesser) && Guesser.OptionJustShowExist.GetBool());
             Utils.SendMessage(GetFormatString(), pc.PlayerId);
             return true;
         }
@@ -130,6 +133,11 @@ public static class GuesserHelper
             reason = GetString("EGGuessMax");
             return false;
         }
+        if (guesser.Is(CustomRoles.Guesser) && Guesser.GuessLimit[guesser.PlayerId] < 1)
+        {
+            reason = GetString("EGGuessMax");
+            return false;
+        }
         if (role == CustomRoles.SuperStar || target.Is(CustomRoles.SuperStar))
         {
             reason = GetString("GuessSuperStar");
@@ -155,14 +163,17 @@ public static class GuesserHelper
             reason = GetString("GuessMini");
             return false;
         }
-        if (CustomRoles.Medic.IsExist(true))
-        if (Medic.InProtect(target.PlayerId))
+        if (CustomRoles.Medic.IsExist(true) && Medic.InProtect(target.PlayerId))
         {
-            if (guesser.GetRoleClass() is NiceGuesser ngClass2 && !NiceGuesser.OptionIgnoreMedicShield.GetBool() || guesser.GetRoleClass() is EvilGuesser egClass2 && !EvilGuesser.OptionIgnoreMedicShield.GetBool())
+            if (guesser.GetRoleClass() is NiceGuesser && !NiceGuesser.OptionIgnoreMedicShield.GetBool() 
+                || guesser.GetRoleClass() is EvilGuesser && !EvilGuesser.OptionIgnoreMedicShield.GetBool()
+                || guesser.Is(CustomRoles.Guesser) &&!Guesser.OptionIgnoreMedicShield.GetBool())
             reason = GetString("GuessShield");
             return false;
         }
-        if (target.Is(CustomRoles.Snitch) && target.AllTasksCompleted() && guesser.Is(CustomRoles.EvilGuesser) && !EvilGuesser.OptionCanGuessTaskDoneSnitch.GetBool())
+        if (target.Is(CustomRoles.Snitch) && target.AllTasksCompleted() 
+            && (guesser.Is(CustomRoles.EvilGuesser) && !EvilGuesser.OptionCanGuessTaskDoneSnitch.GetBool() 
+            || guesser.Is(CustomRoles.Guesser) && !Guesser.OptionCanGuessTaskDoneSnitch.GetBool()))
         {
             reason = GetString("EGGuessSnitchTaskDone");
             return false;
@@ -171,7 +182,8 @@ public static class GuesserHelper
         {
             if (
                 guesser.Is(CustomRoles.NiceGuesser) && !NiceGuesser.OptionCanGuessAddons.GetBool() ||
-                guesser.Is(CustomRoles.EvilGuesser) && !EvilGuesser.OptionCanGuessAddons.GetBool()
+                guesser.Is(CustomRoles.EvilGuesser) && !EvilGuesser.OptionCanGuessAddons.GetBool()||
+                guesser.Is(CustomRoles.Guesser) && !Guesser.OptionCanGuessAddons.GetBool()
                 )
             {
                 reason = GetString("GuessAdtRole");
@@ -182,7 +194,8 @@ public static class GuesserHelper
         {
             if (
                 guesser.Is(CustomRoles.NiceGuesser) && !NiceGuesser.OptionCanGuessVanilla.GetBool() ||
-                guesser.Is(CustomRoles.EvilGuesser) && !EvilGuesser.OptionCanGuessVanilla.GetBool()
+                guesser.Is(CustomRoles.EvilGuesser) && !EvilGuesser.OptionCanGuessVanilla.GetBool() ||
+                guesser.Is(CustomRoles.Guesser) && !Guesser.OptionCanGuessVanilla.GetBool()
                 )
             {
                 reason = GetString("GuessVanillaRole");
@@ -210,6 +223,7 @@ public static class GuesserHelper
 
         if (guesser.Is(CustomRoles.NiceGuesser)) (guesser.GetRoleClass() as NiceGuesser).GuessLimit--;
         if (guesser.Is(CustomRoles.EvilGuesser)) (guesser.GetRoleClass() as EvilGuesser).GuessLimit--;
+        if (guesser.Is(CustomRoles.Guesser)) Guesser.GuessLimit[guesser.PlayerId]--;
 
         CustomSoundsManager.RPCPlayCustomSoundAll("Gunfire");
 
@@ -388,23 +402,23 @@ public static class GuesserHelper
                         foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
                         {
                             if (role.IsExist(true))
-                            switch (role.GetCustomRoleTypes())
-                            {
-                                case CustomRoleTypes.Crewmate:
-                                    Crew.Add(role);
-                                    break;
-                                case CustomRoleTypes.Impostor:
-                                    Imp.Add(role);
-                                    break;
-                                case CustomRoleTypes.Neutral:
-                                    Neu.Add(role);
-                                    break;
-                                case CustomRoleTypes.Addon:
-                                    Add.Add(role);
-                                    break;
-                            }
-                            
-                            
+                                switch (role.GetCustomRoleTypes())
+                                {
+                                    case CustomRoleTypes.Crewmate:
+                                        Crew.Add(role);
+                                        break;
+                                    case CustomRoleTypes.Impostor:
+                                        Imp.Add(role);
+                                        break;
+                                    case CustomRoleTypes.Neutral:
+                                        Neu.Add(role);
+                                        break;
+                                    case CustomRoleTypes.Addon:
+                                        Add.Add(role);
+                                        break;
+                                }
+
+
 
                         }
                         if (Crew.Count <= 0 && index == 0) continue;
@@ -414,11 +428,45 @@ public static class GuesserHelper
                     }
 
                 }
-                else
+                else if (PlayerControl.LocalPlayer.Is(CustomRoles.NiceGuesser))
                 {
                     if (!NiceGuesser.OptionCanGuessCrew.GetBool() && !PlayerControl.LocalPlayer.Is(CustomRoles.Madmate) && index == 0) continue;
                     if (!NiceGuesser.OptionCanGuessAddons.GetBool() && index == 3) continue;
                     if (NiceGuesser.OptionJustShowExist.GetBool())
+                    {
+                        foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
+                        {
+                            if (role.IsExist(true))
+                                switch (role.GetCustomRoleTypes())
+                                {
+                                    case CustomRoleTypes.Crewmate:
+                                        Crew.Add(role);
+                                        break;
+                                    case CustomRoleTypes.Impostor:
+                                        Imp.Add(role);
+                                        break;
+                                    case CustomRoleTypes.Neutral:
+                                        Neu.Add(role);
+                                        break;
+                                    case CustomRoleTypes.Addon:
+                                        Add.Add(role);
+                                        break;
+                                }
+
+
+
+                        }
+                        if (Crew.Count <= 0 && index == 0) continue;
+                        if (Imp.Count <= 0 && index == 1) continue;
+                        if (Neu.Count <= 0 && index == 2) continue;
+                        if (Add.Count <= 0 && index == 3) continue;
+                    }
+                    
+                }
+                else
+                {
+                    if (!Guesser.OptionCanGuessAddons.GetBool() && index == 3) continue;
+                    if (Guesser.OptionJustShowExist.GetBool())
                     {
                         foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
                         {
@@ -538,11 +586,17 @@ public static class GuesserHelper
             {
                 if (!EvilGuesser.OptionCanGuessVanilla.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.EvilGuesser) && role.IsVanilla()) continue;
                 if (!NiceGuesser.OptionCanGuessVanilla.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.NiceGuesser) && role.IsVanilla()) continue;
+                if (!Guesser.OptionCanGuessVanilla.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && role.IsVanilla()) continue;
+
                 if (NiceGuesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.NiceGuesser) && !role.IsExist(true)) continue;
                 if (EvilGuesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.EvilGuesser) && !role.IsExist(true)) continue;
+                if (Guesser.OptionJustShowExist.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !role.IsExist(true)) continue;
+
                 if (role.IsTODO()) continue;
-                if (role is CustomRoles.GM or CustomRoles.NotAssigned or CustomRoles.SuperStar or CustomRoles.GuardianAngel or CustomRoles.HotPotato or CustomRoles.ColdPotato) continue;
-                if (role is  CustomRoles.Mini or CustomRoles.InjusticeSpirit or CustomRoles.Specterraid or CustomRoles.EvilAngel) continue;
+                if (role is CustomRoles.GM or CustomRoles.NotAssigned or CustomRoles.SuperStar) continue;
+                if (role is CustomRoles.HotPotato or CustomRoles.ColdPotato or CustomRoles.Survivor or CustomRoles.Infector) continue;
+                if (role is  CustomRoles.Mini or CustomRoles.InjusticeSpirit or CustomRoles.Specterraid or CustomRoles.EvilAngel or CustomRoles.GuardianAngel) continue;
+
                 CreateRole(role);
             }
             void CreateRole(CustomRoles role)

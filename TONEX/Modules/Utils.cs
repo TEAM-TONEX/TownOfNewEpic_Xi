@@ -1269,7 +1269,7 @@ public static class Utils
                     seer.GetRoleClass()?.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting);
                     //调用职业类通过 seen 重写 name
                     target.GetRoleClass()?.OverrideNameAsSeen(seer, ref TargetPlayerName, isForMeeting);
-
+                    Guesser.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting);
                     //ターゲットのプレイヤー名の色を書き換えます。
                     TargetPlayerName = TargetPlayerName.ApplyNameColorData(seer, target, isForMeeting);
 
@@ -1404,14 +1404,14 @@ public static class Utils
     {
         string f = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}/TONEX-logs/";
         string t = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
-        string filename = $"{f}TONEX-v{Main.PluginShowVersion}-{t}.log";
+        string filename = $"{f}TONEX-v{Main.ShowVersion}-{t}.log";
         if (!Directory.Exists(f)) Directory.CreateDirectory(f);
         FileInfo file = new(@$"{Environment.CurrentDirectory}/BepInEx/LogOutput.log");
         file.CopyTo(@filename);
         if (PlayerControl.LocalPlayer != null)
         {
-            if (popup) PlayerControl.LocalPlayer.ShowPopUp(string.Format(GetString("Message.DumpfileSaved"), $"TONEX - v{Main.PluginShowVersion}-{t}.log"));
-            else AddChatMessage(string.Format(GetString("Message.DumpfileSaved"), $"TONEX - v{Main.PluginShowVersion}-{t}.log"));
+            if (popup) PlayerControl.LocalPlayer.ShowPopUp(string.Format(GetString("Message.DumpfileSaved"), $"TONEX - v{Main.ShowVersion}-{t}.log"));
+            else AddChatMessage(string.Format(GetString("Message.DumpfileSaved"), $"TONEX - v{Main.ShowVersion}-{t}.log"));
         }
         ProcessStartInfo psi = new ProcessStartInfo("Explorer.exe")
         { Arguments = "/e,/select," + @filename.Replace("/", "\\") };

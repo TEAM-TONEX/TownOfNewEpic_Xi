@@ -360,6 +360,13 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                  mc.SendToList.Add(mc.Player.PlayerId);
                 return (MsgRecallMode.Spam, text);
             }),
+            new(["id","guesslist","gl编号","玩家编号","玩家id","id列表","玩家列表","列表","所有id","全部id",
+            "shoot","guess","bet","st","gs","bt","猜","赌"], CommandAccess.All, mc =>
+            {
+                bool isCommand = GuesserHelper.GuesserMsg(mc.Player, mc.Message, out bool spam);
+                var recallMode = spam ? MsgRecallMode.Spam : MsgRecallMode.None;
+                return (recallMode, null);
+            }),
         };
 
     }
@@ -412,6 +419,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
         RoleCommands.Add(CustomRoles.AkujoLovers, new() { "aklo", "魅魔情人", "魅魔愛人", "魅魔链子" });
         RoleCommands.Add(CustomRoles.AkujoFakeLovers, new() { "akflo", "魅魔假情人", "魅魔假愛人", "魅魔假链子" });
         RoleCommands.Add(CustomRoles.CupidLovers, new() { "culo", "丘比特情人", "丘比特愛人", "丘比特链子" });
+        RoleCommands.Add(CustomRoles.Guesser, new() { "附加赌", "赌怪" });
     }
     public static void SendRolesInfo(string input, byte playerId, bool onlycountexists = false)
     {

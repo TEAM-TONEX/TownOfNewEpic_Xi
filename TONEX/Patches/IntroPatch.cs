@@ -197,14 +197,16 @@ class IntroCutscenePatch
             {
                 case CustomRoleTypes.Impostor:
                     __instance.TeamTitle.text = GetString("TeamImpostor");
-                    __instance.ImpostorText.text = GetString("ImpostorIntroText");
+                    __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}"; 
+                    __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
                     __instance.TeamTitle.color = __instance.BackgroundBar.material.color =  new Color32(255, 25, 25, byte.MaxValue);
                     break;
                 case CustomRoleTypes.Crewmate:
                     if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
                     {
                         __instance.TeamTitle.text = GetString("TeamImpostor");
-                        __instance.ImpostorText.text = GetString("ImpostorIntroText");
+                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                        __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
                         __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
                         break;
                     }
@@ -424,7 +426,9 @@ class IntroCutscenePatch
             __instance.ImpostorText.gameObject.SetActive(true);
 
             __instance.TeamTitle.text = GetString("TeamImpostor");
-            __instance.ImpostorText.text = GetString("ImpostorIntroText");
+            __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+
+            __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
             __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
 
             return;

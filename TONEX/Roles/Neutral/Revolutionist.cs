@@ -20,7 +20,7 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
             CustomRoles.Revolutionist,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            75_1_3_1000,
+            75_1_3_0100,
             SetupOptionItem,
             "re|革命|改个",
             "#ba4d06",

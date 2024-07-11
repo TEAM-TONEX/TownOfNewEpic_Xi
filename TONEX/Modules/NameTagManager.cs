@@ -59,7 +59,7 @@ public static class NameTagManager
         if (player.AmOwner && GameStates.IsLobby && Options.GetSuffixMode() != 0 && Options.RemoveModNameTag.GetBool())
             name = Options.GetSuffixMode() switch
             {
-                SuffixModes.TONEX => name += $"\r\n<color={Main.ModColor}>TONEX v{Main.PluginShowVersion}</color>",
+                SuffixModes.TONEX => name += $"\r\n<color={Main.ModColor}>TONEX v{Main.ShowVersion}</color>",
                 SuffixModes.Streaming => name += $"\r\n<size=1.7><color={Main.ModColor}>{GetString("SuffixMode.Streaming")}</color></size>",
                 SuffixModes.Recording => name += $"\r\n<size=1.7><color={Main.ModColor}>{GetString("SuffixMode.Recording")}</color></size>",
                 SuffixModes.RoomHost => name += $"\r\n<size=1.7><color={Main.ModColor}>{GetString("SuffixMode.RoomHost")}</color></size>",
@@ -234,12 +234,12 @@ public static class NameTagManager
             {
                 case CustomGameMode.HotPotato:
                     var prefix = $"<size=80%><color=#F39C12>{GetString("HotPotatoMode")}</color>" +
-                    $"<color=#F39C12>{Main.PluginShowVersion}</color>";
+                    $"<color=#F39C12>{Main.ShowVersion}</color>";
                     name = prefix + "</size>" +"\n"+ name;
                     break;
                 case CustomGameMode.InfectorMode:
                     var prefixV2 = $"<size=80%><color=#F39C12>{GetString("ZombieMode")}</color>" +
-                   $"<color=#F39C12>{Main.PluginShowVersion}</color>";
+                   $"<color=#F39C12>{Main.ShowVersion}</color>";
                     name = prefixV2 + "</size>" + "\n" + name;
                     break;
 

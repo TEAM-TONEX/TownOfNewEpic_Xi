@@ -259,7 +259,7 @@ public static class MeetingHudPatch
                 //调用职业类通过 seen 重写 name
                 target.GetRoleClass()?.OverrideNameAsSeen(seer, ref overrideName, true);
                 pva.NameText.text = overrideName;
-
+                Guesser.OverrideNameAsSeer(target, ref overrideName, true);
                 //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。
 
                 if (seer.KnowDeathReason(target))

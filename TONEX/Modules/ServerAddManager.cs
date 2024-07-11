@@ -42,7 +42,7 @@ public static class ServerAddManager
             regionInfos.Add(CreateHttp("124.222.148.195", "小猫私服", 22000, false));
             regionInfos.Add(CreateHttp("au.3q.fan", "小猫354[北京]", 22020, false));
             regionInfos.Add(CreateHttp("45yun.cn", "小猫服[北京]", 22000, false));
-            regionInfos.Add(CreateHttp("au.fangkuai.fun", "方块服[北京]", 443, true));
+            regionInfos.Add(CreateHttp("player.fangkuai.fun", "方块服[北京]", 22024, true));
             
         }
         regionInfos.Add(CreateHttp("au-as.duikbo.at", "Modded Asia (MAS)", 443, true));

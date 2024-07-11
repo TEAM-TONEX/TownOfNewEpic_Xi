@@ -41,10 +41,10 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.47";
-    public const string PluginShowVersionPrefix = "1.3_20240711";
-    public const string PluginShowVersionPostfix = "_Debug_37";
-    public const string PluginShowVersion = PluginShowVersionPrefix + PluginShowVersionPostfix;
+    public const string PluginVersion = "1.2.50";
+    public const string ShowVersion_Head = "1.3_20240711";
+    public const string ShowVersion_TestText = "_Debug_40";
+    public const string ShowVersion = ShowVersion_Head + ShowVersion_TestText;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
     public static readonly bool ShowWebsiteButton = true;
@@ -88,10 +88,8 @@ public class Main : BasePlugin
     public static ConfigEntry<bool> VersionCheat { get; private set; }
     public static ConfigEntry<bool> GodMode { get; private set; }
 
-
     public static Dictionary<byte, PlayerVersion> playerVersion = new();
 
-    public static List<byte> YuAntiCheatList = new();
     //Preset Name Options
     public static ConfigEntry<string> Preset1 { get; private set; }
     public static ConfigEntry<string> Preset2 { get; private set; }
@@ -290,6 +288,7 @@ public class Main : BasePlugin
                 {CustomRoles.Nihility,"#444444" },
                 {CustomRoles.Believer,"#007169" },
                 {CustomRoles.PublicOpinionShaper, "#ff1919"},
+                {CustomRoles.Guesser, "#DF9965" },
             };
             var type = typeof(RoleBase);
             var roleClassArray =

@@ -651,6 +651,7 @@ public static class Options
         Diseased.SetupCustomOption();
         Nihility.SetupCustomOption();
         Believer.SetupCustomOption();
+        Guesser.SetupCustomOption();
 
         // 船员专属附加
         TextOptionItem.Create(5_100_002, "MenuTitle.Addon.Crew", TabGroup.Addons)

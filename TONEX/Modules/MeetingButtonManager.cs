@@ -2,6 +2,7 @@
 using Hazel;
 using System;
 using System.Linq;
+using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Crewmate;
@@ -33,6 +34,10 @@ public class MeetingButtonManager
             if (PlayerControl.LocalPlayer.GetRoleClass() is IMeetingButton meetingButton && meetingButton.ShouldShowButton())
             {
                 CreateMeetingButton(__instance, meetingButton);
+            }
+            else if (PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && Guesser.ShouldShowButton())
+            {
+                CreateMeetingButton(__instance, null);
             }
         }
     }
@@ -67,8 +72,19 @@ public class MeetingButtonManager
             ButtonCreated = false;
         }
 
+        if (ButtonCreated && Guesser.ShouldShowButton())
+        {
+            ClearMeetingButton(__instance, true);
+            ButtonCreated = false;
+        }
+
         //检查是否应该创建按钮
         if (!ButtonCreated && meetingButton.ShouldShowButton())
+        {
+            CreateMeetingButton(__instance, meetingButton);
+        }
+
+        if (!ButtonCreated && Guesser.ShouldShowButton())
         {
             CreateMeetingButton(__instance, meetingButton);
         }
@@ -82,15 +98,24 @@ public class MeetingButtonManager
         foreach (var pva in __instance.playerStates)
         {
             var pc = Utils.GetPlayerById(pva.TargetPlayerId);
-            var swapnicelist = (PlayerControl.LocalPlayer.GetRoleClass() as NiceSwapper)?.SwapList;
-            var swapevillist = (PlayerControl.LocalPlayer.GetRoleClass() as EvilSwapper)?.SwapList;
-            if (pc == null || !meetingButton.ShouldShowButtonFor(pc)) continue;
+            Logger.Info("Try To Create M Button", "test");
+            if (pc == null 
+                || !PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !(meetingButton?.ShouldShowButtonFor(pc) ?? false)
+                || PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !Guesser.ShouldShowButtonFor(pc)) continue;
+
+
             GameObject template = pva.Buttons.transform.Find("CancelButton").gameObject;
             GameObject targetBox = UnityEngine.Object.Instantiate(template, pva.transform);
             targetBox.name = "Custom Meeting Button";
             targetBox.transform.localPosition = new Vector3(-0.95f, 0.03f, -1.31f);
             SpriteRenderer renderer = targetBox.GetComponent<SpriteRenderer>();
-            renderer.sprite =  CustomButton.GetSprite(meetingButton.ButtonName);
+            renderer.sprite =  CustomButton.GetSprite(meetingButton?.ButtonName ?? "");
+
+            if (PlayerControl.LocalPlayer.Is(CustomRoles.Guesser))
+                renderer.sprite = CustomButton.GetSprite("Target");
+
+            var swapnicelist = (PlayerControl.LocalPlayer.GetRoleClass() as NiceSwapper)?.SwapList;
+            var swapevillist = (PlayerControl.LocalPlayer.GetRoleClass() as EvilSwapper)?.SwapList;
             if (swapnicelist != null)
             {
                 if(swapnicelist.Contains(pc.PlayerId))
@@ -101,11 +126,13 @@ public class MeetingButtonManager
                 if (swapevillist.Contains(pc.PlayerId))
                     renderer.sprite = CustomButton.GetSprite("SwapYes");
             }
+
+
             PassiveButton button = targetBox.GetComponent<PassiveButton>();
             button.OnClick = new();
             button.OnClick.AddListener((Action)(() =>
             {
-                if (meetingButton.OnClickButtonLocal(pc))
+                if (meetingButton?.OnClickButtonLocal(pc) ?? false)
                 {
                     if (AmongUsClient.Instance.AmHost) meetingButton.OnClickButton(pc);
                     else
@@ -116,6 +143,16 @@ public class MeetingButtonManager
                         
                     }
                     
+                }
+                else if (Guesser.OnClickButtonLocal(pc))
+                {
+                    if (AmongUsClient.Instance.AmHost) {}
+                    else
+                    {
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OnClickMeetingButton, SendOption.Reliable, -1);
+                        writer.Write(pc.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    }
                 }
                 ClearMeetingButton(__instance, true);
                 CreateMeetingButton(__instance, meetingButton);
