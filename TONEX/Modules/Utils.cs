@@ -631,7 +631,7 @@ public static class Utils
                 break;
 
             default:
-                if (role.IsImpostor()) hasTasks = false;
+                if (role.IsImpostor() && role is not CustomRoles.CrewPostor) hasTasks = false;
                 break;
         }
         //Logger.Info($"8", "test");
@@ -1311,7 +1311,7 @@ public static class Utils
 #if DEBUG
         if (InjusticeSpirit.SetPlayer != null)
         {
-           
+            InjusticeSpirit.SetPlayer.RpcSetRole(RoleTypes.GuardianAngel);
             InjusticeSpirit.SetPlayer.RpcSetCustomRole(CustomRoles.InjusticeSpirit);
             var taskState = InjusticeSpirit.SetPlayer.GetPlayerTaskState();
             taskState.AllTasksCount = InjusticeSpirit.OptionTaskCount.GetInt();
@@ -1320,12 +1320,13 @@ public static class Utils
                 InjusticeSpirit.SetPlayer.Data.RpcSetTasks(Array.Empty<byte>());
                 InjusticeSpirit.SetPlayer.SyncSettings();
             }
+            InjusticeSpirit.SetPlayer.Notify(Translator.GetString("Surprise"));
             InjusticeSpirit.SetPlayer = null;
 
         }
         if (Specterraid.SetPlayer != null)
         {
-           
+            Specterraid.SetPlayer.RpcSetRole(RoleTypes.GuardianAngel);
             Specterraid.SetPlayer.RpcSetCustomRole(CustomRoles.Specterraid);
             var taskState = Specterraid.SetPlayer.GetPlayerTaskState();
             taskState.AllTasksCount = Specterraid.OptionTaskCount.GetInt();
@@ -1334,14 +1335,8 @@ public static class Utils
                 Specterraid.SetPlayer.Data.RpcSetTasks(Array.Empty<byte>());
                 Specterraid.SetPlayer.SyncSettings();
             }
+            Specterraid.SetPlayer.Notify(Translator.GetString("Surprise"));
             Specterraid.SetPlayer = null;
-
-        }
-        if (EvilAngel.SetPlayer != null)
-        {
-            
-            EvilAngel.SetPlayer.RpcSetCustomRole(CustomRoles.EvilAngel);
-            EvilAngel.SetPlayer = null;
 
         }
 

@@ -38,7 +38,15 @@ public sealed class Specterraid : RoleBase, INeutral
     public static OptionItem EnableSpecterraid;
     public static OptionItem OptionTaskCount;
 
+    public static bool CheckForSet(PlayerControl pc)
+    {
+        if (SetYet || !EnableSpecterraid.GetBool()) return false;
 
+        SetYet = true;
+        pc.Notify(GetString("SurpriseAfterMeet"));
+        SetPlayer = pc;
+        return true;
+    }
     public static void SetupOptionItem()
     {
         EnableSpecterraid = BooleanOptionItem.Create(75_1_5_0310, "EnableSpecterraid", false, TabGroup.NeutralRoles, false)

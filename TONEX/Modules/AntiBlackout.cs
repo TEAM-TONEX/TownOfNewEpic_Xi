@@ -8,6 +8,7 @@ using TONEX.Attributes;
 using TONEX.Modules;
 using TONEX.Roles.Core;
 using TONEX.Roles.Neutral;
+using static Rewired.Data.UserDataStore_PlayerPrefs.ControllerAssignmentSaveInfo;
 namespace TONEX;
 
 public static class AntiBlackout
@@ -97,13 +98,24 @@ public static class AntiBlackout
 
     public static void SendGameData([CallerMemberName] string callerMethodName = "")
     {
-        if (Main.AssistivePluginMode.Value) return;
         logger.Info($"SendGameData is called from {callerMethodName}");
-        foreach (var innerNetObject in GameData.Instance.AllPlayers)
+        foreach (var playerinfo in GameData.Instance.AllPlayers)
         {
-            innerNetObject.SetDirtyBit(uint.MaxValue);
+            MessageWriter writer = MessageWriter.Get(SendOption.Reliable);
+            writer.StartMessage(5); //0x05 GameData
+            {
+                writer.Write(AmongUsClient.Instance.GameId);
+                writer.StartMessage(1); //0x01 Data
+                {
+                    writer.WritePacked(playerinfo.NetId);
+                    playerinfo.Serialize(writer, true);
+                }
+                writer.EndMessage();
+            }
+            writer.EndMessage();
+            AmongUsClient.Instance.SendOrDisconnect(writer);
+            writer.Recycle();
         }
-        AmongUsClient.Instance.SendAllStreamedObjects();
     }
     public static void OnDisconnect(NetworkedPlayerInfo player)
     {

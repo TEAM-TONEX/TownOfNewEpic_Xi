@@ -26,9 +26,8 @@ namespace TONEX;
 
 static class ExtendedPlayerControl
 {
-    public static void SetRole(this PlayerControl player, RoleTypes role, bool canOverrideRole = true)
+    public static void SetRole(this PlayerControl player, RoleTypes role, bool canOverrideRole = false)
     {
-        canOverrideRole = false;
         AmongUsClient.Instance.StartCoroutine(player.CoSetRole(role, canOverrideRole));
     }
     public static void RpcSetCustomRole(this PlayerControl player, CustomRoles role)

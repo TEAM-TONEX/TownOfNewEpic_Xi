@@ -27,6 +27,17 @@ public sealed class GuardianAngel : RoleBase
     )
     { }
     public static int SatPlayerCount;
+    public static bool CheckForSet(PlayerControl pc)
+    {
+        if (SatPlayerCount >= PlayerCount.GetInt() || !EnableGuardianAngel.GetBool()) return false;
+
+        SatPlayerCount++;
+        pc.Notify(Translator.GetString("Surprise"));
+        pc.RpcSetRole(RoleTypes.GuardianAngel);
+        pc.RpcSetCustomRole(CustomRoles.GuardianAngel);
+        return true;
+
+    }
     public override void OnGameStart()
     {
         SatPlayerCount = 0;

@@ -15,6 +15,17 @@ using static TONEX.Translator;
 
 namespace TONEX;
 
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.CheckEndGameViaTasks))]
+class CheckEndGameViaTasksForNormalPatch
+{
+    public static bool Prefix(ref bool __result)
+    {
+        if (Main.AssistivePluginMode.Value) return true;
+        __result = false;
+        return false;
+    }
+}
+
 [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.CheckEndCriteria))]
 class GameEndChecker
 {
@@ -280,6 +291,7 @@ class GameEndChecker
         }
         return false;
     }
+
     public static void StartEndGame(GameOverReason reason)
     {
         var sender = new CustomRpcSender("EndGameSender", SendOption.Reliable, true);
@@ -312,7 +324,7 @@ class GameEndChecker
                         .Write((ushort)RoleTypes.ImpostorGhost)
                         .Write(false)
                         .EndRpc();
-                    pc.SetRole(RoleTypes.ImpostorGhost, true);
+                    pc.SetRole(RoleTypes.ImpostorGhost, false);
                 }
                 else
                 {
@@ -321,7 +333,7 @@ class GameEndChecker
                         .Write((ushort)RoleTypes.CrewmateGhost)
                         .Write(false)
                         .EndRpc();
-                    pc.SetRole(RoleTypes.Crewmate, true);
+                    pc.SetRole(RoleTypes.Crewmate, false);
                 }
             }
             SetEverythingUpPatch.LastWinsReason = winner is CustomWinner.Crewmate or CustomWinner.Impostor ? GetString($"GameOverReason.{reason}") : "";

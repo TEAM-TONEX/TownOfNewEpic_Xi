@@ -394,7 +394,7 @@ internal class SelectRolesPatch
     }
     private static void AssignDesyncRole(CustomRoles role, PlayerControl player, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
     {
-        //if (!role.IsEnable()) return;
+        if (!role.IsEnable()) return;
         if (Main.AssistivePluginMode.Value) return;
         var hostId = PlayerControl.LocalPlayer.PlayerId;
 
@@ -403,7 +403,8 @@ internal class SelectRolesPatch
         var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
         var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
 
-        if (role is CustomRoles.CrewPostor) othersRole = RoleTypes.Impostor;
+        //if (role is CustomRoles.CrewPostor) othersRole = RoleTypes.Impostor;
+
         // 同时处理Desync角色视角和其他玩家角色视角
         foreach (var target in Main.AllPlayerControls)
         {
@@ -421,7 +422,7 @@ internal class SelectRolesPatch
         RpcSetRoleReplacer.OverriddenSenderList.Add(senders[player.PlayerId]);
 
         //ホスト視点はロール決定
-        player.SetRole(othersRole, true);
+        player.SetRole(othersRole, false);
         player.Data.IsDead = true;
 
         Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomRoles");

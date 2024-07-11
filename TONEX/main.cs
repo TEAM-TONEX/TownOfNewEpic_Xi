@@ -41,9 +41,9 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.45";
-    public const string PluginShowVersionPrefix = "1.3_20240709";
-    public const string PluginShowVersionPostfix = "_Debug_35";
+    public const string PluginVersion = "1.2.47";
+    public const string PluginShowVersionPrefix = "1.3_20240711";
+    public const string PluginShowVersionPostfix = "_Debug_37";
     public const string PluginShowVersion = PluginShowVersionPrefix + PluginShowVersionPostfix;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==

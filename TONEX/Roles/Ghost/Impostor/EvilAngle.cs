@@ -39,6 +39,18 @@ public sealed class EvilAngel : RoleBase, IImpostor
     {
         SetYet = false;
     }
+    public static bool CheckForSet(PlayerControl pc)
+    {
+        if (SetYet || !EnableEvilAngel.GetBool()) return false;
+
+        SetYet = true;
+
+        pc.Notify(GetString("Surprise"));
+        pc.RpcSetRole(RoleTypes.GuardianAngel);
+        pc.RpcSetCustomRole(CustomRoles.EvilAngel);
+
+        return true;
+    }
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref UnityEngine.Color roleColor, ref string roleText)
     => enabled |= true;
     public static void SetupOptionItem()

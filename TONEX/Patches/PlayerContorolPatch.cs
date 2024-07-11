@@ -1235,21 +1235,11 @@ public static class PlayerControlDiePatch
 #if DEBUG
             if (__instance.Is(CustomRoles.Madmate))
             {
-                if (!EvilAngel.SetYet && EvilAngel.EnableEvilAngel.GetBool())
-                {
-                    EvilAngel.SetYet = true;
-                    __instance.Notify(GetString("Surprise"));
-                    EvilAngel.SetPlayer = __instance;
-                }
+                EvilAngel.CheckForSet(__instance);
             }
             else if (__instance.Is(CustomRoles.Wolfmate) || __instance.Is(CustomRoles.Charmed))
             {
-                if (!Specterraid.SetYet && Specterraid.EnableSpecterraid.GetBool())
-                {
-                    Specterraid.SetYet = true;
-                    __instance.Notify(GetString("Surprise"));
-                    Specterraid.SetPlayer = __instance;
-                }
+                Specterraid.CheckForSet(__instance);
             }
             else if ((__instance.Is(CustomRoleTypes.Crewmate) || __instance.Is(CustomRoleTypes.Impostor))
                 && !__instance.Is(CustomRoles.Lovers) 
@@ -1261,35 +1251,14 @@ public static class PlayerControlDiePatch
                 switch (__instance.GetCustomRole().GetCustomRoleTypes())
                 {
                     case CustomRoleTypes.Crewmate:
-
-                        if (!InjusticeSpirit.SetYet && InjusticeSpirit.EnableInjusticeSpirit.GetBool())
-                        {
-                            InjusticeSpirit.SetYet = true;
-                            __instance.Notify(GetString("Surprise"));
-                            InjusticeSpirit.SetPlayer = __instance;
-                        }
-                        else if (GuardianAngel.SatPlayerCount < GuardianAngel.PlayerCount.GetInt() && GuardianAngel.EnableGuardianAngel.GetBool())
-                        {
-                            GuardianAngel.SatPlayerCount++;
-                            __instance.Notify(GetString("Surprise"));
-                            __instance.RpcSetCustomRole(CustomRoles.GuardianAngel);
-                        }
+                        if (InjusticeSpirit.CheckForSet(__instance)) { }
+                        else if (GuardianAngel.CheckForSet(__instance)) { }
                         break;
                     case CustomRoleTypes.Neutral:
-                        if (!Specterraid.SetYet && Specterraid.EnableSpecterraid.GetBool())
-                        {
-                            Specterraid.SetYet = true;
-                            __instance.Notify(GetString("Surprise"));
-                            Specterraid.SetPlayer = __instance;
-                        }
+                        Specterraid.CheckForSet(__instance);
                         break;
                     case CustomRoleTypes.Impostor:
-                        if (!EvilAngel.SetYet && EvilAngel.EnableEvilAngel.GetBool())
-                        {
-                            EvilAngel.SetYet = true;
-                            __instance.Notify(GetString("Surprise"));
-                            EvilAngel.SetPlayer = __instance;
-                        }
+                        EvilAngel.CheckForSet(__instance);
                         break;
                 }
             }

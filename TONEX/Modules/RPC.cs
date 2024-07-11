@@ -641,7 +641,7 @@ internal static class RPC
     public static void SetRoleInGame(byte targetId, RoleTypes role)
     {
         var player = Utils.GetPlayerById(targetId);
-        player.SetRole(role, true);
+        player.SetRole(role, false);
 
         HudManager.Instance.SetHudActive(true);
         if (PlayerControl.LocalPlayer.PlayerId == targetId) RemoveDisableDevicesPatch.UpdateDisableDevices();
