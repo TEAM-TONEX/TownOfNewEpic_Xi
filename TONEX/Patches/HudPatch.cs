@@ -66,11 +66,12 @@ class HudManagerPatch
         {
             if (player.IsAlive())
             {
+                
                 //未使用的方法
                 //   __instance.ToggleUseAndPetButton(useTarget: someUsable, canPlayNormally: true, canPet: false);
 
                 //CustomRoleManager.AllActiveRoles.Do(r => Logger.Test(r.Key + " - " + r.Value.MyState.GetCustomRole().ToString()));
-                if (GameStates.IsInGame)
+                if (GameStates.IsInTask)
                 {
                     var roleClass = player.GetRoleClass();
                     if (roleClass != null)
@@ -146,21 +147,41 @@ class HudManagerPatch
                     __instance.ImpostorVentButton.ToggleVisible(CanUseVent);
                     player.Data.Role.CanVent = CanUseVent;
                 }
+                else
+                {
+                    __instance.ReportButton.Hide();
+                    __instance.ImpostorVentButton.Hide();
+                    __instance.KillButton.Hide();
+                    __instance.PetButton.Hide();
+                    if (LowerInfoText != null) LowerInfoText.enabled = false;
+                }
             }
             else
             {
                 __instance.ReportButton.Hide();
                 __instance.ImpostorVentButton.Hide();
                 __instance.KillButton.Hide();
-                if (player.Is(CustomRoles.EvilAngel))
+                if (GameStates.IsInTask)
                 {
-                   __instance.AbilityButton.OverrideText(GetString(StringNames.KillLabel));
-                    __instance.AbilityButton.Show();
-                }
-                else
-                {
-                    __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
-                    __instance.AbilityButton.Show();
+                    if (player.Is(CustomRoles.EvilAngel))
+                    {
+                        __instance.AbilityButton.OverrideText(GetString(StringNames.KillLabel));
+                        __instance.AbilityButton.Show();
+                    }
+                    else if (player.Is(CustomRoles.GuardianAngel))
+                    {
+                        __instance.AbilityButton.OverrideText(GetString(StringNames.ProtectAbility));
+                        __instance.AbilityButton.Show();
+                    }
+                    else if (player.Data.Role.Role is RoleTypes.GuardianAngel)
+                    {
+                        __instance.AbilityButton.Hide();
+                    }
+                    else
+                    {
+                        __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
+                        __instance.AbilityButton.Show();
+                    }
                 }
                 __instance.PetButton.Hide();
                 if (LowerInfoText != null) LowerInfoText.enabled = false;

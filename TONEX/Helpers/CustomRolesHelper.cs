@@ -232,7 +232,8 @@ static class CustomRolesHelper
         return role switch
         {
             CustomRoles.GM => RoleTypes.GuardianAngel,
-
+            CustomRoles.ImpostorGhost => RoleTypes.ImpostorGhost,
+            CustomRoles.CrewmateGhost => RoleTypes.CrewmateGhost,
             _ => role.IsImpostor() ? RoleTypes.Impostor : RoleTypes.Crewmate,
         };
     }

@@ -237,17 +237,18 @@ internal class SelectRolesPatch
 
                     Dictionary<(byte, byte), RoleTypes> rolesMap = new();
 
+                    foreach (var cp in RoleResult.Where(x => x.Value == CustomRoles.CrewPostor))
+                    {
+                        AssignDesyncRole(cp.Value, cp.Key, senders, rolesMap, BaseRole: RoleTypes.Crewmate, hostBaseRole: RoleTypes.Impostor);
+                        Logger.Info($"6-9", "test");
+                    }
                     // 注册反职业
                     foreach (var kv in RoleResult.Where(x => x.Value.GetRoleInfo().IsDesyncImpostor))
                     {
                         AssignDesyncRole(kv.Value, kv.Key, senders, rolesMap, BaseRole: kv.Value.GetRoleInfo().BaseRoleType.Invoke());
                         Logger.Info($"6-8", "test");
                     }
-                    foreach (var cp in RoleResult.Where(x => x.Value == CustomRoles.CrewPostor))
-                    {
-                        AssignDesyncRole(cp.Value, cp.Key, senders, rolesMap, BaseRole: RoleTypes.Crewmate, hostBaseRole: RoleTypes.Impostor);
-                        Logger.Info($"6-9", "test");
-                    }
+                    
                     MakeDesyncSender(senders, rolesMap);
                 }
                 catch (Exception ex)
@@ -403,7 +404,6 @@ internal class SelectRolesPatch
         var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
         var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
 
-        //if (role is CustomRoles.CrewPostor) othersRole = RoleTypes.Impostor;
 
         // 同时处理Desync角色视角和其他玩家角色视角
         foreach (var target in Main.AllPlayerControls)

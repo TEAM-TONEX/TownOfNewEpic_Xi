@@ -71,7 +71,7 @@ public sealed class EvilAngel : RoleBase, IImpostor
     public override bool CanUseAbilityButton() => true;
     public override bool GetAbilityButtonText(out string text)
     {
-        text = GetString("KillButtonText");
+        text = GetString(StringNames.KillLabel);
         return true;
     }
     public override bool GetAbilityButtonSprite(out string buttonName)

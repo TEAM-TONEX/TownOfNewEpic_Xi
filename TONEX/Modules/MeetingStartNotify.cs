@@ -25,17 +25,11 @@ public static class MeetingStartNotify
             foreach (var pc in Main.AllAlivePlayerControls.Where(x => !x.IsModClient()))
             {
                 var role = pc.GetCustomRole();
-                var sb = new StringBuilder();
-                sb.Append(GetString(role.ToString()) + Utils.GetRoleDisplaySpawnMode(role) + pc.GetRoleInfo(true));
-                if (Options.CustomRoleSpawnChances.TryGetValue(role, out var opt))
-                    Utils.ShowChildrenSettings(opt, ref sb, forChat: true);
-                var txt = sb.ToString();
-                sb.Clear().Append(txt.RemoveHtmlTags());
-                foreach (var subRole in PlayerState.AllPlayerStates[pc.PlayerId].SubRoles)
-                    sb.Append($"\n\n" + GetString($"{subRole}") + Utils.GetRoleDisplaySpawnMode(subRole) + GetString($"{subRole}InfoLong"));
-                Neptune.MeetingngStartNotifyOthers(ref sb, role);
-                AkujoFakeLovers.MeetingngStartNotifyOthers(ref sb, role);
-                AddMsg(sb.ToString(), pc.PlayerId);
+                var text = role.GetRoleInfo()?.Description?.GetFullFormatHelpWithAddonsByPlayer(pc) ??
+                    // roleInfoがない役職
+                    GetString(role.ToString()) + pc.GetRoleInfo(true);
+               
+                AddMsg(text, pc.PlayerId);
             }
         if (msgToSend.Count >= 1)
         {

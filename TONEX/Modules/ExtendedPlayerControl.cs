@@ -34,6 +34,7 @@ static class ExtendedPlayerControl
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (player.Is(role)) return;
+
         if (!Main.SetRolesList.ContainsKey(player.PlayerId))
         {
             List<string> values = new();
