@@ -253,7 +253,7 @@ public static class Utils
         {
             opt.SetFloat(
                 FloatOptionNames.ImpostorLightMod,
-                opt.GetFloat(FloatOptionNames.CrewLightMod));
+            opt.GetFloat(FloatOptionNames.CrewLightMod));
             if (IsActive(SystemTypes.Electrical))
             {
                 opt.SetFloat(
@@ -262,6 +262,7 @@ public static class Utils
             }
             return;
         }
+        
     }
     //誰かが死亡したときのメソッド
     public static void TargetDies(MurderInfo info)

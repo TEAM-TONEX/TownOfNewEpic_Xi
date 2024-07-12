@@ -153,8 +153,7 @@ class MurderPlayerPatch
     {
         if (GameStates.IsLobby && !GameStates.IsFreePlay)
         {
-            RPC.NotificationPop(GetString("Warning.RoomBroken"));
-            return false;
+            //RPC.NotificationPop(GetString("Warning.RoomBroken"));
         }
         if (Main.AssistivePluginMode.Value) return true;
         logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
@@ -541,8 +540,11 @@ class FixedUpdatePatch
                 }
                 else if (GameStates.IsInGame)
                 {
-                    Main.playerVersion.TryGetValue(0, out var ver);
-                    if (Main.ForkId != ver.forkId) return;
+                    if (Main.playerVersion.ContainsKey(0))
+                    {
+                        Main.playerVersion.TryGetValue(0, out var ver);
+                        if (Main.ForkId != ver.forkId) return;
+                    }
                     var roleType = __instance.Data.Role.Role;
                     var cr = roleType.GetCustomRoleTypes();
                     var color = Utils.GetRoleColorCode(cr);
@@ -1214,12 +1216,6 @@ public static class PlayerControlDiePatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
-
-        if (GameStates.IsLobby && !GameStates.IsFreePlay)
-        {
-            RPC.NotificationPop(GetString("Warning.RoomBroken"));
-            return false;
-        }
         return true;
     }
 

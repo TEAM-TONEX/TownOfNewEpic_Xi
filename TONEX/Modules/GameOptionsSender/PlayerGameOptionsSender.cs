@@ -194,6 +194,16 @@ public class PlayerGameOptionsSender : GameOptionsSender
         }
         MeetingTimeManager.ApplyGameOptions(opt);
 
+        Main.AllPlayerVision.Remove(player.PlayerId);
+        if (!player.Data.Role.IsImpostor)
+        {
+            
+            Main.AllPlayerVision.TryAdd(player.PlayerId, opt.GetFloat(FloatOptionNames.CrewLightMod));
+        }
+        else
+        {
+            Main.AllPlayerVision.TryAdd(player.PlayerId, opt.GetFloat(FloatOptionNames.ImpostorLightMod));
+        }
 
         AURoleOptions.ShapeshifterCooldown = Mathf.Max(1f, AURoleOptions.ShapeshifterCooldown);
         AURoleOptions.ProtectionDurationSeconds = 0f;

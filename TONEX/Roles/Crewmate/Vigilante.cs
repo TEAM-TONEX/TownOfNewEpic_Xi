@@ -3,6 +3,7 @@ using Hazel;
 using System.Linq;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
+using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
 using UnityEngine;
 
@@ -29,17 +30,22 @@ public sealed class Vigilante : RoleBase, IKiller, ISchrodingerCatOwner
         player,
         () => HasTask.False
     )
-    { CustomRoleManager.OnCheckMurderPlayerOthers_After.Add(OnCheckMurderPlayerOthers_After); }
+    { 
+        CustomRoleManager.OnMurderPlayerOthers.Add(OnMurderPlayerOthers);
+    }
     public SchrodingerCat.TeamType SchrodingerCatChangeTo => SchrodingerCat.TeamType.Crew;
     static OptionItem OptionRevengeTimes;
+    static OptionItem OptionCanRevenge;
     enum OptionName
     {
-        BodyguardProtectRadius
+        OptionCanRevenge,
+        OptionRevengeTimes
     }
 
     private static void SetupOptionItem()
     {
-        OptionRevengeTimes = IntegerOptionItem.Create(RoleInfo, 10, OptionName.BodyguardProtectRadius, new(0, 15, 1), 1, false)
+        OptionCanRevenge = BooleanOptionItem.Create(RoleInfo, 10, OptionName.OptionCanRevenge, false, false);
+        OptionRevengeTimes = IntegerOptionItem.Create(RoleInfo, 11, OptionName.OptionRevengeTimes, new(0, 15, 1), 1, false, OptionCanRevenge)
             .SetValueFormat(OptionFormat.Times);
     }
     private bool IsKilled;
@@ -76,20 +82,20 @@ public sealed class Vigilante : RoleBase, IKiller, ISchrodingerCatOwner
         }
         return true;
     }
-    private static bool OnCheckMurderPlayerOthers_After(MurderInfo info)
+    private static void OnMurderPlayerOthers(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
         
-        if (info.IsSuicide) return true;
+        if (info.IsSuicide || !OptionCanRevenge.GetBool()) return;
         foreach (var pc in Main.AllAlivePlayerControls.Where(x => x.PlayerId != target.PlayerId))
         {
             var pos = target.transform.position;
             var dis = Vector2.Distance(pos, pc.transform.position);
-            if (dis > Main.DefaultCrewmateVision || target == pc) continue;
+            if (dis > Main.AllPlayerVision[pc.PlayerId] || target == pc) continue;
             if (pc.Is(CustomRoles.Vigilante))
             {
                 var rc = pc.GetRoleClass() as Vigilante;
-                if (!rc.IsKilled || rc.revengeTimes <=0) continue;
+                if (!rc.IsKilled || rc.revengeTimes <=0 || NiceGrenadier.IsBlinding(pc) || EvilGrenadier.IsBlinding(pc)) continue;
                 rc.revengeTimes--;
                 if (killer.Is(CustomRoles.SchrodingerCat))
                 {
@@ -103,7 +109,6 @@ public sealed class Vigilante : RoleBase, IKiller, ISchrodingerCatOwner
                 pc.RpcMurderPlayerV2(killer);
             }
         }
-        return true;
     }
 
     public override string GetProgressText(bool comms = false) => Utils.ColorString(CanUseKillButton() ? Utils.GetRoleColor(CustomRoles.Vigilante) : Color.gray, $"({(CanUseKillButton() ? 1 : 0)})");

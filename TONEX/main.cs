@@ -112,6 +112,7 @@ public class Main : BasePlugin
     public static List<(string, byte, string)> MessagesToSend = new();
 
     public static Dictionary<byte, float> AllPlayerKillCooldown = new();
+    public static Dictionary<byte, float> AllPlayerVision = new();
     public static Dictionary<byte, List<string>> SetRolesList = new();
     /// <summary>
     /// 基本的に速度の代入は禁止.スピードは増減で対応してください.

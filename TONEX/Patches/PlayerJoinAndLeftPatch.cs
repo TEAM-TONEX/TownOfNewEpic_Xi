@@ -94,9 +94,13 @@ class OnPlayerJoinedPatch
     {
 
         Logger.Info($"{client.PlayerName}(ClientID:{client.Id}/FriendCode:{client.FriendCode}) 加入房间", "Session");
-        if (AmongUsClient.Instance.AmHost && Main.AssistivePluginMode.Value)
+        if (Main.AssistivePluginMode.Value)
         {
-            RPC.RpcVersionCheck();
+            if (AmongUsClient.Instance.AmHost)
+            {
+                RPC.RpcVersionCheck();
+                
+            }
             return;
         }
         if (AmongUsClient.Instance.AmHost && client.FriendCode == "" && Options.KickPlayerFriendCodeNotExist.GetBool())
