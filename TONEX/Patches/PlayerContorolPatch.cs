@@ -543,7 +543,8 @@ class FixedUpdatePatch
                     if (Main.playerVersion.ContainsKey(0))
                     {
                         Main.playerVersion.TryGetValue(0, out var ver);
-                        if (Main.ForkId != ver.forkId) return;
+                        if (Main.ForkId != ver.forkId) 
+                            return;
                     }
                     var roleType = __instance.Data.Role.Role;
                     var cr = roleType.GetCustomRoleTypes();
