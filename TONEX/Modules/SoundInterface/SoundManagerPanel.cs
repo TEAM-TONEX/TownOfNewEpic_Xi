@@ -119,6 +119,7 @@ public static class SoundManagerPanel
            // getExtension(path);
             var renderer = button.GetComponent<SpriteRenderer>();
             var rollover = button.GetComponent<ButtonRolloverHandler>();
+
             if (File.Exists(path) || File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/SoundNames/{sound}.json"))
             {
                 button.transform.GetChild(0).GetComponent<TextMeshPro>().text = GetString("delete");

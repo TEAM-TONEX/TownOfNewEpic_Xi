@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using TONEX.Attributes;
 using TONEX.Modules.SoundInterface;
 using UnityEngine;
 using static TONEX.Translator;
@@ -192,5 +193,81 @@ public static class AudioManager
     { ".aac", ".ogg" },
     { ".ogg", ".m4a" }
 };
+    public static Dictionary<string, AudioClip> AllSoundClips = new();
+    [PluginModuleInitializer]
+    public static void InitForAudioClip()
+    {
+        foreach (var mus in AllMusics.Keys)
+        {
+            var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{mus}.wav";
+            if (!File.Exists(path)) continue;
+            StartLoadAC(path, mus);
+        }
+    }
+    public static void StartLoadAC(string path, string mus)
+    {
+        var task = LoadAudioClipAsync(path);
+        task.ContinueWith(t =>
+        {
+            if (t.Result != null)
+                AllSoundClips.TryAdd(mus, t.Result);
+        });
+    }
+    public static async Task<AudioClip> LoadAudioClipAsync(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError("File does not exist: " + filePath);
+            return null;
+        }
+
+        byte[] audioData;
+
+        try
+        {
+            // 异步读取音频文件的字节数据
+            audioData = await ReadAllBytesAsync(filePath);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to read file: " + filePath + "\n" + e.Message);
+            return null;
+        }
+
+        // 创建一个新的AudioClip
+        AudioClip audioClip = AudioClip.Create("LoadedAudioClip", audioData.Length / 2, 2, 44100, false);
+        float[] floatData = ConvertBytesToFloats(audioData);
+
+        // 将字节流数据加载到AudioClip中
+        audioClip.SetData(floatData, 0);
+
+        return audioClip;
+    }
+
+    // 异步读取文件字节数据
+    private static async Task<byte[]> ReadAllBytesAsync(string filePath)
+    {
+        using (FileStream sourceStream = new FileStream(filePath,
+            FileMode.Open, FileAccess.Read, FileShare.Read,
+            bufferSize: 4096, useAsync: true))
+        {
+            MemoryStream memoryStream = new MemoryStream();
+            await sourceStream.CopyToAsync(memoryStream);
+            return memoryStream.ToArray();
+        }
+    }
+
+    // 将音频字节数据转换为浮点数数组
+    private static float[] ConvertBytesToFloats(byte[] audioBytes)
+    {
+        float[] floatData = new float[audioBytes.Length / 2]; // 2 bytes to 1 float
+
+        for (int i = 0; i < floatData.Length; i++)
+        {
+            floatData[i] = (float)BitConverter.ToInt16(audioBytes, i * 2) / 32768.0f; // Convert to float (-1.0 to 1.0)
+        }
+
+        return floatData;
+    }
 }
 #nullable disable

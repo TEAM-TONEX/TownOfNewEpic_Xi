@@ -111,8 +111,14 @@ public class MusicDownloader
                 }
                 return;
             }
-            succeed = true;
-            Logger.Info($"Succeed in {url}", "DownloadSound");
+            
+            var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
+            if (File.Exists(path))
+            {
+                AudioManager.StartLoadAC(path, sound);
+                Logger.Info($"Succeed in {url}", "DownloadSound");
+                succeed = true;
+            }
         }
         catch (Exception ex)
         {

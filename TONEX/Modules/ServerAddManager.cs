@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using TONEX.Attributes;
 using UnityEngine;
+using Il2CppSystem.IO;
 
 namespace TONEX;
 
@@ -18,17 +19,8 @@ public static class ServerAddManager
         Logger.Info("0", "gctest");
         if (!ModUpdater.isChecked && ModUpdater.firstStart) ModUpdater.BeforeCheck();
         Logger.Info("2", "gctest");
-        if (!File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/Birthday.wav"))
-        {
-            var task = MusicDownloader.StartDownload("Birthday");
-            task.ContinueWith(t =>
-            {
-                if (!MusicDownloader.succeed)
-                {
-                    Logger.Error("DownloadFailed", "DownloadSound");
-                }
-            });
-        }
+
+        
         serverManager.AvailableRegions = ServerManager.DefaultRegions;
         List<IRegionInfo> regionInfos = new();
         regionInfos.Add(CreateHttp("154.21.201.164", "XtremeWave[HongKong]", 22023, false));

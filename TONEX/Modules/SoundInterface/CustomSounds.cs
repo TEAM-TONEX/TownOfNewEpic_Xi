@@ -3,7 +3,7 @@ using Hazel;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
+using HarmonyLib;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Media;
@@ -46,7 +46,7 @@ public static class CustomSoundsManager
     public static void Play(string sound, int playmode = 0, bool forcePlay = false)
     {
         StopPlay();
-        if (!Constants.ShouldPlaySfx() || !Main.EnableCustomSoundEffect.Value && ! forcePlay) return;
+        if (!Constants.ShouldPlaySfx() || !Main.EnableCustomSoundEffect.Value && !forcePlay) return;
         var path = SOUNDS_PATH + sound + ".wav";
 
         if (!Directory.Exists(SOUNDS_PATH)) Directory.CreateDirectory(SOUNDS_PATH);
@@ -62,10 +62,10 @@ public static class CustomSoundsManager
         switch (playmode)
         {
             case 0:
-                StartPlayOnce(path);
-                break;
+                //StartPlayOnce(path);
+                //break;
             case 1:
-                StartPlayLoop(path);
+                StartPlayInAmongUs(path,sound);
                 break;
             case 2:
             case 3:
@@ -138,66 +138,62 @@ public static class CustomSoundsManager
         new LateTask(() =>
         {
             MusicPlaybackCompletedHandler();
-        },40f,"AddMusic");
+        }, 40f, "AddMusic");
     }
     public static void StartPlayOnce(string path) => PlaySound(@$"{path}", 0, 1); //第3个形参，换为9，连续播放
-
     public static void StartPlayLoop(string path) => PlaySound(@$"{path}", 0, 9);
     public static void StartPlayWait(string path) => PlaySound(@$"{path}", 0, 17);
-
+    public static bool isinternal = false;
     public static void StopPlay()
     {
+        isinternal = true;
         PlaySound(null, 0, 0);
-        var TasksToRemove = new List<LateTask>();
-        foreach (var task in LateTask.Tasks)
+        SoundManager.Instance.StopAllSound();
+        isinternal = false;
+    }
+    public static void StartPlayInAmongUs(string path="", string mus ="")
+    {
+        AllSoundClips.TryGetValue(mus, out var audioClip);
+        if (audioClip != null)
         {
-            if (task.name == "AddMusic")
-                TasksToRemove.Add(task);
-                
+            SoundManager.Instance.StopAllSound();
+            SoundManager.Instance.PlaySound(audioClip, true, 1, null);
         }
-        TasksToRemove.ForEach(task => LateTask.Tasks.Remove(task));
+        else
+        {
+            var task = LoadAudioClipAsync(path);
+            task.ContinueWith(t =>
+            {
+                if (t.Result != null)
+                    AllSoundClips.TryAdd(mus, t.Result);
+                SoundManager.Instance.StopAllSound();
+                SoundManager.Instance.PlaySound(t.Result, true, 1, null);
+            });
+
+            Debug.LogWarning($"Failed to load AudioClip from path: {path}");
+        }
     }
 
 
-    #region Native Methods
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr CreateWindowEx(int dwExStyle, string lpClassName, string lpWindowName, int dwStyle, int x, int y, int nWidth, int nHeight, IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance, IntPtr lpParam);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool TranslateMessage([In] ref MSG lpMsg);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern IntPtr DispatchMessage([In] ref MSG lpmsg);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct MSG
+}
+[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.PlaySound))]
+public class SoundManagerPlaySoundPatch
+{
+    public static void Prefix(SoundManager __instance, [HarmonyArgument(0)] AudioClip clip, [HarmonyArgument(1)] bool loop)
     {
-        public IntPtr hwnd;
-        public uint message;
-        public IntPtr wParam;
-        public IntPtr lParam;
-        public uint time;
-        public POINT pt;
+        if ((AllSoundClips?.Values?.Any(SoundManager.Instance.SoundIsPlaying) ?? false) 
+            && !AllSoundClips.ContainsValue(clip) && loop) 
+            return;
     }
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct POINT
+    
+}
+[HarmonyPatch(typeof(SoundManager), nameof(SoundManager.StopAllSound))]
+public class SoundManagerStopAllSoundPatch
+{
+    public static void Prefix(SoundManager __instance)
     {
-        public int X;
-        public int Y;
+        if ((AllSoundClips?.Values?.Any(SoundManager.Instance.SoundIsPlaying) ?? false) && !CustomSoundsManager.isinternal)
+            return;
     }
-
-    [DllImport("winmm.dll")]
-    private static extern bool MCIWndRegisterClass();
-
-    [DllImport("winmm.dll")]
-    private static extern bool MCIWndSetCallback(IntPtr hwnd, MCIWndCallbackProc lpProc);
-
-    private delegate void MCIWndCallbackProc(IntPtr hwnd, int msg, IntPtr instance, IntPtr param1, IntPtr param2);
-
-    #endregion
 }

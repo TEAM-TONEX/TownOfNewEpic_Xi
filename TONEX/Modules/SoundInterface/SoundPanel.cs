@@ -171,7 +171,9 @@ public static class SoundPanel
             RefreshTags(optionsMenuBehaviour, name, sound, path); 
 
             count++;
+           
         }
+        
     }
     public static void RefreshTags(OptionsMenuBehaviour optionsMenuBehaviour, string name, string sound, string path)
     {
@@ -237,6 +239,7 @@ public static class SoundPanel
             // 在 finally 块中增加当前页面的标签数量
             numItems++;
         }
+
     }
 
 }

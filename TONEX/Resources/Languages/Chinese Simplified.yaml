@@ -24,7 +24,7 @@ ImpostorNumNN:   "<color=#fffee2>周围潜藏着</color><color=#ff1919>{0}</colo
 ImpostorNumEN:   "<color=#bbbaa1>此处存在着</color><color=#ff1919>{0}</color><color=#bbbaa1>名伪装者</color>"
 
 # 阵营开场
-ImpostorIntroText: "<color=#ff1919>让邪恶笼罩世界</color>"
+ImpostorIntroText: "<color=#ff1919>让邪恶笼罩这个世界</color>"
 CrewmateIntroText: "<color=#8cffff>完成你的任务，解决那群坏蛋！</color>"
 NNeutralIntroText: "<color=#fffee2>顺水推舟，正义还是邪恶由你抉择</color>"
 IndependentIntroText: "<color=#bbbaa1>让我们以全新的力量，征服整个世界！</color>"

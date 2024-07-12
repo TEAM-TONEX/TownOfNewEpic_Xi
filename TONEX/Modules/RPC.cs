@@ -540,7 +540,7 @@ internal static class RPC
     }
     public static async void RpcVersionCheck()
     {
-        if (!Main.AssistivePluginMode.Value)
+        if (Main.AssistivePluginMode.Value)
         {
             Main.playerVersion.TryGetValue(0, out var ver);
             if (Main.ForkId == ver.forkId)
