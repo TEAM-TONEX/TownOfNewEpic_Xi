@@ -10,6 +10,7 @@ public static class HeliSabotageSystemUpdateSystemPatch
 {
     public static bool Prefix(HeliSabotageSystem __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -33,10 +34,13 @@ public static class HeliSabotageSystemPatch
 {
     public static void Prefix(HeliSabotageSystem __instance)
     {
-        if (!__instance.IsActive || !Options.SabotageTimeControl.GetBool())
-            return;
-        if (AirshipStatus.Instance != null)
-            if (__instance.Countdown >= Options.AirshipReactorTimeLimit.GetFloat())
-                __instance.Countdown = Options.AirshipReactorTimeLimit.GetFloat();
+        if (!Main.AssistivePluginMode.Value)
+        {
+            if (!__instance.IsActive || !Options.SabotageTimeControl.GetBool())
+                return;
+            if (AirshipStatus.Instance != null)
+                if (__instance.Countdown >= Options.AirshipReactorTimeLimit.GetFloat())
+                    __instance.Countdown = Options.AirshipReactorTimeLimit.GetFloat();
+        }
     }
 }

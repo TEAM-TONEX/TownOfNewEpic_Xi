@@ -26,6 +26,7 @@ class HudManagerPatch
     public static TMPro.TextMeshPro LowerInfoText;
     public static void Postfix(HudManager __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         var pc = PlayerControl.LocalPlayer;
         if (GameStates.IsInGame)
         {
@@ -61,15 +62,16 @@ class HudManagerPatch
 
         Utils.CountAlivePlayers();
 
-        if (SetHudActivePatch.IsActive)
+        if (SetHudActivePatch.IsActive && !Main.AssistivePluginMode.Value)
         {
             if (player.IsAlive())
             {
+                
                 //未使用的方法
                 //   __instance.ToggleUseAndPetButton(useTarget: someUsable, canPlayNormally: true, canPet: false);
 
                 //CustomRoleManager.AllActiveRoles.Do(r => Logger.Test(r.Key + " - " + r.Value.MyState.GetCustomRole().ToString()));
-                if (GameStates.IsInGame)
+                if (GameStates.IsInTask)
                 {
                     var roleClass = player.GetRoleClass();
                     if (roleClass != null)
@@ -93,15 +95,12 @@ class HudManagerPatch
                             else __instance.AbilityButton.SetInfiniteUses();
                         }
 
-                        if (Options.UsePets.GetBool())
+                        if (Options.UsePets.GetBool() && roleClass.EnablePetSkill())
                         {
-                            if (roleClass?.GetPetButtonText(out string name) == true)
-                            {
-                                __instance.PetButton.OverrideText(Utils.ColorString(Utils.GetRoleColor(player.GetCustomRole()), name));
-                            }
-                            else if (roleClass?.GetPetButtonText(out string petlabel) == false)
+                            if (roleClass?.GetPetButtonText(out string petlabel) ?? false)
                             {
                                 __instance.PetButton.OverrideText(Utils.ColorString(Utils.GetRoleColor(player.GetCustomRole()), petlabel));
+                                __instance.PetButton.ToggleVisible(GameStates.IsInTask);
                             }
                         }
 
@@ -148,21 +147,41 @@ class HudManagerPatch
                     __instance.ImpostorVentButton.ToggleVisible(CanUseVent);
                     player.Data.Role.CanVent = CanUseVent;
                 }
+                else
+                {
+                    __instance.ReportButton.Hide();
+                    __instance.ImpostorVentButton.Hide();
+                    __instance.KillButton.Hide();
+                    __instance.PetButton.Hide();
+                    if (LowerInfoText != null) LowerInfoText.enabled = false;
+                }
             }
             else
             {
                 __instance.ReportButton.Hide();
                 __instance.ImpostorVentButton.Hide();
                 __instance.KillButton.Hide();
-                if (player.Is(CustomRoles.EvilAngle))
+                if (GameStates.IsInTask)
                 {
-                   __instance.AbilityButton.OverrideText(GetString("KillButtonText"));
-                    __instance.AbilityButton.Show();
-                }
-                else
-                {
-                    __instance.AbilityButton.OverrideText(GetString(StringNames.SeekButton));
-                    __instance.AbilityButton.Show();
+                    if (player.Is(CustomRoles.EvilAngel))
+                    {
+                        __instance.AbilityButton.OverrideText(GetString(StringNames.KillLabel));
+                        __instance.AbilityButton.Show();
+                    }
+                    else if (player.Is(CustomRoles.GuardianAngel))
+                    {
+                        __instance.AbilityButton.OverrideText(GetString(StringNames.ProtectAbility));
+                        __instance.AbilityButton.Show();
+                    }
+                    else if (player.Data.Role.Role is RoleTypes.GuardianAngel)
+                    {
+                        __instance.AbilityButton.Hide();
+                    }
+                    else
+                    {
+                        __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
+                        __instance.AbilityButton.Show();
+                    }
                 }
                 __instance.PetButton.Hide();
                 if (LowerInfoText != null) LowerInfoText.enabled = false;
@@ -210,6 +229,7 @@ class ToggleHighlightPatch
 {
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] bool active, [HarmonyArgument(1)] RoleTeamTypes team)
     {
+        if (Main.AssistivePluginMode.Value) return;
         var player = PlayerControl.LocalPlayer;
         if (!GameStates.IsInTask) return;
 
@@ -234,13 +254,15 @@ class SetVentOutlinePatch
 class SetHudActivePatch
 {
     public static bool IsActive = false;
-    public static void Prefix(HudManager __instance, [HarmonyArgument(2)] ref bool isActive)
+    public static bool Prefix(HudManager __instance, [HarmonyArgument(2)] ref bool isActive)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         isActive &= !GameStates.IsMeeting;
-        return;
+        return false;
     }
     public static void Postfix(HudManager __instance, [HarmonyArgument(2)] bool isActive)
     {
+        if (Main.AssistivePluginMode.Value) return;
         __instance.ReportButton.ToggleVisible(!GameStates.IsLobby && isActive);
         __instance.PetButton.ToggleVisible(!GameStates.IsLobby && isActive);
         if (!GameStates.IsModHost) return;
@@ -258,15 +280,18 @@ class MapBehaviourShowPatch
 {
     public static void Prefix(MapBehaviour __instance, ref MapOptions opts)
     {
-        if (GameStates.IsMeeting) return;
-
-        if (opts.Mode is MapOptions.Modes.Normal or MapOptions.Modes.Sabotage)
+        if (!Main.AssistivePluginMode.Value)
         {
-            var player = PlayerControl.LocalPlayer;
-            if (player.GetRoleClass() is IKiller killer && killer.CanUseSabotageButton())
-                opts.Mode = MapOptions.Modes.Sabotage;
-            else
-                opts.Mode = MapOptions.Modes.Normal;
+            if (GameStates.IsMeeting) return;
+
+            if (opts.Mode is MapOptions.Modes.Normal or MapOptions.Modes.Sabotage)
+            {
+                var player = PlayerControl.LocalPlayer;
+                if (player.GetRoleClass() is IKiller killer && killer.CanUseSabotageButton())
+                    opts.Mode = MapOptions.Modes.Sabotage;
+                else
+                    opts.Mode = MapOptions.Modes.Normal;
+            }
         }
     }
 }
@@ -277,6 +302,7 @@ class TaskPanelBehaviourPatch
     public static void Postfix(TaskPanelBehaviour __instance)
     {
         if (!GameStates.IsModHost) return;
+        if (Main.AssistivePluginMode.Value) return;
         PlayerControl player = PlayerControl.LocalPlayer;
 
         var taskText = __instance.taskText.text;

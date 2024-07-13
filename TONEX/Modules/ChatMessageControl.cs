@@ -20,7 +20,7 @@ public class MessageControl
     public bool IsFromMod { get => Player.IsModClient(); }
     public bool IsFromSelf { get => Player.AmOwner; }
 
-    public bool IsCommand { get; set; } = false;
+    public bool IsRoleCommand { get; set; } = false;
     public bool ForceSend { get; set; } = false;
     public MsgRecallMode RecallMode { get; set; } = MsgRecallMode.None;
 
@@ -29,27 +29,65 @@ public class MessageControl
         Player = player;
         Message = message;
 
-        if (ChatCommand.AllCommands == null || !ChatCommand.AllCommands.Any())
-            ChatCommand.Init();
-
         MsgRecallMode recallMode = MsgRecallMode.None;
+
         // Check if it is a role command
-        IsCommand = Player.GetRoleClass()?.OnSendMessage(Message, out recallMode) ?? false;
-        if (GameStates.IsInGame && CustomRoles.Blackmailer.IsExist())
-            if (Blackmailer.ForBlackmailer.Contains(Player.PlayerId))
-            {
-                IsCommand = true;
-                recallMode = MsgRecallMode.Spam;
-            }
-        //IsCommand = Player.GetRoleClass()?.OnPlayerSendMessage(player, Message, out recallMode) ?? false;
-        if (IsCommand && !AmongUsClient.Instance.AmHost) ForceSend = true;
-        CustomRoleManager.ReceiveMessage.Do(a => a.Invoke(this));
+        IsRoleCommand = Player.GetRoleClass()?.OnSendMessage(Message, out recallMode) ?? false;
+        if (GameStates.IsInGame && CustomRoles.Blackmailer.IsExist() && Blackmailer.ForBlackmailer.Contains(Player.PlayerId))
+        {
+            IsRoleCommand = true;
+            recallMode = MsgRecallMode.Spam;
+        }
 
         RecallMode = recallMode;
-        if (IsCommand || !AmongUsClient.Instance.AmHost) return;
 
-        if (!IsCommand)
+        if (IsRoleCommand && !AmongUsClient.Instance.AmHost) ForceSend = true;
+        CustomRoleManager.ReceiveMessage.Do(a => a.Invoke(this));
+
+        if (ChatCommand.SpamCommands == null || !ChatCommand.SpamCommands.Any())
+            ChatCommand.SpamInitOnly();
+
+        
+
+        foreach (var command in ChatCommand.SpamCommands)
         {
+            if (command.Access switch
+            {
+                CommandAccess.All => false,
+                CommandAccess.LocalMod => !IsFromMod,
+                CommandAccess.Host => !AmongUsClient.Instance.AmHost || !IsFromSelf,
+                CommandAccess.Debugger => !DebugModeManager.AmDebugger,
+                _ => true,
+            }) continue;
+
+            string keyword = command.KeyWords.Find(k => Message.ToLower().StartsWith("/" + k.ToLower()));
+            if (string.IsNullOrEmpty(keyword)) continue;
+
+            Args = Message[(keyword.Length + 1)..].Trim();
+            HasValidArgs = !string.IsNullOrWhiteSpace(Args);
+
+            Logger.Info($"Command: /{keyword}, Args: {Args}", "ChatControl");
+
+            (RecallMode, string msg) = command.Command(this);
+            if (!string.IsNullOrEmpty(msg))
+                foreach (var pid in SendToList)
+                    Utils.SendMessage(msg, pid);
+            SendToList = new();
+            IsRoleCommand = true;
+            return;
+        }
+
+        if (IsRoleCommand && !AmongUsClient.Instance.AmHost) ForceSend = true;
+        CustomRoleManager.ReceiveMessage.Do(a => a.Invoke(this));
+
+
+        if (IsRoleCommand || !AmongUsClient.Instance.AmHost) return;
+
+        if (!IsRoleCommand)
+        {
+
+            if (ChatCommand.AllCommands == null || !ChatCommand.AllCommands.Any())
+                ChatCommand.Init();
             // Not a role command, check for command list
             foreach (var command in ChatCommand.AllCommands)
             {
@@ -75,7 +113,7 @@ public class MessageControl
                     foreach (var pid in SendToList)
                         Utils.SendMessage(msg, pid);
                 SendToList = new();
-                IsCommand = true;
+                IsRoleCommand = true;
                 return;
             }
         }
@@ -119,38 +157,10 @@ public class MessageControl
         }
     }
 
-    public static void SpamFakeCommands(bool includeHost = false, bool includeModded = false)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        List<CustomRoles> roles = Enum.GetValues(typeof(CustomRoles)).Cast<CustomRoles>().Where(x => x is not CustomRoles.NotAssigned).ToList();
-        var rd = IRandom.Instance;
-        string msg;
-        string[] command = new string[] { "bet", "bt", "guess", "gs", "shoot", "st", "赌", "猜", "审判", "tl", "判", "审" };
-        for (int i = 0; i < 20; i++)
-        {
-            msg = "/";
-            if (rd.Next(1, 100) < 20)
-            {
-                msg += "id";
-            }
-            else
-            {
-                msg += command[rd.Next(0, command.Length - 1)];
-                msg += rd.Next(1, 100) < 50 ? string.Empty : " ";
-                msg += rd.Next(0, 15).ToString();
-                msg += rd.Next(1, 100) < 50 ? string.Empty : " ";
-                CustomRoles role = roles[rd.Next(0, roles.Count)];
-                msg += rd.Next(1, 100) < 50 ? string.Empty : " ";
-                msg += Utils.GetRoleName(role);
-            }
-            var player = Main.AllAlivePlayerControls.ToArray()[rd.Next(0, Main.AllAlivePlayerControls.Count())];
-            SendMessageAsPlayerImmediately(player, msg, includeHost, includeModded);
-        }
-    }
 
     public static void SendMessageAsPlayerImmediately(PlayerControl player, string text, bool hostCanSee = true, bool sendToModded = true)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (hostCanSee) DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, text);
         if (!sendToModded) text += "\0";
 

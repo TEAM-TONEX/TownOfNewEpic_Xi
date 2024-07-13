@@ -23,6 +23,7 @@ public static class SabotageSystemTypeUpdateSystemPatch
 
     public static bool Prefix([HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -64,6 +65,7 @@ public static class SabotageSystemTypeUpdateSystemPatch
     }
     public static void Postfix(SabotageSystemType __instance, bool __runOriginal /* Prefixの結果，本体処理が実行されたかどうか */ )
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (!__runOriginal || !isCooldownModificationEnabled || !AmongUsClient.Instance.AmHost)
         {
             return;
@@ -79,6 +81,7 @@ public static class ElectricTaskInitializePatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Utils.MarkEveryoneDirtySettings();
         if (!GameStates.IsMeeting)
             Utils.NotifyRoles(ForceLoop: true);
@@ -89,6 +92,7 @@ public static class ElectricTaskCompletePatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Utils.MarkEveryoneDirtySettings();
         if (!GameStates.IsMeeting)
             Utils.NotifyRoles(ForceLoop: true);

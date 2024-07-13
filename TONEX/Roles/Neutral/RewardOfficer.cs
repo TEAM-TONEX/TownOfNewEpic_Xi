@@ -58,7 +58,7 @@ public sealed class RewardOfficer : RoleBase, INeutralKiller
     public override void Add()
     {
         ForRewardOfficer = new();
-        //旧base的随机一个玩家未目标
+        //旧base的随机一个玩家为目标
         if (!AmongUsClient.Instance.AmHost) return;
         var pcList = Main.AllAlivePlayerControls.Where(x => x.PlayerId != Player.PlayerId && x.IsAlive()).ToList();
         var SelectedTarget = pcList[IRandom.Instance.Next(0, pcList.Count)];

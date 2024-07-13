@@ -169,7 +169,7 @@ public sealed class Miner : RoleBase, IImpostor
     {
         if (IsInvis()) return;
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         LastTime = -1;
         InvisTime = -1;

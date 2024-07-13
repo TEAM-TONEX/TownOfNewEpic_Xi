@@ -17,7 +17,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, INeutralKiller
             CustomRoleTypes.Neutral,
             50100,
            SetupOptionItem,
-            "op|投機者|投机",
+            "op|投機者|投机|投机者",
             "#00ff00",
            true
            
@@ -32,21 +32,19 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, INeutralKiller
     }
     private static OptionItem OptionKillCooldown;
     public static OptionItem OptionCanKill;
-    public static OptionItem OptionCanVent;
     public bool IsNK { get; private set; } = OptionCanKill.GetBool();
     public bool IsNE { get; private set; } = false;
     public SchrodingerCat.TeamType SchrodingerCatChangeTo => SchrodingerCat.TeamType.Opportunist;
     private static void SetupOptionItem()
     {
-        OptionCanKill = BooleanOptionItem.Create(RoleInfo, 15, GeneralOption.CanKill, true, false);
-        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(2.5f, 180f, 2.5f), 20f, false, OptionCanKill)
+        OptionCanKill = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.CanKill, false, false);
+        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.KillCooldown, new(2.5f, 180f, 2.5f), 25f, false, OptionCanKill)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.CanVent, true, false, OptionCanKill);
     }
     public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
     public bool CanUseKillButton() => OptionCanKill.GetBool();
     public bool CanUseSabotageButton() => false;
-    public bool CanUseImpostorVentButton() => OptionCanVent.GetBool();
+    public bool CanUseImpostorVentButton() => false;
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(false);
 
     public bool CheckWin(ref CustomRoles winnerRole, ref CountTypes winnerCountType)

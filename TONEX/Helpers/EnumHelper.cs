@@ -5,15 +5,17 @@ namespace TONEX;
 public static class EnumHelper
 {
     /// <summary>
-    /// enumのすべての値を取得します
+    /// 获取枚举的所有值
     /// </summary>
-    /// <typeparam name="T">取得したいenumの型</typeparam>
-    /// <returns>Tのすべての値</returns>
+    /// <typeparam name="T">要获取值的枚举类型</typeparam>
+    /// <returns>T 类型的所有值</returns>
     public static T[] GetAllValues<T>() where T : Enum => Enum.GetValues(typeof(T)) as T[];
+
+
     /// <summary>
-    /// enumのすべての名前を取得します
+    /// 获取枚举的所有名称
     /// </summary>
-    /// <typeparam name="T">取得したいenumの型</typeparam>
-    /// <returns>Tのすべての値の名前</returns>
+    /// <typeparam name="T">要获取名称的枚举类型</typeparam>
+    /// <returns>T 类型的所有值的名称</returns>
     public static string[] GetAllNames<T>() where T : Enum => Enum.GetNames(typeof(T));
 }

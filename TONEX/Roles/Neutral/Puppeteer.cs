@@ -47,7 +47,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
     public int BeKillLimit;
     public PlayerControl MarkedPlayer = new();
     public bool CanKill;
-    public GameData.PlayerOutfit Skins;
+    public NetworkedPlayerInfo.PlayerOutfit Skins;
     public string Name;
     public string NameV2;
     public long Timer;
@@ -93,7 +93,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
         if(!CanKill) return false;
         MarkedPlayer = target;
         killer.SetKillCooldownV2();
-        Skins = new GameData.PlayerOutfit().Set(Player.GetRealName(), Player.Data.DefaultOutfit.ColorId, Player.Data.DefaultOutfit.HatId, Player.Data.DefaultOutfit.SkinId, Player.Data.DefaultOutfit.VisorId, Player.Data.DefaultOutfit.PetId);
+        Skins = new NetworkedPlayerInfo.PlayerOutfit().Set(Player.GetRealName(), Player.Data.DefaultOutfit.ColorId, Player.Data.DefaultOutfit.HatId, Player.Data.DefaultOutfit.SkinId, Player.Data.DefaultOutfit.VisorId, Player.Data.DefaultOutfit.PetId, Player.Data.DefaultOutfit.NamePlateId);
         return false;
     }
     public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
@@ -123,10 +123,10 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
         {
             CanKill = false;
             Timer = Utils.GetTimeStamp();
-            GameData.PlayerOutfit TargetSkins = new GameData.PlayerOutfit().Set(MarkedPlayer.GetRealName(), MarkedPlayer.Data.DefaultOutfit.ColorId, MarkedPlayer.Data.DefaultOutfit.HatId, MarkedPlayer.Data.DefaultOutfit.SkinId, MarkedPlayer.Data.DefaultOutfit.VisorId, MarkedPlayer.Data.DefaultOutfit.PetId);
+            NetworkedPlayerInfo.PlayerOutfit TargetSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(MarkedPlayer.GetRealName(), MarkedPlayer.Data.DefaultOutfit.ColorId, MarkedPlayer.Data.DefaultOutfit.HatId, MarkedPlayer.Data.DefaultOutfit.SkinId, MarkedPlayer.Data.DefaultOutfit.VisorId, MarkedPlayer.Data.DefaultOutfit.PetId, MarkedPlayer.Data.DefaultOutfit.NamePlateId);
             var outfit = TargetSkins;
-            Player.SetOutFitStatic(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
-            MarkedPlayer.SetOutFitStatic(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+            Player.SetOutFit(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+            MarkedPlayer.SetOutFit(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
             NameV2 = Main.AllPlayerNames[MarkedPlayer.PlayerId];
             Main.AllPlayerNames[Player.PlayerId] = NameV2;
             Main.AllPlayerNames[MarkedPlayer.PlayerId] = NameV2;
@@ -134,7 +134,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
             MyLastPos = Player.GetTruePosition();
         }
     }
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
 
         CanKill = true;
@@ -143,7 +143,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
         Player.MarkDirtySettings();
         Main.AllPlayerNames[Player.PlayerId] = Name;
         var outfit = Skins;
-        Player.SetOutFitStatic(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+        Player.SetOutFit(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
         Player.MarkDirtySettings();
         return true;
 

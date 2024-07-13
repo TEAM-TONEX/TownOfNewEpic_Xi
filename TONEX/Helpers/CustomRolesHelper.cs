@@ -5,31 +5,35 @@ using TONEX.Roles.Core;
 using TONEX.Roles.Crewmate;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
+using TONEX.Roles.Vanilla;
 
 namespace TONEX;
 
 static class CustomRolesHelper
 {
-    /// <summary>すべての役職(属性は含まない)</summary>
+    /// <summary>所有角色（不包括附加）</summary>
     public static readonly CustomRoles[] AllRoles = EnumHelper.GetAllValues<CustomRoles>().Where(role => role < CustomRoles.NotAssigned).ToArray();
-    /// <summary>すべての属性</summary>
+    /// <summary>所有附加</summary>
     public static readonly CustomRoles[] AllAddOns = EnumHelper.GetAllValues<CustomRoles>().Where(role => role > CustomRoles.NotAssigned).ToArray();
-    /// <summary>スタンダードモードで出現できるすべての役職</summary>
+    /// <summary>可以在标准模式下出现的所有角色</summary>
     public static readonly CustomRoles[] AllStandardRoles = AllRoles.Concat(AllAddOns).ToList().ToArray();
+    /// <summary>所有职业类型</summary>
     public static readonly CustomRoleTypes[] AllRoleTypes = EnumHelper.GetAllValues<CustomRoleTypes>();
 
+    /// <summary>是否内鬼</summary>
     public static bool IsImpostor(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
+        if (roleInfo != null && (int)role >= 100 && (int)role < 400)
             return roleInfo.CustomRoleType == CustomRoleTypes.Impostor;
-        return false;
+        return role is CustomRoles.Impostor or CustomRoles.Shapeshifter or
+            CustomRoles.Phantom or CustomRoles.ImpostorGhost;
     }
     public static bool IsImpostorTeam(this CustomRoles role) => role.IsImpostor() || role is CustomRoles.Madmate;
     public static bool IsNeutral(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
+        if (roleInfo != null && (int)role >= 800 && (int)role < 1500)
             return roleInfo.CustomRoleType == CustomRoleTypes.Neutral;
         return false;
     }
@@ -47,6 +51,42 @@ static class CustomRolesHelper
             return (roleInfo.CustomRoleType == CustomRoleTypes.Neutral && roleInfo.IsNK) || role ==CustomRoles.Opportunist && Opportunist.OptionCanKill.GetBool();
         return false;
     }
+
+    public static bool IsCrewmate(this CustomRoles role)
+    {
+        var roleInfo = role.GetRoleInfo();
+        if (roleInfo != null && (int)role >= 400 && (int)role < 800)
+            return roleInfo.CustomRoleType == CustomRoleTypes.Crewmate;
+        return
+            role is CustomRoles.Crewmate or
+            CustomRoles.Engineer or
+            CustomRoles.Tracker or
+            CustomRoles.Noisemaker or
+            CustomRoles.CrewmateGhost or
+            CustomRoles.GuardianAngel or
+            CustomRoles.Scientist;
+    }
+    public static bool IsAddon(this CustomRoles role) => (int)role > 1500;
+    public static bool IsValid(this CustomRoles role) => role is not CustomRoles.GM and not CustomRoles.NotAssigned;
+    public static bool IsExist(this CustomRoles role, bool CountDeath = false) => Main.AllPlayerControls.Any(x => x.Is(role) && (x.IsAlive() || CountDeath));
+    public static bool IsVanilla(this CustomRoles role)
+    {
+        return
+            role is 
+            
+            CustomRoles.Crewmate or
+            CustomRoles.Engineer or
+            CustomRoles.Scientist or
+            CustomRoles.GuardianAngel or
+            CustomRoles.ImpostorGhost or
+            CustomRoles.CrewmateGhost or
+            CustomRoles.Impostor or
+            CustomRoles.Shapeshifter or
+            CustomRoles.Tracker or
+            CustomRoles.Noisemaker or
+            CustomRoles.Phantom;
+    }
+
     public static bool IsHidden(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
@@ -76,7 +116,6 @@ static class CustomRolesHelper
     CustomRoles.CopyCat or//TODO 效颦者
     CustomRoles.Konan or//TODO 柯南
     CustomRoles.PVPboss or//TODO PVP大佬
-    CustomRoles.Revolutionist or//TODO 革命家
    CustomRoles.Changger or//TODO 连环交换师
     CustomRoles.Amnesiac or//TODO 失忆者
     CustomRoles.PoliticalStrategists or//TODO 纵横家
@@ -91,7 +130,7 @@ static class CustomRolesHelper
     CustomRoles.IncorruptibleOfficial or//TODO 清廉之官
     CustomRoles.VIP or//TODO VIP
       CustomRoles.Non_Villain //不演反派
-    
+
             )
             return true;
         return false;
@@ -103,31 +142,6 @@ static class CustomRolesHelper
             return roleInfo.CantOpen;
         return false;
     }
-    public static bool IsCrewmate(this CustomRoles role)
-    {
-        var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
-            return roleInfo.CustomRoleType == CustomRoleTypes.Crewmate;
-        return
-            role is CustomRoles.Crewmate or
-            CustomRoles.Engineer or
-            CustomRoles.Scientist;
-    }
-    public static bool IsAddon(this CustomRoles role) => (int)role > 500;
-    public static bool IsValid(this CustomRoles role) => role is not CustomRoles.GM and not CustomRoles.NotAssigned;
-    public static bool IsExist(this CustomRoles role, bool CountDeath = false) => Main.AllPlayerControls.Any(x => x.Is(role) && x.IsAlive() || CountDeath);
-    public static bool IsExistCountDeath(this CustomRoles role) => Main.AllPlayerControls.Any(x => x.Is(role));
-    public static bool IsVanilla(this CustomRoles role)
-    {
-        return
-            role is CustomRoles.Crewmate or
-            CustomRoles.Engineer or
-            CustomRoles.Scientist or
-            CustomRoles.GuardianAngel or
-            CustomRoles.Impostor or
-            CustomRoles.Shapeshifter;
-    }
-
     public static CustomRoleTypes GetCustomRoleTypes(this CustomRoles role)
     {
         if (role is CustomRoles.NotAssigned) return CustomRoleTypes.Crewmate;
@@ -144,9 +158,10 @@ static class CustomRolesHelper
 
         return type;
     }
+
     public static int GetCount(this CustomRoles role)
     {
-        if (role.IsVanilla())
+        if (role.IsVanilla() && Options.DisableVanillaRoles.GetBool())
         {
             var roleOpt = Main.NormalOptions.RoleOptions;
             return role switch
@@ -155,6 +170,9 @@ static class CustomRolesHelper
                 CustomRoles.Scientist => roleOpt.GetNumPerGame(RoleTypes.Scientist),
                 CustomRoles.Shapeshifter => roleOpt.GetNumPerGame(RoleTypes.Shapeshifter),
                 CustomRoles.GuardianAngel => roleOpt.GetNumPerGame(RoleTypes.GuardianAngel),
+                CustomRoles.Noisemaker => roleOpt.GetNumPerGame(RoleTypes.Noisemaker),
+                CustomRoles.Tracker => roleOpt.GetNumPerGame(RoleTypes.Tracker),
+                CustomRoles.Phantom => roleOpt.GetNumPerGame(RoleTypes.Phantom),
                 CustomRoles.Crewmate => roleOpt.GetNumPerGame(RoleTypes.Crewmate),
                 _ => 0
             };
@@ -166,7 +184,7 @@ static class CustomRolesHelper
     }
     public static int GetChance(this CustomRoles role)
     {
-        if (role.IsVanilla())
+        if (role.IsVanilla() && Options.DisableVanillaRoles.GetBool())
         {
             var roleOpt = Main.NormalOptions.RoleOptions;
             return role switch
@@ -175,6 +193,9 @@ static class CustomRolesHelper
                 CustomRoles.Scientist => roleOpt.GetChancePerGame(RoleTypes.Scientist),
                 CustomRoles.Shapeshifter => roleOpt.GetChancePerGame(RoleTypes.Shapeshifter),
                 CustomRoles.GuardianAngel => roleOpt.GetChancePerGame(RoleTypes.GuardianAngel),
+                CustomRoles.Noisemaker => roleOpt.GetChancePerGame(RoleTypes.Noisemaker),
+                CustomRoles.Tracker => roleOpt.GetChancePerGame(RoleTypes.Tracker),
+                CustomRoles.Phantom => roleOpt.GetChancePerGame(RoleTypes.Phantom),
                 CustomRoles.Crewmate => roleOpt.GetChancePerGame(RoleTypes.Crewmate),
                 _ => 0
             };
@@ -192,8 +213,13 @@ static class CustomRolesHelper
             RoleTypes.Crewmate => CustomRoles.Crewmate,
             RoleTypes.Scientist => CustomRoles.Scientist,
             RoleTypes.Engineer => CustomRoles.Engineer,
+            RoleTypes.Tracker => CustomRoles.Tracker,
+            RoleTypes.Noisemaker => CustomRoles.Noisemaker,
             RoleTypes.GuardianAngel => CustomRoles.GuardianAngel,
+            RoleTypes.ImpostorGhost =>CustomRoles.ImpostorGhost,
+            RoleTypes.CrewmateGhost => CustomRoles.CrewmateGhost,
             RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,
+            RoleTypes.Phantom => CustomRoles.Phantom,
             RoleTypes.Impostor => CustomRoles.Impostor,
             _ => CustomRoles.NotAssigned
         };
@@ -206,7 +232,8 @@ static class CustomRolesHelper
         return role switch
         {
             CustomRoles.GM => RoleTypes.GuardianAngel,
-
+            CustomRoles.ImpostorGhost => RoleTypes.ImpostorGhost,
+            CustomRoles.CrewmateGhost => RoleTypes.CrewmateGhost,
             _ => role.IsImpostor() ? RoleTypes.Impostor : RoleTypes.Crewmate,
         };
     }
@@ -223,7 +250,7 @@ public enum CountTypes
     Demon= CustomWinner.Demon,
     BloodKnight= CustomWinner.BloodKnight,
     Succubus= CustomWinner.Succubus,
-    FAFL= CustomWinner.FAFL,
+    Vagator= CustomWinner.Vagator,
     Martyr= CustomWinner.Martyr,
     NightWolf= CustomWinner.NightWolf,
     GodOfPlagues= CustomWinner.GodOfPlagues,

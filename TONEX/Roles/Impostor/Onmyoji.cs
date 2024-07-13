@@ -1,5 +1,4 @@
 ﻿using AmongUs.GameOptions;
-using HarmonyLib;
 using Hazel;
 using static TONEX.Translator;
 using System.Collections.Generic;

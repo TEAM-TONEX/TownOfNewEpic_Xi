@@ -28,7 +28,7 @@ public class PlayerGameOptionsSender : GameOptionsSender
         .ToList().ForEach(sender => sender.SetDirty());
 
     public override IGameOptions BasedGameOptions =>
-        Main.RealOptionsData.Restore(new NormalGameOptionsV07(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>());
+        Main.RealOptionsData.Restore(new NormalGameOptionsV08(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>());
     public override bool IsDirty { get; protected set; }
 
     public PlayerControl player;
@@ -115,27 +115,7 @@ public class PlayerGameOptionsSender : GameOptionsSender
                     opt.SetInt(Int32OptionNames.KillDistance, 2);
                     break;
                 case CustomRoles.Mini:
-                    if ((player.GetRoleClass() as IKiller)?.IsKiller ?? false)
-                    {
-                        if (Mini.Age[player.PlayerId] < 18 && !Mini.MKL.Contains(player.PlayerId))
-                        {
-                            Mini.MKL.Add(player.PlayerId);
-                            opt.SetFloat(FloatOptionNames.KillCooldown, Mini.OptionKidKillCoolDown.GetFloat());
-                            Main.AllPlayerKillCooldown[player.PlayerId] *= Mini.OptionKidKillCoolDown.GetFloat();
-                            Mini.SendRPC();
-                            player.ResetKillCooldown();
-                            player.SyncSettings();
-                        }
-                        else if (Mini.Age[player.PlayerId] >= 18 && !Mini.MAL.Contains(player.PlayerId))
-                        {
-                            Mini.MAL.Add(player.PlayerId);
-                            opt.SetFloat(FloatOptionNames.KillCooldown, Mini.OptionAdultKillCoolDown.GetFloat());
-                            Main.AllPlayerKillCooldown[player.PlayerId] *= Mini.OptionAdultKillCoolDown.GetFloat();
-                            player.ResetKillCooldown();
-                            player.SyncSettings();
-                            Mini.SendRPC();
-                        }
-                    }
+                    
                     break;
                 case CustomRoles.Rambler:
                     Main.AllPlayerSpeed[player.PlayerId] = Rambler.OptionSpeed.GetFloat();
@@ -151,17 +131,6 @@ public class PlayerGameOptionsSender : GameOptionsSender
             opt.SetFloat(FloatOptionNames.CrewLightMod, Bewilder.OptionVision.GetFloat());
             opt.SetFloat(FloatOptionNames.ImpostorLightMod, Bewilder.OptionVision.GetFloat());
             player.RpcSetCustomRole(CustomRoles.Bewilder);
-            Utils.NotifyRoles(player);
-        }
-
-        // 为患者的凶手
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Diseased) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Hangman) && !Diseased.DisList.Contains(player.PlayerId)))
-        {
-            Diseased.DisList.Add(player.PlayerId);
-            Main.AllPlayerKillCooldown[player.PlayerId] *= Diseased.OptionVistion.GetFloat();
-            player.ResetKillCooldown();
-            player.SyncSettings();
-            Diseased.SendRPC();
             Utils.NotifyRoles(player);
         }
 
@@ -225,6 +194,16 @@ public class PlayerGameOptionsSender : GameOptionsSender
         }
         MeetingTimeManager.ApplyGameOptions(opt);
 
+        Main.AllPlayerVision.Remove(player.PlayerId);
+        if (!player.Data.Role.IsImpostor)
+        {
+            
+            Main.AllPlayerVision.TryAdd(player.PlayerId, opt.GetFloat(FloatOptionNames.CrewLightMod));
+        }
+        else
+        {
+            Main.AllPlayerVision.TryAdd(player.PlayerId, opt.GetFloat(FloatOptionNames.ImpostorLightMod));
+        }
 
         AURoleOptions.ShapeshifterCooldown = Mathf.Max(1f, AURoleOptions.ShapeshifterCooldown);
         AURoleOptions.ProtectionDurationSeconds = 0f;

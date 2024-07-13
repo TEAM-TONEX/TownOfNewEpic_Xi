@@ -13,7 +13,7 @@ using InnerNet;
 namespace TONEX.Roles.AddOns.CanNotOpened;
 public static class AdmirerLovers
 {
-    private static readonly int Id = 75_1_2_1800;
+    //private static readonly int Id = 75_1_2_1800;
     private static List<byte> playerIdList = new();
 
     public static OptionItem AdmirerLoverKnowRoles;
@@ -65,13 +65,13 @@ public static class AdmirerLovers
         foreach (var playerId in playerIds)
         {
             //AdmirerLoversの後追い
-            if (CustomRoles.AdmirerLovers.IsExistCountDeath() && !isAdmirerLoversDead && AdmirerLoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
+            if (CustomRoles.AdmirerLovers.IsExist(true) && !isAdmirerLoversDead && AdmirerLoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
                 AdmirerLoversSuicide(playerId, true);
         }
     }
     public static void AdmirerLoversSuicide(byte deathId = 0x7f, bool isExiled = false, bool now = false)
     {
-        if (AdmirerLoverSuicide.GetBool() && CustomRoles.AdmirerLovers.IsExistCountDeath() && !isAdmirerLoversDead)
+        if (AdmirerLoverSuicide.GetBool() && CustomRoles.AdmirerLovers.IsExist(true) && !isAdmirerLoversDead)
         {
             foreach (var loversPlayer in AdmirerLoversPlayers)
             {

@@ -19,34 +19,39 @@ internal static class CustomRoleSelector
     public static void SelectCustomRoles()
     {
         // 开始职业抽取
-        RoleResult = new();
         var rd = IRandom.Instance;
         int playerCount = Main.AllAlivePlayerControls.Count();
-        int optImpNum = Options.SetImpNum.GetBool()? Options.ImpNum.GetInt():Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors);
-        int optHPNum = HotPotatoManager.HotPotatoMaxNum.GetInt();
-        int optNeutralNum = 0;
-        if (Options.NeutralRolesMaxPlayer.GetInt() > 0 && Options.NeutralRolesMaxPlayer.GetInt() >= Options.NeutralRolesMinPlayer.GetInt())
-            optNeutralNum = rd.Next(Options.NeutralRolesMinPlayer.GetInt(), Options.NeutralRolesMaxPlayer.GetInt() + 1);
+        
+        int readyRoleTotalNum = 0;
+        List<CustomRoles> rolesToAssign = new();
+        List<CustomRoles> roleList = new();
+
+        List<CustomRoles> crewOnList = new();
+        List<CustomRoles> crewRateList = new();
+
+        int optImpNum = Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors);
+        List<CustomRoles> ImpOnList = new();
+        List<CustomRoles> ImpRateList = new();
+
         int optNKNum = 0;
         if (Options.NeutralKillingRolesMaxPlayer.GetInt() > 0 && Options.NeutralKillingRolesMaxPlayer.GetInt() >= Options.NeutralKillingRolesMinPlayer.GetInt())
             optNKNum = rd.Next(Options.NeutralKillingRolesMinPlayer.GetInt(), Options.NeutralKillingRolesMaxPlayer.GetInt() + 1);
-
-        int readyRoleNum = 0;
-        int readyNeutralNum = 0;
         int readyNKNum = 0;
-
-        List<CustomRoles> rolesToAssign = new();
-
-        List<CustomRoles> roleList = new();
-        List<CustomRoles> roleOnList = new();
-        List<CustomRoles> ImpOnList = new();
-        List<CustomRoles> NeutralOnList = new();
         List<CustomRoles> NKOnList = new();
-
-        List<CustomRoles> roleRateList = new();
-        List<CustomRoles> ImpRateList = new();
-        List<CustomRoles> NeutralRateList = new();
         List<CustomRoles> NKRateList = new();
+
+        int optNeutralNum = 0;
+        if (Options.NeutralRolesMaxPlayer.GetInt() > 0 && Options.NeutralRolesMaxPlayer.GetInt() >= Options.NeutralRolesMinPlayer.GetInt())
+            optNeutralNum = rd.Next(Options.NeutralRolesMinPlayer.GetInt(), Options.NeutralRolesMaxPlayer.GetInt() + 1);
+        int readyNeutralNum = 0;
+        List<CustomRoles> NeutralOnList = new();
+        List<CustomRoles> NeutralRateList = new();
+
+
+        int optHPNum = HotPotatoManager.HotPotatoMaxNum.GetInt();
+
+        RoleResult = new();
+
         if (Options.CurrentGameMode == CustomGameMode.HotPotato)
         {
             foreach (var pc in Main.AllAlivePlayerControls)
@@ -55,10 +60,27 @@ internal static class CustomRoleSelector
             }
             return;
         }
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
+        {
+            var pcList = Main.AllAlivePlayerControls.Where(x => x.IsAlive()).ToList();
+            var Zb = pcList[IRandom.Instance.Next(0, pcList.Count)];
+
+            foreach (var pc in Main.AllAlivePlayerControls)
+            {
+                if(pc!=Zb)
+                   RoleResult.Add(pc, CustomRoles.Survivor);
+            }
+            RoleResult.Add(Zb, CustomRoles.Infector);
+            Zb.SetOutFit(2);
+            return;
+        }
+        
+
+        // 在职业列表中搜索职业
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
         {
             CustomRoles role = (CustomRoles)Enum.Parse(typeof(CustomRoles), cr.ToString());
-            if (role.IsVanilla() || role.IsAddon() || !Options.CustomRoleSpawnChances.TryGetValue(role, out var option) || role.IsHidden() || role.IsCanNotOpen()|| option.Selections.Length != 3) continue;
+            if (role.IsVanilla() && Options.DisableVanillaRoles.GetBool() || role.IsAddon() || !Options.CustomRoleSpawnChances.TryGetValue(role, out var option) || role.IsHidden() || role.IsCanNotOpen()|| option.Selections.Length != 3) continue;
             if (role is CustomRoles.GM or CustomRoles.NotAssigned) continue;
             if (role is CustomRoles.Mare or CustomRoles.Concealer && Main.NormalOptions.MapId == 5) continue;
             for (int i = 0; i < role.GetAssignCount(); i++)
@@ -71,7 +93,7 @@ internal static class CustomRoleSelector
             if (role.IsImpostor()) ImpOnList.Add(role);
             else if (role.IsNotNeutralKilling()) NeutralOnList.Add(role);
             else if (role.IsNeutralKilling()) NKOnList.Add(role);
-            else roleOnList.Add(role);
+            else crewOnList.Add(role);
         }
         // 职业设置为：启用
         foreach (var role in roleList.Where(x => Options.GetRoleChance(x) == 1))
@@ -79,13 +101,13 @@ internal static class CustomRoleSelector
             if (role.IsImpostor()) ImpRateList.Add(role);
             else if (role.IsNotNeutralKilling()) NeutralRateList.Add(role);
             else if (role.IsNeutralKilling()) NKRateList.Add(role);
-            else roleRateList.Add(role);
+            else crewRateList.Add(role);
         }
 
         #region 抽取隐藏职业
         if (!Options.DisableHiddenRoles.GetBool())
         {
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
 
             var sp = UnityEngine.Random.Range(0, 100);
             if (sp < 5 && !rolesToAssign.Contains(CustomRoles.Bard))
@@ -109,11 +131,11 @@ internal static class CustomRoleSelector
                 {
                     rolesToAssign.Add(CustomRoles.Bard);
 
-                    readyRoleNum++;
+                    readyRoleTotalNum++;
                 }
                 sp = UnityEngine.Random.Range(0, 100);
             }
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
 
             if (sp < 3 && !rolesToAssign.Contains(CustomRoles.Sunnyboy) && readyNeutralNum < optNeutralNum)
             {
@@ -135,52 +157,52 @@ internal static class CustomRoleSelector
                 if (shouldExecute)
                 {
                     rolesToAssign.Add(CustomRoles.Sunnyboy);
-                    readyRoleNum++;
+                    readyRoleTotalNum++;
                     readyNeutralNum++;
                 }
                 sp = UnityEngine.Random.Range(0, 100);
             }
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
         }
 #endregion
         // 抽取优先职业（内鬼）
         while (ImpOnList.Count > 0)
         {
-            if (readyRoleNum >= optImpNum) break;
+            if (readyRoleTotalNum >= optImpNum) break;
             var select = ImpOnList[rd.Next(0, ImpOnList.Count)];
             ImpOnList.Remove(select);
             
             rolesToAssign.Add(select);
-            if (select == CustomRoles.MimicTeam && optImpNum >=2 && readyRoleNum< optImpNum-2)
+            if (select == CustomRoles.MimicTeam && optImpNum >=2 && readyRoleTotalNum< optImpNum-2)
             {
                 rolesToAssign.Remove(select);
                 rolesToAssign.Add(CustomRoles.MimicKiller);
                 rolesToAssign.Add(CustomRoles.MimicAssistant);
             }
-            readyRoleNum++;
+            readyRoleTotalNum++;
             Logger.Info(select.ToString() + " 加入内鬼职业待选列表（优先）", "CustomRoleSelector");
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
-            if (readyRoleNum >= optImpNum) break;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= optImpNum) break;
         }
         // 优先职业不足以分配，开始分配启用的职业（内鬼）
-        if (readyRoleNum < playerCount && readyRoleNum < optImpNum)
+        if (readyRoleTotalNum < playerCount && readyRoleTotalNum < optImpNum)
         {
             while (ImpRateList.Count > 0)
             {
-                if (readyRoleNum >= optImpNum) break;
+                if (readyRoleTotalNum >= optImpNum) break;
                 var select = ImpRateList[rd.Next(0, ImpRateList.Count)];
                 ImpRateList.Remove(select);
                 rolesToAssign.Add(select);
-                if (select == CustomRoles.MimicTeam && optImpNum >= 2 && readyRoleNum < optImpNum - 2)
+                if (select == CustomRoles.MimicTeam && optImpNum >= 2 && readyRoleTotalNum < optImpNum - 2)
                 {
                     rolesToAssign.Remove(select);
                     rolesToAssign.Add(CustomRoles.MimicKiller);
                     rolesToAssign.Add(CustomRoles.MimicAssistant);
                 }
-                readyRoleNum++;
+                readyRoleTotalNum++;
                 Logger.Info(select.ToString() + " 加入内鬼职业待选列表", "CustomRoleSelector");
-                if (readyRoleNum >= playerCount) goto EndOfAssign;
-                if (readyRoleNum >= optImpNum) break;
+                if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
+                if (readyRoleTotalNum >= optImpNum) break;
             }
         }
         // 抽取优先职业（中立杀手）
@@ -192,14 +214,14 @@ internal static class CustomRoleSelector
             if (select is CustomRoles.Vagator && !Options.UsePets.GetBool()) continue;
             if (select is CustomRoles.Plaguebearer && Plaguebearer.BecomeGodOfPlaguesStart.GetBool()) select = CustomRoles.GodOfPlagues;
             rolesToAssign.Add(select);
-            readyRoleNum++;
+            readyRoleTotalNum++;
             readyNKNum += select.GetAssignCount();
             Logger.Info(select.ToString() + " 加入中立职业待选列表（优先）", "CustomRoleSelector");
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
             if (readyNKNum >= optNKNum) break;
         }
         // 优先职业不足以分配，开始分配启用的职业（中立杀手）
-        if (readyRoleNum < playerCount && readyNKNum < optNKNum)
+        if (readyRoleTotalNum < playerCount && readyNKNum < optNKNum)
         {
             while (NKRateList.Count > 0 && optNKNum > 0)
             {
@@ -209,10 +231,10 @@ internal static class CustomRoleSelector
                 if (select is CustomRoles.Vagator && !Options.UsePets.GetBool()) continue;
                 if (select is CustomRoles.Plaguebearer && Plaguebearer.BecomeGodOfPlaguesStart.GetBool()) select = CustomRoles.GodOfPlagues;
                 rolesToAssign.Add(select);
-                readyRoleNum++;
+                readyRoleTotalNum++;
                 readyNKNum += select.GetAssignCount();
                 Logger.Info(select.ToString() + " 加入中立职业待选列表", "CustomRoleSelector");
-                if (readyRoleNum >= playerCount) goto EndOfAssign;
+                if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
                 if (readyNKNum >= optNKNum) break;
             }
         }
@@ -225,59 +247,59 @@ internal static class CustomRoleSelector
             var select = NeutralOnList[rd.Next(0, NeutralOnList.Count)];
             NeutralOnList.Remove(select);
             rolesToAssign.Add(select);
-            readyRoleNum++;
+            readyRoleTotalNum++;
             readyNeutralNum += select.GetAssignCount();
             Logger.Info(select.ToString() + " 加入中立职业待选列表（优先）", "CustomRoleSelector");
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
             if (readyNeutralNum >= optNeutralNum) break;
         }
         // 优先职业不足以分配，开始分配启用的职业（中立）
-        if (readyRoleNum < playerCount && readyNeutralNum < optNeutralNum)
+        if (readyRoleTotalNum < playerCount && readyNeutralNum < optNeutralNum)
         {
             while (NeutralRateList.Count > 0 && optNeutralNum > 0)
             {
                 var select = NeutralRateList[rd.Next(0, NeutralRateList.Count)];
                 NeutralRateList.Remove(select);
                 rolesToAssign.Add(select);
-                readyRoleNum++;
+                readyRoleTotalNum++;
                 readyNeutralNum += select.GetAssignCount();
                 Logger.Info(select.ToString() + " 加入中立职业待选列表", "CustomRoleSelector");
-                if (readyRoleNum >= playerCount) goto EndOfAssign;
+                if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
                 if (readyNeutralNum >= optNeutralNum) break;
             }
         }
         // 抽取优先职业
-        while (roleOnList.Count > 0)
+        while (crewOnList.Count > 0)
         {
-            var select = roleOnList[rd.Next(0, roleOnList.Count)];
-            roleOnList.Remove(select);
+            var select = crewOnList[rd.Next(0, crewOnList.Count)];
+            crewOnList.Remove(select);
             rolesToAssign.Add(select);
-            if (select == CustomRoles.Sheriff && Sheriff.HasDeputy.GetBool() && readyRoleNum < playerCount)
+            if (select == CustomRoles.Sheriff && Sheriff.HasDeputy.GetBool() && readyRoleTotalNum < playerCount)
             {
                 
                 rolesToAssign.Add(CustomRoles.Deputy);
             }
-            readyRoleNum++;
+            readyRoleTotalNum++;
             Logger.Info(select.ToString() + " 加入船员职业待选列表（优先）", "CustomRoleSelector");
-            if (readyRoleNum >= playerCount) goto EndOfAssign;
+            if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
         }
         // 优先职业不足以分配，开始分配启用的职业
-        if (readyRoleNum < playerCount)
+        if (readyRoleTotalNum < playerCount)
         {
-            while (roleRateList.Count > 0)
+            while (crewRateList.Count > 0)
             {
-                var select = roleRateList[rd.Next(0, roleRateList.Count)];
-                roleRateList.Remove(select);
+                var select = crewRateList[rd.Next(0, crewRateList.Count)];
+                crewRateList.Remove(select);
                 rolesToAssign.Add(select);
-                readyRoleNum++;
-                if (select == CustomRoles.Sheriff && Sheriff.HasDeputy.GetBool() && readyRoleNum < playerCount)
+                readyRoleTotalNum++;
+                if (select == CustomRoles.Sheriff && Sheriff.HasDeputy.GetBool() && readyRoleTotalNum < playerCount)
                 {
 
                     rolesToAssign.Add(CustomRoles.Deputy);
                 }
                 
                 Logger.Info(select.ToString() + " 加入船员职业待选列表", "CustomRoleSelector");
-                if (readyRoleNum >= playerCount) goto EndOfAssign;
+                if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
             }
         }
 
@@ -398,6 +420,7 @@ internal static class CustomRoleSelector
     public static void SelectAddonRoles()
     {
         if (Options.CurrentGameMode == CustomGameMode.HotPotato) return;
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode) return;
         AddonRolesList = new();
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
         {

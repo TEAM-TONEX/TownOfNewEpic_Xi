@@ -156,18 +156,11 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
 
         return TargetId == seen.PlayerId ? Utils.ColorString(RoleInfo.RoleColor, "♦") : "";
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
-        if (Options.UsePets.GetBool()) return false;
         if (HasProtect) Player.Notify(GetString("HasProtect"));
         HasProtect = true;
         return false;
-    }
-    public override void OnUsePet()
-    {
-        if(!Options.UsePets.GetBool()) return;
-        if (HasProtect) Player.Notify(GetString("HasProtect"));
-        HasProtect = true;
     }
     public bool CheckWin(ref CustomRoles winnerRole, ref CountTypes winnerCountType)
     {

@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using Hazel;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 
@@ -31,8 +32,8 @@ public sealed class Skinwalker : RoleBase, IImpostor
         TargetSpeed = new();
         TargetName = "";
     }
-    public GameData.PlayerOutfit TargetSkins = new();
-    public GameData.PlayerOutfit KillerSkins = new();
+    public NetworkedPlayerInfo.PlayerOutfit TargetSkins = new();
+    public NetworkedPlayerInfo.PlayerOutfit KillerSkins = new();
     public float KillerSpeed = new();
     public string KillerName = "";
     public float TargetSpeed = new();
@@ -53,45 +54,37 @@ public sealed class Skinwalker : RoleBase, IImpostor
         TargetName = "";
     }
     public float CalculateKillCooldown() => KillCooldown.GetFloat();
-    public bool OnCheckMurderAsKiller(MurderInfo info)
+    public void OnMurderPlayerAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        KillerSkins = new GameData.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId);
-
-        TargetSkins = new GameData.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId);
-        TargetSpeed = Main.AllPlayerSpeed[killer.PlayerId];
-        TargetName = Main.AllPlayerNames[killer.PlayerId];
+        KillerSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId, killer.Data.DefaultOutfit.NamePlateId);
+        TargetSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(target.GetRealName(), target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.PetId, target.Data.DefaultOutfit.NamePlateId);
+        
+        TargetSpeed = Main.AllPlayerSpeed[target.PlayerId];
+        TargetName = Main.AllPlayerNames[target.PlayerId];
         KillerSpeed = Main.AllPlayerSpeed[killer.PlayerId];
         KillerName = Main.AllPlayerNames[killer.PlayerId];
-        target.SetOutFitStatic(killer.Data.DefaultOutfit.ColorId);
+
+        target.SetOutFit(killer.Data.DefaultOutfit.ColorId);
         var sender = CustomRpcSender.Create(name: $"RpcSetSkin({target.Data.PlayerName})");
 
-        Logger.Info($"Pet={killer.Data.DefaultOutfit.PetId}", "RpcSetSkin");
-        new LateTask(() =>
-        {
-            Main.AllPlayerSpeed[killer.PlayerId] = TargetSpeed;
-            var outfit = TargetSkins;
-            var outfit2 = KillerSkins;
-            //凶手变样子
-            killer.SetOutFitStatic(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
 
-            Main.AllPlayerNames[killer.PlayerId] = Main.AllPlayerNames[target.PlayerId];
-            Main.AllPlayerSpeed[target.PlayerId] = KillerSpeed;
-            target.SetOutFitStatic(outfit2.ColorId, outfit2.HatId, outfit2.SkinId, outfit2.VisorId, outfit2.PetId);
-
-            //目标变样子
-            Main.AllPlayerNames[target.PlayerId] = KillerName;
-        }, 0.5f, "Clam");
-        new LateTask(() =>
-        {
-            killer.RpcMurderPlayerV2(target);
-        target.SetRealKiller(killer);
-    }, 1f, "Clam");
+        var outfit = TargetSkins;
         var outfit2 = KillerSkins;
-        Main.AllPlayerNames[killer.PlayerId] = Main.AllPlayerNames[target.PlayerId];
+
+        //凶手变样子
+        Main.AllPlayerSpeed[killer.PlayerId] = TargetSpeed;
+        killer.SetOutFit(outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+        Main.AllPlayerNames[killer.PlayerId] = TargetName;
+        killer.RpcSetName(TargetName);
+
         Main.AllPlayerSpeed[target.PlayerId] = KillerSpeed;
-        target.SetOutFitStatic(outfit2.ColorId, outfit2.HatId, outfit2.SkinId, outfit2.VisorId, outfit2.PetId);
+        target.SetOutFit(outfit2.ColorId, outfit2.HatId, outfit2.SkinId, outfit2.VisorId, outfit2.PetId);
         Main.AllPlayerNames[target.PlayerId] = KillerName;
-        return false;
+        target.RpcSetName(KillerName);
+
+        Utils.NotifyRoles(target);
+        Utils.NotifyRoles(killer);
+        Utils.NotifyRoles();
     }
 }

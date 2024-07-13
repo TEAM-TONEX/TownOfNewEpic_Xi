@@ -12,6 +12,7 @@ using static TONEX.Modules.CustomRoleSelector;
 using static TONEX.Translator;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
+using TONEX.MoreGameModes;
 
 namespace TONEX;
 
@@ -21,8 +22,10 @@ internal class ChangeRoleSettings
 
     public static void Postfix(AmongUsClient __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         try
         {
+            
 
             //注:この時点では役職は設定されていません。
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
@@ -30,7 +33,10 @@ internal class ChangeRoleSettings
             {
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
+                Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Tracker, 0, 0);
+                Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Noisemaker, 0, 0);
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
+                Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Phantom, 0, 0);
             }
             Main.SetRolesList = new();
             foreach (var pc in Main.AllPlayerControls)
@@ -96,17 +102,17 @@ internal class ChangeRoleSettings
 
             //名前の記録
             RPC.SyncAllPlayerNames();
-            HudSpritePatch.IsEnd = false ;
+            
             ConfirmEjections.LatestEjec = null;
-            //var invalidColor = Main.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
-            //if (invalidColor.Any())
-            //{
-            //    var msg = Translator.GetString("Error.InvalidColor");
-            //    Logger.SendInGame(msg);
-            //    msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
-            //    Utils.SendMessage(msg);
-            //    Logger.Error(msg, "CoStartGame");
-            //}
+            var invalidColor = Main.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
+            if (invalidColor.Any())
+            {
+                var msg = Translator.GetString("Error.InvalidColor");
+                Logger.SendInGame(msg);
+                msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
+                Utils.SendMessage(msg);
+                Logger.Error(msg, "CoStartGame");
+            }
 
             GameModuleInitializerAttribute.InitializeAll();
 
@@ -129,6 +135,7 @@ internal class ChangeRoleSettings
                 if (AmongUsClient.Instance.AmHost && Options.FormatNameMode.GetInt() == 1) //pc.RpcSetName(Palette.GetColorName(colorId));
                 {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(pc.NetId, (byte)RpcCalls.SetName, SendOption.None, -1);
+                    writer.Write(pc.Data.NetId);
                     writer.Write(Palette.GetColorName(colorId));
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                 }
@@ -142,7 +149,7 @@ internal class ChangeRoleSettings
 
                 RandomSpawn.CustomNetworkTransformPatch.FirstTP.Add(pc.PlayerId, false);
                 var outfit = pc.Data.DefaultOutfit;
-                Camouflage.PlayerSkins[pc.PlayerId] = new GameData.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+                Camouflage.PlayerSkins[pc.PlayerId] = new NetworkedPlayerInfo.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId, outfit.NamePlateId);
                 Main.clientIdList.Add(pc.GetClientId());
             }
             Main.VisibleTasksCount = true;
@@ -186,71 +193,78 @@ internal class SelectRolesPatch
 {
     public static void Prefix()
     {
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        try
+        if (!Main.AssistivePluginMode.Value)
         {
-            Logger.Info($"6-1", "test");
-            //CustomRpcSenderとRpcSetRoleReplacerの初期化
-            Dictionary<byte, CustomRpcSender> senders = new();
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                senders[pc.PlayerId] = new CustomRpcSender($"{pc.name}'s SetRole Sender", SendOption.Reliable, false)
-                        .StartMessage(pc.GetClientId());
-            }
-            RpcSetRoleReplacer.StartReplace(senders);
-            Logger.Info($"6-2", "test");
-            if (Options.EnableGM.GetBool())
-            {
-                PlayerControl.LocalPlayer.RpcSetCustomRole(CustomRoles.GM);
-                PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate);
-                PlayerControl.LocalPlayer.Data.IsDead = true;
-                PlayerState.AllPlayerStates[PlayerControl.LocalPlayer.PlayerId].SetDead();
-            }
-            Logger.Info($"6-3", "test");
-            SelectCustomRoles();
-            Logger.Info($"6-4", "test");
-            SelectAddonRoles();
-            Logger.Info($"6-5", "test");
-            CalculateVanillaRoleCount();
-            Logger.Info($"6-6", "test");
-            //指定原版特殊职业数量
-            RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Shapeshifter };
-            foreach (var roleTypes in RoleTypesList)
-            {
-                var roleOpt = Main.NormalOptions.roleOptions;
-                int numRoleTypes = GetRoleTypesCount(roleTypes);
-                roleOpt.SetRoleRate(roleTypes, numRoleTypes, numRoleTypes > 0 ? 100 : 0);
-                Logger.Info($"6-7", "test");
-            }
-           
-            Dictionary<(byte, byte), RoleTypes> rolesMap = new();
 
-            // 注册反职业
-            foreach (var kv in RoleResult.Where(x => x.Value.GetRoleInfo().IsDesyncImpostor))
+            if (AmongUsClient.Instance.AmHost)
             {
-                AssignDesyncRole(kv.Value, kv.Key, senders, rolesMap, BaseRole: kv.Value.GetRoleInfo().BaseRoleType.Invoke());
-                Logger.Info($"6-8", "test");
+
+                try
+                {
+                    Logger.Info($"6-1", "test");
+                    //CustomRpcSenderとRpcSetRoleReplacerの初期化
+                    Dictionary<byte, CustomRpcSender> senders = new();
+                    foreach (var pc in Main.AllPlayerControls)
+                    {
+                        senders[pc.PlayerId] = new CustomRpcSender($"{pc.name}'s SetRole Sender", SendOption.Reliable, false)
+                                .StartMessage(pc.GetClientId());
+                    }
+                    RpcSetRoleReplacer.StartReplace(senders);
+                    Logger.Info($"6-2", "test");
+                    if (Options.EnableGM.GetBool())
+                    {
+                        PlayerControl.LocalPlayer.RpcSetCustomRole(CustomRoles.GM);
+                        PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate);
+                        PlayerControl.LocalPlayer.Data.IsDead = true;
+                        PlayerState.AllPlayerStates[PlayerControl.LocalPlayer.PlayerId].SetDead();
+                    }
+                    Logger.Info($"6-3", "test");
+                    SelectCustomRoles();
+                    Logger.Info($"6-4", "test");
+                    SelectAddonRoles();
+                    Logger.Info($"6-5", "test");
+                    CalculateVanillaRoleCount();
+                    Logger.Info($"6-6", "test");
+                    //指定原版特殊职业数量
+                    RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Shapeshifter };
+                    foreach (var roleTypes in RoleTypesList)
+                    {
+                        var roleOpt = Main.NormalOptions.roleOptions;
+                        int numRoleTypes = GetRoleTypesCount(roleTypes);
+                        roleOpt.SetRoleRate(roleTypes, numRoleTypes, numRoleTypes > 0 ? 100 : 0);
+                        Logger.Info($"6-7", "test");
+                    }
+
+                    Dictionary<(byte, byte), RoleTypes> rolesMap = new();
+
+                    foreach (var cp in RoleResult.Where(x => x.Value == CustomRoles.CrewPostor))
+                    {
+                        AssignDesyncRole(cp.Value, cp.Key, senders, rolesMap, BaseRole: RoleTypes.Crewmate, hostBaseRole: RoleTypes.Impostor);
+                        Logger.Info($"6-9", "test");
+                    }
+                    // 注册反职业
+                    foreach (var kv in RoleResult.Where(x => x.Value.GetRoleInfo().IsDesyncImpostor))
+                    {
+                        AssignDesyncRole(kv.Value, kv.Key, senders, rolesMap, BaseRole: kv.Value.GetRoleInfo().BaseRoleType.Invoke());
+                        Logger.Info($"6-8", "test");
+                    }
+                    
+                    MakeDesyncSender(senders, rolesMap);
+                }
+                catch (Exception ex)
+                {
+                    Utils.ErrorEnd("Select Role Prefix");
+                    ex.Message.Split(@"\r\n").Do(line => Logger.Fatal(line, "Select Role Prefix"));
+                }
+                //以下、バニラ側の役職割り当てが入る
             }
-            foreach (var cp in RoleResult.Where(x => x.Value == CustomRoles.CrewPostor))
-            {
-                AssignDesyncRole(cp.Value, cp.Key, senders, rolesMap, BaseRole: RoleTypes.Crewmate, hostBaseRole: RoleTypes.Impostor);
-                Logger.Info($"6-9", "test");
-            }
-            MakeDesyncSender(senders, rolesMap);
         }
-        catch (Exception ex)
-        {
-            Utils.ErrorEnd("Select Role Prefix");
-            ex.Message.Split(@"\r\n").Do(line => Logger.Fatal(line, "Select Role Prefix"));
-        }
-        //以下、バニラ側の役職割り当てが入る
     }
 
     public static void Postfix()
     {
         if (!AmongUsClient.Instance.AmHost) return;
-
+        if (Main.AssistivePluginMode.Value) return;
         try
         {
             List<(PlayerControl, RoleTypes)> newList = new();
@@ -342,6 +356,11 @@ internal class SelectRolesPatch
                 case CustomGameMode.HotPotato:
                     GameEndChecker.SetPredicateToHotPotato();
                     break;
+                case CustomGameMode.InfectorMode:
+                    GameEndChecker.SetPredicateToZombie();
+
+
+                    break;
             }
 
             GameOptionsSender.AllSenders.Clear();
@@ -376,8 +395,8 @@ internal class SelectRolesPatch
     }
     private static void AssignDesyncRole(CustomRoles role, PlayerControl player, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
     {
-        if (!role.IsExist(true)) return;
-
+        if (!role.IsEnable()) return;
+        if (Main.AssistivePluginMode.Value) return;
         var hostId = PlayerControl.LocalPlayer.PlayerId;
 
         PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role);
@@ -385,20 +404,28 @@ internal class SelectRolesPatch
         var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
         var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
 
-        //Desync役職視点
+
+        // 同时处理Desync角色视角和其他玩家角色视角
         foreach (var target in Main.AllPlayerControls)
+        {
+            // Desync角色视角
             rolesMap[(player.PlayerId, target.PlayerId)] = player.PlayerId != target.PlayerId ? othersRole : selfRole;
 
-        //他者視点
-        foreach (var seer in Main.AllPlayerControls.Where(x => player.PlayerId != x.PlayerId))
-            rolesMap[(seer.PlayerId, player.PlayerId)] = othersRole;
+            // 其他玩家角色视角（针对不是当前玩家的玩家）
+            if (player.PlayerId != target.PlayerId)
+            {
+                rolesMap[(target.PlayerId, player.PlayerId)] = othersRole;
+            }
+        }
 
+        // 将当前玩家添加到发送者列表
         RpcSetRoleReplacer.OverriddenSenderList.Add(senders[player.PlayerId]);
+
         //ホスト視点はロール決定
-        player.SetRole(othersRole);
+        player.SetRole(othersRole, false);
         player.Data.IsDead = true;
 
-        Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomSubRoles");
+        Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomRoles");
     }
     public static void MakeDesyncSender(Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap)
     {
@@ -424,8 +451,9 @@ internal class SelectRolesPatch
         public static List<(PlayerControl, RoleTypes)> StoragedData = new();
         // 役職Desyncなど別の処理でSetRoleRpcを書き込み済みなため、追加の書き込みが不要なSenderのリスト
         public static List<CustomRpcSender> OverriddenSenderList;
-        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType)
+        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType, [HarmonyArgument(1)] bool canOverrideRole = false)
         {
+            if (Main.AssistivePluginMode.Value) return true;
             if (doReplace && senders != null)
             {
                 StoragedData.Add((__instance, roleType));
@@ -443,9 +471,10 @@ internal class SelectRolesPatch
 
                 foreach (var pair in StoragedData)
                 {
-                    pair.Item1.SetRole(pair.Item2);
+                    pair.Item1.StartCoroutine(pair.Item1.CoSetRole(pair.Item2, true));
                     sender.Value.AutoStartRpc(pair.Item1.NetId, (byte)RpcCalls.SetRole, Utils.GetPlayerById(sender.Key).GetClientId())
                         .Write((ushort)pair.Item2)
+                        .Write(false)
                         .EndRpc();
                 }
                 sender.Value.EndMessage();

@@ -51,7 +51,7 @@ public sealed class EvilSwapper : RoleBase, IImpostor, IMeetingButton
     {
         SwapLimit = OptionGuessNums.GetInt();
     }
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (Is(reporter) && target == null && !SwapperCanStartMetting.GetBool())
         {

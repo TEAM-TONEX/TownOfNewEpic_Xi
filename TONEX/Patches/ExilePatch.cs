@@ -10,12 +10,13 @@ namespace TONEX;
 class ExileControllerWrapUpPatch
 {
     public static List<Action> ActionsOnWrapUp = new();
-    public static GameData.PlayerInfo AntiBlackout_LastExiled;
+    public static NetworkedPlayerInfo AntiBlackout_LastExiled;
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp))]
     class BaseExileControllerPatch
     {
         public static void Postfix(ExileController __instance)
         {
+            if (Main.AssistivePluginMode.Value) return;
             try
             {
                 WrapUpPostfix(__instance.exiled);
@@ -32,6 +33,7 @@ class ExileControllerWrapUpPatch
     {
         public static void Postfix(AirshipExileController __instance)
         {
+            if (Main.AssistivePluginMode.Value) return;
             try
             {
                 WrapUpPostfix(__instance.exiled);
@@ -42,8 +44,9 @@ class ExileControllerWrapUpPatch
             }
         }
     }
-    static void WrapUpPostfix(GameData.PlayerInfo exiled)
+    static void WrapUpPostfix(NetworkedPlayerInfo exiled)
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (AntiBlackout.OverrideExiledPlayer)
         {
             exiled = AntiBlackout_LastExiled;
@@ -79,6 +82,19 @@ class ExileControllerWrapUpPatch
             foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
             {
                 roleClass.OnExileWrapUp(exiled, ref DecidedWinner);
+                var now = Utils.GetTimeStamp();
+                foreach (var player in Main.AllPlayerControls)
+                {
+                    var roleclass = (player.GetRoleClass());
+                    if (player.IsAlive())
+                    {
+                        for (int i = 0; i < roleclass.CountdownList.Count;  i++)
+                        {
+                            roleclass.CountdownList[i] = now;
+                        }
+                        roleclass.UsePetCooldown_Timer = now;
+                    }
+                }
             }
 
             if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();
@@ -118,7 +134,7 @@ class ExileControllerWrapUpPatch
         Utils.NotifyRoles();
     }
 
-    static void WrapUpFinalizer(GameData.PlayerInfo exiled)
+    static void WrapUpFinalizer(NetworkedPlayerInfo exiled)
     {
         //WrapUpPostfixで例外が発生しても、この部分だけは確実に実行されます。
         if (AmongUsClient.Instance.AmHost)

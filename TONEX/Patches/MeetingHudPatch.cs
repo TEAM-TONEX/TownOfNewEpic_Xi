@@ -25,6 +25,7 @@ public static class MeetingHudPatch
         public static bool Prefix()
         {
             if (!AmongUsClient.Instance.AmHost) return true;
+            if (Main.AssistivePluginMode.Value) return true;
             MeetingVoteManager.Instance?.CheckAndEndMeeting();
             return false;
         }
@@ -35,7 +36,7 @@ public static class MeetingHudPatch
         public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] byte srcPlayerId /* 投票者 */ , [HarmonyArgument(1)] byte suspectPlayerId /* 被票者 */ )
         {
             if (!AmongUsClient.Instance.AmHost) return true;
-
+            if (Main.AssistivePluginMode.Value) return true;
             var voter = Utils.GetPlayerById(srcPlayerId);
             var voted = Utils.GetPlayerById(suspectPlayerId);
 
@@ -62,13 +63,94 @@ public static class MeetingHudPatch
         public static void Prefix()
         {
             Logger.Info("------------会议开始------------", "Phase");
-            ChatUpdatePatch.DoBlockChat = true;
-            GameStates.AlreadyDied |= !Utils.IsAllAlive;
-            Main.AllPlayerControls.Do(x => ReportDeadBodyPatch.WaitReport[x.PlayerId].Clear());
-            MeetingStates.MeetingCalled = true;
+            if (!Main.AssistivePluginMode.Value)
+            {
+                
+                ChatUpdatePatch.DoBlockChat = true;
+                GameStates.AlreadyDied |= !Utils.IsAllAlive;
+                Main.AllPlayerControls.Do(x => ReportDeadBodyPatch.WaitReport[x.PlayerId].Clear());
+                MeetingStates.MeetingCalled = true;
+            }
         }
         public static void Postfix(MeetingHud __instance)
         {
+            if (Main.AssistivePluginMode.Value)
+            {
+                foreach (var pva in __instance.playerStates)
+                {
+                    var pc = Utils.GetPlayerById(pva.TargetPlayerId);
+                    if (pc == null) continue;
+                    var roleTextMeeting = UnityEngine.Object.Instantiate(pva.NameText);
+                    roleTextMeeting.text = "";
+                    roleTextMeeting.enabled = false;
+                    roleTextMeeting.transform.SetParent(pva.NameText.transform);
+                    roleTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
+                    roleTextMeeting.fontSize = 1.5f;
+                    roleTextMeeting.gameObject.name = "RoleTextMeeting";
+                    roleTextMeeting.enableWordWrapping = false;
+
+                    // 役職とサフィックスを同時に表示する必要が出たら要改修
+                    var suffixBuilder = new StringBuilder(32);
+                    var roleType = pc.Data.Role.Role;
+                    var cr = roleType.GetCustomRoleTypes();
+                    var color = Utils.GetRoleColorCode(cr);
+                    if (pc == PlayerControl.LocalPlayer)
+                    {
+                        pva.NameText.text =
+        $"<color={color}>{pva.NameText.text}</color>";
+                        suffixBuilder.Append
+                            (
+                            $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size></color>"
+                            );
+                    }
+                    else
+                    {
+
+                        if (PlayerControl.LocalPlayer.Data.IsDead && pc.Data.IsDead)
+                        {
+                            pva.NameText.text =
+                                $"<color={color}>{pva.NameText.text}</color>";
+                            suffixBuilder.Append
+                            (
+                                $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size></color>");
+                        }
+                        else if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsImpostor() && cr.IsImpostor())
+                        {
+                            if (PlayerControl.LocalPlayer.Data.IsDead)
+                            {
+                                pva.NameText.text =
+        $"<color=#ff1919>{pva.NameText.text}</color>";
+                                suffixBuilder.Append
+                            (
+                                       $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size></color>");
+                            }
+                            else
+                            {
+
+                                pva.NameText.text =
+                                $"<color=#FF1919>{pc?.name}</color>";
+
+                            }
+                        }
+                        else
+                        {
+
+                            pva.NameText.text =
+                            $"<color=#FFFFFF>{pc?.name}</color>";
+
+
+
+                        }
+
+                    }
+                    if (suffixBuilder.Length > 0)
+                    {
+                        roleTextMeeting.text = suffixBuilder.ToString();
+                        roleTextMeeting.enabled = true;
+                    }
+                }
+                return;
+            }
             MeetingVoteManager.Start();
 
             SoundManager.Instance.ChangeAmbienceVolume(0f);
@@ -128,7 +210,6 @@ public static class MeetingHudPatch
                         {
                             seen.RpcSetNamePrivate(
                                 seer == seen ? coloredName : seenName,
-                                true,
                                 seer);
                         }
                     }
@@ -139,8 +220,21 @@ public static class MeetingHudPatch
             if (AmongUsClient.Instance.AmHost)
             {
                 CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
+                foreach (var player in Main.AllPlayerControls)
+                {
+                    var roleclass = (player.GetRoleClass());
+                    if (player.IsAlive())
+                    {
+                        for (int i = 0; i < roleclass.CountdownList.Count; i++)
+                        {
+                            roleclass.CountdownList[i] = -1;
+                        }
+                        roleclass.UsePetCooldown_Timer = -1;
+                    }
+                }
                 MeetingStartNotify.OnMeetingStart();
                 Tiebreaker.OnMeetingStart();
+
             }
 
             foreach (var pva in __instance.playerStates)
@@ -165,7 +259,7 @@ public static class MeetingHudPatch
                 //调用职业类通过 seen 重写 name
                 target.GetRoleClass()?.OverrideNameAsSeen(seer, ref overrideName, true);
                 pva.NameText.text = overrideName;
-
+                Guesser.OverrideNameAsSeer(target, ref overrideName, true);
                 //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。
 
                 if (seer.KnowDeathReason(target))
@@ -201,7 +295,7 @@ public static class MeetingHudPatch
                             }
                             break;
                         case CustomRoles.CupidLovers:
-                            if (seer.Is(CustomRoles.CupidLovers) || seer.Is(CustomRoles.Cupid)|| seer.Data.IsDead)
+                            if (seer.Is(CustomRoles.CupidLovers) || seer.Is(CustomRoles.Cupid) || seer.Data.IsDead)
                             {
                                 sb.Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.CupidLovers), "♡"));
                                 isLover = true;
@@ -220,15 +314,18 @@ public static class MeetingHudPatch
 
                 pva.NameText.text += sb.ToString();
                 pva.ColorBlindName.transform.localPosition -= new Vector3(1.35f, 0f, 0f);
+
             }
         }
+
     }
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Update))]
     class UpdatePatch
     {
         public static void Postfix(MeetingHud __instance)
         {
-            if (!AmongUsClient.Instance.AmHost || !GameStates.IsInGame || __instance == null || __instance.IsDestroyedOrNull()) return;
+            if (Main.AssistivePluginMode.Value) return;
+                if (!AmongUsClient.Instance.AmHost || !GameStates.IsInGame || __instance == null || __instance.IsDestroyedOrNull()) return;
             if (Input.GetMouseButtonUp(1) && Input.GetKey(KeyCode.LeftControl))
             {
                 __instance.playerStates.DoIf(x => x.HighlightedFX.enabled, x =>
@@ -250,14 +347,17 @@ public static class MeetingHudPatch
     {
         public static void Postfix()
         {
+
             MeetingStates.FirstMeeting = false;
             Logger.Info("------------会议结束------------", "Phase");
+            if (Main.AssistivePluginMode.Value) return;
             if (AmongUsClient.Instance.AmHost)
             {
                 AntiBlackout.SetIsDead();
                 Main.AllPlayerControls.Do(pc => RandomSpawn.CustomNetworkTransformPatch.FirstTP[pc.PlayerId] = false);
                 EAC.MeetingTimes = 0;
             }
+
             // MeetingVoteManagerを通さずに会議が終了した場合の後処理
             MeetingVoteManager.Instance?.Destroy();
         }

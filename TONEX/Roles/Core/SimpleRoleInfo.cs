@@ -104,7 +104,7 @@ public class SimpleRoleInfo
         _ = ColorUtility.TryParseHtmlString(colorCode, out RoleColor);
 
         if (Experimental) tab = TabGroup.OtherRoles;
-        else if (tab == TabGroup.GameSettings)
+        else if (tab == TabGroup.ModSettings)
             tab = CustomRoleType switch
             {
                 CustomRoleTypes.Impostor => TabGroup.ImpostorRoles,
@@ -129,7 +129,7 @@ public class SimpleRoleInfo
         string colorCode = "", 
         bool isDesyncImpostor = false,
         bool isNK = false,
-        TabGroup tab = TabGroup.GameSettings,
+        TabGroup tab = TabGroup.ModSettings,
         Func<AudioClip> introSound = null,
         CountTypes? countType = null,
         bool experimental = false,
@@ -169,73 +169,75 @@ public class SimpleRoleInfo
                 assignCountRule,
                 assignUnitRoles
             ) ;
-        roleInfo.Description = new SingleRoleDescription(roleInfo);
+        roleInfo.Description = roleName.IsVanilla()? new VanillaRoleDescription(roleInfo, baseRoleType()): new SingleRoleDescription(roleInfo);
         return roleInfo;
     }
-    public static SimpleRoleInfo CreateForVanilla(
-        Type classType,
-        Func<PlayerControl, RoleBase> createInstance,
-        RoleTypes baseRoleType,
-        string colorCode = ""
-    )
-    {
-        CustomRoles roleName;
-        CustomRoleTypes customRoleType;
-        CountTypes countType = CountTypes.Crew;
+    //public static SimpleRoleInfo CreateForVanilla(
+    //    Type classType,
+    //    Func<PlayerControl, RoleBase> createInstance,
+    //    RoleTypes baseRoleType,
+    //    int configId,
+    //    string colorCode = ""
 
-        switch (baseRoleType)
-        {
-            case RoleTypes.Engineer:
-                roleName = CustomRoles.Engineer;
-                customRoleType = CustomRoleTypes.Crewmate;
-                break;
-            case RoleTypes.Scientist:
-                roleName = CustomRoles.Scientist;
-                customRoleType = CustomRoleTypes.Crewmate;
-                break;
-            case RoleTypes.GuardianAngel:
-                roleName = CustomRoles.GuardianAngel;
-                customRoleType = CustomRoleTypes.Crewmate;
-                break;
-            case RoleTypes.Impostor:
-                roleName = CustomRoles.Impostor;
-                customRoleType = CustomRoleTypes.Impostor;
-                countType = CountTypes.Impostor;
-                break;
-            case RoleTypes.Shapeshifter:
-                roleName = CustomRoles.Shapeshifter;
-                customRoleType = CustomRoleTypes.Impostor;
-                countType = CountTypes.Impostor;
-                break;
-            default:
-                roleName = CustomRoles.Crewmate;
-                customRoleType = CustomRoleTypes.Crewmate;
-                break;
-        }
-        var roleInfo = new SimpleRoleInfo(
-                classType,
-                createInstance,
-                roleName,
-                () => baseRoleType,
-                customRoleType,
-                countType,
-                -1,
-                null,
-                null,
-                colorCode,
-                false,
-                false,
-                TabGroup.GameSettings,
-                null,
-                false,
-                false,
-                false,
-                false,
-                new(1, 15, 1),
-                new CustomRoles[1] { roleName }
-            );
-        roleInfo.Description = new VanillaRoleDescription(roleInfo, baseRoleType);
-        return roleInfo;
-    }
+    //)
+    //{
+    //    CustomRoles roleName;
+    //    CustomRoleTypes customRoleType;
+    //    CountTypes countType = CountTypes.Crew;
+
+    //    switch (baseRoleType)
+    //    {
+    //        case RoleTypes.Engineer:
+    //            roleName = CustomRoles.Engineer;
+    //            customRoleType = CustomRoleTypes.Crewmate;
+    //            break;
+    //        case RoleTypes.Scientist:
+    //            roleName = CustomRoles.Scientist;
+    //            customRoleType = CustomRoleTypes.Crewmate;
+    //            break;
+    //        case RoleTypes.GuardianAngel:
+    //            roleName = CustomRoles.GuardianAngel;
+    //            customRoleType = CustomRoleTypes.Crewmate;
+    //            break;
+    //        case RoleTypes.Impostor:
+    //            roleName = CustomRoles.Impostor;
+    //            customRoleType = CustomRoleTypes.Impostor;
+    //            countType = CountTypes.Impostor;
+    //            break;
+    //        case RoleTypes.Shapeshifter:
+    //            roleName = CustomRoles.Shapeshifter;
+    //            customRoleType = CustomRoleTypes.Impostor;
+    //            countType = CountTypes.Impostor;
+    //            break;
+    //        default:
+    //            roleName = CustomRoles.Crewmate;
+    //            customRoleType = CustomRoleTypes.Crewmate;
+    //            break;
+    //    }
+    //    var roleInfo = new SimpleRoleInfo(
+    //            classType,
+    //            createInstance,
+    //            roleName,
+    //            () => baseRoleType,
+    //            customRoleType,
+    //            countType,
+    //            configId,
+    //            null,
+    //            null,
+    //            colorCode,
+    //            false,
+    //            false,
+    //            TabGroup.ModSettings,
+    //            null,
+    //            false,
+    //            false,
+    //            false,
+    //            false,
+    //            new(1, 15, 1),
+    //            new CustomRoles[1] { roleName }
+    //        );
+    //    roleInfo.Description = new VanillaRoleDescription(roleInfo, baseRoleType);
+    //    return roleInfo;
+    //}
     public delegate void OptionCreatorDelegate();
 }

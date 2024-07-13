@@ -14,5 +14,3 @@ Get-ChildItem -Path $folderPath -File -Recurse | Where-Object { $_.Name -notmatc
     $md5 = Get-FileHash -Path $file -Algorithm MD5
     Add-Content -Path $outputFile -Value "$($md5.Hash.ToLower())  $($file.Replace($folderPath, ''))"
 }
-
-

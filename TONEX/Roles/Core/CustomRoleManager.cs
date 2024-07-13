@@ -10,7 +10,9 @@ using TONEX.Modules;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
 using TONEX.Roles.AddOns.Impostor;
+using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
+using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.ParticleSystem.PlaybackState;
 
@@ -122,6 +124,10 @@ public static class CustomRoleManager
                         return false;
                     }
                 }
+                if (Madmate.FirstKill(attemptKiller, attemptTarget))
+                {
+                    return false;
+                }
             }
 
         }
@@ -226,7 +232,6 @@ public static class CustomRoleManager
     /// 返回 false 以阻止本次击杀事件
     /// </summary>
     public static HashSet<Func<MurderInfo, bool>> OnCheckMurderPlayerOthers_After = new();
-
     private static Dictionary<byte, long> LastSecondsUpdate = new();
     public static void OnFixedUpdate(PlayerControl player)
     {
@@ -241,6 +246,37 @@ public static class CustomRoleManager
                 Mini.OnSecondsUpdate(player,now);
                 Chameleon.OnSecondsUpdate(player, now);
             }
+            var roleclass = player.GetRoleClass();
+            if (player.IsAlive() && roleclass?.CountdownList != null && roleclass?.CooldownList != null)
+            {
+                for (int i= 0; i< roleclass.CountdownList.Count; i++)
+                {
+                    if (roleclass.CheckForOffGuard(i))
+                    {
+                        roleclass.CountdownList[i] = -1;
+                        if (roleclass.SetOffGuardProtect(out string notify, out int format_int, out float format_float))
+                        player.RpcProtectedMurderPlayer();
+                        if (format_int != -255)
+                            player.Notify(string.Format(notify, format_int));
+                        else if (format_float != -255)
+                            player.Notify(string.Format(notify, format_float));
+                        else
+                            player.Notify(notify);
+                        roleclass.AfterOffGuard();
+                    }
+                }
+                roleclass.CD_Update();
+            }
+            if (player.IsAlive() && Options.UsePets.GetBool() && roleclass?.UsePetCooldown_Timer != null && roleclass?.UsePetCooldown != null)
+            {
+                if (roleclass.UsePetCooldown_Timer + roleclass.UsePetCooldown < now && roleclass.UsePetCooldown_Timer != -1)
+                {
+                    roleclass.UsePetCooldown_Timer = -1;
+                    player.RpcProtectedMurderPlayer();
+                    player.Notify(string.Format(GetString("PetSkillCanUse")));
+                }
+            }
+            
 
             player.GetRoleClass()?.OnFixedUpdate(player);
             
@@ -400,6 +436,9 @@ public static class CustomRoleManager
                 case CustomRoles.Nihility:
                     Nihility.Add(pc.PlayerId);
                     break;
+                case CustomRoles.Guesser:
+                    Guesser.Add(pc.PlayerId);
+                    break;
             }
         }
     }
@@ -550,8 +589,10 @@ public enum CustomRoles
     //Default
     Crewmate = 0,
     //Impostor(Vanilla)
+    ImpostorGhost =100,
     Impostor,
     Shapeshifter,
+    Phantom,
     //Impostor
     BountyHunter,
     Fireworker,
@@ -603,8 +644,8 @@ public enum CustomRoles
     Medusa,
     Skinwalker,
     ViciousSeeker,
-    EvilAngle,
-    EvilTimeStops,
+    EvilAngel,
+    EvilTimePauser,
     MirrorSpirit,//TODO 镜妖
     Assaulter,
     MimicTeam,//TODO 模仿者团队
@@ -615,10 +656,14 @@ public enum CustomRoles
     Disperser,//TODO 分散者
     EvilPianist,//TODO 邪恶的钢琴家
     EvilGrenadier,
+
     //Crewmate(Vanilla)
+    CrewmateGhost = 400,
     Engineer,
-    GuardianAngel,
     Scientist,
+    GuardianAngel,
+    Noisemaker,
+    Tracker,
     //Crewmate
     Luckey,
     LazyGuy,
@@ -649,7 +694,7 @@ public enum CustomRoles
     Medium,
     Observer,
     DoveOfPeace,
-    NiceTimeStops,
+    NiceTimePauser,
     TimeMaster,
     Prophet,
     Instigator,
@@ -673,8 +718,10 @@ public enum CustomRoles
     InjusticeSpirit,
     Scout,
     Amber,
+    Saint,
+
     //Neutral
-    Arsonist,
+    Arsonist = 800,
     Jester,
     God,
     Opportunist,
@@ -684,7 +731,7 @@ public enum CustomRoles
     Jackal,
     Innocent,
     Pelican,
-    Revolutionist, //TODO 革命家
+    Revolutionist, 
     Hater,
     Konan, //TODO 柯南
     Demon,
@@ -725,19 +772,23 @@ public enum CustomRoles
     Martyr,//先烈 1.1限定
     NightWolf,
     Moonshadow,//TODO 月影,1.4限定
-    Phantom,
+    Specterraid,
     MeteorArbiter,// 陨星判官,1.2限定
     MeteorMurderer,// 陨星戮者,1.2限定
     SharpShooter,
+    Alternate,
+    SplitPersonality,
     //GameMode
     HotPotato,
     ColdPotato,
+    Survivor,
+    Infector,
 
     //GM
     GM,
 
-    //Sub-role after 500
-    NotAssigned = 500,
+    //Sub-role after 1500
+    NotAssigned = 1500,
     LastImpostor,
     Lovers,
     AdmirerLovers,
@@ -781,6 +832,7 @@ public enum CustomRoles
     VIP,//TODO VIP
     Believer,
     PublicOpinionShaper,
+    Guesser,
 
 }
 public enum CustomRoleTypes

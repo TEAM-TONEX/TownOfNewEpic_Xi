@@ -10,6 +10,7 @@ public static class ReactorSystemTypeUpdateSystemPatch
 {
     public static bool Prefix(ReactorSystemType __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -33,6 +34,7 @@ public static class ReactorSystemDetetiorateTypePatch
 {
     public static void Postfix(ReactorSystemType __instance, byte __state /* amount */ )
     {
+        if (Main.AssistivePluginMode.Value) return;
         // サボタージュ発動時
         if (__state == ReactorSystemType.StartCountdown)
         {

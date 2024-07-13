@@ -38,7 +38,8 @@ public sealed class QuickShooter : RoleBase, IImpostor
 
     private int ShotLimit;
     private bool Storaging;
-    public long UsePetCooldown;
+    public override long UsePetCooldown { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     private static void SetupOptionItem()
     {
         OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.KillCooldown, new(2.5f, 180f, 2.5f), 35f, false)
@@ -51,11 +52,11 @@ public sealed class QuickShooter : RoleBase, IImpostor
     public override void Add()
     {
         ShotLimit = 0;
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     public override void OnGameStart()
     {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        
     }
     private void SendRPC()
     {
@@ -80,7 +81,7 @@ public sealed class QuickShooter : RoleBase, IImpostor
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("QuickShooterShapeshiftText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
     public override int OverrideAbilityButtonUsesRemaining() => ShotLimit;
     public override void OnShapeshift(PlayerControl target)
@@ -103,12 +104,6 @@ public sealed class QuickShooter : RoleBase, IImpostor
     public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionShapeshiftCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
         if (Player.killTimer < 1)
         {
             ShotLimit++;
@@ -138,20 +133,5 @@ public sealed class QuickShooter : RoleBase, IImpostor
         ShotLimit--;
         ShotLimit = Mathf.Max(ShotLimit, 0);
         if (ShotLimit != before) SendRPC();
-    }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() && UsePetCooldown + (long)OptionShapeshiftCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
-    public override void AfterMeetingTasks()
-    {
-        UsePetCooldown = Utils.GetTimeStamp();
     }
 }

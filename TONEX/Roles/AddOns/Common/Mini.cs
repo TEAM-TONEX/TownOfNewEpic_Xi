@@ -57,16 +57,6 @@ public static class Mini
             writer.Write(pc);
             writer.Write(Age[pc]);
         }
-        writer.Write(MKL.Count);
-        foreach (var pc in MKL)
-        {
-            writer.Write(pc);
-        }
-        writer.Write(MAL.Count);
-        foreach (var pc in MAL)
-        {
-            writer.Write(pc);
-        }
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
     public static void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
@@ -79,20 +69,6 @@ public static class Mini
             var age = reader.ReadInt32();
             Age.TryAdd(pc, age);
             Age[pc] = age;
-        }
-        var mkl = reader.ReadInt32();
-        for (int i = 0; i < mkl; i++)
-        {
-            var pc = reader.ReadByte();
-            if (!MKL.Contains(pc))
-                MKL.Add(pc);
-        }
-        var mal = reader.ReadInt32();
-        for (int i = 0; i < mal; i++)
-        {
-            var pc = reader.ReadByte();
-            if (!MAL.Contains(pc))
-                MAL.Add(pc);
         }
     }
     public static bool IsEnable => playerIdList.Count > 0;

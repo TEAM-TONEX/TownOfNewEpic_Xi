@@ -36,6 +36,7 @@ internal class EAC
             switch (rpc)
             {
                 case RpcCalls.SetName:
+                    sr.ReadUInt32();
                     string name = sr.ReadString();
                     if (sr.BytesRemaining > 0 && sr.ReadBoolean()) return false;
                     if (
@@ -60,6 +61,7 @@ internal class EAC
                     break;
                 case RpcCalls.SetRole:
                     var role = (RoleTypes)sr.ReadUInt16();
+                    var canOverrideRole = sr.ReadBoolean();
                     if (GameStates.IsLobby && (role is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost))
                     {
                         WarnHost();
@@ -107,6 +109,10 @@ internal class EAC
                     break;
                 case RpcCalls.SetColor:
                 case RpcCalls.CheckColor:
+                    if (rpc is RpcCalls.SetColor)
+                    {
+                        sr.ReadUInt32();
+                    }
                     var color = sr.ReadByte();
                     if (pc.Data.DefaultOutfit.ColorId != -1 &&
                         (Main.AllPlayerControls.Where(x => x.Data.DefaultOutfit.ColorId == color).Count() >= 5
@@ -244,6 +250,10 @@ internal class EAC
                 Report(pc, "AUM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
+            case unchecked((byte)520)://YAC
+                Report(pc, "YM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return false;
         }
         return true;
     }

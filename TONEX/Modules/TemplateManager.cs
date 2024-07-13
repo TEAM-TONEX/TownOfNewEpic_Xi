@@ -21,7 +21,7 @@ public static class TemplateManager
         ["RoomCode"] = () => InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId),
         ["PlayerName"] = () => DataManager.Player.Customization.Name,
         ["AmongUsVersion"] = () => UnityEngine.Application.version,
-        ["ModVersion"] = () => Main.PluginShowVersion,
+        ["ModVersion"] = () => Main.ShowVersion,
         ["Map"] = () => Constants.MapNames[Main.NormalOptions.MapId],
         ["NumEmergencyMeetings"] = () => Main.NormalOptions.NumEmergencyMeetings.ToString(),
         ["EmergencyCooldown"] = () => Main.NormalOptions.EmergencyCooldown.ToString(),
@@ -98,7 +98,7 @@ public static class TemplateManager
         }
         if (sendList.Count == 0 && !noErr)
         {
-            if (playerId == 0xff)
+            if (Utils.GetPlayerById(playerId).OwnerId == AmongUsClient.Instance.HostId)
                 Utils.AddChatMessage(string.Format(GetString("Message.TemplateNotFoundHost"), str, tags.Join(delimiter: ", ")));
             else Utils.SendMessage(string.Format(GetString("Message.TemplateNotFoundClient"), str), playerId);
         }

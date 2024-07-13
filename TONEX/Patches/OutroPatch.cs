@@ -20,11 +20,14 @@ class EndGamePatch
     public static string KillLog = "";
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ref EndGameResult endGameResult)
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         GameStates.InGame = false;
-        //SetRolePatch.playanima = true;
-        HudSpritePatch.IsEnd = true;
         Logger.Info("-----------游戏结束-----------", "Phase");
+            
+        if (Main.AssistivePluginMode.Value) return;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+         
+
         if (!GameStates.IsModHost) return;
         SummaryText = new();
         foreach (var id in PlayerState.AllPlayerStates.Keys)
@@ -47,7 +50,7 @@ class EndGamePatch
 
         Main.NormalOptions.KillCooldown = Options.DefaultKillCooldown;
         //winnerListリセット
-        TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+        EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
         var winner = new List<PlayerControl>();
         foreach (var pc in Main.AllPlayerControls)
         {
@@ -64,7 +67,7 @@ class EndGamePatch
         {
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw && pc.Is(CustomRoles.GM)) continue;
 
-            TempData.winners.Add(new WinningPlayerData(pc.Data));
+            EndGameResult.CachedWinners.Add(new CachedPlayerData(pc.Data));
             Main.winnerList.Add(pc.PlayerId);
             Main.winnerNameList.Add(pc.GetRealName());
         }
@@ -91,6 +94,9 @@ class SetEverythingUpPatch
 
     public static void Postfix(EndGameManager __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
+        var showInitially = Main.ShowResults.Value;
+       
         if (!Main.playerVersion.ContainsKey(0)) return;
         //#######################################
         //          ==勝利陣営表示==
@@ -109,8 +115,8 @@ class SetEverythingUpPatch
         string EndWinnerText = "";
         var AdditionalWinnerText = new StringBuilder(32);
         var EndAdditionalWinnerText = new StringBuilder(32);
-        string CustomWinnerColor = Utils.GetRoleColorCode(CustomRoles.Crewmate);
-        string EndWinnerColor = Utils.GetRoleColorCode(CustomRoles.Crewmate);
+        string CustomWinnerColor = "#ffffff";
+        string EndWinnerColor = "#ffffff";
 
         var winnerRole = (CustomRoles)CustomWinnerHolder.WinnerTeam;
         if (winnerRole >= 0)
@@ -134,8 +140,8 @@ class SetEverythingUpPatch
         {
             //通常勝利
             case CustomWinner.Crewmate:
-                CustomWinnerColor = Utils.GetRoleColorCode(CustomRoles.Engineer);
-                EndWinnerColor = Utils.GetRoleColorCode(CustomRoles.Engineer);
+                CustomWinnerColor = "#8cffff";
+                EndWinnerColor = "#8cffff";
                 break;
             //特殊勝利
             case CustomWinner.Terrorist:
@@ -219,8 +225,7 @@ class SetEverythingUpPatch
         //#######################################
         //           ==最終結果表示==
         //#######################################
-
-        var showInitially = Main.ShowResults.Value;
+        
         showHideButton = new SimpleButton(
            __instance.transform,
            "ShowHideResultsButton",

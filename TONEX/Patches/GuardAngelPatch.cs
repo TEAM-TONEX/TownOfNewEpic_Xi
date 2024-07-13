@@ -8,6 +8,7 @@ internal class GuardAngelPatch
     {
         public static bool Prefix(MeetingIntroAnimation __instance)
         {
+            if (Main.AssistivePluginMode.Value) return true;
             __instance.ProtectedRecently.active = false;
             __instance.ProtectedRecently.transform.localPosition = new UnityEngine.Vector3(100f, 100f, 100f);
             __instance.ProtectedRecentlySound = new();

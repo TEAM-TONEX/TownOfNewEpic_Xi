@@ -9,7 +9,7 @@ namespace TONEX.Attributes;
 [AttributeUsage(AttributeTargets.Method)]
 public abstract class InitializerAttribute<T> : Attribute
 {
-    /// <summary>全初期化メソッド</summary>
+    /// <summary>所有初始化方法</summary>
     private static MethodInfo[] allInitializers = null;
     private static LogHandler logger = Logger.Handler(nameof(InitializerAttribute<T>));
 
@@ -20,61 +20,62 @@ public abstract class InitializerAttribute<T> : Attribute
     }
 
     private readonly InitializePriority priority = InitializePriority.Normal;
-    /// <summary>初期化時に呼び出されるメソッド</summary>
+    /// <summary>在初始化时调用的方法</summary>
     private MethodInfo targetMethod;
 
     private static void FindInitializers()
     {
         var initializers = new HashSet<InitializerAttribute<T>>(32);
 
-        // TownOfHost.dll内の
+        // 在 TownOfNewEpic_Xtreme.dll 中
         var assembly = Assembly.GetExecutingAssembly();
-        // 全クラス内の
+        // 在所有类中
         var types = assembly.GetTypes();
         foreach (var type in types)
         {
-            // 全メソッドについて
+            // 遍历所有方法
             var methods = type.GetMethods();
             foreach (var method in methods)
             {
-                // InitializerAttributeを取得
+                // 获取 InitializerAttribute
                 var attribute = method.GetCustomAttribute<InitializerAttribute<T>>();
                 if (attribute != null)
                 {
-                    // 取得できたら登録
+                    // 如果获取到了，则注册
                     attribute.targetMethod = method;
                     initializers.Add(attribute);
                 }
             }
         }
-        // 見つかった初期化メソッドをpriority順に並べ替えて配列に変換
+        // 将找到的初始化方法按照优先级排序并转换为数组
         allInitializers = initializers.OrderBy(initializer => initializer.priority).Select(initializer => initializer.targetMethod).ToArray();
+
     }
     public static void InitializeAll()
     {
-        // 初回の初期化時に初期化メソッドを探す
+        // 在首次初始化时查找初始化方法
         if (allInitializers == null)
         {
             FindInitializers();
         }
         foreach (var initializer in allInitializers)
         {
-            logger.Info($"初期化: {initializer.DeclaringType.Name}.{initializer.Name}");
+            logger.Info($"初始化: {initializer.DeclaringType.Name}.{initializer.Name}");
             initializer.Invoke(null, null);
         }
     }
 }
 
-public enum InitializePriority
+    public enum InitializePriority
 {
-    /// <summary>一番最初に実行される</summary>
+    /// <summary>最高优先级，首先执行</summary>
     VeryHigh,
-    /// <summary>既定値より前に実行される</summary>
+    /// <summary>在默认值之前执行</summary>
     High,
-    /// <summary>既定値</summary>
+    /// <summary>默认值</summary>
     Normal,
-    /// <summary>既定値より後に実行される</summary>
+    /// <summary>在默认值之后执行</summary>
     Low,
-    /// <summary>一番最後に実行される</summary>
+    /// <summary>最低优先级，最后执行</summary>
     VeryLow,
 }

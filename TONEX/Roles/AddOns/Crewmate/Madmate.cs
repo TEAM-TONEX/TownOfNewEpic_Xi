@@ -12,7 +12,7 @@ using System;
 namespace TONEX.Roles.AddOns.Crewmate;
 public static class Madmate
 {
-    private static readonly int Id = 75_1_2_1500;
+    //private static readonly int Id = 75_1_2_1500;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Madmate);
     private static List<byte> playerIdList = new();
 
@@ -138,7 +138,7 @@ public static class Madmate
                     taskState.AllTasksCount = Madmate.MadSnitchTasks.GetInt();
                     if (AmongUsClient.Instance.AmHost)
                     {
-                        GameData.Instance.RpcSetTasks(voter.PlayerId, Array.Empty<byte>());
+                        voter.Data.RpcSetTasks(Array.Empty<byte>());
                         voter.SyncSettings();
                         Utils.NotifyRoles();
                     }
@@ -176,7 +176,7 @@ public static class Madmate
                     taskState.AllTasksCount = Madmate.MadSnitchTasks.GetInt();
                     if (AmongUsClient.Instance.AmHost)
                     {
-                        GameData.Instance.RpcSetTasks(player.PlayerId, Array.Empty<byte>());
+                        player.Data.RpcSetTasks(Array.Empty<byte>());
                         player.SyncSettings();
                         Utils.NotifyRoles();
                     }
@@ -184,6 +184,25 @@ public static class Madmate
             }, 2F, "MadMate");
             Logger.Info($"注册附加职业：{player?.Data?.PlayerName}（{player.GetCustomRole()}）=> {CustomRoles.Madmate}", "AssignCustomSubRoles");
         }
+    }
+    public static bool FirstKill(PlayerControl killer, PlayerControl target)
+    {
+        if (!killer.IsImpTeam() || !target.IsCrew() || target.IsImpTeam() ||MadmateSpawnMode.GetInt() !=1 || Main.FirstDied != byte.MaxValue) return false;
+        target.RpcSetCustomRole(CustomRoles.Madmate);
+        if (target.Is(CustomRoles.Snitch))
+        {
+            var taskState = target.GetPlayerTaskState();
+            taskState.AllTasksCount = Madmate.MadSnitchTasks.GetInt();
+            if (AmongUsClient.Instance.AmHost)
+            {
+                target.Data.RpcSetTasks(Array.Empty<byte>());
+                target.SyncSettings();
+                Utils.NotifyRoles();
+            }
+        }
+        Logger.Info($"注册附加职业：{target.GetNameWithRole()} => {CustomRoles.Madmate}", "AssignCustomSubRoles");
+        target.RpcProtectedMurderPlayer();
+        return true;
     }
     public static void TaskAssgin(PlayerControl pc, ref bool hasCommonTasks, ref int NumLongTasks, ref int NumShortTasks)
     {

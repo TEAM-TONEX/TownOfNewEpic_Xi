@@ -3,6 +3,7 @@ using HarmonyLib;
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
+using TONEX.MoreGameModes;
 using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Core;
@@ -14,13 +15,26 @@ using static TONEX.Translator;
 
 namespace TONEX;
 
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.CheckEndGameViaTasks))]
+class CheckEndGameViaTasksForNormalPatch
+{
+    public static bool Prefix(ref bool __result)
+    {
+        if (Main.AssistivePluginMode.Value) return true;
+        __result = false;
+        return false;
+    }
+}
+
 [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.CheckEndCriteria))]
 class GameEndChecker
 {
     private static GameEndPredicate predicate;
     public static bool Prefix()
     {
-        if (!AmongUsClient.Instance.AmHost) return true;
+        if (Main.AssistivePluginMode.Value) return true;
+        
+            if (!AmongUsClient.Instance.AmHost) return true;
 
         //ゲーム終了判定済みなら中断
         if (predicate == null) return false;
@@ -51,6 +65,33 @@ class GameEndChecker
             }
 
         }
+        //僵尸用
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
+        {
+            var playerList = Main.AllAlivePlayerControls.ToList();
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count || InfectorManager.RemainRoundTime <= 0)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
+                foreach (var zb in playerList)
+                    CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
+                ShipStatus.Instance.enabled = false;
+                StartEndGame(reason);
+                predicate = null;
+                return false;
+            }
+            else if (InfectorManager.HumanCompleteTasks.Count == InfectorManager.HumanNum.Count)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Survivor);
+                foreach (var hm in InfectorManager.HumanCompleteTasks)
+                    CustomWinnerHolder.WinnerIds.Add(hm);
+                ShipStatus.Instance.enabled = false;
+                StartEndGame(reason);
+                predicate = null;
+                return false;
+            }
+
+        }
+
         //ゲーム終了時
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default)
         {
@@ -102,7 +143,7 @@ class GameEndChecker
                         .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
 
-                case CustomWinner.FAFL:
+                case CustomWinner.Vagator:
                     Main.AllPlayerControls
                      .Where(pc => pc.Is(CustomRoles.Vagator) )
                      .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
@@ -186,6 +227,22 @@ class GameEndChecker
                         }
                     }
                 }
+
+                //Instigator 胜利时移除玩家ID了
+                if (CustomRoles.Alternate.IsExist() && Alternate.SubstituteId != byte.MaxValue)
+                {
+                    foreach (var pc in Main.AllPlayerControls)
+                    {
+                        if (Alternate.SubstituteId==pc.PlayerId)
+                        {
+                            if (CustomWinnerHolder.WinnerIds.Contains(Alternate.SubstituteId)) {
+                                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+
+                            }
+                               
+                        }
+                    }
+                }
                 //追加胜利
                 foreach (var pc in Main.AllPlayerControls)
                 {
@@ -234,6 +291,7 @@ class GameEndChecker
         }
         return false;
     }
+
     public static void StartEndGame(GameOverReason reason)
     {
         var sender = new CustomRpcSender("EndGameSender", SendOption.Reliable, true);
@@ -264,16 +322,18 @@ class GameEndChecker
                     Logger.Info($"{pc.GetNameWithRole()}: ImpostorGhostに変更", "ResetRoleAndEndGame");
                     sender.StartRpc(pc.NetId, RpcCalls.SetRole)
                         .Write((ushort)RoleTypes.ImpostorGhost)
+                        .Write(false)
                         .EndRpc();
-                    pc.SetRole(RoleTypes.ImpostorGhost);
+                    pc.SetRole(RoleTypes.ImpostorGhost, false);
                 }
                 else
                 {
                     Logger.Info($"{pc.GetNameWithRole()}: CrewmateGhostに変更", "ResetRoleAndEndGame");
                     sender.StartRpc(pc.NetId, RpcCalls.SetRole)
                         .Write((ushort)RoleTypes.CrewmateGhost)
+                        .Write(false)
                         .EndRpc();
-                    pc.SetRole(RoleTypes.Crewmate);
+                    pc.SetRole(RoleTypes.Crewmate, false);
                 }
             }
             SetEverythingUpPatch.LastWinsReason = winner is CustomWinner.Crewmate or CustomWinner.Impostor ? GetString($"GameOverReason.{reason}") : "";
@@ -287,15 +347,15 @@ class GameEndChecker
         // GameDataによる蘇生処理
         writer.StartMessage(1); // Data
         {
-            writer.WritePacked(GameData.Instance.NetId); // NetId
-            foreach (var info in GameData.Instance.AllPlayers)
+            writer.WritePacked(PlayerControl.LocalPlayer.NetId); // NetId
+            foreach (var info in GameData.Instance.AllPlayers)// undecided
             {
                 if (ReviveRequiredPlayerIds.Contains(info.PlayerId))
                 {
                     // 蘇生&メッセージ書き込み
                     info.IsDead = false;
                     writer.StartMessage(info.PlayerId);
-                    info.Serialize(writer);
+                    info.Serialize(writer, false);
                     writer.EndMessage();
                 }
             }
@@ -318,6 +378,7 @@ class GameEndChecker
 
     public static void SetPredicateToNormal() => predicate = new NormalGameEndPredicate();
     public static void SetPredicateToHotPotato() => predicate = new HotPotatoGameEndPredicate();
+    public static void SetPredicateToZombie() => predicate = new ZombieGameEndPredicate();
 
     // ===== ゲーム終了条件 =====
     // 通常ゲーム用
@@ -495,6 +556,29 @@ class GameEndChecker
             }
             else { return false; }
             return true;
+        }
+    }
+    class ZombieGameEndPredicate : GameEndPredicate
+    {
+        public override bool CheckForEndGame(out GameOverReason reason)
+        {
+            reason = GameOverReason.ImpostorByKill;
+            var playerList = Main.AllAlivePlayerControls.ToList();
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count && InfectorManager.RemainRoundTime <= 0)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
+                foreach (var zb in playerList)
+                    CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
+                return true;
+            }
+            else if (InfectorManager.HumanCompleteTasks.Count == InfectorManager.HumanNum.Count)
+            {
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Survivor);
+                foreach (var hm in InfectorManager.HumanCompleteTasks)
+                    CustomWinnerHolder.WinnerIds.Add(hm);
+                return true;
+            }
+            else { return false; }
         }
     }
 }

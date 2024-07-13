@@ -1,8 +1,8 @@
 ﻿namespace TONEX.Attributes;
 
 /// <summary>
-/// <see cref="Main.Load"/>で起動時に初期化するメソッドに使う<br/>
-/// staticメソッドの前に [PluginModuleInitializer] と付けると起動時に自動で呼び出される<br/>
-/// [PluginModuleInitializer(InitializePriority.High)] のようにすることで呼び出される順番を指定できる
+/// 用于在 <see cref="Main.Load"/> 中启动时初始化的方法
+/// 在静态方法前面加上 [PluginModuleInitializer]，可以在启动时自动调用
+/// 可以使用 [PluginModuleInitializer(InitializePriority.High)] 来指定调用顺序
 /// </summary>
 public sealed class PluginModuleInitializerAttribute : InitializerAttribute<PluginModuleInitializerAttribute> { }

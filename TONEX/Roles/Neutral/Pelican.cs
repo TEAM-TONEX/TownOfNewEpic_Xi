@@ -122,7 +122,7 @@ public sealed class Pelican : RoleBase, INeutralKiller
         Logger.Info($"{killer.GetRealName()} 吞掉了 {target.GetRealName()}", "Pelican.OnCheckMurderAsKiller");
         return;
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo reportTarget)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo reportTarget)
     {
         foreach (var id in EatenPlayers)
         {

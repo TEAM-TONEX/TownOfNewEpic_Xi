@@ -10,40 +10,44 @@ using static TONEX.Translator;
 using Object = UnityEngine.Object;
 using System.IO;
 
+
 namespace TONEX.Modules.SoundInterface;
 
 public static class SoundPanel
 {
     public static SpriteRenderer CustomBackground { get; private set; }
-    public static GameObject Slider { get; private set; }
-    public static Dictionary<string, GameObject> Items { get; private set; }
+    public static List<GameObject> Items { get; private set; }
+    public static OptionsMenuBehaviour OptionsMenuBehaviourNow { get; private set; }
+
+    public static int currentPage { get; private set; } = 1;
+    public static int itemsPerPage { get; private set; } = 7;
+    public static int totalPageCount { get; private set; } = (AllMusics.Count + itemsPerPage - 1) / itemsPerPage;
 
     private static int numItems = 0;
+    public static int PlayMode = 0;
+    public static ToggleButtonBehaviour ChangePlayMode { get; private set; }
     public static void Hide()
     {
         if (CustomBackground != null)
             CustomBackground?.gameObject?.SetActive(false);
-        if (!GameStates.IsNotJoined)
-        {
-            Utils.LocationLocked = false;
-            PlayerControl.LocalPlayer.EnableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, true);
-        }
     }
     public static void Init(OptionsMenuBehaviour optionsMenuBehaviour)
     {
-        Logger.Info("a", "test");
-        //PlayMode = OptPlayMode;
         var mouseMoveToggle = optionsMenuBehaviour.DisableMouseMovement;
 
+            OptionsMenuBehaviourNow = optionsMenuBehaviour;
         if (CustomBackground == null)
         {
+             totalPageCount= (AllMusics.Count + itemsPerPage - 1) / itemsPerPage;
+            currentPage = 1;
             numItems = 0;
+            PlayMode = 0;
             CustomBackground = Object.Instantiate(optionsMenuBehaviour.Background, optionsMenuBehaviour.transform);
             CustomBackground.name = "Name Tag Panel Background";
             CustomBackground.transform.localScale = new(0.9f, 0.9f, 1f);
             CustomBackground.transform.localPosition += Vector3.back * 18;
             CustomBackground.gameObject.SetActive(false);
-            Logger.Info("b", "test");
+
             var closeButton = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
             closeButton.transform.localPosition = new(1.3f, -2.43f, -16f);
             closeButton.name = "Close";
@@ -55,37 +59,11 @@ public static class SoundPanel
             {
                 
                 CustomBackground.gameObject.SetActive(false);
-                if (!GameStates.IsNotJoined)
-                {
-                    Utils.LocationLocked = false;
-                    PlayerControl.LocalPlayer.EnableAction(PlayerControl.LocalPlayer, ExtendedPlayerControl.PlayerActionType.Move, true);
-                }
             }));
-            /*var changeButton = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
-            changeButton.transform.localPosition = new(0.65f, -1.88f, -15f);
-            var changeButtonScale  = changeButton.transform.localScale;
-            changeButtonScale.x *= 0.4f;
-            changeButton.transform.localScale = changeButtonScale;
-
-            changeButton.name = "ChangeButton";
-            changeButton.Text.text = GetString($"PlayMode{PlayMode}");
-            changeButton.Background.color = Color.white;
-            var changePassiveButton = changeButton.GetComponent<PassiveButton>();
-            changePassiveButton.OnClick = new();
-            changePassiveButton.OnClick.AddListener(new Action(() =>
-            {
-                if (PlayMode != 1)
-                    OptPlayMode = 1;
-                else
-                    OptPlayMode = 0;
-                PlayMode = OptPlayMode;
-                Init(optionsMenuBehaviour);
-            }));*/
 
             var stopButton = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
-            stopButton.transform.localPosition = new(1.95f, -1.88f, -16f);
+            stopButton.transform.localPosition = new(1.3f, -1.88f, -16f);
             var stopButtonScale = stopButton.transform.localScale;
-            stopButtonScale.x *= 0.4f;
             stopButton.transform.localScale = stopButtonScale;
             stopButton.name = "stopButton";
             stopButton.Text.text = GetString("Stop");
@@ -96,104 +74,172 @@ public static class SoundPanel
             {
                                 CustomSoundsManager.StopPlay();
             }));
-            Logger.Info("c", "test");
-            if (GameStates.IsNotJoined)
-            {
-                var helpText = Object.Instantiate(CustomPopup.InfoTMP.gameObject, CustomBackground.transform);
-                helpText.name = "Help Text";
-                helpText.transform.localPosition = new(-1.25f, -2.15f, -15f);
-                helpText.transform.localScale = new(1f, 1f, 1f);
-                Logger.Info("c0/2", "test");
-                var helpTextTMP = helpText.GetComponent<TextMeshPro>();
-                Logger.Info("c1/2", "test");
-                helpTextTMP.text = GetString("CustomSoundHelp");
-                helpText.gameObject.GetComponent<RectTransform>().sizeDelta = new(2.45f, 1f);
-                Logger.Info("c2/2", "test");//*/
-            }
-            Logger.Info("d", "test");
-            var sliderTemplate = AccountManager.Instance.transform.FindChild("MainSignInWindow/SignIn/AccountsMenu/Accounts/Slider").gameObject;
-            if (sliderTemplate != null && Slider == null)
-            {
-                Slider = Object.Instantiate(sliderTemplate, CustomBackground.transform);
-                Slider.name = "Name Tags Slider";
-                Slider.transform.localPosition = new Vector3(0f, 0.5f, -11f);
-                Slider.transform.localScale = new Vector3(1f, 1f, 1f);
-                Slider.GetComponent<SpriteRenderer>().size = new(5f, 4f);
-                var scroller = Slider.GetComponent<Scroller>();
-                scroller.ScrollWheelSpeed = 0.3f;
-                var mask = Slider.transform.FindChild("Mask");
-                mask.transform.localScale = new Vector3(4.9f, 3.92f, 1f);
-            }
-            Logger.Info("e", "test");
+
+            AddPageNavigationButton(optionsMenuBehaviour);
+
+            var helpText = Object.Instantiate(optionsMenuBehaviour.DisableMouseMovement.Text, CustomBackground.transform);
+            helpText.name = "Help Text";
+            helpText.transform.localPosition = new(-1.25f, -2.15f, -15f);
+            helpText.transform.localScale = new(1f, 1f, 1f);
+            var helpTextTMP = helpText.GetComponent<TextMeshPro>();
+            helpTextTMP.text = GetString("CustomSoundHelp");
+            helpText.gameObject.GetComponent<RectTransform>().sizeDelta = new(2.45f, 1f);
+
+            AddChangePlayModeButton(optionsMenuBehaviour);
         }
 
         ReloadTag(null);
         RefreshTagList();
     }
+    static void AddPageNavigationButton(OptionsMenuBehaviour optionsMenuBehaviour)
+    {
+        var mouseMoveToggle = optionsMenuBehaviour.DisableMouseMovement;
+        var nextPageButton = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
+        nextPageButton.transform.localPosition = new Vector3(1.3f, -1.33f, -16f);
+        var nextPageButtonScale = nextPageButton.transform.localScale;
+        nextPageButton.transform.localScale = nextPageButtonScale;
+        nextPageButton.name = "NextPageButton";
+        nextPageButton.Text.text = GetString("NextPage");
+        nextPageButton.Background.color = Palette.DisabledGrey;
+
+        var nextPagePassiveButton = nextPageButton.GetComponent<PassiveButton>();
+        nextPagePassiveButton.OnClick = new();
+        nextPagePassiveButton.OnClick.AddListener(new Action(() =>
+        {
+            
+            currentPage++; // 增加到下一页
+            Logger.Info($"cp:{currentPage}", "test");
+            Logger.Info($"tp:{totalPageCount}", "test");
+            // 判断是否到达最后一页，如果是则回到第一页
+            if (currentPage > totalPageCount)
+            {
+                currentPage = 1;
+            }
+
+            // 刷新标签列表
+               RefreshTagList() ;
+        }));
+    }
+    static void AddChangePlayModeButton(OptionsMenuBehaviour optionsMenuBehaviour)
+    {
+        //var mouseMoveToggle = optionsMenuBehaviour.DisableMouseMovement;
+        //ChangePlayMode = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
+        //ChangePlayMode.transform.localPosition = new Vector3(-1.3f, -1.33f, -16f);
+        //ChangePlayMode.name = "ChangePlayMode";
+        //ChangePlayMode.Text.text = GetString($"PlayMode{PlayMode}");
+        //ChangePlayMode.Background.color = Palette.DisabledGrey;
+
+        //var nextPagePassiveButton = ChangePlayMode.GetComponent<PassiveButton>();
+        //nextPagePassiveButton.OnClick = new();
+        //nextPagePassiveButton.OnClick.AddListener(new Action(() =>
+        //{
+
+        //    PlayMode++;
+        //    if (PlayMode > 3)
+        //    {
+        //        PlayMode = 0;
+        //    }
+
+        //    Object.Destroy(ChangePlayMode.gameObject);
+        //    AddChangePlayModeButton(OptionsMenuBehaviourNow);
+        //}));
+    }
     public static void RefreshTagList()
     {
-        var scroller = Slider.GetComponent<Scroller>();
-        scroller.Inner.gameObject.ForEachChild((Action<GameObject>)(DestroyObj));
-        static void DestroyObj(GameObject obj)
-        {
-            if (obj.name.StartsWith("AccountButton")) Object.Destroy(obj);
-        }
-
-        var numberSetter = AccountManager.Instance.transform.FindChild("DOBEnterScreen/EnterAgePage/MonthMenu/Months").GetComponent<NumberSetter>();
-        var buttonPrefab = numberSetter.ButtonPrefab.gameObject;
-
-        Items?.Values?.Do(Object.Destroy);
+        totalPageCount = (AllMusics.Count + itemsPerPage - 1) / itemsPerPage;
+        Items?.Do(Object.Destroy);
         Items = new();
+        numItems = 0;
+        var optionsMenuBehaviour = OptionsMenuBehaviourNow;
+        Logger.Info($"cp:{currentPage}", "test");
 
-        foreach (var soundp in AllMusic)
+        
+        int startIndex = (currentPage - 1) * itemsPerPage; // 当前页的起始索引
+
+        // 遍历从起始索引开始的音频，直到达到本页数量上限或 AllMusics 没有更多音乐
+        int count = 0;
+        foreach (var soundp in AllMusics.Skip(startIndex))
         {
-            
-                var sound = soundp.Key;
-                numItems++;
-                var button = Object.Instantiate(buttonPrefab, scroller.Inner);
-                button.transform.localPosition = new(-1f, 1.6f - 0.6f * numItems, -11.5f);
-                button.transform.localScale = new(1.2f, 1.2f, 1.2f);
-                button.name = "Name Tag Item For " + sound;
-                Object.Destroy(button.GetComponent<UIScrollbarHelper>());
-                Object.Destroy(button.GetComponent<NumberButton>());
-                button.transform.GetChild(0).GetComponent<TextMeshPro>().text = AllTONEX.ContainsKey(sound) ? GetString($"Mus.{sound}") : sound;
-                var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
-            //GetPostfix(path);
-            var renderer = button.GetComponent<SpriteRenderer>();
-                var rollover = button.GetComponent<ButtonRolloverHandler>();
-                if  (File.Exists(path))
-                {
-                    renderer.color = rollover.OutColor = TONEXMusic.ContainsKey(sound) ? Color.cyan : Color.green;
-                }
-                else
-                {
-                    renderer.color = rollover.OutColor = Palette.DisabledGrey;
-                }
-            var passiveButton = button.GetComponent<PassiveButton>();
-            passiveButton.OnClick = new();
-            passiveButton.OnClick.AddListener(new Action(() =>
+            if (count >= itemsPerPage)
             {
+                break; // 已达到本页数量上限，退出循环
+            }
 
-                    if (File.Exists(path))
-                    {
-                        Logger.Info($"Play {sound}:{path}", "SoundsPanel");
-                        CustomSoundsManager.Play(sound,1);
-                     //   CustomSoundsManager.StartPlayLoop(path);
-                    }
+            var sound = soundp.Key;
+            var name = AllTONEX.ContainsKey(sound) ? GetString($"Mus.{sound}") : sound;
+            var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
+            RefreshTags(optionsMenuBehaviour, name, sound, path); 
 
-                }));
-                var previewText = Object.Instantiate(button.transform.GetChild(0).GetComponent<TextMeshPro>(), button.transform);
-                previewText.transform.SetLocalX(1.9f);
-                previewText.fontSize = 1f;
-                string preview = GetString("NoFound");
-                if (File.Exists(path))
-                    preview = GetString("CanPlay");
-                previewText.text = preview;
-                Items.Add(sound, button);
-            
+            count++;
+           
         }
-        scroller.SetYBoundsMin(0f);
-        scroller.SetYBoundsMax(0.6f * numItems);
+        
+    }
+    public static void RefreshTags(OptionsMenuBehaviour optionsMenuBehaviour, string name, string sound, string path)
+    {
+       
+        try
+        {
+            var mouseMoveToggle = optionsMenuBehaviour.DisableMouseMovement;
+
+            // 计算标签在当前页面中的位置
+            float offsetX = numItems % 2 == 0 ? -1.3f : 1.3f;
+            float offsetY = 2.2f - (0.5f * (numItems / 2));
+            float offsetZ = -4f;
+
+            // 创建标签按钮
+            var ToggleButton = Object.Instantiate(mouseMoveToggle, CustomBackground.transform);
+            ToggleButton.transform.localPosition = new Vector3(offsetX, offsetY, offsetZ);
+            numItems++; // 增加当前页面的标签数量
+
+            ToggleButton.name = name;
+            ToggleButton.Text.text = name;
+            ToggleButton.Background.color = Color.white;
+
+            var passiveButton = ToggleButton.GetComponent<PassiveButton>();
+            passiveButton.OnClick = new();
+            passiveButton.OnClick.AddListener(new Action( () =>
+            {
+                Logger.Info($"Play {sound}:{path}", "SoundsPanel");
+                if (File.Exists(path))
+                {
+                    if (PlayMode == 0)
+                        CustomSoundsManager.Play(sound, 0, true);
+                    else if (PlayMode == 1)
+                        CustomSoundsManager.Play(sound, 1, true);
+                    else if (PlayMode == 2 || PlayMode == 3)
+                    {
+                        CustomSoundsManager.Play(sound, 2, true);
+
+                    }
+                }
+            }));
+
+            ToggleButton.Background.color = File.Exists(path) ?
+                (TONEXMusic.ContainsKey(sound) ? Color.cyan : Color.green) :
+                Palette.DisabledGrey;
+
+
+            offsetX = numItems % 2 == 0 ? -1.3f : 1.3f;
+            offsetY = 2.2f - (0.5f * (numItems / 2));
+            offsetZ = -6f;
+
+            var previewText = Object.Instantiate(optionsMenuBehaviour.DisableMouseMovement.Text, CustomBackground.transform);
+            previewText.transform.localPosition = new Vector3(offsetX, offsetY, offsetZ);
+            previewText.fontSize = ToggleButton.Text.fontSize;
+
+
+            string preview = File.Exists(path) ? GetString("CanPlay") : GetString("NoFound");
+            previewText.text = preview;
+            Items.Add(ToggleButton.gameObject);
+            Items.Add(previewText.gameObject);
+        }
+        finally
+        {
+            // 在 finally 块中增加当前页面的标签数量
+            numItems++;
+        }
+
     }
 
 }

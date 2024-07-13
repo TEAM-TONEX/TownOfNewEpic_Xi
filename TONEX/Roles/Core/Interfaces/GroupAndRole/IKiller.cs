@@ -30,18 +30,20 @@ public interface IKiller
     /// <returns>击杀冷却时间（秒）</returns>
     public float CalculateKillCooldown() => CanUseKillButton() ? Options.DefaultKillCooldown : 255f;
     /// <summary>
-    /// サボタージュボタンを使えるかどうか
+    /// 是否可以使用破坏按钮
     /// </summary>
-    /// <returns>trueを返した場合，サボタージュボタンを使える</returns>
+    /// <returns>如果返回true，则可以使用破坏按钮</returns>
     public bool CanUseSabotageButton();
+
     /// <summary>
-    /// ベントボタンを使えるかどうか
-    /// デフォルトでは使用可能
+    /// 是否可以使用内鬼通风口按钮
+    /// 默认情况下可使用
     /// </summary>
-    /// <returns>trueを返した場合，ベントボタンを使える</returns>
+    /// <returns>如果返回true，则可以使用内鬼通风口按钮</returns>
     public bool CanUseImpostorVentButton() => true;
 
-    public bool CanUseShapeShiftButton() => true;
+
+    //public bool CanUseShapeShiftButton() => true;
 
     /// <summary>
     /// CheckMurder 作为击杀者时的处理函数<br/>
@@ -53,7 +55,7 @@ public interface IKiller
     /// public bool CanUseImpostorVentButton() => true;
     public bool OnCheckMurderAsKiller(MurderInfo info) => true;
 
-    public void OnCheckMurderAfterCheck(MurderInfo info) { }
+    //public void OnCheckMurderAfterCheck(MurderInfo info) { }
 
     /// <summary>
     /// MurderPlayer 作为击杀者时的处理函数

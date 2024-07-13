@@ -135,6 +135,7 @@ public class RemoveDisableDevicesPatch
 {
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         if (!Options.DisableDevices.GetBool()) return;
         UpdateDisableDevices();
     }

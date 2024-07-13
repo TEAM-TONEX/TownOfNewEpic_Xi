@@ -162,21 +162,26 @@ public sealed class Jackal : RoleBase, INeutralKiller
             target.RpcSetCustomRole(CustomRoles.Wolfmate);
         else
         {
-            if (target.CanUseKillButton())
-                target.RpcSetCustomRole(CustomRoles.Sidekick);
-            else
+            if (!Options.IsAllCrew)
             {
-                
-                target.RpcSetCustomRole(CustomRoles.Whoops);
-                var taskState = target.GetPlayerTaskState();
-                taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();
-                if (AmongUsClient.Instance.AmHost)
+                if (target.CanUseKillButton())
+                    target.RpcSetCustomRole(CustomRoles.Sidekick);
+                else
                 {
-                    GameData.Instance.RpcSetTasks(target.PlayerId, Array.Empty<byte>());
-                    target.SyncSettings();
-                    Utils.NotifyRoles();
+
+                    target.RpcSetCustomRole(CustomRoles.Whoops);
+                    var taskState = target.GetPlayerTaskState();
+                    taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();
+                    if (AmongUsClient.Instance.AmHost)
+                    {
+                        Player.Data.RpcSetTasks(Array.Empty<byte>());
+                        target.SyncSettings();
+                        Utils.NotifyRoles();
+                    }
                 }
             }
+            else
+                target.RpcSetCustomRole(CustomRoles.Sidekick);
         }
        
 

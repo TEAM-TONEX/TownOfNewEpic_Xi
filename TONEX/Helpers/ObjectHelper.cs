@@ -6,8 +6,9 @@ namespace TONEX;
 public static class ObjectHelper
 {
     /// <summary>
-    /// オブジェクトの<see cref="TextTranslatorTMP"/>コンポーネントを破棄します
+    /// 销毁对象的<see cref="TextTranslatorTMP"/>组件
     /// </summary>
+
     public static void DestroyTranslator(this GameObject obj)
     {
         if (obj == null) return;
@@ -16,7 +17,7 @@ public static class ObjectHelper
         translator?.Do(Object.Destroy);
     }
     /// <summary>
-    /// オブジェクトの<see cref="TextTranslatorTMP"/>コンポーネントを破棄します
+    /// 销毁对象的 <see cref="TextTranslatorTMP"/> 组件
     /// </summary>
     public static void DestroyTranslator(this MonoBehaviour obj) => obj?.gameObject?.DestroyTranslator();
 }

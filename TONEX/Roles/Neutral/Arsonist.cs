@@ -130,7 +130,7 @@ SetDousedPlayer,
         }
         return false;
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         TargetInfo = null;
     }
@@ -183,7 +183,7 @@ SetDousedPlayer,
             }
         }
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (GameStates.IsInGame && IsDouseDone(Player))
         {
@@ -206,30 +206,6 @@ SetDousedPlayer,
             return true;
         }
         return false;
-    }
-    public override void OnUsePet()
-    {
-                if (GameStates.IsInGame && IsDouseDone(Player))
-        {
-            foreach (var pc in Main.AllAlivePlayerControls)
-            {
-                if (pc.PlayerId != Player.PlayerId)
-                {
-                    //生存者は焼殺
-                    pc.SetRealKiller(Player);
-                    pc.RpcMurderPlayer(pc);
-                    var state = PlayerState.GetByPlayerId(pc.PlayerId);
-                    state.DeathReason = CustomDeathReason.Torched;
-                    state.SetDead();
-                }
-                else
-                    RPC.PlaySoundRPC(pc.PlayerId, Sounds.KillSound);
-            }
-            CustomWinnerHolder.ShiftWinnerAndSetWinner(CustomWinner.Arsonist); //焼殺で勝利した人も勝利させる
-            CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
-            return;
-        }
-        return;
     }
     public bool OverrideKillButtonText(out string text)
     {

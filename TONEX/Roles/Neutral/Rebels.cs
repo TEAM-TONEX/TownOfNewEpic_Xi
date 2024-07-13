@@ -37,7 +37,7 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
         RebelsSkillDuration
     }
     private long ProtectStartTime;
-    private long UsePetCooldown;
+    
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.RebelsSkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
@@ -48,12 +48,11 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
     public override void Add()
     {
         ProtectStartTime = -1;
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
     }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown = OptionSkillCooldown.GetFloat();
@@ -66,62 +65,27 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
     }
     public void CheckWin(ref CustomWinner WinnerTeam, ref HashSet<byte> WinnerIds)
     {
-        if (Player.IsAlive() && WinnerTeam != CustomWinner.Rebels && ProtectStartTime != -1)
+        if (Player.IsAlive() && WinnerTeam != CustomWinner.Rebels && CheckForOnGuard(0))
         {
             CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Rebels);
             CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Rebels);
         }
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
-            
-            ProtectStartTime = Utils.GetTimeStamp();
+
+        ResetCountdown(0);
             if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
-            Player.Notify(string.Format(GetString("RebelsOnGuard"),2f));
+        Player.RPCPlayCustomSound("Gunload");
+        Player.Notify(string.Format(GetString("RebelsOnGuard"),2f));
             return true;
-    }
-    public override void OnUsePet()
-    {
-        if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionSkillCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
-            ProtectStartTime = Utils.GetTimeStamp();
-            if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
-            Player.RPCPlayCustomSound("Gunload");
-            UsePetCooldown = Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("RebelsOnGuard"), 2f));
     }
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("RebelsVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() && ProtectStartTime + (long)OptionSkillDuration.GetFloat() < now && ProtectStartTime != -1)
-        {
-            ProtectStartTime = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("RebelsOffGuard")));
-        }
-        if (Player.IsAlive() && UsePetCooldown + (long)OptionSkillCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
-    public override void OnStartMeeting()
-    {
-        ProtectStartTime = -1;
-    }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
     }

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using TONEX.Attributes;
 using UnityEngine;
+using Il2CppSystem.IO;
 
 namespace TONEX;
 
@@ -15,21 +16,11 @@ public static class ServerAddManager
     [PluginModuleInitializer]
     public static void Init()
     {
+        Logger.Info("0", "gctest");
         if (!ModUpdater.isChecked && ModUpdater.firstStart) ModUpdater.BeforeCheck();
-        if (!File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/Birthday.wav"))
-        {
-            var task = MusicDownloader.StartDownload("Birthday");
-            task.ContinueWith(t =>
-            {
-                if (!MusicDownloader.succeed)
-                {
-                    Logger.Error("DownloadFailed", "DownloadSound");
-                }
-                new LateTask(() =>
-                {
-                }, 0.1f);
-            });
-        }
+        Logger.Info("2", "gctest");
+
+        
         serverManager.AvailableRegions = ServerManager.DefaultRegions;
         List<IRegionInfo> regionInfos = new();
         regionInfos.Add(CreateHttp("154.21.201.164", "XtremeWave[HongKong]", 22023, false));
@@ -43,7 +34,7 @@ public static class ServerAddManager
             regionInfos.Add(CreateHttp("124.222.148.195", "小猫私服", 22000, false));
             regionInfos.Add(CreateHttp("au.3q.fan", "小猫354[北京]", 22020, false));
             regionInfos.Add(CreateHttp("45yun.cn", "小猫服[北京]", 22000, false));
-            regionInfos.Add(CreateHttp("au.fangkuai.fun", "方块服[北京]", 443, true));
+            regionInfos.Add(CreateHttp("player.fangkuai.fun", "方块服[北京]", 22024, true));
             
         }
         regionInfos.Add(CreateHttp("au-as.duikbo.at", "Modded Asia (MAS)", 443, true));
@@ -75,7 +66,7 @@ public static class ServerAddManager
             "方块服[北京]" => "方块[北京]",
             "Nikocat233(CN)" => "Niko(CN)",
             "Nikocat233(US)" => "Niko(US)",
-            "XtremeWave[HongKong]" => "XW[HK]",
+            "XtremeWave[HongKong]" =>  "XW[HK]",
 
             _ => serverName,
         };
@@ -88,6 +79,7 @@ public static class ServerAddManager
                 "Europe" => "欧服",
                 "North America" => "北美服",
                 "NA" => "北美服",
+                "XW[HK]" => "XW[香港]",
                 _ => name,
             };
         };
@@ -111,7 +103,7 @@ public static class ServerAddManager
 
             _ => new(255, 255, 255, 255),
         };
-
+        Cloud.ServerName = name;
         PingTrackerUpdatePatch.ServerName = Utils.ColorString(color, name);
     }
 

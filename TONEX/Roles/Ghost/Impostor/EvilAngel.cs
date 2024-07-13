@@ -5,14 +5,14 @@ using MS.Internal.Xml.XPath;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 
 namespace TONEX.Roles.Ghost.Impostor;
-public sealed class EvilAngle : RoleBase, IImpostor
+public sealed class EvilAngel : RoleBase, IImpostor
 {
 
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(EvilAngle),
-            player => new EvilAngle(player),
-            CustomRoles.EvilAngle,
+            typeof(EvilAngel),
+            player => new EvilAngel(player),
+            CustomRoles.EvilAngel,
             () => RoleTypes.GuardianAngel,
             CustomRoleTypes.Impostor,
             94_1_5_0100,
@@ -20,7 +20,7 @@ public sealed class EvilAngle : RoleBase, IImpostor
             "eg|邪恶守护",
             ctop: true
         );
-    public EvilAngle(PlayerControl player)
+    public EvilAngel(PlayerControl player)
     : base(
         RoleInfo,
         player
@@ -30,7 +30,7 @@ public sealed class EvilAngle : RoleBase, IImpostor
     }
     public static bool SetYet;
     public static PlayerControl SetPlayer;
-    public static OptionItem EnableEvilAngle;
+    public static OptionItem EnableEvilAngel;
     static OptionItem OptionProbability;
     static OptionItem OptionKiilCooldown;
     static OptionItem OptionTryMax;
@@ -39,27 +39,39 @@ public sealed class EvilAngle : RoleBase, IImpostor
     {
         SetYet = false;
     }
+    public static bool CheckForSet(PlayerControl pc)
+    {
+        if (SetYet || !EnableEvilAngel.GetBool()) return false;
+
+        SetYet = true;
+
+        pc.Notify(GetString("Surprise"));
+        pc.RpcSetRole(RoleTypes.GuardianAngel);
+        pc.RpcSetCustomRole(CustomRoles.EvilAngel);
+
+        return true;
+    }
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref UnityEngine.Color roleColor, ref string roleText)
     => enabled |= true;
     public static void SetupOptionItem()
     {
-        EnableEvilAngle = BooleanOptionItem.Create(94_1_5_0110, "EnableEvilAngle", false, TabGroup.ImpostorRoles, false)
+        EnableEvilAngel = BooleanOptionItem.Create(94_1_5_0110, "EnableEvilAngel", false, TabGroup.ImpostorRoles, false)
             .SetHeader(true)
             .SetGameMode(CustomGameMode.Standard);
         OptionProbability = IntegerOptionItem.Create(94_1_5_0111, "KillProbability", new(0, 100, 5), 40, TabGroup.ImpostorRoles, false)
             .SetValueFormat(OptionFormat.Percent)
-            .SetParent(EnableEvilAngle);
+            .SetParent(EnableEvilAngel);
         OptionKiilCooldown = FloatOptionItem.Create(94_1_5_0112,"KillCooldown", new(0, 100, 5), 40, TabGroup.ImpostorRoles, false)
             .SetValueFormat(OptionFormat.Seconds)
-            .SetParent(EnableEvilAngle);
+            .SetParent(EnableEvilAngel);
         OptionTryMax = IntegerOptionItem.Create(94_1_5_0113, "OptionTryMax", new(0, 100, 5), 40, TabGroup.ImpostorRoles, false)
             .SetValueFormat(OptionFormat.Times)
-            .SetParent(EnableEvilAngle);
+            .SetParent(EnableEvilAngel);
     }
     public override bool CanUseAbilityButton() => true;
     public override bool GetAbilityButtonText(out string text)
     {
-        text = GetString("KillButtonText");
+        text = GetString(StringNames.KillLabel);
         return true;
     }
     public override bool GetAbilityButtonSprite(out string buttonName)
@@ -73,7 +85,7 @@ public sealed class EvilAngle : RoleBase, IImpostor
         Maxi --;
         if (IRandom.Instance.Next(0, 100) < OptionProbability.GetInt())
         {
-            target.Notify(string.Format(GetString("KillForEvilAngle")));
+            target.Notify(string.Format(GetString("KillForEvilAngel")));
             Player.RpcTeleport(target.GetTruePosition());
             RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
             Player.RpcMurderPlayerV2(target);

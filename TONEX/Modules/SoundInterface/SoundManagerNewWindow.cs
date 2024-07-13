@@ -82,7 +82,7 @@ public static class SoundManagerNewWindow
             var code = EnterBox.GetComponent<TextBoxTMP>().text;
             var reg = new Regex(@"^(\s{1}|)$");
 
-            if (AllMusic.ContainsKey(code))
+            if (AllMusics.ContainsKey(code))
             {
                 ConfirmButton.SetActive(false);
                 colorInfoTmp.text = GetString("SoundManagerAlreadyExist");

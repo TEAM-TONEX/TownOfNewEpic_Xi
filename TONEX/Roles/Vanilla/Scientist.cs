@@ -6,16 +6,36 @@ namespace TONEX.Roles.Vanilla;
 public sealed class Scientist : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
-        SimpleRoleInfo.CreateForVanilla(
-            typeof(Scientist),
-            player => new Scientist(player),
-            RoleTypes.Scientist,
-            "#8cffff"
-        );
+        SimpleRoleInfo.Create(
+           typeof(Scientist),
+           player => new Scientist(player),
+           CustomRoles.Scientist,
+           () => RoleTypes.Scientist,
+           CustomRoleTypes.Crewmate,
+           0030,
+           SetupOptionItem,
+           "sci",
+           "#F8FF8C"
+
+       );
     public Scientist(PlayerControl player)
     : base(
         RoleInfo,
         player
     )
     { }
+    static OptionItem ScientistCooldown;
+    static OptionItem ScientistBatteryCharge;
+    private static void SetupOptionItem()
+    {
+        ScientistCooldown = IntegerOptionItem.Create(RoleInfo, 5, StringNames.ScientistCooldown, new(0, 60, 5), 10, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        ScientistBatteryCharge = IntegerOptionItem.Create(RoleInfo, 6, StringNames.ScientistBatteryCharge, new(0, 30, 5), 5, false)
+            .SetValueFormat(OptionFormat.Seconds);
+    }
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.ScientistCooldown = ScientistCooldown.GetInt();
+        AURoleOptions.ScientistBatteryCharge = ScientistBatteryCharge.GetInt();
+    }
 }
