@@ -263,8 +263,7 @@ internal class SelectRolesPatch
 
     public static void Postfix()
     {
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (Main.AssistivePluginMode.Value) return;
+        if (!AmongUsClient.Instance.AmHost || Main.AssistivePluginMode.Value) return;
         try
         {
             List<(PlayerControl, RoleTypes)> newList = new();
@@ -319,27 +318,26 @@ internal class SelectRolesPatch
                 Logger.Info($"7-3.5", "test");
             }
             Logger.Info($"7-4", "test");
-            if ((CustomRoles.Lovers.IsEnable()/* || CustomRoles.Admirer.IsEnable() || CustomRoles.Akujo.IsEnable() || CustomRoles.Cupid.IsEnable()*/) && CustomRoles.Hater.IsEnable()) Lovers.AssignLoversRoles();
-            else if (CustomRoles.Lovers.IsEnable()) Lovers.AssignLoversRoles();
+            if (CustomRoles.Lovers.IsEnable()) Lovers.AssignLoversRoles();
             if (CustomRoles.Madmate.IsEnable() && Madmate.MadmateSpawnMode.GetInt() == 0) Madmate.AssignMadmateRoles();
             AddOnsAssignData.AssignAddOnsFromList();
-            Logger.Info($"7-5", "test");
+
             foreach (var pair in PlayerState.AllPlayerStates)
             {
                 ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);
 
                 foreach (var subRole in pair.Value.SubRoles)
                     ExtendedPlayerControl.RpcSetCustomRole(pair.Key, subRole);
-                Logger.Info($"7-6", "test");
             }
-            Logger.Info($"7-7", "test");
-            CustomRoleManager.CreateInstance();
+          
+            CustomRoleManager.CreateInstance
+                ();
             foreach (var pc in Main.AllPlayerControls)
             {
                 HudManager.Instance.SetHudActive(true);
                 pc.ResetKillCooldown();
             }
-            Logger.Info($"7-8", "test");
+            
             RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Shapeshifter };
             foreach (var roleTypes in RoleTypesList)
             {
@@ -370,9 +368,8 @@ internal class SelectRolesPatch
                     new PlayerGameOptionsSender(pc)
                 );
             }
-            Logger.Info($"7-10", "test");
             /*
-            //インポスターのゴーストロールがクルーになるバグ対策
+            //修复幽灵角色成为船员的bug
             foreach (var pc in PlayerControl.AllPlayerControls)
             {
                 if (pc.Data.Role.IsImpostor || Main.ResetCamPlayerList.Contains(pc.PlayerId))
@@ -382,9 +379,7 @@ internal class SelectRolesPatch
             }
             */
             Utils.CountAlivePlayers(true);
-            Logger.Info($"7-11", "test");
             Utils.SyncAllSettings();
-            Logger.Info($"7-12", "test");
             SetColorPatch.IsAntiGlitchDisabled = false;
         }
         catch (Exception ex)
