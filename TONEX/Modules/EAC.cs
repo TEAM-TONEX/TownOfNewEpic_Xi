@@ -250,10 +250,23 @@ internal class EAC
                 Report(pc, "AUM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
-            case unchecked((byte)520)://YAC
+            case 101:
+                Report(pc, "AUM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
+            //Slok你个歌姬
+            case unchecked((byte)520)://YuMenu
                 Report(pc, "YM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
-                return false;
+                return true;
+            case 168:
+                Report(pc, "SM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
+            case unchecked((byte)420):
+                Report(pc, "SM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
         }
         return true;
     }

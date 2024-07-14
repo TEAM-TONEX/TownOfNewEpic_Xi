@@ -2278,7 +2278,7 @@ GameOver: "游戏结束"
 Website: "模组官网"
 NextPage: "下一页"
 PreviousPage: "上一页"
-EAC.CheatDetected.EAC: "开挂（使用AUM）"
+EAC.CheatDetected.EAC: "开挂（使用AUM、YuMenu、SM等）"
 
 FakeTask: "假任务："
 PVP.ATK: "攻击力"
