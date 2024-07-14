@@ -149,41 +149,42 @@ class HudManagerPatch
                 }
                 else
                 {
-                    __instance.ReportButton.Hide();
-                    __instance.ImpostorVentButton.Hide();
-                    __instance.KillButton.Hide();
-                    __instance.PetButton.Hide();
+                    __instance.ReportButton.ToggleVisible(false);
+                    __instance.ImpostorVentButton.ToggleVisible(false);
+                    __instance.AbilityButton.ToggleVisible(false);
+                    __instance.KillButton.ToggleVisible(false);
+                    __instance.PetButton.ToggleVisible(false);
                     if (LowerInfoText != null) LowerInfoText.enabled = false;
                 }
             }
             else
             {
-                __instance.ReportButton.Hide();
-                __instance.ImpostorVentButton.Hide();
-                __instance.KillButton.Hide();
+                __instance.ReportButton.ToggleVisible(false);
+                __instance.ImpostorVentButton.ToggleVisible(false);
+                __instance.KillButton.ToggleVisible(false);
                 if (GameStates.IsInTask)
                 {
                     if (player.Is(CustomRoles.EvilAngel))
                     {
                         __instance.AbilityButton.OverrideText(GetString(StringNames.KillLabel));
-                        __instance.AbilityButton.Show();
+                        __instance.AbilityButton.ToggleVisible(true);
                     }
                     else if (player.Is(CustomRoles.GuardianAngel))
                     {
                         __instance.AbilityButton.OverrideText(GetString(StringNames.ProtectAbility));
-                        __instance.AbilityButton.Show();
+                        __instance.AbilityButton.ToggleVisible(true);
                     }
                     else if (player.Data.Role.Role is RoleTypes.GuardianAngel)
                     {
-                        __instance.AbilityButton.Hide();
+                        __instance.AbilityButton.ToggleVisible(false);
                     }
                     else
                     {
                         __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
-                        __instance.AbilityButton.Show();
+                        __instance.AbilityButton.ToggleVisible(true);
                     }
                 }
-                __instance.PetButton.Hide();
+                __instance.PetButton.ToggleVisible(false);
                 if (LowerInfoText != null) LowerInfoText.enabled = false;
             }
         }

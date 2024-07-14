@@ -62,8 +62,8 @@ public static class CustomSoundsManager
         switch (playmode)
         {
             case 0:
-                //StartPlayOnce(path);
-                //break;
+                StartPlayOnce(path);
+                break;
             case 1:
                 StartPlayInAmongUs(path,sound);
                 break;
