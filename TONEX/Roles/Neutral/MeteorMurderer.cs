@@ -32,10 +32,10 @@ public sealed class MeteorMurderer : RoleBase, INeutralKiller
             true,
             countType: CountTypes.MeteorMurderer,
             assignCountRule: new(1, 1, 1)
-#if RELEASE
-,
-ctop:true
-#endif
+//#if RELEASE
+//,
+//ctop:true
+//#endif
         );
     public MeteorMurderer(PlayerControl player)
     : base(

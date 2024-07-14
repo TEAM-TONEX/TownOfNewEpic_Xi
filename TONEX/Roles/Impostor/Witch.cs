@@ -243,4 +243,6 @@ public sealed class Witch : RoleBase, IImpostor
         }
         return;
     }
+    public override bool EnablePetSkill() => true;
+
 }

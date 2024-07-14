@@ -157,6 +157,7 @@ Scout: "侦察兵"
 InjusticeSpirit: "冤魂"
 Amber: "琥珀"
 Saint: "圣教徒"
+Telegrapher: "译电员"
 
 ## 中立阵营 / Neutrals
 Jester: "小丑"
@@ -336,6 +337,9 @@ WinnerRoleText.Specterraid: "全都是假象！"
 WinnerRoleText.Yandere: "你永远是我的宝宝"
 WinnerRoleText.Alternate: "无事值得冒险"
 WinnerRoleText.SplitPersonality: "我是你们滴一员，对吧？嘿嘿嘿嘿"
+WinnerRoleText.Infector: "Brain~"
+WinnerRoleText.Survivor: "安全了，暂时..."
+WinnerRoleText.ColdPotato: "还是我技高一筹)))))"
 
 ## 胜利界面职业名 / Role Name for End Screen
 WinnerRoleText.InEnd.Impostor: "伪装者阵营"
@@ -494,6 +498,8 @@ ScoutInfo: "侦查骑士登场！"
 InjusticeSpiritInfo: "冤屈化作动力！"
 AmberInfo: "一切献给——琥珀王！"
 SaintInfo: "吾将重获新生"
+TelegrapherInfo: "··· ···- ·· / -· --- / -· / ···- ·-· ··- ··- ·-· - 
+  / -·· --- -. / -· / -·-· --- ·-· / -··· · ·-··"
 
 ## 中立阵营 / Neutral Blurbs
 ArsonistInfo: "今天天气真不错..."
@@ -592,6 +598,8 @@ GMInfo: "开局死的冤魂隔岸观火"
 NotAssignedInfo: "未被分配职业"
 InfectorInfo: "感染其他幸存者"
 SurvivorInfo: "完成任务并且存活下去"
+HotPotatoInfo: "把热土豆传给其他人！"
+ColdPotatoInfo: "躲避热土豆"
 
 # 以下是职业描述（使用/m或/r指令后得到的文本）/ Role Descriptions
 
@@ -697,6 +705,7 @@ InjusticeSpiritInfoLong: "你还有用，别退！！！\n冤魂在完成任务�
 AmberInfoLong: "琥珀使用击杀按钮可以使自己和一名其他角色获得标记，该标记可以抵挡一次伤害，标记每一次被攻击都会获得一层琥珀。每一层都会提升伤害避免率，当琥珀层数累计到上限时可消耗所有层数使用一次击杀"
 ScoutInfoLong: "侦察兵可以使用击杀按钮来检查一定范围内的玩家所属阵营数量"
 SaintInfoLong: "圣教徒可以通过跳管来进行救赎过程，当需要跳管数量归零时，此时有两个抉择。\n1.活下去：完成所有任务，可以获得一次免刀的机会\n2.救赎：随机挑选一位场上存活的玩家揭示身份并且自己死亡，死因为“救赎”"
+TelegrapherInfoLong: "译电员概率在开会时获得一串数字 其中包含一位随机玩家的ID 职业首字的 ASCII 值和是否拥有副职业（0为否，1为是）\n玩家ID信息可能会被混淆"
 
 ## 中立阵营 / Neutrals Descriptions
 ArsonistInfoLong: "纵火犯可以通过对玩家点击击杀按钮并跟随其数秒来完成涂油，开始涂油以及涂油成功时会显示护盾破碎的动画作为提示（仅自己可见）。当所有存活玩家都被纵火犯涂油后，纵火犯可以通过跳通风管来点火，并单独获得胜利。\n玩家名显示「△」表示涂油中\n玩家名显示「▲」表示已涂油。"
@@ -792,6 +801,10 @@ GuesserInfoLong: "赌怪可以在会议时猜测某位玩家的职业，正确�
 
 ## 其它 / Other Descriptions
 GMInfoLong: "看我干啥，我只是个开局就死的冤魂，静静地吃瓜而已。"
+InfectorInfoLong: "跟随其他感染者感染幸存者（贴贴即感染）"
+SurvivorInfoLong: "完成你的所有任务并且不被感染"
+HotPotatoInfoLong: "通过击杀把热土豆传给其他人（所有人都可以看见谁是冷/热土豆）"
+ColdPotatoInfoLong: "躲避热土豆（所有人都可以看见谁是冷/热土豆）"
 
 # 选项菜单标题 / Option Menu Titles
 MenuTitle.Disable: "乂 禁用相关设定"
@@ -1435,11 +1448,13 @@ CanFollowWin: "在存活的情况下未获得LV可以跟随胜利"
 CanFollowWinWhenMurdererExists: "在存活的情况下获得LV小于5且<color=#ff0000>陨星戮者</color>在场时可以跟随胜利"
 SubstituteCooldown: "替代冷却"
 NeedSubstituteLimit: "需要替代的次数"
-LongTasksNum: "人类的长任务数"
-ShortTasksNum: "人类的短任务数"
 RoundTotalTime: "游戏时间"
 OptionCanRevenge: "允许复仇"
 OptionRevengeTimes: "复仇次数上限"
+HotPotatoMaxNum: "热土豆最大数量"
+ExplosionTotalTime: "热土豆爆炸&分配倒计时"
+ProbabilityOfObtainingThePasswor: "获得密码的概率"
+PprobabilityOfPasswordError: "获得错误玩家ID的概率"
 
 # 随机出生点 / Random Spawn Locations
 Junction: "三岔路"
@@ -1804,6 +1819,7 @@ CupidIsDead: "丘比特护盾生效！"
 NWReady: "冷却结束"
 NothingIsWorthTheRisk: "Nothing Is Worth The Risk"
 ZombieTimeRemain: "游戏结束倒计时：{0}"
+HotPotatoTimeRemain: "热土豆分配&爆炸倒计时：{0}"
 
 # 信息 / Messages
 Message.SetToSeconds: "信息发送冷却时间为【{0}】秒"
@@ -2286,6 +2302,8 @@ HotPotatoMode: "烫手山芋"
 InfectorMode: "僵尸模式"
 AllCrewModMode: "全员模组（试验性）"
 GameMode: "游戏模式"
+ModeHotPotato: "烫手山芋模式"
+ModeZombieMode: "僵尸模式"
 
 # 发送
 SendTargets.Default: "发送给：默认"

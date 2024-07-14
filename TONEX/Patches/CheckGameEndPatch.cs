@@ -69,7 +69,7 @@ class GameEndChecker
         if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
         {
             var playerList = Main.AllAlivePlayerControls.ToList();
-            if (playerList.Count == InfectorManager.ZombiePlayers.Count || InfectorManager.RemainRoundTime <= 0)
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count || (InfectorManager.RemainRoundTime <= 0 && InfectorManager.HumanCompleteTasks.Count != InfectorManager.HumanNum.Count))
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
                 foreach (var zb in playerList)
@@ -228,21 +228,15 @@ class GameEndChecker
                     }
                 }
 
-                //Instigator 胜利时移除玩家ID了
-                if (CustomRoles.Alternate.IsExist() && Alternate.SubstituteId != byte.MaxValue)
-                {
-                    foreach (var pc in Main.AllPlayerControls)
-                    {
-                        if (Alternate.SubstituteId==pc.PlayerId)
-                        {
-                            if (CustomWinnerHolder.WinnerIds.Contains(Alternate.SubstituteId)) {
-                                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
 
-                            }
-                               
-                        }
-                    }
+                //Alternate 胜利时移除玩家ID了
+
+                foreach (var pc in Main.AllPlayerControls.Where(p => p.Is(CustomRoles.Alternate)))
+                {
+                    var rc = pc.GetRoleClass() as Alternate;
+                    CustomWinnerHolder.WinnerIds.Remove(rc.SubstituteId);
                 }
+
                 //追加胜利
                 foreach (var pc in Main.AllPlayerControls)
                 {
@@ -403,16 +397,19 @@ class GameEndChecker
 
             // 计数阵营记录字典
             Dictionary<CountTypes, int> playerTypeCounts = new();
-            playerTypeCounts.Clear();
+
             foreach (var ct in System.Enum.GetValues(typeof(CountTypes)))
             {
                 if (ct is CountTypes.OutOfGame or CountTypes.None) continue;
                 playerTypeCounts.TryAdd((CountTypes)ct, 0);
             }
 
+
             foreach (var Player in Main.AllAlivePlayerControls)// 判断阵营玩家数量
             {
-                if ((Player.GetRoleClass() as MeteorArbiter)?.CanWin ?? false || Player.Is(CustomRoles.Martyr) && !Martyr.CanKill) continue;// 先烈、陨星判官独立判断
+                if ((Player.GetRoleClass() as MeteorArbiter)?.CanWin ?? false 
+                    || Player.Is(CustomRoles.Martyr) && !Martyr.CanKill) continue;// 先烈、陨星判官独立判断
+
                 var playerType = Player.GetCountTypes();
                 if (playerTypeCounts.ContainsKey(playerType))
                 {
@@ -424,51 +421,62 @@ class GameEndChecker
                         if (playerTypeCounts.ContainsKey(targetType))
                             playerTypeCounts[targetType]--;
                     }
+
                     if (Player.Is(CustomRoles.Schizophrenic))// 双重人格独立判断
                         playerTypeCounts[playerType]++;
+
                     if (Player.Is(CustomRoles.SchrodingerCat))// 猫独立判断
                     {
-
                         playerType = SchrodingerCat.GetCatTeam((Player.GetRoleClass() as SchrodingerCat).Team);
                         playerTypeCounts[playerType]++;
                     }
                 }
             }
 
-            var win = false;// 是否进入判断阵营胜利的bool
-            KeyValuePair<CountTypes, int> maywinner = new();// 定义存储胜利者的键值对
-            var crewValue = playerTypeCounts.ElementAt(0).Value;// 船员阵营数量
-            var nonCrewPlayerTypes = playerTypeCounts.Skip(1).Where(kv => kv.Value >= crewValue && kv.Value != 0).ToList(); // 没有船员阵营的可能的胜利者键值对列表
-            foreach (var maywin in nonCrewPlayerTypes)// 寻找剩余玩家数量大于等于船员的阵营键值对
-            { 
-                win = true; // 假设为胜利者
-                foreach (var kv in playerTypeCounts.Skip(1))
-                {
-                    if (kv.Key == maywin.Key || kv.Value == 0) continue;
-                    win = false; // 如果有其他阵营的值不为 0，则不是胜利者
-                    
-                    break;
-                }
-                if (win)
-                {
-                    maywinner = maywin; // 确定胜利者
-                    Logger.Info($"胜利阵营已决定", "CheckGameEnd");
-                    break;
-                }
-            }
-            var playerCount = Main.AllAlivePlayerControls.ToList().Count;
-            var skip = false;
-            if (playerTypeCounts.All(pair => pair.Value == 0)) //全灭
+            if (playerTypeCounts.All(pair => pair.Value == 0))
             {
                 reason = GameOverReason.ImpostorByKill;
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
+                return true;
             }
+
+            bool winnerFound = false;
+            CustomWinner winningType = CustomWinner.None;
+
+            var crewCount = playerTypeCounts[CountTypes.Crew];
+            var potentialWinners = playerTypeCounts;
+            potentialWinners.Remove(CountTypes.Crew);
+
+            foreach (var candidate in potentialWinners.Where(kv => kv.Value >= crewCount && kv.Value != 0))
+            {
+                bool isWinner = true;
+
+                foreach (var kv in potentialWinners)
+                {
+                    if (kv.Key == candidate.Key || kv.Value == 0)
+                        continue;
+
+                    isWinner = false;
+                    break;
+                }
+
+                if (isWinner)
+                {
+                    winnerFound = true;
+                    winningType = (CustomWinner)candidate.Key;
+                    Logger.Info($"胜利阵营决定为{winningType}", "CheckGameEnd");
+                    break; 
+                }
+            }
+
+            var playerCount = Main.AllAlivePlayerControls.Count();
 
             CustomRoles[] loverRoles = { CustomRoles.Lovers, CustomRoles.AdmirerLovers, CustomRoles.AkujoLovers, CustomRoles.CupidLovers };
 
             foreach (var loverRole in loverRoles)// 多种恋人判断胜利
             {
                 if (!loverRole.IsExist()) continue;
+
                 if (Main.AllAlivePlayerControls.Count(p => p.Is(loverRole)) >= (playerCount / 2) 
                     && !Main.AllAlivePlayerControls
                     .Where(p => !p.Is(loverRole))// 不是恋人
@@ -476,50 +484,44 @@ class GameEndChecker
                     && !p.IsCrew() // 不是船员
                     || ForLover(p, loverRole))) //或者是恋人
                 {
-                    skip = true;
-                    reason = GameOverReason.ImpostorByKill;
 
-                    CustomWinner customWinner;
                     switch (loverRole)
                     {
                         case CustomRoles.Lovers:
-                            customWinner = CustomWinner.Lovers;
+                            winningType = CustomWinner.Lovers;
                             break;
                         case CustomRoles.AdmirerLovers:
-                            customWinner = CustomWinner.AdmirerLovers;
+                            winningType = CustomWinner.AdmirerLovers;
                             break;
                         case CustomRoles.AkujoLovers:
-                            customWinner = CustomWinner.AkujoLovers;
+                            winningType = CustomWinner.AkujoLovers;
                             break;
                         case CustomRoles.CupidLovers:
-                            customWinner = CustomWinner.CupidLovers;
+                            winningType = CustomWinner.CupidLovers;
                             break;
                         default:
-                            customWinner = CustomWinner.None;
                             break;
                     }
-                    Logger.Info($"胜利阵营已决定", "CheckGameEnd");
-                    CustomWinnerHolder.ResetAndSetWinner(customWinner);
 
+                    winnerFound = true;
+                    Logger.Info($"胜利阵营决定为{winningType}", "CheckGameEnd");
                     break; // 结束循环
                 }
             }
-            if (!skip)
+
+            if (winnerFound)// 确定有胜利阵营，开始根据不同阵营判断
             {
-                if (win)// 确定有胜利阵营，开始根据不同阵营判断
-                {
-                    reason = GameOverReason.ImpostorByKill;
-                    CustomWinnerHolder.ResetAndSetWinner((CustomWinner)maywinner.Key);// 将胜利阵营键值对的键写入并且转化为CustomWinner
-                }
-                else if (playerTypeCounts.Skip(1).All(kv => kv.Value == 0)) //船员胜利
-                {
-                    reason = GameOverReason.HumansByVote;
-                    CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Crewmate);
-                }
-                else
-                {
-                    return false; //胜利条件未达成
-                }
+                reason = GameOverReason.ImpostorByKill;
+                CustomWinnerHolder.ResetAndSetWinner(winningType);// 将胜利阵营键值对的键写入并且转化为CustomWinner
+            }
+            else if (potentialWinners.All(kv => kv.Value == 0)) //船员胜利
+            {
+                reason = GameOverReason.HumansByVote;
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Crewmate);
+            }
+            else
+            {
+                return false; //胜利条件未达成
             }
             return true;
         }
@@ -564,7 +566,7 @@ class GameEndChecker
         {
             reason = GameOverReason.ImpostorByKill;
             var playerList = Main.AllAlivePlayerControls.ToList();
-            if (playerList.Count == InfectorManager.ZombiePlayers.Count && InfectorManager.RemainRoundTime <= 0)
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count || (InfectorManager.RemainRoundTime <= 0 && InfectorManager.HumanCompleteTasks.Count != InfectorManager.HumanNum.Count))
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
                 foreach (var zb in playerList)

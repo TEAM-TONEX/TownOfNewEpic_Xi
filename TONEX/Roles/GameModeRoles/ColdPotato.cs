@@ -15,7 +15,7 @@ public sealed class ColdPotato : RoleBase, IKiller
             typeof(ColdPotato),
             player => new ColdPotato(player),
             CustomRoles.ColdPotato,
-            () => RoleTypes.Shapeshifter,
+            () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
             94_1_0_0100,
             null,
@@ -34,18 +34,8 @@ public sealed class ColdPotato : RoleBase, IKiller
         )
     {
         CustomRoleManager.MarkOthers.Add(MarkOthers);
-        LastTime = -1;
     }
-    public static int BoomTime;
-    public long LastTime;
     public bool IsKiller { get; private set; } = false;
-    //public override bool CanUseAbilityButton() => true;
-    public bool CanUseShapeShiftButton() => true;
-    public override bool GetAbilityButtonText(out string text)
-    {
-        text = GetString("HotBoom");
-        return true;
-    }
     public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
     => target.Is(CustomRoles.ColdPotato);
     public static string MarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)

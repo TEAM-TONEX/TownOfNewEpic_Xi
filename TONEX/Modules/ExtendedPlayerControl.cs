@@ -1750,4 +1750,17 @@ static class ExtendedPlayerControl
         }
         return !state.IsDead;
     }
+    public static void RevivePlayer(this PlayerControl repl)
+    {
+        var aliveplayer = PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.Data.IsDead == false && !p.Data.Disconnected);
+        foreach (var playeralive in aliveplayer)
+        {
+            playeralive.Data.Disconnected = true;
+        }
+        repl.RpcSetRole(RoleTypes.Crewmate, true);
+        foreach (var playeralive in aliveplayer)
+        {
+            playeralive.Data.Disconnected = false;
+        }
+    }
 }

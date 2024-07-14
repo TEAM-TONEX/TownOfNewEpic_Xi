@@ -105,12 +105,6 @@ class RpcSetTasksPatch
                 NumShortTasks = 0;
                 NumLongTasks = 0;
             }
-            if (pc.Is(CustomRoles.Survivor))
-            {
-                hasCommonTasks = true;
-                NumShortTasks = InfectorManager.ShortTasksNum.GetInt();
-                NumLongTasks = InfectorManager.LongTasksNum.GetInt();
-            }
 
             //加班狂加班咯~
             if (pc.Is(CustomRoles.Workhorse))

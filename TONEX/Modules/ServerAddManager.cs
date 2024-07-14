@@ -16,9 +16,7 @@ public static class ServerAddManager
     [PluginModuleInitializer]
     public static void Init()
     {
-        Logger.Info("0", "gctest");
-        if (!ModUpdater.isChecked && ModUpdater.firstStart) ModUpdater.BeforeCheck();
-        Logger.Info("2", "gctest");
+
 
         
         serverManager.AvailableRegions = ServerManager.DefaultRegions;

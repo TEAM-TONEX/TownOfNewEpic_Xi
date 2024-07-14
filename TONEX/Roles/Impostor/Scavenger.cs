@@ -42,7 +42,7 @@ public sealed class Scavenger : RoleBase, IImpostor
         target.RpcMurderPlayerV2(target);
         killer.SetKillCooldownV2();
         NameNotifyManager.Notify(target, Utils.ColorString(Utils.GetRoleColor(CustomRoles.Scavenger), Translator.GetString("KilledByScavenger")));
-
+        
         return false;
     }
 }

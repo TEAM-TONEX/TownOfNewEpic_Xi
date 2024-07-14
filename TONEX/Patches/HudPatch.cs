@@ -147,14 +147,7 @@ class HudManagerPatch
                     __instance.ImpostorVentButton.ToggleVisible(CanUseVent);
                     player.Data.Role.CanVent = CanUseVent;
                 }
-                else
-                {
-                    __instance.ReportButton.Hide();
-                    __instance.ImpostorVentButton.Hide();
-                    __instance.KillButton.Hide();
-                    __instance.PetButton.Hide();
-                    if (LowerInfoText != null) LowerInfoText.enabled = false;
-                }
+
             }
             else
             {

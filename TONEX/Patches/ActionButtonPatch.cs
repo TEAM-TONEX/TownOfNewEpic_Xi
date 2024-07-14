@@ -58,7 +58,7 @@ class KillButtonDoClickPatch
             if (pc == null || pc.inVent || __instance.currentTarget == null || !__instance.isActiveAndEnabled) return true;
             if (pc.HasDisabledAction(PlayerActionType.Kill))
             {
-                CustomRoleManager.OnCheckMurder(pc, __instance.currentTarget);
+            pc.CheckMurder(__instance.currentTarget);
                 return false;
             }
         

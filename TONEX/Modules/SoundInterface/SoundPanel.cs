@@ -203,15 +203,8 @@ public static class SoundPanel
                 Logger.Info($"Play {sound}:{path}", "SoundsPanel");
                 if (File.Exists(path))
                 {
-                    if (PlayMode == 0)
-                        CustomSoundsManager.Play(sound, 0, true);
-                    else if (PlayMode == 1)
-                        CustomSoundsManager.Play(sound, 1, true);
-                    else if (PlayMode == 2 || PlayMode == 3)
-                    {
-                        CustomSoundsManager.Play(sound, 2, true);
 
-                    }
+                    CustomSoundsManager.Play(sound, 1, true);
                 }
             }));
 

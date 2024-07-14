@@ -170,6 +170,8 @@ public sealed class Cupid : RoleBase, INeutralKiller
         text = GetString("CupidKillButtonText");
         return true;
     }
+    public override bool EnablePetSkill() => true;
+
     public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (!CupidCanShield.GetBool()) return false;

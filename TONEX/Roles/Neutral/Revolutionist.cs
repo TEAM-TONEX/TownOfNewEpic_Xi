@@ -246,6 +246,8 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
         }
 
     }
+    public override bool EnablePetSkill() => true;
+
     public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (GameStates.IsInGame && IsDrawDone(Player))

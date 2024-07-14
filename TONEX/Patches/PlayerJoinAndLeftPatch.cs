@@ -227,6 +227,7 @@ class InnerNetClientSpawnPatch
 
             ClientData client = Utils.GetClientById(ownerId);
 
+            Logger.Msg($"Spawn player data: ID {ownerId}: {client.PlayerName}", "InnerNetClientSpawn");
 
             //规范昵称
 

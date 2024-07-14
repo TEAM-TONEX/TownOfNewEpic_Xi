@@ -11,6 +11,7 @@ using UnityEngine.UIElements.UIR;
 using static TONEX.Translator;
 using System;
 using static UnityEngine.ParticleSystem.PlaybackState;
+using System.Linq;
 
 namespace TONEX.Roles.Neutral;
 public sealed class Jackal : RoleBase, INeutralKiller
@@ -158,6 +159,7 @@ public sealed class Jackal : RoleBase, INeutralKiller
         Player.SetKillCooldownV2();
         NameColorManager.Add(Player.PlayerId, target.PlayerId, "#00b4eb");
         NameColorManager.Add(target.PlayerId, Player.PlayerId, "#00b4eb");
+
         if (!OptionJackalCanSaveSidekick.GetBool())
             target.RpcSetCustomRole(CustomRoles.Wolfmate);
         else
@@ -168,7 +170,14 @@ public sealed class Jackal : RoleBase, INeutralKiller
                     target.RpcSetCustomRole(CustomRoles.Sidekick);
                 else
                 {
-
+                    //target.RpcSetCustomRole(CustomRoles.Sidekick);
+                    //foreach (var pc in Main.AllPlayerControls.Where(x => x != target))
+                    //    pc.Data.Disconnected = true;
+                    //AntiBlackout.SendGameData();
+                    //target.RpcSetRole(RoleTypes.Impostor, true);
+                    //foreach (var pc in Main.AllPlayerControls.Where(x => x != target))
+                    //    target.Data.Disconnected = false;
+                    //AntiBlackout.SendGameData();
                     target.RpcSetCustomRole(CustomRoles.Whoops);
                     var taskState = target.GetPlayerTaskState();
                     taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();

@@ -30,9 +30,9 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
             countType: CountTypes.Martyr,
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             assignCountRule: new(1, 1, 1)
-#if RELEASE
-            ,ctop: true
-#endif
+//#if RELEASE
+//            ,ctop: true
+//#endif
         );
     public Martyr(PlayerControl player)
     : base(
@@ -148,6 +148,7 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
         }
         return true;
     }
+    public override bool EnablePetSkill() => true;
 
     public override string GetMark(PlayerControl seer, PlayerControl seen, bool _ = false)
     {

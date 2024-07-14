@@ -36,7 +36,7 @@ public sealed class Survivor : RoleBase
     { }
     public override void Add()
     {
-        Player.SetOutFit(2);
+        Player.SetOutFit(1);
     }
     public override bool OnCompleteTask(out bool cancel)
     {
@@ -56,6 +56,6 @@ public sealed class Survivor : RoleBase
         //seeおよびseenが自分である場合以外は関係なし
         if (!Is(seer) || !Is(seen)) return "";
 
-        return string.Format(GetString("HotPotatoTimeRemain"), InfectorManager.RemainRoundTime);
+        return string.Format(GetString("ZombieTimeRemain"), InfectorManager.RemainRoundTime);
     }
 }

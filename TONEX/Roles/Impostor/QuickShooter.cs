@@ -101,6 +101,7 @@ public sealed class QuickShooter : RoleBase, IImpostor
             Logger.Info($"{Utils.GetPlayerById(Player.PlayerId)?.GetNameWithRole()} : 剩余子弹{ShotLimit}发", "QuickShooter.OnShapeshift");
         }
     }
+
     public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;
