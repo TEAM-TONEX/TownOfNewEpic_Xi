@@ -254,6 +254,7 @@ internal class EAC
                 Report(pc, "AUM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
+            //Slok你个歌姬
             case unchecked((byte)520)://YuMenu
                 Report(pc, "YM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
