@@ -79,7 +79,8 @@ public static class Lovers
     }
     public static void AssignLoversRoles(int RawCount = -1)
     {
-        if (Main.AllPlayerControls.Count() < 2) return;
+        if (!CustomRoles.Lovers.IsEnable()) return;
+            if (Main.AllPlayerControls.Count() < 2) return;
         //Loversを初期化
         LoversPlayers.Clear();
         isLoversDead = false;

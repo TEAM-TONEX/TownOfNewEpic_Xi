@@ -1,6 +1,9 @@
 ﻿using HarmonyLib;
+using Hazel;
+using InnerNet;
 using TONEX.Roles.Core;
 using static TONEX.ExtendedPlayerControl;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TONEX.Patches;
 
@@ -55,13 +58,15 @@ class KillButtonDoClickPatch
         if (Main.AssistivePluginMode.Value) return true;
 
         var pc = PlayerControl.LocalPlayer;
-            if (pc == null || pc.inVent || __instance.currentTarget == null || !__instance.isActiveAndEnabled) return true;
-            if (pc.HasDisabledAction(PlayerActionType.Kill))
-            {
-            pc.CheckMurder(__instance.currentTarget);
-                return false;
-            }
-        
+        if (pc == null || pc.inVent || __instance.currentTarget == null || !__instance.isActiveAndEnabled) return true;
+        if (pc.HasDisabledAction(PlayerActionType.Kill))
+        {
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(pc.NetId, (byte)RpcCalls.CheckMurder, SendOption.Reliable, -1);
+            messageWriter.WriteNetObject(__instance.currentTarget);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+            return false;
+        }
+
         return true;
     }
 }

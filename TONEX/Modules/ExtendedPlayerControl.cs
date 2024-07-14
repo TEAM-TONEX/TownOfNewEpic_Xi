@@ -1763,4 +1763,11 @@ static class ExtendedPlayerControl
             playeralive.Data.Disconnected = false;
         }
     }
+    public static void RpcRandomVentTeleport(this PlayerControl player)
+    {
+        var vents = UnityEngine.Object.FindObjectsOfType<Vent>();
+        var rand = new System.Random();
+        var vent = vents[rand.Next(0, vents.Count)];
+        player.RpcTeleport(new Vector2(vent.transform.position.x, vent.transform.position.y + 0.3636f));
+    }
 }

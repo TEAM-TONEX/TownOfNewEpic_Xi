@@ -92,50 +92,49 @@ class CheckMurderPatch
     {
         (var killer, var target) = info.AttemptTuple;
 
-        // Killerが既に死んでいないかどうか
+        // 检查凶手是否已经死亡
         if (!killer.IsAlive())
         {
-            Logger.Info($"{killer.GetNameWithRole()}は死亡しているためキャンセルされました。", "CheckMurder");
+            Logger.Info($"{killer.GetNameWithRole()}因为已经死亡而取消了杀人行为。", "CheckMurder");
             return false;
         }
-        // targetがキル可能な状態か
+        // 检查目标是否处于可以被杀的状态
         if (
-            // PlayerDataがnullじゃないか確認
+            // 确认PlayerData不为null
             target.Data == null ||
-            // targetの状態をチェック
+            // 检查目标的状态
             target.inVent ||
             target.MyPhysics.Animations.IsPlayingEnterVentAnimation() ||
             target.MyPhysics.Animations.IsPlayingAnyLadderAnimation() ||
             target.inMovingPlat)
         {
-            Logger.Info("targetは現在キルできない状態です。", "CheckMurder");
+            Logger.Info("目标当前处于无法被杀的状态。", "CheckMurder");
             return false;
         }
-        // targetが既に死んでいないか
+        // 检查目标是否已经死亡
         if (!target.IsAlive())
         {
-            Logger.Info("targetは既に死んでいたため、キルをキャンセルしました。", "CheckMurder");
+            Logger.Info("目标已经死亡，取消了杀人行为。", "CheckMurder");
             return false;
         }
-        // 会議中のキルでないか
+        // 检查是否处于会议中，如果是则取消杀人行为
         if (MeetingHud.Instance != null)
         {
-            Logger.Info("会議が始まっていたため、キルをキャンセルしました。", "CheckMurder");
+            Logger.Info("因为会议已经开始，取消了杀人行为。", "CheckMurder");
             return false;
         }
-        var divice = Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode ? 3000f : 2000f;
-        // 連打キルでないか
-        float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / divice * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
-                                                                                    //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
-                                                                                    //↓許可されない場合
+        // 根据游戏模式设定的时间间隔检查是否连续杀人
+        var device = Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode ? 3000f : 2000f;
+        float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / device * 6f); //※AmongUsClient.Instance.Ping的值是毫秒(ms)，因此要除以1000
+                                                                                     // 如果距离上次杀人时间不足设定的最小时间，则取消杀人行为
         if (TimeSinceLastKill.TryGetValue(killer.PlayerId, out var time) && time < minTime)
         {
-            Logger.Info("前回のキルからの時間が早すぎるため、キルをブロックしました。", "CheckMurder");
+            Logger.Info("因为距离上次杀人时间太短，取消了杀人行为。", "CheckMurder");
             return false;
         }
         TimeSinceLastKill[killer.PlayerId] = 0f;
 
-        // キルが可能なプレイヤーか(遠隔は除く)
+        // 检查是否是可以执行杀人操作的玩家（排除远程杀人）
         if (!info.IsFakeSuicide && !killer.CanUseKillButton())
         {
             return false;
@@ -167,11 +166,11 @@ class MurderPlayerPatch
         }
         if (isProtectedByHost)
         {
-            logger.Info("守護されているため，キルはホストによってキャンセルされました");
+            logger.Info("守護されているため，击杀已由房主取消");
         }
         if (isFailed)
         {
-            logger.Info("キルはホストによってキャンセルされました");
+            logger.Info("击杀已由房主取消");
         }
 
         if (isSucceeded)
