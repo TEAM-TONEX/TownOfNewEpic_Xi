@@ -751,12 +751,9 @@ class FixedUpdatePatch
                 RealName = RealName.ApplyNameColorData(seer, target, false);
 
                 // 模组端色盲文字处理
-                if (CustomRoles.NiceGrenadier.IsExist() && NiceGrenadier.IsBlinding(PlayerControl.LocalPlayer))
-                    foreach (var pc in Main.AllAlivePlayerControls)
-                        pc.cosmetics.colorBlindText.text = $"<size=1000><color=#ffffff>●</color></size>";
-                if (CustomRoles.EvilGrenadier.IsExist() && EvilGrenadier.IsBlinding(PlayerControl.LocalPlayer))
-                        foreach (var pc in Main.AllAlivePlayerControls)
-                    pc.cosmetics.colorBlindText.text = $"<size=1000><color=#ffffff>●</color></size>";
+
+                NiceGrenadier.ChangeColorBlindText();
+                EvilGrenadier.ChangeColorBlindText();
 
                 //seer役職が対象のMark
                 Mark.Append(seerRole?.GetMark(seer, target, false));
@@ -771,6 +768,7 @@ class FixedUpdatePatch
                 CupidLovers.Marks(__instance, ref Mark);
                 Neptune.Marks(__instance, ref Mark);
                 Mini.Marks(__instance, ref Mark);
+
                 if (!seer.IsModClient())
                     Suffix.Append(seerRole?.GetLowerText(seer, target));
                 //seerに関わらず発動するLowerText

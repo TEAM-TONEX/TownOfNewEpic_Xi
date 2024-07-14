@@ -568,14 +568,6 @@ static class ExtendedPlayerControl
 
         return roleCanUse ?? false;
     }
-    //public static bool CanUseShapeShiftButton(this PlayerControl pc)
-    //{
-    //    if (!pc.IsAlive()) return false;
-
-    //    //var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseShapeShiftButton();
-
-    //    return roleCanUse ?? false;
-    //}
     public static bool CanUseSabotageButton(this PlayerControl pc)
     {
         var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseSabotageButton();
@@ -607,6 +599,7 @@ static class ExtendedPlayerControl
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
     public const MurderResultFlags SucceededFlags = MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost;
+    #region MurderPlayer
     public static void MurderPlayer(this PlayerControl killer, PlayerControl target)
     {
         killer.MurderPlayer(target, SucceededFlags);
@@ -696,6 +689,7 @@ static class ExtendedPlayerControl
             meetingHud.ClearVote();
         }
     }
+    #endregion
     public static void NoCheckStartMeeting(this PlayerControl reporter, NetworkedPlayerInfo target, bool force = false)
     { /*サボタージュ中でも関係なしに会議を起こせるメソッド
         targetがnullの場合はボタンとなる*/
