@@ -30,6 +30,10 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
             "#663366",
             true,
             true
+#if RELEASE
+            , 
+            ctop: true
+#endif
         );
     public Alternate(PlayerControl player)
     : base(
@@ -52,9 +56,9 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
     }
     public static bool CanVent;
     private string Name;
-    public static int SubstituteLimit;
+    public  int SubstituteLimit;
     public byte Id = new();
-    public static byte SubstituteId = new();
+    public  byte SubstituteId = new();
     public bool InSubstitute;
     public bool EndSubstitute;
 
@@ -79,21 +83,12 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
     {
         using var sender = CreateSender();
         sender.Writer.Write(Name);
+        sender.Writer.Write(SubstituteLimit);
     }
     public override void ReceiveRPC(MessageReader reader)
     {
         Name = reader.ReadString();
-    }
-    public static void SendRPC_SyncInt()
-    {
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetSubstituteLimit, SendOption.Reliable, -1);
-        writer.Write(SubstituteLimit);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
-    }
-    public static void ReceiveRPC_Limit(MessageReader reader)
-    {
-        int count = reader.ReadInt32();
-        SubstituteLimit= reader.ReadInt32();
+        SubstituteLimit = reader.ReadInt32();
     }
     public bool CanUseKillButton() => Player.IsAlive() && SubstituteLimit > 0 &&!EndSubstitute;
     public bool CanUseSabotageButton() => false;
@@ -129,7 +124,7 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
         if (Name != ""){
             if (SubstituteLimit >= 1 && Id==target.PlayerId){
                 SubstituteLimit--;
-                SendRPC_SyncInt();
+                SendRPC();
                 if(SubstituteLimit == 0) {
                     KillerSkins = new NetworkedPlayerInfo.PlayerOutfit().Set(killer.GetRealName(), killer.Data.DefaultOutfit.ColorId, killer.Data.DefaultOutfit.HatId, killer.Data.DefaultOutfit.SkinId, killer.Data.DefaultOutfit.VisorId, killer.Data.DefaultOutfit.PetId, killer.Data.DefaultOutfit.NamePlateId);
 
@@ -185,7 +180,6 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
             Name =ExtendedPlayerControl.GetTrueName(target);
             SubstituteLimit = OptionSubstituteLimit.GetInt();
             SendRPC();
-            SendRPC_SyncInt();
             killer.SetKillCooldownV2(target: target, forceAnime: true);
             Utils.NotifyRoles(killer);
             Utils.NotifyRoles(killer);
@@ -203,7 +197,6 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
             Name = "";
             SubstituteLimit = 1;
             SendRPC();
-            SendRPC_SyncInt();
             Utils.NotifyRoles(Player);
             Utils.NotifyRoles(Player);
             Id = byte.MaxValue;

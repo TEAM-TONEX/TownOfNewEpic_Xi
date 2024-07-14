@@ -153,7 +153,7 @@ class MurderPlayerPatch
     {
         if (GameStates.IsLobby && !GameStates.IsFreePlay)
         {
-            //RPC.NotificationPop(GetString("Warning.RoomBroken"));
+            RPC.NotificationPop(GetString("Warning.RoomBroken"));
         }
         if (Main.AssistivePluginMode.Value) return true;
         logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}({resultFlags})");
@@ -1217,6 +1217,10 @@ public static class PlayerControlDiePatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (GameStates.IsLobby && !GameStates.IsFreePlay)
+        {
+            RPC.NotificationPop(GetString("Warning.RoomBroken"));
+        }
         return true;
     }
 

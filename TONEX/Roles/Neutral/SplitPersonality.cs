@@ -22,6 +22,10 @@ public sealed class SplitPersonality : RoleBase, IAdditionalWinner
             "sp",
             "#960F0F",
            true
+#if RELEASE
+            ,
+            ctop: true
+#endif
 
         );
     public SplitPersonality(PlayerControl player)

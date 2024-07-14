@@ -21,6 +21,10 @@ public sealed class Saint : RoleBase
             SetupOptionItem,
             "sa",
             "#CCFFFF"
+#if RELEASE
+            ,
+            ctop: true
+#endif
         );
     public Saint(PlayerControl player)
     : base(

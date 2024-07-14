@@ -228,21 +228,15 @@ class GameEndChecker
                     }
                 }
 
-                //Instigator 胜利时移除玩家ID了
-                if (CustomRoles.Alternate.IsExist() && Alternate.SubstituteId != byte.MaxValue)
-                {
-                    foreach (var pc in Main.AllPlayerControls)
-                    {
-                        if (Alternate.SubstituteId==pc.PlayerId)
-                        {
-                            if (CustomWinnerHolder.WinnerIds.Contains(Alternate.SubstituteId)) {
-                                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
 
-                            }
-                               
-                        }
-                    }
+                //Alternate 胜利时移除玩家ID了
+
+                foreach (var pc in Main.AllPlayerControls.Where(p => p.Is(CustomRoles.Alternate)))
+                {
+                    var rc = pc.GetRoleClass() as Alternate;
+                    CustomWinnerHolder.WinnerIds.Remove(rc.SubstituteId);
                 }
+
                 //追加胜利
                 foreach (var pc in Main.AllPlayerControls)
                 {
@@ -443,6 +437,7 @@ class GameEndChecker
             {
                 reason = GameOverReason.ImpostorByKill;
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
+                return true;
             }
 
             bool winnerFound = false;

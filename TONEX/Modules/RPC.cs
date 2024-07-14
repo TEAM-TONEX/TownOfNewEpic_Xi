@@ -122,7 +122,7 @@ public enum Sounds
 internal class RPCHandlerPatch
 {
     public static bool TrustedRpc(byte id)
- => (CustomRPC)id is CustomRPC.VersionCheck or CustomRPC.RequestRetryVersionCheck or CustomRPC.AntiBlackout or CustomRPC.Judge or CustomRPC.Swap or CustomRPC.Guess or CustomRPC.OnClickMeetingButton or CustomRPC.PlaySound or CustomRPC.IsDisabledAction or CustomRPC.SetAction;
+ => (CustomRPC)id is CustomRPC.VersionCheck or CustomRPC.RequestRetryVersionCheck or CustomRPC.AntiBlackout or CustomRPC.Judge or CustomRPC.Swap or CustomRPC.Guess or CustomRPC.OnClickMeetingButton or CustomRPC.PlaySound or CustomRPC.IsDisabledAction or CustomRPC.SetAction ;
 
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
     {
@@ -427,9 +427,6 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetDeputyList:
                 Deputy.ReceiveRPC_SyncList(reader);
-                break;
-            case CustomRPC.SetSubstituteLimit:
-               Alternate.ReceiveRPC_Limit(reader);
                 break;
         }
     }

@@ -176,7 +176,12 @@ class IntroCutscenePatch
     {
         if (Main.AssistivePluginMode.Value)
         {
-
+            if (Main.playerVersion.ContainsKey(0))
+            {
+                Main.playerVersion.TryGetValue(0, out var ver);
+                if (Main.ForkId != ver.forkId)
+                    return;
+            }
             __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
 
             __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
@@ -388,7 +393,12 @@ class IntroCutscenePatch
     public static bool BeginImpostor_Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
         if (Main.AssistivePluginMode.Value) return true;
-
+        if (Main.playerVersion.ContainsKey(0))
+        {
+            Main.playerVersion.TryGetValue(0, out var ver);
+            if (Main.ForkId != ver.forkId)
+                return true;
+        }
         var role = PlayerControl.LocalPlayer.GetCustomRole();
             if (role is CustomRoles.CrewPostor)
             {
