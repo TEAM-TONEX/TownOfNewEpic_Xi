@@ -183,6 +183,8 @@ SetDousedPlayer,
             }
         }
     }
+    public override bool EnablePetSkill() => true;
+
     public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (GameStates.IsInGame && IsDouseDone(Player))

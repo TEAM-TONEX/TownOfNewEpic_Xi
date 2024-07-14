@@ -72,6 +72,7 @@ public static class Signal
         var pc = reader.ReadByte();
         var x = reader.ReadSingle();
         var y = reader.ReadSingle();
+        Signalbacktrack = new();
         Signalbacktrack.Add(pc,new(x, y));
     }
 }

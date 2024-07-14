@@ -87,6 +87,8 @@ ctop:true
         return true;
     }
     public float Speed;
+    public override bool EnablePetSkill() => true;
+
     public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (Cooldown == -1)

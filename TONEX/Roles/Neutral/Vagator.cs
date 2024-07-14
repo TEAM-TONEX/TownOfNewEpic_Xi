@@ -177,6 +177,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
             player.Notify(string.Format(GetString("PetSkillCanUse")), 2f);
         }
     }
+    public override bool EnablePetSkill() => true;
 
     public override void OnUsePet()
     {

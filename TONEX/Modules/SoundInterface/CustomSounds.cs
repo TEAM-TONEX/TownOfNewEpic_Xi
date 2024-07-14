@@ -45,7 +45,6 @@ public static class CustomSoundsManager
     public static readonly string PLAY_PATH = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}/TONEX_Data/Sounds/";
     public static void Play(string sound, int playmode = 0, bool forcePlay = false)
     {
-        StopPlay();
         if (!Constants.ShouldPlaySfx() || !Main.EnableCustomSoundEffect.Value && !forcePlay) return;
         var path = SOUNDS_PATH + sound + ".wav";
 

@@ -289,6 +289,8 @@ public sealed class Akujo : RoleBase, INeutralKiller
         }
         return sb.ToString();
     }
+    public override bool EnablePetSkill() => true;
+
     public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         if (NowSwitchTrigger is SwitchTrigger.TriggerVent)

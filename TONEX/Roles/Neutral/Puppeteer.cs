@@ -58,6 +58,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
         OptionBeKillLimit = IntegerOptionItem.Create(RoleInfo, 11, OptionName.BeKillLimit, new(1, 99, 1), 3, false)
             .SetValueFormat(OptionFormat.Times);
     }
+    public override bool EnablePetSkill() => true;
     public override void Add()
     {
         Timer = -1;
@@ -117,6 +118,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Puppeteer);
         CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
     }
+
     public override void OnUsePet()
     {
         if (MarkedPlayer != null)
@@ -132,6 +134,7 @@ public sealed class Puppeteer : RoleBase, INeutralKiller
             Main.AllPlayerNames[MarkedPlayer.PlayerId] = NameV2;
             Player.MarkDirtySettings(); 
             MyLastPos = Player.GetTruePosition();
+            MarkedPlayer = null;
         }
     }
     public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)

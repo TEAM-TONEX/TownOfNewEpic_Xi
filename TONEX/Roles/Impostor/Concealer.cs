@@ -65,6 +65,7 @@ public sealed class Concealer : RoleBase, IImpostor
         buttonName = "Camo";
         return PetUnSet();
     }
+    
    public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;

@@ -148,6 +148,7 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
         }
         return true;
     }
+    public override bool EnablePetSkill() => true;
 
     public override string GetMark(PlayerControl seer, PlayerControl seen, bool _ = false)
     {
