@@ -466,8 +466,8 @@ class ReportDeadBodyPatch
         Utils.NotifyRoles(isForMeeting: true, NoCache: true);
 
         Utils.SyncAllSettings();
-        foreach (var pc in Main.AllAlivePlayerControls)
-            Signal.AddPosi(pc);
+        
+            Signal.AddPosi();
         if (target != null)
             if (target.Object.GetRealKiller() != null && target.Object.GetRealKiller().Is(CustomRoles.Spiders))
             {

@@ -30,17 +30,22 @@ public static class Signal
     }
     public static bool IsEnable => playerIdList.Count > 0;
     public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-    public static void AddPosi(PlayerControl player)
+    public static void AddPosi()
     {
-        if (!AmongUsClient.Instance.AmHost || !player.IsAlive() || !player.Is(CustomRoles.Signal) || !GameStates.IsInTask) return;
-        Signalbacktrack.Add(player.PlayerId, player.GetTruePosition());
+        Signalbacktrack = new();
+        foreach (var player in Main.AllPlayerControls)
+        {
+            if (!AmongUsClient.Instance.AmHost ||  !player.Is(CustomRoles.Signal)) return;
+            Signalbacktrack.Add(player.PlayerId, player.GetTruePosition());
+            
+        }
         SendRPC();
     }
     public static void AfterMeet()
     {
         foreach (var pc in Main.AllPlayerControls)
         {
-            if (pc.Is(CustomRoles.Signal))
+            if (pc.Is(CustomRoles.Signal) && Signalbacktrack.ContainsKey(pc.PlayerId))
             {
                 pc.RpcTeleport(Signalbacktrack[pc.PlayerId]);
             }

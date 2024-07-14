@@ -32,10 +32,10 @@ public sealed class MeteorArbiter : RoleBase, INeutralKiller, IAdditionalWinner
             true,
             countType: CountTypes.MeteorArbiter,
             assignCountRule: new(1, 1, 1)
-#if RELEASE
-,
-ctop:true
-#endif
+//#if RELEASE
+//,
+//ctop:true
+//#endif
         );
     public MeteorArbiter(PlayerControl player)
     : base(

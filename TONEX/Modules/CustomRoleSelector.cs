@@ -112,7 +112,7 @@ internal static class CustomRoleSelector
             if (readyRoleTotalNum >= playerCount) goto EndOfAssign;
 
             var sp = UnityEngine.Random.Range(0, 100);
-            if (sp < 5 && !rolesToAssign.Contains(CustomRoles.Bard))
+            if (sp < 5 && !rolesToAssign.Contains(CustomRoles.Bard) && readyRoleTotalNum < optImpNum)
             {
                 var shouldExecute = true;
                 if (ImpRateList.Count > 0)
@@ -129,6 +129,7 @@ internal static class CustomRoleSelector
                 {
                     shouldExecute = false;
                 }
+
                 if (shouldExecute)
                 {
                     rolesToAssign.Add(CustomRoles.Bard);
