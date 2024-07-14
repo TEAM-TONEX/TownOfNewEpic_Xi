@@ -92,12 +92,13 @@ class GameEndChecker
 
         }
 
-        //ゲーム終了時
+        // 游戏结束时
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default)
         {
-            //カモフラージュ強制解除
+            // 强制解除伪装
+        
             Main.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(pc, ForceRevert: true, RevertToDefault: true));
-
+  
             if (reason == GameOverReason.ImpostorBySabotage && CustomRoles.Jackal.IsExist() && Jackal.WinBySabotage && !Main.AllAlivePlayerControls.Any(x => x.GetCustomRole().IsImpostorTeam()))
             {
                 reason = GameOverReason.ImpostorByKill;
@@ -108,17 +109,17 @@ class GameEndChecker
             {
                 case CustomWinner.Crewmate:
                     Main.AllPlayerControls
-                        .Where(pc => pc.Is(CustomRoleTypes.Crewmate) && !pc.Is(CustomRoles.Madmate) && !pc.Is(CustomRoles.Charmed) && !pc.Is(CustomRoles.Wolfmate))
+                        .Where(pc => pc.IsCrewTeam())
                         .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
                 case CustomWinner.Impostor:
                     Main.AllPlayerControls
-                        .Where(pc => (pc.Is(CustomRoleTypes.Impostor) || pc.Is(CustomRoles.Madmate)) && !pc.Is(CustomRoles.Charmed) && !pc.Is(CustomRoles.Wolfmate))
+                        .Where(pc => pc.IsImpTeam())
                         .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
                 case CustomWinner.Jackal:
                     Main.AllPlayerControls
-                     .Where(pc => pc.Is(CustomRoles.Jackal) || pc.Is(CustomRoles.Wolfmate) || pc.Is(CustomRoles.Sidekick) || pc.Is(CustomRoles.Whoops))
+                     .Where(pc => pc.IsJackalTeam())
                      .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
                 case CustomWinner.Pelican:
@@ -139,7 +140,7 @@ class GameEndChecker
 
                 case CustomWinner.Succubus:
                     Main.AllPlayerControls
-                        .Where(pc => pc.Is(CustomRoles.Succubus) || pc.Is(CustomRoles.Charmed))
+                        .Where(pc =>pc.IsSuccubusTeam())
                         .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
 
@@ -150,9 +151,12 @@ class GameEndChecker
                     break;
 
                 case CustomWinner.Martyr:
-                    Main.AllPlayerControls
-                     .Where(pc => pc.Is(CustomRoles.Martyr) || pc.PlayerId == Martyr.TargetId)
-                     .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
+                    foreach (var m in Main.AllPlayerControls.Where(P => P.Is(CustomRoles.Martyr)))
+                    {
+                        var rc = m.GetRoleClass() as Martyr;
+                        CustomWinnerHolder.WinnerIds.Add(m.PlayerId);
+                        CustomWinnerHolder.WinnerIds.Add(rc.TargetId);
+                    }
                     break;
                 case CustomWinner.NightWolf:
                     Main.AllPlayerControls
@@ -180,9 +184,13 @@ class GameEndChecker
                         .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
                 case CustomWinner.Yandere:
-                    Main.AllPlayerControls
-                        .Where(pc => pc.Is(CustomRoles.Yandere))
-                        .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
+                    foreach (var y in Main.AllPlayerControls.Where(P => P.Is(CustomRoles.Yandere)))
+                    {
+                        var rc = y.GetRoleClass() as Yandere;
+                        CustomWinnerHolder.WinnerIds.Add(y.PlayerId);
+                        CustomWinnerHolder.WinnerIds.Add(rc.TargetId.PlayerId);
+                    }
+          
                     break;
                 case CustomWinner.Lovers:
                     Main.AllPlayerControls
@@ -206,41 +214,20 @@ class GameEndChecker
                     break;
             }
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw and not CustomWinner.None and not CustomWinner.Error)
-            {
-                //抢夺胜利
+            { 
+
                 foreach (var pc in Main.AllPlayerControls)
                 {
-                    if (pc.GetRoleClass() is IOverrideWinner overrideWinner)
+                    var roleClass = pc.GetRoleClass();
+
+                    //抢夺胜利
+                    if (roleClass is IOverrideWinner overrideWinner)
                     {
                         overrideWinner.CheckWin(ref CustomWinnerHolder.WinnerTeam, ref CustomWinnerHolder.WinnerIds);
                     }
-                }
-                
-                //Instigator 胜利时移除玩家ID了
-                if (CustomRoles.Instigator.IsExist() && Instigator.ForInstigator.Count != 0)
-                {
-                    foreach (var pc in Main.AllPlayerControls)
-                    {
-                        if (Instigator.ForInstigator.Contains(pc.PlayerId))
-                        {
-                            CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
-                        }
-                    }
-                }
 
-
-                //Alternate 胜利时移除玩家ID了
-
-                foreach (var pc in Main.AllPlayerControls.Where(p => p.Is(CustomRoles.Alternate)))
-                {
-                    var rc = pc.GetRoleClass() as Alternate;
-                    CustomWinnerHolder.WinnerIds.Remove(rc.SubstituteId);
-                }
-
-                //追加胜利
-                foreach (var pc in Main.AllPlayerControls)
-                {
-                    if (pc.GetRoleClass() is IAdditionalWinner additionalWinner)
+                    //追加胜利
+                    if (roleClass is IAdditionalWinner additionalWinner)
                     {
                         var winnerRole = pc.GetCustomRole();
                         var ct = pc.GetCountTypes();
@@ -251,6 +238,9 @@ class GameEndChecker
                             CustomWinnerHolder.AdditionalWinnerRoles.Add(winnerRole);
                         }
                     }
+
+                    //Instigator 胜利时移除玩家ID了
+                    (roleClass as Instigator).CheckWin();
                 }
                 //if (CustomRoles.Non_Villain.IsExist() && Non_Villain.DigitalLifeList.Count <=0) 
                  //   foreach (var pc in Non_Villain.DigitalLifeList)
@@ -407,8 +397,8 @@ class GameEndChecker
 
             foreach (var Player in Main.AllAlivePlayerControls)// 判断阵营玩家数量
             {
-                if ((Player.GetRoleClass() as MeteorArbiter)?.CanWin ?? false 
-                    || Player.Is(CustomRoles.Martyr) && !Martyr.CanKill) continue;// 先烈、陨星判官独立判断
+                if (((Player.GetRoleClass() as MeteorArbiter)?.CanWin ?? false)
+                    || ((Player.GetRoleClass() as Martyr)?.CanKill ?? false)) continue;// 先烈、陨星判官独立判断
 
                 var playerType = Player.GetCountTypes();
                 if (playerTypeCounts.ContainsKey(playerType))

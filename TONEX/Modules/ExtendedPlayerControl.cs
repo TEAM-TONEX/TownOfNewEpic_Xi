@@ -746,16 +746,21 @@ static class ExtendedPlayerControl
         }
         return rangePlayers;
     }
+    #region Imp
     public static bool IsImp(this PlayerControl player) => player.Is(CustomRoleTypes.Impostor);
-    public static bool IsImpTeam(this PlayerControl player) => player.IsImp() || player.Is(CustomRoles.Madmate);
-
+    public static bool IsImpTeam(this PlayerControl player) => (player.IsImp() || player.Is(CustomRoles.Madmate))
+        && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate)
+        && !player.Is(CustomRoles.Lovers) && !player.Is(CustomRoles.AdmirerLovers) && !player.Is(CustomRoles.AkujoLovers) && !player.Is(CustomRoles.CupidLovers);
+    #endregion
+    #region Crew
     public static bool IsCrew(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate);
-    public static bool IsCrewTeam(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoles.Madmate) 
-        && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate) 
+    public static bool IsCrewTeam(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate) 
+        && !player.Is(CustomRoles.Madmate) && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate) 
         && !player.Is(CustomRoles.Lovers) && !player.Is(CustomRoles.AdmirerLovers) && !player.Is(CustomRoles.AkujoLovers) && !player.Is(CustomRoles.CupidLovers);
     public static bool IsCrewKiller(this PlayerControl player) => player.IsCrew() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as IKiller)?.IsKiller ?? false);
     public static bool IsCrewNonKiller(this PlayerControl player) => !player.IsCrewKiller();
-
+    #endregion
+    #region Neu
     public static bool IsNeutral(this PlayerControl player) => player.Is(CustomRoleTypes.Neutral);
 
     public static bool IsNeutralKiller(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as INeutralKiller)?.IsNK ?? false);
@@ -763,6 +768,17 @@ static class ExtendedPlayerControl
 
     public static bool IsNeutralEvil(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as INeutral)?.IsNE ?? false);
     public static bool IsNeutralBenign(this PlayerControl player) => !player.IsNeutralEvil();
+
+    #endregion
+    #region SpecialNeu
+    public static bool IsJackalTeam(this PlayerControl player) => 
+        player.Is(CustomRoles.Jackal) || player.Is(CustomRoles.Wolfmate) || player.Is(CustomRoles.Sidekick) || player.Is(CustomRoles.Whoops);
+
+    public static bool IsSuccubusTeam(this PlayerControl player) =>
+     player.Is(CustomRoles.Succubus) || player.Is(CustomRoles.Charmed);
+
+    #endregion
+
 
     public static bool IsShapeshifting(this PlayerControl player) => Main.CheckShapeshift.TryGetValue(player.PlayerId, out bool ss) && ss;
     public static bool KnowDeathReason(this PlayerControl seer, PlayerControl seen)

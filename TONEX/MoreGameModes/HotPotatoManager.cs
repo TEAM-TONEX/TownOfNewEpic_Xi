@@ -77,7 +77,7 @@ internal static class HotPotatoManager
                         if (pc.Is(CustomRoles.HotPotato))
                             pc.SetKillCooldownV2(0f);
                     }
-                }, 0.1f, "Clam");
+                }, 0.1f, "HotPotato");
             }
             if (LastFixedUpdate == Utils.GetTimeStamp()) return;
             LastFixedUpdate = Utils.GetTimeStamp();

@@ -1429,84 +1429,32 @@ public static class Utils
     private static Dictionary<byte, string> LastResultForChat = new();
     public static string SummaryTexts(byte id, bool isForChat)
     {
-        /*// 全プレイヤー中最長の名前の長さからプレイヤー名の後の水平位置を計算する
-        // 1em ≒ 半角2文字
-        // 空白は0.5emとする
-        // SJISではアルファベットは1バイト，日本語は基本的に2バイト
-        var longestNameByteCount = Main.AllPlayerNames.Values.Select(name => name.GetByteCount()).OrderByDescending(byteCount => byteCount).FirstOrDefault();
-        //最大11.5emとする(★+日本語10文字分+半角空白)
-        var pos = Math.Min(((float)longestNameByteCount / 2) + 1.5f /* ★+末尾の半角空白  , 11.5f);
-        */
+        
+        if (isForChat) return LastResultForChat[id];
+
         var builder = new StringBuilder();
-        /*var pc = GetPlayerById(id);
-        builder.Append(isForChat ? Main.AllPlayerNames[id] : ColorString(Main.PlayerColors[id], Main.AllPlayerNames[id]));
-        string progressText = string.IsNullOrEmpty(GetProgressText(id)) ? GetProgressText(id) : GetKillCountText(id);
-        builder.AppendFormat("<pos={0}em>", pos).Append(isForChat ? progressText.RemoveColorTags() : progressText).Append("</pos>");
-        // "(00/00) " = 4em
+        var longestNameByteCount = Main.AllPlayerNames.Values.Select(name => name.GetByteCount()).OrderByDescending(byteCount => byteCount).FirstOrDefault();
+ 
+        var pos = Math.Min(((float)longestNameByteCount / 2) + 1.5f, 11.5f);
+        builder.Append(ColorString(Main.PlayerColors[id], Main.AllPlayerNames[id]));
+        builder.AppendFormat("<pos={0}em>", pos).Append(GetProgressText(id)).Append("</pos>");
+ 
         pos += 4f;
-        builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id)).Append("</pos>");
-        // "Lover's Suicide " = 8em
-        // "回線切断 " = 4.5em
-        pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID is SupportedLangs.English or SupportedLangs.Russian ? 8f : 4.5f;
+        builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
+ 
+        pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
+        string oldRoleName = GetOldRoleName(id);
+        var newRoleName = GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true);
 
-        string oldRoleName = GetOldRoleName(pc);
-        var newRoleName = GetTrueRoleName(id, false);
-        if (!string.IsNullOrEmpty(oldRoleName) && oldRoleName != newRoleName && !pc.Is(CustomRoles.GM))
-        {
-            builder.AppendFormat("<pos={0}em>", pos);
-            builder.Append(isForChat ? $"  {oldRoleName}{GetSubRolesText(id)} => " + GetTrueRoleName(id, false).RemoveColorTags() : $" {oldRoleName}{GetSubRolesText(id)} =>" + GetTrueRoleName(id, false));
-            builder.Append(isForChat ? GetSubRolesText(id).RemoveColorTags() : GetSubRolesText(id));
-            return builder.ToString();
-        }
         builder.AppendFormat("<pos={0}em>", pos);
-        builder.Append(isForChat ? GetTrueRoleName(id, false).RemoveColorTags() : GetTrueRoleName(id, false));
-        builder.Append(isForChat ? GetSubRolesText(id).RemoveColorTags() : GetSubRolesText(id));*/
-        // チャットならposタグを使わない(文字数削減)
-        if (isForChat)
-        {
-            return LastResultForChat[id];
-        }
-        else
-        { 
+        if (!string.IsNullOrEmpty(oldRoleName))
+            builder.Append(oldRoleName);
+        builder.AppendFormat("<pos={0}em>", pos);
+        builder.Append(newRoleName);
+        builder.Append("</pos>");
 
-            // 全プレイヤー中最長の名前の長さからプレイヤー名の後の水平位置を計算する
-            // 1em ≒ 半角2文字
-            // 空白は0.5emとする
-            // SJISではアルファベットは1バイト，日本語は基本的に2バイト
-            var longestNameByteCount = Main.AllPlayerNames.Values.Select(name => name.GetByteCount()).OrderByDescending(byteCount => byteCount).FirstOrDefault();
-            //最大11.5emとする(★+日本語10文字分+半角空白)
-            var pos = Math.Min(((float)longestNameByteCount / 2) + 1.5f /* ★+末尾の半角空白 */ , 11.5f);
-            builder.Append(ColorString(Main.PlayerColors[id], Main.AllPlayerNames[id]));
-            builder.AppendFormat("<pos={0}em>", pos).Append(GetProgressText(id)).Append("</pos>");
-            // "(00/00) " = 4em
-            pos += 4f;
-            builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
-            // "Lover's Suicide " = 8em
-            // "回線切断 " = 4.5em
-            pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
-            string oldRoleName = GetOldRoleName(id);
-            var newRoleName = GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true);
-
-            if (!string.IsNullOrEmpty(oldRoleName))
-            {
-                builder.AppendFormat("<pos={0}em>", pos);
-                builder.Append(oldRoleName);
-                builder.Append(newRoleName);
-                builder.Append("</pos>");
-                if (!LastResultForChat.ContainsKey(id))
-                    LastResultForChat.Add(id, builder.ToString());
-                else
-                    LastResultForChat[id] = builder.ToString();
-                return builder.ToString();
-            }
-            builder.AppendFormat("<pos={0}em>", pos);
-            builder.Append(newRoleName);
-            builder.Append("</pos>");
-        }
-        if (!LastResultForChat.ContainsKey(id))
-            LastResultForChat.Add(id, builder.ToString());
-        else
-            LastResultForChat[id] = builder.ToString();
+        LastResultForChat.Remove(id);
+        LastResultForChat.TryAdd(id, builder.ToString());
         return builder.ToString();
     }
 
@@ -1665,7 +1613,10 @@ public static class Utils
     public static int AllAlivePlayersCount => Main.AllAlivePlayerControls.Count(pc => !pc.Is(CountTypes.OutOfGame));
     public static bool IsAllAlive => PlayerState.AllPlayerStates.Values.All(state => state.CountType == CountTypes.OutOfGame || !state.IsDead);
     public static int PlayersCount(CountTypes countTypes) => PlayerState.AllPlayerStates.Values.Count(state => state.CountType == countTypes);
-    public static int AlivePlayersCount(CountTypes countTypes) => Main.AllAlivePlayerControls.Count(pc => pc.Is(countTypes) && (!(pc.GetRoleClass() as MeteorArbiter)?.CanWin ?? true) && (pc.Is(CustomRoles.Martyr)&& Martyr.CanKill));
+    public static int AlivePlayersCount(CountTypes countTypes) => 
+        Main.AllAlivePlayerControls.Count(
+            pc => pc.Is(countTypes) 
+            && ((pc.GetRoleClass() as MeteorArbiter)?.CanWin ?? true) || ((pc.GetRoleClass() as Martyr)?.CanKill ?? true));
 
     private const string ActiveSettingsSize = "70%";
     private const string ActiveSettingsLineHeight = "55%";

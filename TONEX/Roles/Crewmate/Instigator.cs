@@ -90,13 +90,16 @@ public override bool GetAbilityButtonText(out string text)
         text = GetString("InstigatorVetnButtonText");
         return PetUnSet();
     }
-    public void CheckWin(ref CustomWinner WinnerTeam, ref HashSet<byte> WinnerIds)
+    public void CheckWin()
     {
-        if (ForInstigator.Count != 0)
+        if (CustomRoles.Instigator.IsExist() && ForInstigator.Count != 0)
         {
-            foreach(var item in ForInstigator)
+            foreach (var pc in Main.AllPlayerControls)
             {
-                if (WinnerIds.Contains(item))   CustomWinnerHolder.WinnerIds.Remove(item);
+                if (ForInstigator.Contains(pc.PlayerId))
+                {
+                    CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+                }
             }
         }
     }
