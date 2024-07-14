@@ -158,6 +158,7 @@ public sealed class Jackal : RoleBase, INeutralKiller
         Player.SetKillCooldownV2();
         NameColorManager.Add(Player.PlayerId, target.PlayerId, "#00b4eb");
         NameColorManager.Add(target.PlayerId, Player.PlayerId, "#00b4eb");
+
         if (!OptionJackalCanSaveSidekick.GetBool())
             target.RpcSetCustomRole(CustomRoles.Wolfmate);
         else
@@ -168,7 +169,12 @@ public sealed class Jackal : RoleBase, INeutralKiller
                     target.RpcSetCustomRole(CustomRoles.Sidekick);
                 else
                 {
-
+        //target.RpcSetCustomRole(CustomRoles.Sidekick);
+        //target.Data.Disconnected = true;
+        //AntiBlackout.SendGameData();
+        //target.RpcSetRole(RoleTypes.Impostor, true);
+        //target.Data.Disconnected = false;
+        //AntiBlackout.SendGameData();
                     target.RpcSetCustomRole(CustomRoles.Whoops);
                     var taskState = target.GetPlayerTaskState();
                     taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();

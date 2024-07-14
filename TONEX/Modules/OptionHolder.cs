@@ -796,6 +796,7 @@ public static class Options
 
         #region 游戏设置
         HotPotatoManager.SetupCustomOption();
+        InfectorManager.SetupCustomOption();
 
         // 更多游戏模式
         TextOptionItem.Create(3_020_000, "MenuTitle.GameMode", TabGroup.ModSettings)

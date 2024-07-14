@@ -67,8 +67,10 @@ internal static class CustomRoleSelector
 
             foreach (var pc in Main.AllAlivePlayerControls)
             {
-                if(pc!=Zb)
-                   RoleResult.Add(pc, CustomRoles.Survivor);
+                if (pc != Zb)   {
+                    RoleResult.Add(pc, CustomRoles.Survivor);
+                }
+                 
             }
             RoleResult.Add(Zb, CustomRoles.Infector);
             Zb.SetOutFit(2);

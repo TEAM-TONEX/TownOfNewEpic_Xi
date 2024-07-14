@@ -17,17 +17,9 @@ internal static class InfectorManager
     public static List<byte> HumanNum;
     public static int RemainRoundTime = new();
 
-    public static OptionItem ShortTasksNum;
-    public static OptionItem LongTasksNum;
     public static OptionItem RoundTotalTime;
     public static void SetupCustomOption()
     {
-        ShortTasksNum = IntegerOptionItem.Create(62_293_011, "ShortTasksNum", new(1, 1, 10), 2, TabGroup.ModSettings, false)
-          .SetGameMode(CustomGameMode.InfectorMode)
-          .SetColor(new Color32(245, 82, 82, byte.MaxValue));
-        LongTasksNum = IntegerOptionItem.Create(62_293_012, "LongTasksNum", new(1, 1, 10), 1, TabGroup.ModSettings, false)
-          .SetGameMode(CustomGameMode.InfectorMode)
-          .SetColor(new Color32(245, 82, 82, byte.MaxValue));
         RoundTotalTime = IntegerOptionItem.Create(62_293_010, "RoundTotalTime", new(100, 300, 25), 150, TabGroup.ModSettings, false)
           .SetGameMode(CustomGameMode.InfectorMode)
           .SetColor(new Color32(245, 82, 82, byte.MaxValue))
@@ -52,7 +44,6 @@ internal static class InfectorManager
             if (Main.AssistivePluginMode.Value) return;
             if (!GameStates.IsInTask || Options.CurrentGameMode != CustomGameMode.InfectorMode || !AmongUsClient.Instance.AmHost || Main.AllAlivePlayerControls.ToList().Count == 0) return;
 
-            var playerList = Main.AllAlivePlayerControls.ToList();
             foreach (var player in Main.AllAlivePlayerControls)
             {
                 if (player.Is(CustomRoles.Infector) && !ZombiePlayers.Contains(player.PlayerId))

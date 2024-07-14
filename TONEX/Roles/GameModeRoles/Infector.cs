@@ -21,7 +21,7 @@ public sealed class Infector : RoleBase
             94_1_3_0300,
             null,
             "zb",
-            "#66ffff",
+            "#009900",
             true,
            introSound: () => GetIntroSound(RoleTypes.Impostor),
            ctop: true
@@ -46,7 +46,7 @@ public sealed class Infector : RoleBase
             var dis = Vector2.Distance(pos, pc.transform.position);
             if (dis > 0.3f) continue;
             pc.RpcSetCustomRole(CustomRoles.Infector);
-            pc.SetOutFit(1);
+            pc.SetOutFit(2);
             Utils.NotifyRoles();
         }
     }

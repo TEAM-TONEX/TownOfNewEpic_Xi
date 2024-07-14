@@ -69,7 +69,7 @@ class GameEndChecker
         if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
         {
             var playerList = Main.AllAlivePlayerControls.ToList();
-            if (playerList.Count == InfectorManager.ZombiePlayers.Count || InfectorManager.RemainRoundTime <= 0)
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count || (InfectorManager.RemainRoundTime <= 0 && InfectorManager.HumanCompleteTasks.Count != InfectorManager.HumanNum.Count))
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
                 foreach (var zb in playerList)
@@ -564,7 +564,7 @@ class GameEndChecker
         {
             reason = GameOverReason.ImpostorByKill;
             var playerList = Main.AllAlivePlayerControls.ToList();
-            if (playerList.Count == InfectorManager.ZombiePlayers.Count && InfectorManager.RemainRoundTime <= 0)
+            if (playerList.Count == InfectorManager.ZombiePlayers.Count || (InfectorManager.RemainRoundTime <= 0 && InfectorManager.HumanCompleteTasks.Count != InfectorManager.HumanNum.Count))
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Infector);
                 foreach (var zb in playerList)
