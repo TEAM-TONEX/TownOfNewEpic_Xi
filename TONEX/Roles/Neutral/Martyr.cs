@@ -26,7 +26,7 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
             "mar",
             "#A94F34",
             true,
-            CanKill,
+            true,
             countType: CountTypes.Martyr,
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             assignCountRule: new(1, 1, 1)
@@ -54,11 +54,11 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
         MartryCanUseKillButtonOnGameStart,
     }
 
-    public static byte TargetId;
-    public static bool CanKill = false;
+    public  byte TargetId;
+    public  bool CanKill = false;
     public bool HasProtect;
-    public bool IsNK { get; private set; } = CanKill;
-    public bool IsNE { get; private set; } = CanKill;
+    public bool IsNK { get; private set; } = false;
+    public bool IsNE { get; private set; } = false;
     public static List<PlayerControl> player;
     private static void SetupOptionItem()
     {
@@ -122,11 +122,14 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
     {
         var (killer, target) = info.AttemptTuple;
         if (info.IsSuicide) return true;
-        if (target.PlayerId == TargetId)
+
+
+        foreach (var pc in Main.AllPlayerControls.Where(x => x.Is(CustomRoles.Martyr) && x.IsAlive()))
         {
-            foreach (var pc in Main.AllPlayerControls.Where(x => x.PlayerId != target.PlayerId && player.Contains(x) && x.IsAlive()))
+            var rc = pc.GetRoleClass() as Martyr;
+            if (target.PlayerId == rc.TargetId)
             {
-                    if ((pc.GetRoleClass() as Martyr).HasProtect)
+                if (rc.HasProtect)
                 {
                     pc.RpcTeleport(target.transform.position);
                     killer.RpcTeleport(pc.transform.position);
@@ -137,15 +140,17 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
                 }
                 else
                 {
-                    CanKill = true;
+                    rc.CanKill = true;
                     pc.ResetKillCooldown();
                     pc.SetKillCooldownV2();
-                    (pc.GetRoleClass() as Martyr).SendRPC();
+                    rc.SendRPC();
+                    rc.IsNE = true;
+                    rc.IsNK = true;
                 }
-
 
             }
         }
+        
         return true;
     }
     public override bool EnablePetSkill() => true;
@@ -165,10 +170,6 @@ public sealed class Martyr : RoleBase, IAdditionalWinner, INeutralKiller
     }
     public bool CheckWin(ref CustomRoles winnerRole, ref CountTypes winnerCountType)
     {
-        if (CustomWinnerHolder.WinnerIds.Contains(TargetId))
-        {
-            return true;
-        }
-        return false;
+        return CustomWinnerHolder.WinnerIds.Contains(TargetId);
     }
 }

@@ -568,14 +568,6 @@ static class ExtendedPlayerControl
 
         return roleCanUse ?? false;
     }
-    //public static bool CanUseShapeShiftButton(this PlayerControl pc)
-    //{
-    //    if (!pc.IsAlive()) return false;
-
-    //    //var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseShapeShiftButton();
-
-    //    return roleCanUse ?? false;
-    //}
     public static bool CanUseSabotageButton(this PlayerControl pc)
     {
         var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseSabotageButton();
@@ -607,6 +599,7 @@ static class ExtendedPlayerControl
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
     public const MurderResultFlags SucceededFlags = MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost;
+    #region MurderPlayer
     public static void MurderPlayer(this PlayerControl killer, PlayerControl target)
     {
         killer.MurderPlayer(target, SucceededFlags);
@@ -696,6 +689,7 @@ static class ExtendedPlayerControl
             meetingHud.ClearVote();
         }
     }
+    #endregion
     public static void NoCheckStartMeeting(this PlayerControl reporter, NetworkedPlayerInfo target, bool force = false)
     { /*サボタージュ中でも関係なしに会議を起こせるメソッド
         targetがnullの場合はボタンとなる*/
@@ -746,16 +740,21 @@ static class ExtendedPlayerControl
         }
         return rangePlayers;
     }
+    #region Imp
     public static bool IsImp(this PlayerControl player) => player.Is(CustomRoleTypes.Impostor);
-    public static bool IsImpTeam(this PlayerControl player) => player.IsImp() || player.Is(CustomRoles.Madmate);
-
+    public static bool IsImpTeam(this PlayerControl player) => (player.IsImp() || player.Is(CustomRoles.Madmate))
+        && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate)
+        && !player.Is(CustomRoles.Lovers) && !player.Is(CustomRoles.AdmirerLovers) && !player.Is(CustomRoles.AkujoLovers) && !player.Is(CustomRoles.CupidLovers);
+    #endregion
+    #region Crew
     public static bool IsCrew(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate);
-    public static bool IsCrewTeam(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoles.Madmate) 
-        && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate) 
+    public static bool IsCrewTeam(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate) 
+        && !player.Is(CustomRoles.Madmate) && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate) 
         && !player.Is(CustomRoles.Lovers) && !player.Is(CustomRoles.AdmirerLovers) && !player.Is(CustomRoles.AkujoLovers) && !player.Is(CustomRoles.CupidLovers);
     public static bool IsCrewKiller(this PlayerControl player) => player.IsCrew() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as IKiller)?.IsKiller ?? false);
     public static bool IsCrewNonKiller(this PlayerControl player) => !player.IsCrewKiller();
-
+    #endregion
+    #region Neu
     public static bool IsNeutral(this PlayerControl player) => player.Is(CustomRoleTypes.Neutral);
 
     public static bool IsNeutralKiller(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as INeutralKiller)?.IsNK ?? false);
@@ -763,6 +762,17 @@ static class ExtendedPlayerControl
 
     public static bool IsNeutralEvil(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as INeutral)?.IsNE ?? false);
     public static bool IsNeutralBenign(this PlayerControl player) => !player.IsNeutralEvil();
+
+    #endregion
+    #region SpecialNeu
+    public static bool IsJackalTeam(this PlayerControl player) => 
+        player.Is(CustomRoles.Jackal) || player.Is(CustomRoles.Wolfmate) || player.Is(CustomRoles.Sidekick) || player.Is(CustomRoles.Whoops);
+
+    public static bool IsSuccubusTeam(this PlayerControl player) =>
+     player.Is(CustomRoles.Succubus) || player.Is(CustomRoles.Charmed);
+
+    #endregion
+
 
     public static bool IsShapeshifting(this PlayerControl player) => Main.CheckShapeshift.TryGetValue(player.PlayerId, out bool ss) && ss;
     public static bool KnowDeathReason(this PlayerControl seer, PlayerControl seen)
@@ -1762,5 +1772,12 @@ static class ExtendedPlayerControl
         {
             playeralive.Data.Disconnected = false;
         }
+    }
+    public static void RpcRandomVentTeleport(this PlayerControl player)
+    {
+        var vents = UnityEngine.Object.FindObjectsOfType<Vent>();
+        var rand = new System.Random();
+        var vent = vents[rand.Next(0, vents.Count)];
+        player.RpcTeleport(new Vector2(vent.transform.position.x, vent.transform.position.y + 0.3636f));
     }
 }
