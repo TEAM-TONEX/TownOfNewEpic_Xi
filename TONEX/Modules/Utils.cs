@@ -1468,6 +1468,7 @@ public static class Utils
                 {
                     if (role == "" || role == null) continue;
                     sb.Append($"{role} =>");
+                    sb.Append($"\n");
                 }
             return sb.ToString();
         }
