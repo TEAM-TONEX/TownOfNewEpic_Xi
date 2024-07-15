@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace TONEX.Modules;
 
+// 参考： https://github.com/0xDrMoe/TownofHost-Enhanced/blob/Support-2024-6-18/Modules/DelayNetworkedData.cs
+// 感激不尽
 [HarmonyPatch(typeof(InnerNetClient))]
 public class InnerNetClientPatch
 {
