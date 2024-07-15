@@ -28,7 +28,7 @@ class EndGamePatch
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
          
 
-        if (!GameStates.IsModHost) return;
+        //if (!GameStates.IsModHost) return;
         SummaryText = new();
         foreach (var id in PlayerState.AllPlayerStates.Keys)
             SummaryText[id] = Utils.SummaryTexts(id, false);

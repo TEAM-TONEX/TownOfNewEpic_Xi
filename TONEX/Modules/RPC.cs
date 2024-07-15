@@ -290,6 +290,17 @@ internal class RPCHandlerPatch
                 byte CustomRoleTargetId = reader.ReadByte();
                 CustomRoles role = (CustomRoles)reader.ReadPackedInt32();
                 RPC.SetCustomRole(CustomRoleTargetId, role);
+
+                var his = reader.ReadBoolean();
+                if (his)
+                {
+                    Main.SetRolesList.Remove(CustomRoleTargetId);
+                    int listcount = reader.ReadInt32();
+                    List<string> strings = new();
+                    for (int i = 0; i < listcount; i++)
+                        strings.Add(reader.ReadString());
+                    Main.SetRolesList.Add(CustomRoleTargetId, strings);
+                }
                 break;
             case CustomRPC.SetRoleInGame:
                 PlayerControlSetRolePatch.playanima = reader.ReadBoolean();
