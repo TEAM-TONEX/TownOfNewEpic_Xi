@@ -234,7 +234,7 @@ class GameEndChecker
                     }
 
                     //Instigator 胜利时移除玩家ID了
-                    (roleClass as Instigator).CheckWin();
+                    Instigator.CheckWin() ;
                 }
                 //if (CustomRoles.Non_Villain.IsExist() && Non_Villain.DigitalLifeList.Count <= 0)
                 //    foreach (var pc in Non_Villain.DigitalLifeList)
@@ -378,16 +378,19 @@ class GameEndChecker
             if (CustomRoles.Sunnyboy.IsExist() && Main.AllAlivePlayerControls.Count() > 1) return false;
 
             // 计数阵营记录字典
-            Dictionary<CountTypes, int> playerTypeCounts = 
+            Dictionary<CountTypes, int> playerTypeCounts =
                 Enum.GetValues(typeof(CountTypes))
                 .Cast<CountTypes>()
-                .ToDictionary(key => key, _ => 0); ;
+                .Distinct()
+                .ToDictionary(key => key, _ => 0);
 
+            Logger.Info($"获取阵营完成", "CheckGameEnd");
             // 有效计数阵营记录字典
             var validPlayerTypeCounts = playerTypeCounts
-                .Where(p => p.Key is not CountTypes.OutOfGame and not CountTypes.None)
-                .ToDictionary(p => p.Key, v => v.Value);
+                .Where(p => p.Key != CountTypes.OutOfGame && p.Key != CountTypes.None)
+                .ToDictionary(k => k.Key, v => v.Value);
 
+            Logger.Info($"获取有效阵营完成", "CheckGameEnd");
             // 判断阵营玩家数量
             foreach (var Player in Main.AllAlivePlayerControls)
             {
@@ -416,17 +419,18 @@ class GameEndChecker
                     validPlayerTypeCounts[playerType]++;
                 }
             }
+            Logger.Info($"获取各个阵营玩家数量完成", "CheckGameEnd");
 
             var crewCount = validPlayerTypeCounts[CountTypes.Crew];// 获取船员数量
             bool winnerFound = false;// 判断是否结束游戏的bool
             CustomWinner winningType = CustomWinner.None;// 赢家
 
             // 船员外所有潜在胜利者
-            var potentialWinners = validPlayerTypeCounts 
+            var potentialWinners = validPlayerTypeCounts
                 .Where(p => p.Key is not CountTypes.Crew)
                 .ToDictionary(p => p.Key, v => v.Value);
 
-            if (validPlayerTypeCounts.All(pair => pair.Value == 0)) //无人生还
+            if (validPlayerTypeCounts.All(pair => pair.Value == 0) && Main.AllAlivePlayerControls.Count() <1) //无人生还
             {
                 reason = GameOverReason.ImpostorByKill;
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
@@ -457,11 +461,14 @@ class GameEndChecker
             //判断有没有非恋人的阵营计数
             var hasTypeSansLover = Main.AllAlivePlayerControls.Any(p =>
                potentialWinners.ContainsKey(p.GetCountTypes())
-               && validLovers.All(role => !p.Is(role)));
-               
+               && IsNotLover(p));
+
+            bool IsNotLover(PlayerControl p) => validLovers.Count > 0 && validLovers.All(role => !p.Is(role));
+
             if (hasTypeSansLover || validLovers.Count() >1)// 如果有、或者不止一对链子，那就滚犊子
             {
                 winnerFound = false;
+                Logger.Info($"无效恋人", "CheckGameEnd");
             }
             // 否则，如果只有一对链子或者这对链子人数大于等于总人数一半
             else if (validLovers.Count() == 1 && Main.AllAlivePlayerControls.Count(p => p.Is(validLovers[0])) >= Main.AllAlivePlayerControls.Count()/2)

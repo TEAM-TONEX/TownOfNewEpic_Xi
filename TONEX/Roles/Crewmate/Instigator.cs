@@ -90,7 +90,7 @@ public override bool GetAbilityButtonText(out string text)
         text = GetString("InstigatorVetnButtonText");
         return PetUnSet();
     }
-    public void CheckWin()
+    public static void CheckWin()
     {
         if (CustomRoles.Instigator.IsExist() && ForInstigator.Count != 0)
         {
