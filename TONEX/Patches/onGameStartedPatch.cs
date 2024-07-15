@@ -25,8 +25,6 @@ internal class ChangeRoleSettings
         if (Main.AssistivePluginMode.Value) return;
         try
         {
-            
-
             //注:この時点では役職は設定されていません。
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
             if (Options.DisableVanillaRoles.GetBool())
