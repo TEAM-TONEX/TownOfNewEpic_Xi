@@ -139,7 +139,7 @@
  - [Farewell](https://github.com/ksduye) - **咨询支持**
  - [LezaiYa](https://github.com/LezaiYa1) - **咨询支持**
  - [Imp11](https://github.com/dabao40) - **咨询支持**
- - [方块](https://github.com/FangKuaiYa) - **咨询支持**
+ - [FangKuai](https://github.com/FangKuaiYa) - **咨询支持**
 
 ## 星标历史
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
