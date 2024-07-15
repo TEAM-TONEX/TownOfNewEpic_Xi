@@ -134,10 +134,10 @@
  - [KARPED1EM](https://github.com/KARPED1EM) - **技术支持**
  - [Yu(原名：Night)](https://github.com/Night-GUA) - **[TOHEX](https://tohex.cc)开发者**
  - ryuk - **新功能与优秀的想法**
- - Amongus(水木年华) - **翻译与技术支持**
+ - [Amongus](https://github.com/XiezibanWrite) - **翻译与技术支持**
  - [NikoCat233](https://github.com/NikoCat233) - **技术支持**
- - Farewell - **咨询支持**
- - [LeZaiYa](https://github.com/LezaiYa1) - **咨询支持**
+ - [Farewell](https://github.com/ksduye) - **咨询支持**
+ - [LezaiYa](https://github.com/LezaiYa1) - **咨询支持**
  - [Imp11](https://github.com/dabao40) - **咨询支持**
  - [方块](https://github.com/FangKuaiYa) - **咨询支持**
 
