@@ -95,9 +95,6 @@
 - 开发者：[Loonie-Toons](https://github.com/Loonie-Toons)
 - 许多职业想法
 - 提供职业: TOHEX中的医生、分散者、变色龙
-### [To-Hope](https://gitee.com/xigua_ya/to-hope) :
-- 开发者：[遇千知Yu(Night_瓜)](https://gitee.com/xigua_ya)
-- 参考: TOHEX中的自定义按钮
 ### [Project:Lotus](https://github.com/ImaMapleTree/Lotus) :
 - 开发者：[ImaMapleTree](https://github.com/ImaMapleTree)
 - 参考: 修改聊天框
@@ -135,7 +132,7 @@
 
 ### 贡献者
  - [KARPED1EM](https://github.com/KARPED1EM) - **技术支持**
- - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **[TOHEX](https://tohex.cc)开发者**
+ - [Yu(原名：Night)](https://github.com/Night-GUA) - **[TOHEX](https://tohex.cc)开发者**
  - ryuk - **新功能与优秀的想法**
  - Amongus(水木年华) - **翻译与技术支持**
  - [NikoCat233](https://github.com/NikoCat233) - **技术支持**
