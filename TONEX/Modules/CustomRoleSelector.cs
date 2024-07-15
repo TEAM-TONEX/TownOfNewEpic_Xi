@@ -381,12 +381,14 @@ internal static class CustomRoleSelector
     public static int addScientistNum = 0;
     public static int addEngineerNum = 0;
     public static int addShapeshifterNum = 0;
+    public static int addGuardianAngelNum = 0;
     public static void CalculateVanillaRoleCount()
     {
         // 计算原版特殊职业数量
         addEngineerNum = 0;
         addScientistNum = 0;
         addShapeshifterNum = 0;
+        addGuardianAngelNum = 0;
         foreach (var role in AllRoles)
         {
             switch (role.GetRoleInfo()?.BaseRoleType.Invoke())
@@ -394,6 +396,7 @@ internal static class CustomRoleSelector
                 case RoleTypes.Scientist: addScientistNum++; break;
                 case RoleTypes.Engineer: addEngineerNum++; break;
                 case RoleTypes.Shapeshifter: addShapeshifterNum++; break;
+                case RoleTypes.GuardianAngel: addGuardianAngelNum++; break;
             }
         }
     }
@@ -404,6 +407,7 @@ internal static class CustomRoleSelector
             RoleTypes.Engineer => addEngineerNum,
             RoleTypes.Scientist => addScientistNum,
             RoleTypes.Shapeshifter => addShapeshifterNum,
+            RoleTypes.GuardianAngel => addGuardianAngelNum,
             _ => 0
         };
     }

@@ -128,7 +128,7 @@ public sealed class Demon : RoleBase, INeutralKiller
 
 
         RPC.PlaySoundRPC(killer.PlayerId, Sounds.KillSound);
-        Utils.NotifyRoles(killer);
+        Utils.NotifyRoles();
 
         Logger.Info($"{killer.GetNameWithRole()} 对玩家 {target.GetNameWithRole()} 造成了 {OptionDamage.GetInt()} 点伤害", "Demon");
         return false;
@@ -151,9 +151,7 @@ public sealed class Demon : RoleBase, INeutralKiller
         RPC.PlaySoundRPC(target.PlayerId, Sounds.KillSound);
         killer.SetKillCooldownV2(target: target, forceAnime: true);
 
-        Utils.NotifyRoles(target);
-        Utils.NotifyRoles(target);
-        Utils.NotifyRoles(target);
+        Utils.NotifyRoles();
 
         Logger.Info($"{killer.GetNameWithRole()} 对玩家 {target.GetNameWithRole()} 造成了 {OptionSelfDamage.GetInt()} 点伤害", "Demon");
         return false;

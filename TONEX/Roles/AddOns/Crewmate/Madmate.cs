@@ -160,7 +160,8 @@ public static class Madmate
     }
     public static void AssignMadmateRoles()
     {
-        var allPlayers = Main.AllPlayerControls.Where(x => x.CanBeMadmate()).ToList();
+        if (!CustomRoles.Madmate.IsEnable() || Madmate.MadmateSpawnMode.GetInt() != 0) return;
+            var allPlayers = Main.AllPlayerControls.Where(x => x.CanBeMadmate()).ToList();
         var count = Math.Clamp(CustomRoles.Madmate.GetCount(), 0, allPlayers.Count);
         if (count <= 0) return;
         for (var i = 0; i < count; i++)

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using TONEX.Modules.SoundInterface;
 using static UnityEngine.GraphicsBuffer;
+using System.Linq;
 
 namespace TONEX.Roles.Neutral;
 public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
@@ -97,8 +98,12 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(false);
     public bool CheckWin(ref CustomRoles winnerRole, ref CountTypes winnerCountType)
     {
-        if (CustomWinnerHolder.WinnerIds.Contains(SubstituteId)) return false;
-        return true ;
+        if (Utils.GetPlayerById(SubstituteId).GetCountTypes() == winnerCountType)
+        {
+            CustomWinnerHolder.WinnerIds.Remove(SubstituteId);
+            return true;
+        }
+        return false;
     }
     public override string GetProgressText(bool comms = false)
     {
@@ -150,13 +155,13 @@ public sealed class Alternate : RoleBase, IAdditionalWinner, INeutralKiller
                         target.RpcSetName(KillerName);
                         Main.AllPlayerSpeed[target.PlayerId] = KillerSpeed;
                         target.SetOutFit(outfit2.ColorId, outfit2.HatId, outfit2.SkinId, outfit2.VisorId, outfit2.PetId);
-                    }, 0.2f, "Clam");
+                    }, 0.2f, "Alternate");
                     new LateTask(() =>
                     {
                         Utils.NotifyRoles(target);
                         Utils.NotifyRoles(killer);
                         Utils.NotifyRoles();
-                    }, 0.5f, "Clam");
+                    }, 0.5f, "Alternate");
                     killer.RpcTeleport(target.GetTruePosition());
                     RPC.PlaySoundRPC(killer.PlayerId, Sounds.KillSound);
                     target.RpcTeleport(Utils.GetBlackRoomPS());
