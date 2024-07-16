@@ -136,6 +136,9 @@ public class Main : BasePlugin
     public static Dictionary<byte, CustomRoles> DevRole = new();
 
     static bool LoadEnd = false;
+
+    public static Dictionary<byte, bool> RoleAssigned;
+
     public static IEnumerable<PlayerControl> AllPlayerControls => 
         //(PlayerControl.AllPlayerControls == null || PlayerControl.AllPlayerControls.Count == 0) && LoadEnd
         //? AllPlayerControls : 

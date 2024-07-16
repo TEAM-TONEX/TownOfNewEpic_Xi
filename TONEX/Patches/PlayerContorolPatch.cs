@@ -30,6 +30,7 @@ using UnityEngine;
 using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.ParticleSystem.PlaybackState;
+using MonoMod.Cil;
 
 namespace TONEX;
 
@@ -1062,17 +1063,23 @@ class CheckProtectPatch
 
 #region 设置职业 / SetRole
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetRole))]
-class PlayerControlRpcSetRolePatch
+public class PlayerControlRpcSetRolePatch
 {
     public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, ref bool canOverrideRole )
     {
-        if (Main.AssistivePluginMode.Value) return true;
-        canOverrideRole = false;
+        if (!AmongUsClient.Instance.AmHost ||Main.AssistivePluginMode.Value) return true;
+        if (Main.RoleAssigned[__instance.PlayerId] && !RoleManager.IsGhostRole(roleType))
+            return false;
+        if (!canOverrideRole)
+        {
+            __instance.RpcSetRole(roleType, true);
+            return false;
+        }
         var target = __instance;
         var targetName = __instance.GetNameWithRole();
         Logger.Info($"{targetName} =>{roleType}", "PlayerControl.RpcSetRole");
         if (!ShipStatus.Instance.enabled) return true;
-        if (roleType is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost or RoleTypes.GuardianAngel)
+        if (RoleManager.IsGhostRole(roleType))
         {
             var targetIsKiller = target.GetRoleClass() is IKiller;
             var ghostRoles = new Dictionary<PlayerControl, RoleTypes>();
@@ -1117,8 +1124,13 @@ class PlayerControlRpcSetRolePatch
                 return false;
             }
         }
-        return true;
+        __instance.RpcSetRoleV2(roleType);
+        Main.RoleAssigned[__instance.PlayerId] = true;
+
+        return false;
     }
+
+
 }
 /*[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CoSetRole))]*/
 public static class PlayerControlSetRolePatch

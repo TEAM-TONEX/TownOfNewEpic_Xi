@@ -64,6 +64,10 @@ internal class ChangeRoleSettings
             Main.CheckShapeshift = new();
             Main.ShapeshiftTarget = new();
 
+            Main.RoleAssigned = new();
+            foreach (var pc in PlayerControl.AllPlayerControls)
+                Main.RoleAssigned.Add(pc.PlayerId, false);
+
             Main.ShieldPlayer = Options.ShieldPersonDiedFirst.GetBool() ? Main.FirstDied : byte.MaxValue;
             Main.FirstDied = byte.MaxValue;
 
@@ -242,7 +246,7 @@ internal class SelectRolesPatch
                 AssignDesyncRole(kv.Value, kv.Key, senders, rolesMap, BaseRole: kv.Value.GetRoleInfo().BaseRoleType.Invoke());
             }
 
-            MakeDesyncSender(senders, rolesMap);
+            //MakeDesyncSender(senders, rolesMap);
         }
         catch (Exception ex)
         {
@@ -365,34 +369,10 @@ internal class SelectRolesPatch
     static void AssignDesyncRole(CustomRoles role, PlayerControl player, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
     {
         if (Main.AssistivePluginMode.Value) return;
-        var hostId = PlayerControl.LocalPlayer.PlayerId;
 
         PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role);
-
-        var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
-        var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
-
-
-        // 同时处理Desync角色视角和其他玩家角色视角
-        foreach (var target in Main.AllPlayerControls)
-        {
-            // Desync角色视角
-            rolesMap[(player.PlayerId, target.PlayerId)] = player.PlayerId != target.PlayerId ? othersRole : selfRole;
-
-            // 其他玩家角色视角（针对不是当前玩家的玩家）
-            if (player.PlayerId != target.PlayerId)
-            {
-                rolesMap[(target.PlayerId, player.PlayerId)] = othersRole;
-            }
-        }
-
-        // 将当前玩家添加到发送者列表
+        player.RpcSetRoleV2(BaseRole, hostBaseRole, true);
         RpcSetRoleReplacer.OverriddenSenderList.Add(senders[player.PlayerId]);
-
-        //房主视角下确定角色
-        player.SetRole(othersRole, false);
-        player.Data.IsDead = true;
-
         Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomRoles");
     }
     static void MakeDesyncSender(Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap)
@@ -440,11 +420,7 @@ internal class SelectRolesPatch
 
                 foreach (var pair in StoragedData)
                 {
-                    AmongUsClient.Instance.StartCoroutine(pair.Item1.CoSetRole(pair.Item2, true));
-                    sender.Value.AutoStartRpc(pair.Item1.NetId, (byte)RpcCalls.SetRole, Utils.GetPlayerById(sender.Key).GetClientId())
-                        .Write((ushort)pair.Item2)
-                        .Write(false)
-                        .EndRpc();
+                    pair.Item1.RpcSetRoleV2(pair.Item2);
                 }
                 sender.Value.EndMessage();
             }

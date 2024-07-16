@@ -30,6 +30,108 @@ static class ExtendedPlayerControl
     {
         AmongUsClient.Instance.StartCoroutine(player.CoSetRole(role, canOverrideRole));
     }
+    public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, bool canOverride, int clientId = -255)
+    {
+        //player: 名前の変更対象
+        if (clientId == -255)
+            clientId = player.GetClientId();
+        if (player == null) return;
+        if (AmongUsClient.Instance.ClientId == clientId)
+        {
+            player.SetRole(role, true);
+            return;
+        }
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, clientId);
+        writer.Write((ushort)role);
+        writer.Write(true);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+
+    public static void RpcSetRoleDesyncV2(this PlayerControl player, RoleTypes role, PlayerControl seer)
+    {
+        if (player == null || seer == null) return;
+        if (seer.AmOwner)
+        {
+            player.SetRole(role, true);
+            return;
+        }
+        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, seer.GetClientId());
+        writer.Write((ushort)role);
+        writer.Write(true);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+    public static bool RpcSetRoleV2(this PlayerControl player, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate, bool Desync = false)
+    {
+        Main.RoleAssigned[player.PlayerId] = true;
+
+        if (Desync)
+        {
+            var hostId = PlayerControl.LocalPlayer.PlayerId;
+            var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
+            var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
+
+
+            new LateTask(() => {
+                Dictionary<byte, bool> Disconnected = new();
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                {
+                    Disconnected[pc.PlayerId] = pc.Data.Disconnected;
+                    pc.Data.Disconnected = true;
+                }
+                AntiBlackout.SendGameData();
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                    pc.Data.Disconnected = Disconnected[pc.PlayerId];
+            }, 0.5f);
+            new LateTask(() => {
+                player.RpcSetRoleDesyncV2(selfRole, player);
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    if (player == pc) continue;
+                    player.RpcSetRoleDesyncV2(othersRole, player);
+                }
+            }, 1f);
+            new LateTask(() => {
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                    PlayerNameColor.Set(pc);
+                DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+                DestroyableSingleton<HudManager>.Instance.HideGameLoader();
+            }, 1.2f);
+            new LateTask(() => AntiBlackout.SendGameData(), 1.5f);
+        }
+        else
+        {
+            new LateTask(() =>
+            {
+                Dictionary<byte, bool> Disconnected = new();
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                {
+                    Disconnected[pc.PlayerId] = pc.Data.Disconnected;
+                    pc.Data.Disconnected = true;
+                }
+                AntiBlackout.SendGameData();
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                    pc.Data.Disconnected = Disconnected[pc.PlayerId];
+            }, 0.5f);
+            new LateTask(() =>
+            {
+                player.SetRole(BaseRole, true);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, -1);
+                writer.Write((ushort)BaseRole);
+                writer.Write(true);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+            }, 1f);
+            new LateTask(() =>
+            {
+                foreach (var pc in PlayerControl.AllPlayerControls)
+                    PlayerNameColor.Set(pc);
+                DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+                DestroyableSingleton<HudManager>.Instance.HideGameLoader();
+            }, 1.2f);
+            new LateTask(() => AntiBlackout.SendGameData(), 1.5f);
+        }
+        return false;
+    }
+
     public static void RpcSetCustomRole(this PlayerControl player, CustomRoles role)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -76,10 +178,11 @@ static class ExtendedPlayerControl
         }
         AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-
+        if (!role.IsAddon())
+        player.RpcSetRole(role.GetRoleInfo()?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate, !IsGM);
        
-        if (Options.IsAllCrew)
-            player.RpcSetRoleInGame(role.GetRoleInfo().BaseRoleType.Invoke());
+        //if (Options.IsAllCrew)
+        //    player.RpcSetRoleInGame(role.GetRoleInfo()?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate);
     }
     public static void RpcSetCustomRole(byte PlayerId, CustomRoles role)
     {
@@ -277,21 +380,6 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, SendOption.Reliable, clientId);
         writer.Write(player.Data.NetId);
         writer.Write(name);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
-    }
-    public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, bool canOverride, int clientId)
-    {
-        //player: 名前の変更対象
-
-        if (player == null) return;
-        if (AmongUsClient.Instance.ClientId == clientId)
-        {
-            player.SetRole(role, false);
-            return;
-        }
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, clientId);
-        writer.Write((ushort)role);
-        writer.Write(false);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
