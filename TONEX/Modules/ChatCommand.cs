@@ -349,7 +349,6 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
     }
     public static void SpamInitOnly()
     {
-        InitRoleCommands();
         SpamCommands = new()
         {
             new(["id"], CommandAccess.All, mc =>

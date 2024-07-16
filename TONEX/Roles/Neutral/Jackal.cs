@@ -164,8 +164,7 @@ public sealed class Jackal : RoleBase, INeutralKiller
             target.RpcSetCustomRole(CustomRoles.Wolfmate);
         else
         {
-            if (!Options.IsAllCrew)
-            {
+
                 if (target.CanUseKillButton())
                     target.RpcSetCustomRole(CustomRoles.Sidekick);
                 else
@@ -188,9 +187,7 @@ public sealed class Jackal : RoleBase, INeutralKiller
                         Utils.NotifyRoles();
                     }
                 }
-            }
-            else
-                target.RpcSetCustomRole(CustomRoles.Sidekick);
+           
         }
        
 

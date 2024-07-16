@@ -44,7 +44,8 @@ internal static class HotPotatoManager
         public static void Postfix(PlayerControl __instance)
         {
             if (Main.AssistivePluginMode.Value) return;
-            if (!GameStates.IsInTask || Options.CurrentGameMode != CustomGameMode.HotPotato || !AmongUsClient.Instance.AmHost || Main.AllAlivePlayerControls.ToList().Count == 0) return;
+            if (!GameStates.IsInTask || Options.CurrentGameMode != CustomGameMode.HotPotato 
+                || !AmongUsClient.Instance.AmHost || Main.AllAlivePlayerControls.ToList().Count == 0) return;
             //一些巴拉巴拉的东西
             var playerList = Main.AllAlivePlayerControls.ToList();
             if ((playerList.Count >= 9 && playerList.Count <= 11 && HotPotatoMax >= 3) ||(playerList.Count >= 5 && playerList.Count <= 7 && HotPotatoMax >= 2))

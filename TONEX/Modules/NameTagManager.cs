@@ -43,6 +43,7 @@ public static class NameTagManager
     }
     public static void ApplyFor(PlayerControl player)
     {
+        return;
         if (!AmongUsClient.Instance.AmHost || player == null) return;
         if (!player.AmOwner && !AllNameTags.ContainsKey(player.FriendCode)) return;
 

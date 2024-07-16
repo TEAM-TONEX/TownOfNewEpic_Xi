@@ -1355,33 +1355,37 @@ class PlayerControlCheckNamePatch
 {
     public static void Postfix(PlayerControl __instance, string playerName)
     {
-        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby || Main.AssistivePluginMode.Value) return;
+        if (!AmongUsClient.Instance.AmHost || !GameStates.IsLobby ) return;
 
         var name = playerName;
-        if (Options.FormatNameMode.GetInt() == 2)
-            name = Main.Get_TName_Snacks;
-        else
+        if (!Main.AssistivePluginMode.Value)
         {
-            // 删除非法字符
-            name = name.RemoveHtmlTags().Replace(@"\", string.Empty).Replace("/", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace("\0", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty);
-            // 删除超出10位的字符
-            if (name.Length > 10) name = name[..10];
-            // 删除Emoji
-            if (Options.DisableEmojiName.GetBool()) name = Regex.Replace(name, @"\p{Cs}", string.Empty);
-            // 若无有效字符则随机取名
-            if (Regex.Replace(Regex.Replace(name, @"\s", string.Empty), @"[\x01-\x1F,\x7F]", string.Empty).Length < 1) name = Main.Get_TName_Snacks;
-            // 替换重名
-            string fixedName = name;
-            int suffixNumber = 0;
-            while (Main.AllPlayerNames.ContainsValue(fixedName))
+            if (Options.FormatNameMode.GetInt() == 2)
+                name = Main.Get_TName_Snacks;
+            else
             {
-                suffixNumber++;
-                fixedName = $"{name} {suffixNumber}";
+                // 删除非法字符
+                name = name.RemoveHtmlTags().Replace(@"\", string.Empty).Replace("/", string.Empty).Replace("\n", string.Empty).Replace("\r", string.Empty).Replace("\0", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty);
+                // 删除超出10位的字符
+                if (name.Length > 10) name = name[..10];
+                // 删除Emoji
+                if (Options.DisableEmojiName.GetBool()) name = Regex.Replace(name, @"\p{Cs}", string.Empty);
+                // 若无有效字符则随机取名
+                if (Regex.Replace(Regex.Replace(name, @"\s", string.Empty), @"[\x01-\x1F,\x7F]", string.Empty).Length < 1) name = Main.Get_TName_Snacks;
+                // 替换重名
+                string fixedName = name;
+                int suffixNumber = 0;
+                while (Main.AllPlayerNames.ContainsValue(fixedName))
+                {
+                    suffixNumber++;
+                    fixedName = $"{name} {suffixNumber}";
+                }
+                if (!fixedName.Equals(name)) name = fixedName;
             }
-            if (!fixedName.Equals(name)) name = fixedName;
         }
         Main.AllPlayerNames.Remove(__instance.PlayerId);
         Main.AllPlayerNames.TryAdd(__instance.PlayerId, name);
+        if (Main.AssistivePluginMode.Value) return;
         if (!name.Equals(playerName))
         {
             _ = new LateTask(() =>

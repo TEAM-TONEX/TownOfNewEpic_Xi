@@ -1434,25 +1434,37 @@ public static class Utils
 
         var builder = new StringBuilder();
         var longestNameByteCount = Main.AllPlayerNames.Values.Select(name => name.GetByteCount()).OrderByDescending(byteCount => byteCount).FirstOrDefault();
- 
         var pos = Math.Min(((float)longestNameByteCount / 2) + 1.5f, 11.5f);
-        builder.Append(ColorString(Main.PlayerColors[id], Main.AllPlayerNames[id]));
-        builder.AppendFormat("<pos={0}em>", pos).Append(GetProgressText(id)).Append("</pos>");
- 
-        pos += 4f;
-        builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
- 
-        pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
-        string oldRoleName = GetOldRoleName(id);
-        var newRoleName = GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true);
+        if (!Main.AssistivePluginMode.Value)
+        {
+            builder.Append(ColorString(Main.PlayerColors[id], Main.AllPlayerNames[id]));
+            builder.AppendFormat("<pos={0}em>", pos).Append(GetProgressText(id)).Append("</pos>");
 
-        builder.AppendFormat("<pos={0}em>", pos);
-        if (!string.IsNullOrEmpty(oldRoleName))
-            builder.Append(oldRoleName);
-        builder.AppendFormat("<pos={0}em>", pos);
-        builder.Append(newRoleName);
-        builder.Append("</pos>");
+            pos += 4f;
+            builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
 
+            pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
+            string oldRoleName = GetOldRoleName(id);
+            var newRoleName = GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true);
+
+            builder.AppendFormat("<pos={0}em>", pos);
+            if (!string.IsNullOrEmpty(oldRoleName))
+                builder.Append(oldRoleName);
+            builder.Append(newRoleName);
+            builder.Append("</pos>");
+        }
+        else
+        {
+            var pc = GetPlayerById(id);
+            var colorId = pc.Data.DefaultOutfit.ColorId;
+            builder.Append(ColorString(Palette.PlayerColors[colorId], Main.AllPlayerNames[id]));
+            pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
+            builder.AppendFormat("<pos={0}em>", pos);
+            builder.Append($"{pc.Data.RoleWhenAlive}");
+            if (pc.Data.IsDead)
+                builder.Append($"=> \n{pc.Data.Role.Role}");
+            builder.Append("</pos>");
+        }
         LastResultForChat.Remove(id);
         LastResultForChat.TryAdd(id, builder.ToString());
         return builder.ToString();
@@ -1468,6 +1480,7 @@ public static class Utils
                 {
                     if (role == "" || role == null) continue;
                     sb.Append($"{role} =>");
+                    sb.Append($"\n");
                 }
             return sb.ToString();
         }

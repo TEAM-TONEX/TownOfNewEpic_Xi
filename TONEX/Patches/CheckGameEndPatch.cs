@@ -384,13 +384,11 @@ class GameEndChecker
                 .Distinct()
                 .ToDictionary(key => key, _ => 0);
 
-            Logger.Info($"获取阵营完成", "CheckGameEnd");
             // 有效计数阵营记录字典
             var validPlayerTypeCounts = playerTypeCounts
                 .Where(p => p.Key != CountTypes.OutOfGame && p.Key != CountTypes.None)
                 .ToDictionary(k => k.Key, v => v.Value);
 
-            Logger.Info($"获取有效阵营完成", "CheckGameEnd");
             // 判断阵营玩家数量
             foreach (var Player in Main.AllAlivePlayerControls)
             {
@@ -419,7 +417,6 @@ class GameEndChecker
                     validPlayerTypeCounts[playerType]++;
                 }
             }
-            Logger.Info($"获取各个阵营玩家数量完成", "CheckGameEnd");
 
             var crewCount = validPlayerTypeCounts[CountTypes.Crew];// 获取船员数量
             bool winnerFound = false;// 判断是否结束游戏的bool
@@ -443,7 +440,6 @@ class GameEndChecker
                 reason = GameOverReason.HumansByVote;
                 winnerFound = true;
                 winningType = CustomWinner.Crewmate;
-                Logger.Info($"胜利阵营暂定为{winningType}", "CheckGameEnd");
             }
 
             var winningCandidate = potentialWinners.FirstOrDefault(kv => kv.Value >= crewCount && kv.Value != 0);// 找到第一个可能的胜利者
@@ -451,7 +447,6 @@ class GameEndChecker
             {
                 winnerFound = true;
                 winningType = (CustomWinner)winningCandidate.Key; 
-                Logger.Info($"胜利阵营暂定为{winningType}", "CheckGameEnd");
             }
 
             // 所有链子的数组
@@ -468,7 +463,6 @@ class GameEndChecker
             if (hasTypeSansLover || validLovers.Count() >1)// 如果有、或者不止一对链子，那就滚犊子
             {
                 winnerFound = false;
-                Logger.Info($"无效恋人", "CheckGameEnd");
             }
             // 否则，如果只有一对链子或者这对链子人数大于等于总人数一半
             else if (validLovers.Count() == 1 && Main.AllAlivePlayerControls.Count(p => p.Is(validLovers[0])) >= Main.AllAlivePlayerControls.Count()/2)
@@ -476,14 +470,13 @@ class GameEndChecker
                 var loverRole = validLovers[0];
                 winningType = (CustomWinner)loverRole;
                 winnerFound = true;
-                Logger.Info($"胜利阵营暂定为{winningType}", "CheckGameEnd");
             }
 
             if (winnerFound) // 胜利条件达成
             {
                 reason = GameOverReason.ImpostorByKill;
                 CustomWinnerHolder.ResetAndSetWinner(winningType);
-                Logger.Info($"胜利阵营判断决定为{winningType}", "CheckGameEnd");
+                Logger.Info($"胜利阵营暂时决定为{winningType}", "CheckGameEnd");
                 return true;
             }
             // 胜利条件未达成
