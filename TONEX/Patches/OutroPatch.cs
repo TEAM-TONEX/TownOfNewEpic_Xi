@@ -22,18 +22,25 @@ class EndGamePatch
     {
         GameStates.InGame = false;
         Logger.Info("-----------游戏结束-----------", "Phase");
-            
+
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-         
+
+        if (Main.AssistivePluginMode.Value)
+        {
+            SummaryText = new();
+            foreach (var id in ChangeRoleSettings.AllPlayers.Keys)
+                SummaryText[id] = Utils.SummaryTexts(id, false);
+            return;
+        }
 
         //if (!GameStates.IsModHost) return;
         SummaryText = new();
         foreach (var id in PlayerState.AllPlayerStates.Keys)
             SummaryText[id] = Utils.SummaryTexts(id, false);
 
-        if (Main.AssistivePluginMode.Value) return;
+       
 
         var sb = new StringBuilder(GetString("KillLog"));
         sb.Append("<size=70%>");
@@ -93,7 +100,13 @@ class SetEverythingUpPatch
     public static string LastWinsReason = "";
     private static TextMeshPro roleSummary;
     private static SimpleButton showHideButton;
-
+    static bool DidHumansWin;
+    static List<CachedPlayerData> Data;
+    public static void Prefix()
+    {
+        DidHumansWin = GameManager.Instance.DidHumansWin(EndGameResult.CachedGameOverReason);
+        Data = EndGameResult.CachedWinners.ToArray().ToList();
+    }
     public static void Postfix(EndGameManager __instance)
     {
         
@@ -269,31 +282,41 @@ class SetEverythingUpPatch
         }
         else
         {
-            List<byte> cloneRoles = new();
-            foreach (var pc in ChangeRoleSettings.AllPlayers)
-                cloneRoles.Add(pc.PlayerId);
-            foreach (var data in EndGameResult.CachedWinners)
-            {
-                var id = cloneRoles.FirstOrDefault(p =>
-                {
-                    return Utils.GetPlayerById(p).Data.DefaultOutfit.ColorId == data.ColorId;
-                });
+            
 
-                try
-                {
-                    CustomWinnerColor = Utils.GetPlayerById(id).Data.Role.IsImpostor ? "#FF1919" : "#8CFFFF";
-                    sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[id]);
-                    cloneRoles.Remove(id);
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e.ToString(), "SetEverythingUpPatch");
-                }
-                
-            }
-            foreach (var id in cloneRoles)
+            CustomWinnerColor = !DidHumansWin ? "#FF1919" : "#8CFFFF";
+
+            if (DidHumansWin)
             {
-                sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[id]);
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+
+                    if (pc.Value) continue;
+                    sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[pc.Key]);
+                }
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+                    if (!pc.Value) continue;
+                    sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[pc.Key]);
+
+                }
+                Logger.Info("船员胜利", "SetEverythingUpPatch");
+            }
+            else
+            {
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+
+                    if (!pc.Value) continue;
+                    sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[pc.Key]);
+                }
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+                    if (pc.Value) continue;
+                    sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[pc.Key]);
+
+                }
+                Logger.Info("内鬼胜利", "SetEverythingUpPatch");
             }
         }
 
@@ -310,6 +333,6 @@ class SetEverythingUpPatch
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //Utils.ApplySuffix();
+        ////////Utils.ApplySuffix();
     }
 }

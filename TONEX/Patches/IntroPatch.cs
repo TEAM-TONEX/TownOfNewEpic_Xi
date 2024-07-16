@@ -436,7 +436,7 @@ class IntroCutscenePatch
             __instance.ImpostorText.gameObject.SetActive(true);
 
             __instance.TeamTitle.text = GetString("TeamImpostor");
-            __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+            __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
 
             __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
             __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
@@ -449,7 +449,16 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.OnDestroy)), HarmonyPostfix]
     public static void OnDestroy_Postfix(IntroCutscene __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+
+        if (Main.AssistivePluginMode.Value)
+        {
+            foreach (var id in ChangeRoleSettings.AllPlayers.Keys)
+            {
+                var pc = Utils.GetPlayerById(id);
+                ChangeRoleSettings.AllPlayers[id] = pc.Data.Role.IsImpostor;
+            }
+            return;
+        }
         if (!GameStates.IsInGame) return;
 
         Main.introDestroyed = true;
@@ -527,6 +536,7 @@ class IntroCutscenePatch
             {
                 PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
             }
+
         }
         Logger.Info("OnDestroy", "IntroCutscene");
     }

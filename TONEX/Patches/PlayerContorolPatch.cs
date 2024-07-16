@@ -670,7 +670,7 @@ class FixedUpdatePatch
         //LocalPlayer専用
         if (__instance.AmOwner)
         {
-            //キルターゲットの上書き処理
+            //覆盖杀手目标处理
             if (GameStates.IsInTask && !__instance.Is(CustomRoleTypes.Impostor) && __instance.CanUseKillButton() && !__instance.Data.IsDead)
             {
                 var players = __instance.GetPlayersInAbilityRangeSorted(false);

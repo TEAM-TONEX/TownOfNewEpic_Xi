@@ -51,7 +51,11 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
                 SetRoles(mc.Args, mc.Player.PlayerId);
                 return (MsgRecallMode.Block, null);
             }),
-
+            new(["rule"], CommandAccess.All, mc =>
+            {
+var  text="行动阶段：\n1.采用伪装者模版或工程师模版发动技能的角色禁止使用管道快速移动和关门。中立带刀职业请查看设置是否能使用管道。\n2.警长，侠客等带刀好人禁止无任何理由开刀。\n会议阶段：\n1.小丑允许报带刀职业，但是不允许主动发起11，和自爆狼或带刀中立的操作。\n2.赌怪指令若有泄露不能明报，只能暗踩或自行悄悄解决。\n3.不允许通过询问职业参数的方式询问一个人的职业的真实性。\n4.非赌怪角色禁止输入赌怪指令或有意错误输入赌怪指令到聊天框，也不允许让一名玩家通过发指令的方式证明他是否为赌怪。\n5.“讨论时间”结束之前不允许赌人。";
+                return (MsgRecallMode.None, text);
+            }),
             new(["rev"], CommandAccess.Debugger, mc =>
             {
                 var id = Convert.ToByte(mc.Args);

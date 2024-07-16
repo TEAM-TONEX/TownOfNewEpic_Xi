@@ -1053,6 +1053,8 @@ public static class Utils
             + $"\n  ○ /win {GetString("Command.winner")}"
             + $"\n  ○ /eje {GetString("Command.GetLatestEje")}"
             + $"\n  ○ /ank {GetString("Command.ActiveNK")}"
+            + $"\n  ○ /id {GetString("Command.idlist")}"
+            + $"\n  ○ /rule → 查看比赛规则"
             + "\n\n" + "<color=#12bee4>" + GetString("CommandOtherList")
             + $"\n  ○ /color {GetString("Command.color")}"
             + $"\n  ○ /rn {GetString("Command.rename")}"
@@ -1064,7 +1066,7 @@ public static class Utils
             + $"\n  ○ /kill {GetString("Command.kill")}"
             + $"\n  ○ /exe {GetString("Command.exe")}"
             + $"\n  ○ /level {GetString("Command.level")}"
-            + $"\n  ○ /id {GetString("Command.idlist")}"
+            
             + $"\n  ○ /qq {GetString("Command.qq")}"
             + $"\n  ○ /dump {GetString("Command.dump")}"
             + $"\n  ○ /up {GetString("Command.up")}"
@@ -1460,9 +1462,10 @@ public static class Utils
             builder.Append(ColorString(Palette.PlayerColors[colorId], Main.AllPlayerNames[id]));
             pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
             builder.AppendFormat("<pos={0}em>", pos);
-            builder.Append($"{pc.Data.RoleWhenAlive}");
+            builder.Append(ColorString(GetRoleColor(pc.Data.RoleWhenAlive.Value.GetCustomRoleTypes()),GetString($"{pc.Data.RoleWhenAlive.Value}")));
             if (pc.Data.IsDead)
-                builder.Append($"=> \n{pc.Data.Role.Role}");
+                builder.Append($"=> \n" +
+                    $"                    {ColorString(GetRoleColor(pc.Data.Role.Role.GetCustomRoleTypes()), GetString($"{pc.Data.Role.Role}"))}");
             builder.Append("</pos>");
         }
         LastResultForChat.Remove(id);
@@ -1480,7 +1483,7 @@ public static class Utils
                 {
                     if (role == "" || role == null) continue;
                     sb.Append($"{role} =>");
-                    sb.Append($"\n");
+                    sb.Append($"\n             ");
                 }
             return sb.ToString();
         }

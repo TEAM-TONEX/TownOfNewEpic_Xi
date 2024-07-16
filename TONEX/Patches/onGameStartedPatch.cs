@@ -19,13 +19,15 @@ namespace TONEX;
 [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CoStartGame))]
 internal class ChangeRoleSettings
 {
-    public static List<PlayerControl> AllPlayers;
+    public static Dictionary<byte, bool> AllPlayers;
 
     public static void Postfix(AmongUsClient __instance)
     {
         if (Main.AssistivePluginMode.Value)
         {
-            AllPlayers = PlayerControl.AllPlayerControls.ToArray().ToList() ;
+            AllPlayers = new();
+            foreach (var pc in PlayerControl.AllPlayerControls)
+                AllPlayers.Add(pc.PlayerId, false);
 
             return;
         
