@@ -95,9 +95,6 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 - Developer：[Loonie-Toons](https://github.com/Loonie-Toons)
 - Many role ideas
 - Provided roles: Medic, Disperser, Researcher In TOHEX
-### [To-Hope](https://gitee.com/xigua_ya/to-hope) :
-- Developer：[YuQianZhi(Night)](https://gitee.com/xigua_ya)
-- Reference: Custom Button In TOHEX
 ### [Project:Lotus](https://github.com/ImaMapleTree/Lotus) :
 - Developer：[ImaMapleTree](https://github.com/ImaMapleTree)
 - Reference: Modify Text Box
@@ -130,15 +127,15 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
  - [一念旧情丶](https://github.com/ynjq) - **Creative Team - Design**
 
 ### Contributors
-- [KARPED1EM](https://github.com/KARPED1EM) - **Technical Support**
- - [YuQianZhi(Night)](https://gitee.com/xigua_ya) - **Developer of [TOHEX](https://tohex.cc)**
+ - [KARPED1EM](https://github.com/KARPED1EM) - **Technical Support**
+ - [Yu(Original Name: Night)](https://github.com/night-gua) - **Developer of [TOHEX](https://tohex.cc)**
  - ryuk - **New Features &amp; Great Ideas**
- - Amongus (水木年华) - **Translation &amp; Technical Support**
+ - [Amongus](https://github.com/XiezibanWrite) - **Translation &amp; Technical Support**
  - [NikoCat233](https://github.com/NikoCat233) - **Technical Support**
- - Farewell - **Consultation Support**
- - [LeZaiYa](https://github.com/LezaiYa1) - **Consultation Support**
+ - [Farewell](https://github.com/ksduye) - **Consultation Support**
+ - [LezaiYa](https://github.com/LezaiYa1) - **Consultation Support**
  - [Imp11](https://github.com/dabao40) - **Consultation Support**
- - [方块](https://github.com/FangKuaiYa) - **Consultation Support**
+ - [FangKuai](https://github.com/FangKuaiYa) - **Consultation Support**
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
