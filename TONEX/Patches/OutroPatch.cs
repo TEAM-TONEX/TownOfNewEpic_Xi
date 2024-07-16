@@ -23,7 +23,7 @@ class EndGamePatch
         GameStates.InGame = false;
         Logger.Info("-----------游戏结束-----------", "Phase");
             
-        if (Main.AssistivePluginMode.Value) return;
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
          
@@ -32,6 +32,8 @@ class EndGamePatch
         SummaryText = new();
         foreach (var id in PlayerState.AllPlayerStates.Keys)
             SummaryText[id] = Utils.SummaryTexts(id, false);
+
+        if (Main.AssistivePluginMode.Value) return;
 
         var sb = new StringBuilder(GetString("KillLog"));
         sb.Append("<size=70%>");
@@ -94,13 +96,24 @@ class SetEverythingUpPatch
 
     public static void Postfix(EndGameManager __instance)
     {
-        if (Main.AssistivePluginMode.Value) return;
+        
         var showInitially = Main.ShowResults.Value;
-       
-        if (!Main.playerVersion.ContainsKey(0)) return;
+
         //#######################################
         //          ==勝利陣営表示==
         //#######################################
+        Logger.Info("胜利阵营显示", "SetEverythingUpPatch");
+
+
+        string CustomWinnerText = "";
+        string EndWinnerText = "";
+        var AdditionalWinnerText = new StringBuilder(32);
+        var EndAdditionalWinnerText = new StringBuilder(32);
+        string CustomWinnerColor = "#ffffff";
+        string EndWinnerColor = "#ffffff";
+
+        if (Main.AssistivePluginMode.Value) goto ShowResult;
+        if (!Main.playerVersion.ContainsKey(0)) return;
 
         var WinnerTextObject = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
         WinnerTextObject.transform.position = new(__instance.WinText.transform.position.x, __instance.WinText.transform.position.y - 0.5f, __instance.WinText.transform.position.z);
@@ -110,13 +123,6 @@ class SetEverythingUpPatch
         WinnerText.text = "";
         var InEndWinnerText = "";
 
-
-        string CustomWinnerText = "";
-        string EndWinnerText = "";
-        var AdditionalWinnerText = new StringBuilder(32);
-        var EndAdditionalWinnerText = new StringBuilder(32);
-        string CustomWinnerColor = "#ffffff";
-        string EndWinnerColor = "#ffffff";
 
         var winnerRole = (CustomRoles)CustomWinnerHolder.WinnerTeam;
         if (winnerRole >= 0)
@@ -219,13 +225,14 @@ class SetEverythingUpPatch
         LastWinsText = InEndWinnerText;
 
 
-
+        ShowResult:
+        Logger.Info("最终结果显示", "SetEverythingUpPatch");
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //#######################################
         //           ==最終結果表示==
         //#######################################
-        
+
         showHideButton = new SimpleButton(
            __instance.transform,
            "ShowHideResultsButton",
@@ -246,16 +253,50 @@ class SetEverythingUpPatch
         };
 
         StringBuilder sb = new($"{GetString("RoleSummaryText")}");
-        List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
-        foreach (var id in Main.winnerList.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+
+        if (!Main.AssistivePluginMode.Value)
         {
-            sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[id]);
-            cloneRoles.Remove(id);
+            List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
+            foreach (var id in Main.winnerList.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+            {
+                sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[id]);
+                cloneRoles.Remove(id);
+            }
+            foreach (var id in cloneRoles.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+            {
+                sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[id]);
+            }
         }
-        foreach (var id in cloneRoles.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+        else
         {
-            sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[id]);
+            List<byte> cloneRoles = new();
+            foreach (var pc in ChangeRoleSettings.AllPlayers)
+                cloneRoles.Add(pc.PlayerId);
+            foreach (var data in EndGameResult.CachedWinners)
+            {
+                var id = cloneRoles.FirstOrDefault(p =>
+                {
+                    return Utils.GetPlayerById(p).Data.DefaultOutfit.ColorId == data.ColorId;
+                });
+
+                try
+                {
+                    CustomWinnerColor = Utils.GetPlayerById(id).Data.Role.IsImpostor ? "#FF1919" : "#8CFFFF";
+                    sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[id]);
+                    cloneRoles.Remove(id);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e.ToString(), "SetEverythingUpPatch");
+                }
+                
+            }
+            foreach (var id in cloneRoles)
+            {
+                sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[id]);
+            }
         }
+
         roleSummary = TMPTemplate.Create(
                 "RoleSummaryText",
                 sb.ToString(),

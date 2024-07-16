@@ -41,7 +41,7 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.3.0.7";
+    public const string PluginVersion = "1.3.0.9";
     public const string ShowVersion_Head = "1.3_20240716";
     public const string ShowVersion_TestText = "_Exclusive";
     public const string ShowVersion = ShowVersion_Head + ShowVersion_TestText;
@@ -135,8 +135,15 @@ public class Main : BasePlugin
 
     public static Dictionary<byte, CustomRoles> DevRole = new();
 
-    public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
-    public static IEnumerable<PlayerControl> AllAlivePlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive() && !p.Data.Disconnected && !p.IsEaten());
+    static bool LoadEnd = false;
+    public static IEnumerable<PlayerControl> AllPlayerControls => 
+        //(PlayerControl.AllPlayerControls == null || PlayerControl.AllPlayerControls.Count == 0) && LoadEnd
+        //? AllPlayerControls : 
+        PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
+    public static IEnumerable<PlayerControl> AllAlivePlayerControls => 
+        //(PlayerControl.AllPlayerControls == null || PlayerControl.AllPlayerControls.Count == 0) && LoadEnd
+        //? AllAlivePlayerControls :
+        PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive() && !p.Data.Disconnected && !p.IsEaten());
 
     public static Main Instance;
 
@@ -163,6 +170,7 @@ public class Main : BasePlugin
     {
         Instance = this;
 
+        LoadEnd = false;
         //Client Options
         HideName = Config.Bind("Client Options", "Hide Game Code Name", "TONEX");
         HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
@@ -344,6 +352,7 @@ public class Main : BasePlugin
         else ConsoleManager.CreateConsole();
 
         TONEX.Logger.Msg("========= TONEX loaded! =========", "Plugin Load");
+        LoadEnd = true;
     }
 }
 public enum CustomDeathReason

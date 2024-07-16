@@ -10,7 +10,7 @@ public static class NameNotifyManager
 
     [GameModuleInitializer]
     public static void Reset() => Notice = new();
-    public static bool Notifying(this PlayerControl pc) => Notice.ContainsKey(pc.PlayerId);
+    public static bool IsNotifying(this PlayerControl pc) => Notice.ContainsKey(pc.PlayerId);
     public static void Notify(this PlayerControl pc, string text, float time = 4f)
     {
         if (!AmongUsClient.Instance.AmHost || pc == null) return;

@@ -44,10 +44,11 @@ public class MessageControl
         if (IsRoleCommand && !AmongUsClient.Instance.AmHost) ForceSend = true;
         CustomRoleManager.ReceiveMessage.Do(a => a.Invoke(this));
 
+        if (IsRoleCommand || !AmongUsClient.Instance.AmHost) return;
         if (ChatCommand.SpamCommands == null || !ChatCommand.SpamCommands.Any())
             ChatCommand.SpamInitOnly();
 
-        
+
 
         foreach (var command in ChatCommand.SpamCommands)
         {
