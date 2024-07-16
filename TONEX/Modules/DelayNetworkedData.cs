@@ -17,6 +17,7 @@ public class InnerNetClientPatch
     [HarmonyPrefix]
     public static bool SendInitialDataPrefix(InnerNetClient __instance, int clientId)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         if (!Constants.IsVersionModded() || __instance.NetworkMode != NetworkModes.OnlineGame) return true;
         // We make sure other stuffs like playercontrol and Lobby behavior is spawned properly
         // Then we spawn networked data for new clients
@@ -87,7 +88,7 @@ public class InnerNetClientPatch
     [HarmonyPrefix]
     public static bool SendAllStreamedObjectsPrefix(InnerNetClient __instance, ref bool __result)
     {
-        if (!Constants.IsVersionModded() || __instance.NetworkMode != NetworkModes.OnlineGame) return true;
+        if (!Constants.IsVersionModded() || __instance.NetworkMode != NetworkModes.OnlineGame || Main.AssistivePluginMode.Value) return true;
         // Bypass all NetworkedData here.
         __result = false;
         Il2CppSystem.Collections.Generic.List<InnerNetObject> obj = __instance.allObjects;
@@ -144,8 +145,15 @@ public class InnerNetClientPatch
     [HarmonyPostfix]
     public static void FixedUpdatePostfix(InnerNetClient __instance)
     {
+        if (Main.AssistivePluginMode.Value) return;
         // Send a networked data pre 2 fixed update should be a good practice?
         if (!__instance.AmHost || __instance.Streams == null || __instance.NetworkMode != NetworkModes.OnlineGame) return;
+
+        if (timer == 0)
+        {
+            timer = 1;
+            return;
+        }
 
         var player = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(x => x.IsDirty);
         if (player != null)
@@ -191,6 +199,7 @@ internal class DirtyAllDataPatch
     // Temporarily disable it until Innersloth get a better fix.
     public static bool Prefix()
     {
+        if (Main.AssistivePluginMode.Value) return true;
         return false;
     }
 }

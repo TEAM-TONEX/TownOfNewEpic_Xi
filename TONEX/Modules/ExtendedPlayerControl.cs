@@ -35,16 +35,22 @@ static class ExtendedPlayerControl
         if (!AmongUsClient.Instance.AmHost) return;
         if (player.Is(role)) return;
 
-        if (!Main.SetRolesList.ContainsKey(player.PlayerId))
+        bool IsGM = role is CustomRoles.GM;
+
+        if (!IsGM)
         {
-            List<string> values = new();
-            values.Add(null);
-            Main.SetRolesList.Add(player.PlayerId, values);
+            if (!Main.SetRolesList.ContainsKey(player.PlayerId))
+            {
+                List<string> values = new();
+                values.Add(null);
+                Main.SetRolesList.Add(player.PlayerId, values);
+            }
+
+            // 游戏结束用
+            var id = player.PlayerId;
+            Main.SetRolesList[player.PlayerId].Add(Utils.GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true));
         }
 
-        // 游戏结束用
-        var id = player.PlayerId;
-        Main.SetRolesList[player.PlayerId].Add(Utils.GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true));
 
         if (role < CustomRoles.NotAssigned)
         {
@@ -61,7 +67,17 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCustomRole, SendOption.Reliable, -1);
         writer.Write(player.PlayerId);
         writer.WritePacked((int)role);
+        writer.Write(IsGM);
+        if (!IsGM)
+        {
+            writer.Write(Main.SetRolesList[player.PlayerId].Count);
+            foreach (var strings in Main.SetRolesList[player.PlayerId])
+                writer.Write(strings);
+        }
         AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+
+       
         if (Options.IsAllCrew)
             player.RpcSetRoleInGame(role.GetRoleInfo().BaseRoleType.Invoke());
     }
@@ -72,6 +88,7 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCustomRole, SendOption.Reliable, -1);
         writer.Write(PlayerId);
         writer.WritePacked((int)role);
+        writer.Write(false);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
         if (Options.IsAllCrew)
             RpcSetRoleInGame(PlayerId, role.GetRoleInfo().BaseRoleType.Invoke());

@@ -162,9 +162,13 @@ public sealed class Medic : RoleBase, IKiller
         killer.RpcProtectedMurderPlayer(target);
         info.CanKill = false;
         if (OptionSeenShieldMode.GetInt() == 1 || OptionSeenShieldMode.GetInt() == 2)
-            target.RpcProtectedMurderPlayer(target);
+            target.KillFlash();
         if (OptionKnowTargetShieldBroken.GetBool())
-            Main.AllPlayerControls.Where(x => x.Is(CustomRoles.Medic) && x.PlayerId != target.PlayerId).Do(x => x.Notify(Translator.GetString("MedicTargetShieldBroken")));
+            Main.AllPlayerControls.Where(x => x.Is(CustomRoles.Medic) && x.PlayerId != target.PlayerId).Do(x => 
+            { 
+                x.KillFlash();
+                x.Notify(Translator.GetString("MedicTargetShieldBroken"));
+            });
         else
             Main.AllPlayerControls.Where(x => x.Is(CustomRoles.Medic)).Do(x => Utils.NotifyRoles(x));
         Utils.NotifyRoles(target);
