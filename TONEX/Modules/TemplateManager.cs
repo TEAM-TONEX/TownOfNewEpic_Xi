@@ -67,7 +67,7 @@ public static class TemplateManager
         else
         {
             var text = File.ReadAllText(TEMPLATE_FILE_PATH, Encoding.GetEncoding("UTF-8"));
-            File.WriteAllText(TEMPLATE_FILE_PATH, text.Replace("tohex.cc", "www.xtreme.net.cn"));
+            File.WriteAllText(TEMPLATE_FILE_PATH, text.Replace("tonexex.cc", "www.xtreme.net.cn"));
         }
     }
 

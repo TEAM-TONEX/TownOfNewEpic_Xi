@@ -702,7 +702,7 @@ public enum CustomRoles
     Unyielding,
     Perfumer, //TODO 香水师
     Captain,// TODO 舰长
-    VirtueGuider, //TODO 善导者，TOHEX的舰长
+    VirtueGuider, //TODO 善导者，TONEXEX的舰长
     NiceTracker,//TODO 正义的追踪者
     NiceInvisibler,//TODO 影行者（正义隐身）
     NiceSwapper,

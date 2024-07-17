@@ -11,8 +11,8 @@ namespace TONEX.Modules;
 public static class OptionSerializer
 {
     private static LogHandler logger = Logger.Handler(nameof(OptionSerializer));
-    private const string Header = "%TOHOptions%", Footer = "%End%";
-    private static readonly DirectoryInfo exportDir = new("./TOH_DATA/OptionOutputs");
+    private const string Header = "%TONEXOptions%", Footer = "%End%";
+    private static readonly DirectoryInfo exportDir = new("./TONEX_DATA/OptionOutputs");
     public static void SaveToClipboard()
     {
         GUIUtility.systemCopyBuffer = GenerateOptionsString();

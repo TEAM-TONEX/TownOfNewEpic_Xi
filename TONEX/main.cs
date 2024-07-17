@@ -31,7 +31,7 @@ public class Main : BasePlugin
     public static readonly Color32 ModColor32 = new(205, 255, 253, 255);
     public static readonly bool AllowPublicRoom = true;
     public static readonly string ForkId = "TONEX";
-    public const string OriginalForkId = "OriginalTOH";
+    public const string OriginalForkId = "OriginalTONEX";
     public const string PluginGuid = "cn.tonex.xtremewave";
     // == 认证设定 / Authentication Config ==
     public static HashAuth DebugKeyAuth { get; private set; }
@@ -127,8 +127,8 @@ public class Main : BasePlugin
     public static bool introDestroyed = false;
     public static float DefaultCrewmateVision;
     public static float DefaultImpostorVision;
-    public static bool IsTOHEInitialRelease = DateTime.Now.Month == 1 && DateTime.Now.Day is 17;
-    public static bool IsTOHEXInitialRelease = DateTime.Now.Month == 5 && DateTime.Now.Day is 21;
+    public static bool IsTONEXEInitialRelease = DateTime.Now.Month == 1 && DateTime.Now.Day is 17;
+    public static bool IsTONEXEXInitialRelease = DateTime.Now.Month == 5 && DateTime.Now.Day is 21;
     public static bool IsTONEXInitialRelease = DateTime.Now.Month == 2 && DateTime.Now.Day is 9;
     public static bool IsAprilFools = DateTime.Now.Month == 4 && DateTime.Now.Day is 1;
     public const float RoleTextSize = 2f;
@@ -361,7 +361,7 @@ public enum CustomDeathReason
     Kill,
     Vote,
 
-    // TOH
+    // TONEX
     Suicide,
     Spell,
     FollowingSuicide,

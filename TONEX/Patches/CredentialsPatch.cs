@@ -14,8 +14,28 @@ internal class PingTrackerUpdatePatch
 {
     private static float deltaTime;
     public static string ServerName = "";
+    private static TextMeshPro pingTrackerCredential = null;
+    private static AspectPosition pingTrackerCredentialAspectPos = null;
     private static void Postfix(PingTracker __instance)
     {
+        if (pingTrackerCredential == null)
+        {
+            var uselessPingTracker = Object.Instantiate(__instance, __instance.transform.parent);
+            pingTrackerCredential = uselessPingTracker.GetComponent<TextMeshPro>();
+            Object.Destroy(uselessPingTracker);
+            pingTrackerCredential.alignment = TextAlignmentOptions.TopRight;
+            pingTrackerCredential.color = new(1f, 1f, 1f, 0.7f);
+            pingTrackerCredential.rectTransform.pivot = new(1f, 1f);  // 中心を右上角に設定
+            pingTrackerCredentialAspectPos = pingTrackerCredential.GetComponent<AspectPosition>();
+            pingTrackerCredentialAspectPos.Alignment = AspectPosition.EdgeAlignments.RightTop;
+        }
+        if (pingTrackerCredentialAspectPos)
+        {
+            pingTrackerCredentialAspectPos.DistanceFromEdge = 
+                DestroyableSingleton<HudManager>.InstanceExists && DestroyableSingleton<HudManager>.Instance.Chat.chatButton.gameObject.active 
+                ? new(2.5f, 0f, -800f)
+                        : new(1.8f, 0f, -800f);
+        }
         __instance.text.alignment = TextAlignmentOptions.TopRight;
 
         StringBuilder sb = new();
@@ -53,13 +73,14 @@ internal class PingTrackerUpdatePatch
             sb.Append($"\r\n").Append("</size>");
         }
 
-        var offset_x = 2.5f; //右端からのオフセット
-        var offset_y = 6.1f; //右端からのオフセット
-        if (HudManager.InstanceExists && !HudManager._instance.Chat.chatButton.gameObject.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
-        //if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
-        __instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, offset_y, 0f);
+        pingTrackerCredential.text = sb.ToString();
+        //var offset_x = 2.5f; //右端からのオフセット
+        //var offset_y = 6.1f; //右端からのオフセット
+        //if (HudManager.InstanceExists && !HudManager._instance.Chat.chatButton.gameObject.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
+        ////if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
+        //__instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, offset_y, 0f);
 
-        __instance.text.text = sb.ToString();
+        __instance.text.text = "";
     }
 }
 [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
