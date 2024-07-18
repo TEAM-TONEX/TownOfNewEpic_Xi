@@ -62,13 +62,13 @@ public static class GameSettingMenuPatch
         }));
 
         // 各カテゴリの見出しを作成
-        SystemCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.SystemSettings");
-        ModCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.ModSettings");
-        ImpostorRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.ImpostorRoles");
-        CrewmateRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.CrewmateRoles");
-        NeutralRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.NeutralRoles");
-        AddOnCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.Addons");
-        OtherRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, "TabGroup.OtherRoles");
+        SystemCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.SystemSettings);
+        ModCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.ModSettings);
+        ImpostorRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.ImpostorRoles);
+        CrewmateRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.CrewmateRoles);
+        NeutralRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.NeutralRoles);
+        AddOnCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.Addons);
+        OtherRoleCategoryHeader = CreateCategoryHeader(__instance, tonexSettingsTab, TabGroup.OtherRoles);
 
         // 各設定スイッチを作成
         var template = __instance.GameSettingsTab.stringOptionOrigin;
@@ -108,14 +108,14 @@ public static class GameSettingMenuPatch
         tonexSettingsTab.gameObject.SetActive(false);
 
         // 各カテゴリまでスクロールするボタンを作成
-        var jumpButtonY = -0.6f;
-        var jumpToSystemButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_SystemSettings.png", ref jumpButtonY, SystemCategoryHeader);
-        var jumpToModButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_ModSettings.png", ref jumpButtonY, ModCategoryHeader);
-        var jumpToImpButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_ImpostorRoles.png", ref jumpButtonY, ImpostorRoleCategoryHeader);
-        var jumpToCrewButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_CrewmateRoles.png", ref jumpButtonY, CrewmateRoleCategoryHeader);
-        var jumpToNeutralButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_NeutralRoles.png", ref jumpButtonY, NeutralRoleCategoryHeader);
-        var jumpToAddOnButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_Addons.png", ref jumpButtonY, AddOnCategoryHeader);
-        var jumpToOtherButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.TabIcon_OtherRoles.png", ref jumpButtonY, OtherRoleCategoryHeader);
+        var jumpButtonY = -0.55f;
+        var jumpToSystemButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_SystemSettings.png", ref jumpButtonY, SystemCategoryHeader);
+        var jumpToModButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_ModSettings.png", ref jumpButtonY, ModCategoryHeader);
+        var jumpToImpButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_ImpostorRoles.png", ref jumpButtonY, ImpostorRoleCategoryHeader);
+        var jumpToCrewButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_CrewmateRoles.png", ref jumpButtonY, CrewmateRoleCategoryHeader);
+        var jumpToNeutralButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_NeutralRoles.png", ref jumpButtonY, NeutralRoleCategoryHeader);
+        var jumpToAddOnButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_Addons.png", ref jumpButtonY, AddOnCategoryHeader);
+        var jumpToOtherButton = CreateJumpToCategoryButton(__instance, tonexSettingsTab, "TONEX.Resources.Images.TabIcon_OtherRoles.png", ref jumpButtonY, OtherRoleCategoryHeader);
     }
     private static MapSelectButton CreateJumpToCategoryButton(GameSettingMenu __instance, GameOptionsMenu tonexTab, string resourcePath, ref float localY, CategoryHeaderMasked jumpTo)
     {
@@ -123,6 +123,7 @@ public static class GameSettingMenuPatch
         var button = Object.Instantiate(__instance.GameSettingsTab.MapPicker.MapButtonOrigin, Vector3.zero, Quaternion.identity, tonexTab.transform);
         button.SetImage(image, GameOptionsMenu.MASK_LAYER);
         button.transform.localPosition = new(7.1f, localY, -10f);
+        button.transform.localScale *= 0.9f;
         button.Button.ClickMask = tonexTab.ButtonClickMask;
         button.Button.OnClick.AddListener((Action)(() =>
         {
@@ -136,14 +137,30 @@ public static class GameSettingMenuPatch
         localY -= JumpButtonSpacing;
         return button;
     }
-    private const float JumpButtonSpacing = 0.6f;
+    private const float JumpButtonSpacing = 0.55f;
     // ジャンプしたカテゴリヘッダのScrollerとの相対Y座標がこの値になる
     private const float CategoryJumpY = 2f;
-    private static CategoryHeaderMasked CreateCategoryHeader(GameSettingMenu __instance, GameOptionsMenu tonexTab, string translationKey)
+    private static string GetTabColor(TabGroup tab)
+    {
+        return tab switch
+        {
+            TabGroup.SystemSettings => Main.ModColor,
+            TabGroup.ModSettings => "#59ef83",
+            TabGroup.ImpostorRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Impostor),
+            TabGroup.CrewmateRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Crewmate),
+            TabGroup.NeutralRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Neutral),
+            TabGroup.Addons => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Addon),
+            TabGroup.OtherRoles => "#76b8e0",
+            _ => "#ffffff",
+        };
+    }
+    private static CategoryHeaderMasked CreateCategoryHeader(GameSettingMenu __instance, GameOptionsMenu tonexTab, TabGroup translationKey)
     {
         var categoryHeader = Object.Instantiate(__instance.GameSettingsTab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, tonexTab.settingsContainer);
-        categoryHeader.name = translationKey;
-        categoryHeader.Title.text = GetString(translationKey);
+        categoryHeader.name = $"TabGroup.{translationKey}";
+        
+        categoryHeader.Title.text = GetString(categoryHeader.name);
+        categoryHeader.Title.color = ColorHelper.GetTabColor(translationKey)
         var maskLayer = GameOptionsMenu.MASK_LAYER;
         categoryHeader.Background.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
         if (categoryHeader.Divider != null)
@@ -222,41 +239,40 @@ public class GameOptionsMenuUpdatePatch
         if (_timer < 0.1f) return;
         _timer = 0f;
         var offset = 2.7f;
-        var isOdd = true;
         UpdateCategoryHeader(GameSettingMenuPatch.SystemCategoryHeader, ref offset);
         foreach (var option in OptionItem.SystemOptions)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption(option, ref offset);
         }
         UpdateCategoryHeader(GameSettingMenuPatch.ModCategoryHeader, ref offset);
         foreach (var option in OptionItem.ModOptions)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption( option, ref offset);
         }
         UpdateCategoryHeader(GameSettingMenuPatch.ImpostorRoleCategoryHeader, ref offset);
         foreach (var option in OptionItem.ImpostorRoleOptions)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption( option, ref offset);
         }
         UpdateCategoryHeader(GameSettingMenuPatch.CrewmateRoleCategoryHeader, ref offset);
         foreach (var option in OptionItem.CrewmateRoleOptions)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption(option, ref offset);
         }
         UpdateCategoryHeader(GameSettingMenuPatch.NeutralRoleCategoryHeader, ref offset);
         foreach (var option in OptionItem.NeutralRoleOptions)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption(option, ref offset);
         }
         UpdateCategoryHeader(GameSettingMenuPatch.AddOnCategoryHeader, ref offset);
         foreach (var option in OptionItem.AddOnOptions)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption( option, ref offset);
         }
         UpdateCategoryHeader(GameSettingMenuPatch.OtherRoleCategoryHeader, ref offset);
         foreach (var option in OptionItem.OtherRoles)
         {
-            UpdateOption(ref isOdd, option, ref offset);
+            UpdateOption(option, ref offset);
         }
         __instance.scrollBar.ContentYBounds.max = (-offset) - 1.5f;
 
@@ -266,7 +282,7 @@ public class GameOptionsMenuUpdatePatch
         offset -= GameOptionsMenu.HEADER_HEIGHT;
         categoryHeader.transform.localPosition = new(GameOptionsMenu.HEADER_X, offset, -2f);
     }
-    private static void UpdateOption(ref bool isOdd, OptionItem item, ref float offset)
+    private static void UpdateOption(OptionItem item, ref float offset)
     {
         if (item?.OptionBehaviour == null || item.OptionBehaviour.gameObject == null) return;
         var enabled = true;
@@ -283,7 +299,7 @@ public class GameOptionsMenuUpdatePatch
         if (enabled)
         {
             // 見やすさのため交互に色を変える
-            stringOption.LabelBackground.color = item is IRoleOptionItem roleOption ? roleOption.RoleColor : (isOdd ? Color.cyan : Color.white);
+            stringOption.LabelBackground.color = item is IRoleOptionItem roleOption ? roleOption.RoleColor : new Color32(16, 16, 16, 0);
             offset -= GameOptionsMenu.SPACING_Y;
             if (item.IsHeader)
             {
@@ -295,8 +311,6 @@ public class GameOptionsMenuUpdatePatch
                    GameOptionsMenu.START_POS_X,
                    offset,
                    -2f);
-
-            isOdd = !isOdd;
         }
     }
 

@@ -82,7 +82,7 @@ public static class OptionShower
                 { "TypeImpostor", CustomRoleTypes.Impostor },
                 { "TypeCrewmate", CustomRoleTypes.Crewmate },
                 { "TypeNeutral", CustomRoleTypes.Neutral },
-                { "TypeAddon", CustomRoleTypes.Addon }
+                { "TypeAddon", CustomRoleTypes.Addon },
             };
 
             foreach (var type in pageRoleTypes)
