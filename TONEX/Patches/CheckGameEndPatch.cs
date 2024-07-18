@@ -321,26 +321,17 @@ class GameEndChecker
         CustomWinnerHolder.WriteTo(sender.stream);
         sender.EndRpc();
 
+        if (ReviveRequiredPlayerIds.Count >0)
         // GameDataによる蘇生処理
-        writer.StartMessage(1); // Data
+        for (int i = 0; i < ReviveRequiredPlayerIds.Count; i++)
         {
-            writer.WritePacked(PlayerControl.LocalPlayer.NetId); // NetId
-            foreach (var info in GameData.Instance.AllPlayers)// undecided
-            {
-                if (ReviveRequiredPlayerIds.Contains(info.PlayerId))
-                {
-                    // 蘇生&メッセージ書き込み
-                    info.IsDead = false;
-                    writer.StartMessage(info.PlayerId);
-                    info.Serialize(writer, false);
-                    writer.EndMessage();
-                }
-            }
-            writer.EndMessage();
+            var id = ReviveRequiredPlayerIds[i];
+            var info = GameData.Instance.GetPlayerById(id);
+            info.IsDead = false;
+            info.MarkDirty();
+            AmongUsClient.Instance.SendAllStreamedObjects();
         }
-
-        sender.EndMessage();
-
+        
         // バニラ側のゲーム終了RPC
         writer.StartMessage(8); //8: EndGame
         {
