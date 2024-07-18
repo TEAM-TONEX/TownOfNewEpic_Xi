@@ -147,3 +147,9 @@
 ## 我们的其它开源项目
  - [TONEX官方网站](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) -使用了 VuePress-reco.
  - [TONEX车队姬](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - 由天梦LK提供技术支持.
+
+## :warning: 遇到问题/bug :warning:
+|      你       |      如何解决     |
+|:------------:|:---------------------------------:|
+|    提出弱智问题    | 想都别想|
+| 礼貌且问题明确并给出日志 | 尽全力帮助您|

@@ -143,3 +143,9 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 ## Our Other Star Projects
  - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX, using with VuePress-reco.
  - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN, powered by 天梦LK.
+
+## :warning: Problem/bug encountered:warning:
+|                               You                                |          How to resolve          |
+|:----------------------------------------------------------------:|:--------------------------------:|
+|                        Issue a IQ Quesion                        |    Don't even think about it     |
+|   Attitude is polite and the clear problemis and give the log    |     do our best to help you      |
