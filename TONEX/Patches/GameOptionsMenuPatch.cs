@@ -75,10 +75,6 @@ public static class GameSettingMenuPatch
         var scOptions = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
         foreach (var option in OptionItem.AllOptions)
         {
-            var enabled = !option.IsHiddenOn(Options.CurrentGameMode)
-             && (option.Parent == null || (!option.Parent.IsHiddenOn(Options.CurrentGameMode) && option.Parent.GetBool()));
-
-
             if (option.OptionBehaviour == null)
             {
                 var stringOption = Object.Instantiate(template, tonexSettingsTab.settingsContainer);
@@ -90,10 +86,12 @@ public static class GameSettingMenuPatch
               
                 if (option is TextOptionItem)
                 {
-                    stringOption.ValueText.gameObject.SetActive(false);
+                    stringOption.ValueText.text = option.Name;
+                    stringOption.ValueText.color = option.NameColor;
+
+
                     stringOption.buttons.Do(x => x.gameObject.SetActive(false));
-                    stringOption.TitleText.text = option.Name + "";
-                    stringOption.
+                    stringOption.TitleText.gameObject.SetActive(false);
                 }
                 else
                 {
