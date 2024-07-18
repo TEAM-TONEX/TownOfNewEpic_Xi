@@ -1446,12 +1446,14 @@ public static class Utils
             builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
 
             pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
-            string oldRoleName = GetOldRoleName(id);
+            string oldRoleName = GetOldRoleName(id, pos);
             var newRoleName = GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true);
 
             builder.AppendFormat("<pos={0}em>", pos);
             if (!string.IsNullOrEmpty(oldRoleName))
+            {
                 builder.Append(oldRoleName);
+            }
             builder.Append(newRoleName);
             builder.Append("</pos>");
         }
@@ -1463,9 +1465,12 @@ public static class Utils
             pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
             builder.AppendFormat("<pos={0}em>", pos);
             builder.Append(ColorString(GetRoleColor(pc.Data.RoleWhenAlive.Value.GetCustomRoleTypes()),GetString($"{pc.Data.RoleWhenAlive.Value}")));
-            if (pc.Data.IsDead)
-                builder.Append($"=> \n" +
-                    $"                    {ColorString(GetRoleColor(pc.Data.Role.Role.GetCustomRoleTypes()), GetString($"{pc.Data.Role.Role}"))}");
+            if (!pc.Data.Disconnected && pc.Data.IsDead)
+            {
+                builder.Append("</pos>");
+                builder.AppendFormat("<pos={0}em>", pos);
+                builder.Append($"\n=> {ColorString(GetRoleColor(pc.Data.Role.Role.GetCustomRoleTypes()), GetString($"{pc.Data.Role.Role}"))}");
+            }
             builder.Append("</pos>");
         }
         LastResultForChat.Remove(id);
@@ -1473,7 +1478,7 @@ public static class Utils
         return builder.ToString();
     }
 
-    private static string GetOldRoleName(byte id)
+    private static string GetOldRoleName(byte id, float pos)
     {
         foreach (var kvp in Main.SetRolesList)
         {
@@ -1482,8 +1487,10 @@ public static class Utils
                 foreach (var role in kvp.Value)
                 {
                     if (role == "" || role == null) continue;
-                    sb.Append($"{role} =>");
-                    sb.Append($"\n             ");
+                    sb.Append($"{role}");
+                    sb.Append("</pos>");
+                    sb.AppendFormat("<pos={0}em>", pos);
+                    sb.Append($"\n=> ");
                 }
             return sb.ToString();
         }

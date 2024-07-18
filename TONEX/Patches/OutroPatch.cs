@@ -101,11 +101,10 @@ class SetEverythingUpPatch
     private static TextMeshPro roleSummary;
     private static SimpleButton showHideButton;
     static bool DidHumansWin;
-    static List<CachedPlayerData> Data;
     public static void Prefix()
     {
+        if (Main.AssistivePluginMode.Value)
         DidHumansWin = GameManager.Instance.DidHumansWin(EndGameResult.CachedGameOverReason);
-        Data = EndGameResult.CachedWinners.ToArray().ToList();
     }
     public static void Postfix(EndGameManager __instance)
     {
