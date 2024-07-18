@@ -25,7 +25,8 @@ public static class IsVersionModdedPatch
 {
     public static bool Prefix(ref bool __result)
     {
-        __result = !Main.AssistivePluginMode.Value;
+        if (Main.AssistivePluginMode.Value) return true;
+        __result = true;
         return false;
     }
 }

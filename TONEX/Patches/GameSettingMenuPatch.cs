@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using TMPro;
 using UnityEngine;
 using static TONEX.Translator;
@@ -248,4 +248,4 @@ public class RpcSyncSettingsPatch
         if (Main.AssistivePluginMode.Value) return;
         OptionItem.SyncAllOptions();
     }
-}
+}*/

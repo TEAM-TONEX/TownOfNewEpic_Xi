@@ -144,6 +144,31 @@ class OnPlayerLeftPatch
         {
             if (!GameStates.IsInGame || !AmongUsClient.Instance.AmHost) return;
             CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnPlayerDeath(data.Character, PlayerState.GetByPlayerId(data.Character.PlayerId).DeathReason, GameStates.IsMeeting));
+
+            if (AmongUsClient.Instance.AmHost && data.Character != null)
+            {
+
+                for (int i = 0; i < Main.MessagesToSend.Count; i++)
+                {
+                    var (msg, sendTo, title) = Main.MessagesToSend[i];
+                    if (sendTo == data.Character.PlayerId)
+                    {
+                        Main.MessagesToSend.RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+            var netid = data.Character.NetId;
+            _ = new LateTask(() =>
+            {
+                if (GameStates.IsOnlineGame && AmongUsClient.Instance.AmHost)
+                {
+                    MessageWriter messageWriter = AmongUsClient.Instance.Streams[1];
+                    messageWriter.StartMessage(5);
+                    messageWriter.WritePacked(netid);
+                    messageWriter.EndMessage();
+                }
+            }, 2.5f, "Repeat Despawn");
         }
     }
     public static List<int> ClientsProcessed = new();

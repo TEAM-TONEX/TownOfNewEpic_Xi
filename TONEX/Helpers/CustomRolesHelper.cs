@@ -105,7 +105,7 @@ static class CustomRolesHelper
     CustomRoles.EvilPianist or//TODO 邪恶的钢琴家
     CustomRoles.Perfumer or //TODO 香水师
     CustomRoles.Captain or// TODO 舰长
-    CustomRoles.VirtueGuider or //TODO 善导者，TOHEX的舰长
+    CustomRoles.VirtueGuider or //TODO 善导者，TONEXEX的舰长
     CustomRoles.NiceTracker or//TODO 正义的追踪者
     CustomRoles.NiceInvisibler or//TODO 影行者（正义隐身）
     CustomRoles.Alien or //TODO 外星人
