@@ -130,7 +130,7 @@
 - 重制云服务：云EAC
 (想法 By KARPED1EM, 制作 By 天梦LK & QingFeng)
 - 重制设置界面UI
-(来源：Town Of Host_Y)
+(来源：Town Of Host)
 - 新增游戏模式：感染模式
 (想法 By Slok, 制作 By 喜)
 - EAC支持对Yu Menu和Sicko Menu的检测
