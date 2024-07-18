@@ -73,18 +73,34 @@ public static class GameSettingMenuPatch
         // 各設定スイッチを作成
         var template = __instance.GameSettingsTab.stringOptionOrigin;
         var scOptions = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
-        foreach (var option in OptionItem.AllOptions.Where(o => o is not TextOptionItem))
+        foreach (var option in OptionItem.AllOptions)
         {
+            var enabled = !option.IsHiddenOn(Options.CurrentGameMode)
+             && (option.Parent == null || (!option.Parent.IsHiddenOn(Options.CurrentGameMode) && option.Parent.GetBool()));
+
+
             if (option.OptionBehaviour == null)
             {
                 var stringOption = Object.Instantiate(template, tonexSettingsTab.settingsContainer);
                 scOptions.Add(stringOption);
                 stringOption.SetClickMask(__instance.GameSettingsButton.ClickMask);
                 stringOption.SetUpFromData(stringOption.data, GameOptionsMenu.MASK_LAYER);
+                
                 stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
-                stringOption.TitleText.text = option.Name;
-                stringOption.Value = stringOption.oldValue = option.CurrentValue;
-                stringOption.ValueText.text = option.GetString();
+              
+                if (option is TextOptionItem)
+                {
+                    stringOption.ValueText.gameObject.SetActive(false);
+                    stringOption.buttons.Do(x => x.gameObject.SetActive(false));
+                    stringOption.TitleText.text = option.Name + "";
+                    stringOption.
+                }
+                else
+                {
+                    stringOption.Value = stringOption.oldValue = option.CurrentValue;
+                    stringOption.ValueText.text = option.GetString();
+                    stringOption.TitleText.text = option.Name;
+                }
                 stringOption.name = option.Name;
 
                 // タイトルの枠をデカくする
@@ -161,6 +177,22 @@ public static class GameSettingMenuPatch
         
         categoryHeader.Title.text = GetString(categoryHeader.name);
         categoryHeader.Title.color = GetTabColor(translationKey);
+        var maskLayer = GameOptionsMenu.MASK_LAYER;
+        categoryHeader.Background.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
+        if (categoryHeader.Divider != null)
+        {
+            categoryHeader.Divider.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
+        }
+        categoryHeader.Title.fontMaterial.SetFloat("_StencilComp", 3f);
+        categoryHeader.Title.fontMaterial.SetFloat("_Stencil", (float)maskLayer);
+        categoryHeader.transform.localScale = Vector3.one * GameOptionsMenu.HEADER_SCALE;
+        return categoryHeader;
+    }
+    private static CategoryHeaderMasked CreateCategoryHeaderForTextOptionItem(GameSettingMenu __instance, GameOptionsMenu tonexTab, OptionItem option)
+    {
+        var categoryHeader = Object.Instantiate(__instance.GameSettingsTab.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, tonexTab.settingsContainer);
+        categoryHeader.name = option.GetName();
+        categoryHeader.Title.text = GetString(categoryHeader.name);
         var maskLayer = GameOptionsMenu.MASK_LAYER;
         categoryHeader.Background.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
         if (categoryHeader.Divider != null)
