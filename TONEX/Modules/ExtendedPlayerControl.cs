@@ -36,19 +36,20 @@ static class ExtendedPlayerControl
         if (player.Is(role)) return;
 
         bool IsGM = role is CustomRoles.GM;
-
+        var id = player.PlayerId;
         if (!IsGM)
         {
-            if (!Main.SetRolesList.ContainsKey(player.PlayerId))
+            if (!Main.SetRolesList.ContainsKey(id))
             {
-                List<string> values = new();
-                values.Add(null);
-                Main.SetRolesList.Add(player.PlayerId, values);
+                Main.SetRolesList[id] = new ();
             }
 
-            // 游戏结束用
-            var id = player.PlayerId;
-            Main.SetRolesList[player.PlayerId].Add(Utils.GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true));
+            var trueRoleName = Utils.GetTrueRoleName(id, false);
+            var subRolesText = Utils.GetSubRolesText(id, false, false, true);
+            var allRoles = trueRoleName + subRolesText;
+
+            Main.SetRolesList[id].Add(allRoles);
+
         }
 
 
@@ -67,13 +68,6 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCustomRole, SendOption.Reliable, -1);
         writer.Write(player.PlayerId);
         writer.WritePacked((int)role);
-        writer.Write(IsGM);
-        if (!IsGM)
-        {
-            writer.Write(Main.SetRolesList[player.PlayerId].Count);
-            foreach (var strings in Main.SetRolesList[player.PlayerId])
-                writer.Write(strings);
-        }
         AmongUsClient.Instance.FinishRpcImmediately(writer);
 
 

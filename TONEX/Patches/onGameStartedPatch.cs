@@ -47,12 +47,6 @@ internal class ChangeRoleSettings
                 Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Phantom, 0, 0);
             }
             Main.SetRolesList = new();
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                List<string> values = new();
-                values.Add(null);
-                Main.SetRolesList.Add(pc.PlayerId, values);
-            }
             Main.OverrideWelcomeMsg = "";
             Main.AllPlayerKillCooldown = new();
             Main.AllPlayerSpeed = new();

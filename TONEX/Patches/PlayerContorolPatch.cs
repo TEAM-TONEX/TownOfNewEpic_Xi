@@ -870,17 +870,10 @@ class CoEnterVentPatch
             or CustomRoles.TimeMaster or CustomRoles.Instigator or CustomRoles.Paranoia or CustomRoles.Mayor or CustomRoles.DoveOfPeace
             or CustomRoles.NiceGrenadier or CustomRoles.Akujo or CustomRoles.Miner)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, -1);
-            writer.WritePacked(127);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
             _ = new LateTask(() =>
             {
-                int clientId = user.GetClientId();
-                MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, clientId);
-                writer2.Write(id);
-                AmongUsClient.Instance.FinishRpcImmediately(writer2);
-            }, 0.5f, "Fix DesyncImpostor Stuck");
-            return false;
+                __instance.RpcBootFromVent(id);
+            }, 0.5f, "Cancel Vent");
         }
 
         if ((!user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false) 
@@ -888,34 +881,22 @@ class CoEnterVentPatch
             && !user.CanUseImpostorVentButton()) //也不能使用内鬼管道
         )
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, -1);
-            writer.WritePacked(127);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+      
             _ = new LateTask(() =>
             {
-                int clientId = user.GetClientId();
-                MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, clientId);
-                writer2.Write(id);
-                AmongUsClient.Instance.FinishRpcImmediately(writer2);
-            }, 0.5f, "Fix DesyncImpostor Stuck");
-            return false;
+                __instance.RpcBootFromVent(id);
+            }, 0.5f, "Cancel Vent");
         }
         if ((!user.GetRoleClass()?.OnEnterVentWithUsePet(__instance, id) ?? false)
             || (user.Data.Role.Role != RoleTypes.Engineer //非工程师
             && !user.CanUseImpostorVentButton()) //也不能使用内鬼管道
         )
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, -1);
-            writer.WritePacked(127);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            
             _ = new LateTask(() =>
             {
-                int clientId = user.GetClientId();
-                MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, clientId);
-                writer2.Write(id);
-                AmongUsClient.Instance.FinishRpcImmediately(writer2);
-            }, 0.5f, "Fix DesyncImpostor Stuck");
-            return false;
+                __instance.RpcBootFromVent(id);
+            }, 0.5f, "Cancel Vent");
         }
         return true;
     }
@@ -933,9 +914,6 @@ class CoExitVentPatch
         if (user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.ExitVent) 
             || user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.ExitVent, ExtendedPlayerControl.PlayerActionInUse.Skill))
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, -1);
-            writer.WritePacked(127);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
             _ = new LateTask(() =>
             {
                 int clientId = user.GetClientId();

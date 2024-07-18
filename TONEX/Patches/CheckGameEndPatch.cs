@@ -14,6 +14,8 @@ using System;
 using static RoleEffectAnimation;
 using static TONEX.Translator;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace TONEX;
 
@@ -57,7 +59,7 @@ class GameEndChecker
             ShipStatus.Instance.enabled = false;
             foreach (var cp in playerList)
                 CustomWinnerHolder.WinnerIds.Add(cp.PlayerId);
-            StartEndGame(reason);
+            AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
             predicate = null;
             return false;
 
@@ -71,7 +73,7 @@ class GameEndChecker
                 foreach (var zb in playerList)
                     CustomWinnerHolder.WinnerIds.Add(zb.PlayerId);
                 ShipStatus.Instance.enabled = false;
-                StartEndGame(reason);
+                AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
                 predicate = null;
                 return false;
             }
@@ -81,7 +83,7 @@ class GameEndChecker
                 foreach (var hm in InfectorManager.HumanCompleteTasks)
                     CustomWinnerHolder.WinnerIds.Add(hm);
                 ShipStatus.Instance.enabled = false;
-                StartEndGame(reason);
+                AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
                 predicate = null;
                 return false;
             }
@@ -263,17 +265,14 @@ class GameEndChecker
                 //CupidLovers.CheckWin();
             }
             ShipStatus.Instance.enabled = false;
-            StartEndGame(reason);
+            AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
             predicate = null;
         }
         return false;
     }
 
-    public static void StartEndGame(GameOverReason reason)
+    private static System.Collections.IEnumerator CoEndGame(AmongUsClient self, GameOverReason reason)
     {
-        var sender = new CustomRpcSender("EndGameSender", SendOption.Reliable, true);
-        sender.StartMessage(-1); // 5: GameData
-        MessageWriter writer = sender.stream;
        
 
         //变灵魂
@@ -297,29 +296,23 @@ class GameEndChecker
                 if (ToGhostImpostor)
                 {
                     Logger.Info($"{pc.GetNameWithRole()}: 更改为ImpostorGhost", "ResetRoleAndEndGame");
-                    sender.StartRpc(pc.NetId, RpcCalls.SetRole)
-                        .Write((ushort)RoleTypes.ImpostorGhost)
-                        .Write(false)
-                        .EndRpc();
-                    pc.SetRole(RoleTypes.ImpostorGhost, false);
+                    pc.RpcSetRole(RoleTypes.ImpostorGhost);
                 }
                 else
                 {
                     Logger.Info($"{pc.GetNameWithRole()}: 更改为CrewmateGhost", "ResetRoleAndEndGame");
-                    sender.StartRpc(pc.NetId, RpcCalls.SetRole)
-                        .Write((ushort)RoleTypes.CrewmateGhost)
-                        .Write(false)
-                        .EndRpc();
-                    pc.SetRole(RoleTypes.Crewmate, false);
+                    pc.RpcSetRole(RoleTypes.CrewmateGhost);
                 }
             }
             SetEverythingUpPatch.LastWinsReason = winner is CustomWinner.Crewmate or CustomWinner.Impostor ? GetString($"GameOverReason.{reason}") : "";
         }
 
         // CustomWinnerHolderの情報の同期
-        sender.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.EndGame);
-        CustomWinnerHolder.WriteTo(sender.stream);
-        sender.EndRpc();
+        var winnerWriter = self.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.EndGame, SendOption.Reliable);
+        CustomWinnerHolder.WriteTo(winnerWriter);
+        self.FinishRpcImmediately(winnerWriter);
+
+        yield return new WaitForSeconds(EndGameDelay);
 
         if (ReviveRequiredPlayerIds.Count >0)
         // GameDataによる蘇生処理
@@ -331,19 +324,11 @@ class GameEndChecker
             info.MarkDirty();
             AmongUsClient.Instance.SendAllStreamedObjects();
         }
-        
+        yield return new WaitForSeconds(EndGameDelay);
         // バニラ側のゲーム終了RPC
-        writer.StartMessage(8); //8: EndGame
-        {
-            writer.Write(AmongUsClient.Instance.GameId); //GameId
-            writer.Write((byte)reason); //GameoverReason
-            writer.Write(false); //showAd
-        }
-        writer.EndMessage();
-
-        sender.SendMessage();
+        GameManager.Instance.RpcEndGame(reason, false);
     }
-
+    private const float EndGameDelay = 0.2f;
     public static void SetPredicateToNormal() => predicate = new NormalGameEndPredicate();
     public static void SetPredicateToHotPotato() => predicate = new HotPotatoGameEndPredicate();
     public static void SetPredicateToZombie() => predicate = new ZombieGameEndPredicate();

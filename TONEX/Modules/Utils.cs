@@ -1469,7 +1469,7 @@ public static class Utils
             {
                 builder.Append("</pos>");
                 builder.AppendFormat("<pos={0}em>", pos);
-                builder.Append($"\n=> {ColorString(GetRoleColor(pc.Data.Role.Role.GetCustomRoleTypes()), GetString($"{pc.Data.Role.Role}"))}");
+                builder.Append($"=> {ColorString(GetRoleColor(pc.Data.Role.Role.GetCustomRoleTypes()), GetString($"{pc.Data.Role.Role}"))}");
             }
             builder.Append("</pos>");
         }
@@ -1480,18 +1480,24 @@ public static class Utils
 
     private static string GetOldRoleName(byte id, float pos)
     {
-        foreach (var kvp in Main.SetRolesList)
+        StringBuilder sb = new();
+        var count = 0;
+        var maxi = 4;
+        if (Main.SetRolesList.ContainsKey(id) &&Main.SetRolesList[id].Count > 0)
         {
-            StringBuilder sb = new();
-            if (kvp.Key == id && kvp.Value.Count > 0)
-                foreach (var role in kvp.Value)
+            foreach (var role in Main.SetRolesList[id])
+            {
+                count++;
+                sb.Append($"{role}");
+                if (count >= maxi)
                 {
-                    if (role == "" || role == null) continue;
-                    sb.Append($"{role}");
-                    sb.Append("</pos>");
-                    sb.AppendFormat("<pos={0}em>", pos);
-                    sb.Append($"\n=> ");
+                    count = 0;
+                    maxi = 6;
+                    sb.Append("\n");
                 }
+                sb.Append($"=> ");
+
+            }
             return sb.ToString();
         }
         Logger.Info($"无", "RoleName");
