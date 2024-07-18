@@ -18,6 +18,7 @@ internal class PingTrackerUpdatePatch
     private static AspectPosition pingTrackerCredentialAspectPos = null;
     private static void Postfix(PingTracker __instance)
     {
+        __instance.text.text = "";
         if (pingTrackerCredential == null)
         {
             var uselessPingTracker = Object.Instantiate(__instance, __instance.transform.parent);
@@ -72,15 +73,17 @@ internal class PingTrackerUpdatePatch
                 sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
             sb.Append($"\r\n").Append("</size>");
         }
-
+        pingTrackerCredential.gameObject.SetActive(true);
         pingTrackerCredential.text = sb.ToString();
+        if (GameSettingMenu.Instance?.gameObject?.active ?? false)
+            pingTrackerCredential.text = "";
+
         //var offset_x = 2.5f; //右端からのオフセット
         //var offset_y = 6.1f; //右端からのオフセット
         //if (HudManager.InstanceExists && !HudManager._instance.Chat.chatButton.gameObject.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
         ////if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
         //__instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, offset_y, 0f);
 
-        __instance.text.text = "";
     }
 }
 [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]

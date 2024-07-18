@@ -816,11 +816,12 @@ public static class Utils
             SendMessage(GetString("Message.HideModSettings"), PlayerId);
             return;
         }
-        var sb = new StringBuilder(GetString("Roles")).Append(':');
-        var sb1 = new StringBuilder(GetString("Roles")).Append(':');
-        var sb2 = new StringBuilder(GetString("Roles")).Append(':');
-        var sb3 = new StringBuilder(GetString("Roles")).Append(':');
-        sb.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.GM), GetRoleName(CustomRoles.GM)), Options.EnableGM.GetString().RemoveHtmlTags());
+        var gm = new StringBuilder();
+        var sb = new StringBuilder();
+        var sb1 = new StringBuilder();
+        var sb2 = new StringBuilder();
+        var sb3 = new StringBuilder();
+        gm.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.GM), GetRoleName(CustomRoles.GM)), Options.EnableGM.GetString().RemoveHtmlTags());
         
         int headCount = -1;
         foreach (CustomRoles role in CustomRolesHelper.AllStandardRoles)
@@ -828,14 +829,14 @@ public static class Utils
             headCount++;
             if (role.IsImpostor() && headCount == 0)
             {
-                sb.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.ImpostorRoles")));
+                sb.Append(ColorString(GetRoleTeamColor(role), "● " + GetString("TabGroup.ImpostorRoles")));
 #if DEBUG
                 sb.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.EvilAngel), GetRoleName(CustomRoles.EvilAngel)), EvilAngel.EnableEvilAngel.GetString().RemoveHtmlTags());
 #endif
             }
             else if (role.IsCrewmate() && headCount == 1)
             {
-                sb1.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.CrewmateRoles")));
+                sb1.Append(ColorString(GetRoleTeamColor(role), "● " + GetString("TabGroup.CrewmateRoles")));
 #if DEBUG
                 sb1.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.InjusticeSpirit), GetRoleName(CustomRoles.InjusticeSpirit)), InjusticeSpirit.EnableInjusticeSpirit.GetString().RemoveHtmlTags());
 #endif
@@ -845,12 +846,12 @@ public static class Utils
 
             else if (role.IsNeutral() && headCount == 2) 
             {
-                sb2.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.NeutralRoles")));
+                sb2.Append(ColorString(GetRoleTeamColor(role), "● " + GetString("TabGroup.NeutralRoles")));
 #if DEBUG
                 sb2.AppendFormat("\n{0}:{1}", ColorString(GetRoleColor(CustomRoles.Specterraid), GetRoleName(CustomRoles.Specterraid)), Specterraid.EnableSpecterraid.GetString().RemoveHtmlTags());
 #endif
             }
-            else if (role.IsAddon() && headCount == 3) sb3.Append(ColorString(GetRoleTeamColor(role), "\n\n● " + GetString("TabGroup.Addons")));
+            else if (role.IsAddon() && headCount == 3) sb3.Append(ColorString(GetRoleTeamColor(role), "● " + GetString("TabGroup.Addons")));
             else headCount--;
             
             if (role.IsEnable())
@@ -876,6 +877,7 @@ public static class Utils
                 }
             }
         }
+        SendMessage(gm.ToString(), PlayerId);
         SendMessage(sb.ToString(), PlayerId);
         SendMessage(sb1.ToString(), PlayerId);
         SendMessage(sb2.ToString(), PlayerId);
@@ -888,9 +890,9 @@ public static class Utils
             SendMessage(GetString("Message.HideModSettings"), PlayerId);
             return;
         }
-        var sb2 = new StringBuilder(GetString("Roles")).Append(':');
+        var sb = new StringBuilder(GetString("Roles")).Append(':');
         Color32 color = new(187, 187, 187, 255);
-        sb2.Append( ColorString(color, "\n\n● " + GetString("TabGroup.NeutralKillerRoles")));
+        sb.Append( ColorString(color, "\n\n● " + GetString("TabGroup.NeutralKillerRoles")));
         foreach (CustomRoles role in CustomRolesHelper.AllStandardRoles)
         {
             
@@ -902,12 +904,12 @@ public static class Utils
                 {
                     case CustomRoleTypes.Neutral:
                         if (!role.IsNeutralKilling()) break;
-                        sb2.AppendFormat("\n{0}:{1}x{2}", ColorString(GetRoleColor(role), GetRoleName(role)), $"{Utils.GetRoleDisplaySpawnMode(role, false)}", role.GetCount());
+                        sb.AppendFormat("\n{0}:{1}x{2}", ColorString(GetRoleColor(role), GetRoleName(role)), $"{Utils.GetRoleDisplaySpawnMode(role, false)}", role.GetCount());
                         break;
                 }
             }
         }
-        SendMessage(sb2.ToString(), PlayerId);
+        SendMessage(sb.ToString(), PlayerId);
     }
     public static void ShowChildrenSettings(OptionItem option, ref StringBuilder sb, int deep = 0, bool forChat = false)
     {

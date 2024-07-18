@@ -35,8 +35,8 @@ public static class RegistryManager
 
         List<string> FoldersNFileToDel =
             [
-                @"./TONEX_DATA",
-                @"./TONEXE_DATA",
+                @"./TOH_DATA",
+                @"./TOHEX_DATA",
                 @"./TONX_DATA",
             ];
 

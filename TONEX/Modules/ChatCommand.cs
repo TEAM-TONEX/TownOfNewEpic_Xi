@@ -432,7 +432,7 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.InfectorMode"), playerId);
             return;
         }
-        
+
 
 
         if (string.IsNullOrWhiteSpace(input))
@@ -448,14 +448,17 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
         else
         {
 
-            if (!role.IsAddon() &&!role.IsVanilla())
-            Utils.SendMessage(role.GetRoleInfo().Description.FullFormatHelp, playerId);
+            if (!role.IsAddon() && !role.IsVanilla())
+                Utils.SendMessage(role.GetRoleInfo().Description.FullFormatHelp, playerId);
             else if (role.IsVanilla())
                 Utils.SendMessage(role.GetRoleInfo().Description.FullFormatHelp, playerId);
             else if (role.IsAddon())
-                Utils.SendMessage(AddonDescription.FullFormatHelpByRole(role) ??
-                        // roleInfoがない役職
-                        $"<size=130%><color={Utils.GetRoleColor(role)}>{GetString(role.ToString())}</color></size>:\n\n{role.GetRoleInfoWithRole()}", playerId);
+            {
+                Utils.SendMessage(AddonDescription.FullFormatHelpByRole(role) 
+                    ??
+                            // roleInfoがない役職
+                            $"<size=130%><color={Utils.GetRoleColor(role)}>{GetString(role.ToString())}</color></size>:\n\n{role.GetRoleInfoWithRole()}", playerId);
+            }
         }
     }
     public static void SetRoles(string input, byte playerId)

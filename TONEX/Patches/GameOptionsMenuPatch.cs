@@ -14,8 +14,8 @@ namespace TONEX;
 [HarmonyPatch(typeof(GameSettingMenu))]
 public static class GameSettingMenuPatch
 {
-    private static GameOptionsMenu tonexSettingsTab;
-    private static PassiveButton tonexSettingsButton;
+    public static GameOptionsMenu tonexSettingsTab;
+    public static PassiveButton tonexSettingsButton;
     public static CategoryHeaderMasked SystemCategoryHeader { get; private set; }
     public static CategoryHeaderMasked ModCategoryHeader { get; private set; }
     public static CategoryHeaderMasked ImpostorRoleCategoryHeader { get; private set; }
