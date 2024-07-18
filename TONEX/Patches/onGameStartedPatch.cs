@@ -20,15 +20,20 @@ namespace TONEX;
 internal class ChangeRoleSettings
 {
     public static Dictionary<byte, bool> AllPlayers;
+    public static Dictionary<byte, RoleTypes> PlayerRoleWhenAlive;
 
     public static void Postfix(AmongUsClient __instance)
     {
         if (Main.AssistivePluginMode.Value)
         {
             AllPlayers = new();
+            PlayerRoleWhenAlive = new();
+
             foreach (var pc in PlayerControl.AllPlayerControls)
                 AllPlayers.Add(pc.PlayerId, false);
 
+            foreach (var pc in PlayerControl.AllPlayerControls)
+                PlayerRoleWhenAlive.Add(pc.PlayerId, RoleTypes.CrewmateGhost);
             return;
         
         }

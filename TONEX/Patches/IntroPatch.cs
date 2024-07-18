@@ -457,6 +457,11 @@ class IntroCutscenePatch
                 var pc = Utils.GetPlayerById(id);
                 ChangeRoleSettings.AllPlayers[id] = pc.Data.Role.IsImpostor;
             }
+            foreach (var id in ChangeRoleSettings.PlayerRoleWhenAlive.Keys)
+            {
+                var pc = Utils.GetPlayerById(id);
+                ChangeRoleSettings.PlayerRoleWhenAlive[id] = pc.Data.RoleWhenAlive.Value;
+            }
             return;
         }
         if (!GameStates.IsInGame) return;

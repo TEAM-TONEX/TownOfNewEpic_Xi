@@ -40,7 +40,7 @@ class CmdCheckMurderPatch
 {
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (Main.AssistivePluginMode.Value) return true;
+       // if (Main.AssistivePluginMode.Value) return true;
         Logger.Info($"{__instance.GetNameWithRole()} => {target.GetNameWithRole()}", "CmdCheckMurder");
 
         if (AmongUsClient.Instance.AmHost && GameStates.IsModHost)
@@ -509,89 +509,66 @@ class FixedUpdatePatch
     public static void Postfix(PlayerControl __instance)
     {
         var player = __instance;
-        if (Main.AssistivePluginMode.Value)
+        if (Main.AssistivePluginMode.Value && __instance != null)
         {
-            if (__instance != null)
+
+            if (GameStates.IsLobby)
             {
-                if (GameStates.IsLobby)
+                if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
                 {
-                    if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
+                    if (Main.ForkId != ver.forkId)
+                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
+                    else if (Main.version.CompareTo(ver.version) == 0)
+                        __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
+                    else
+                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
+                }
+                else if (__instance == PlayerControl.LocalPlayer)
+                {
+                    __instance.cosmetics.nameText.text = $"<color=#31D5BA>{__instance?.name}</color>";
+                }
+                else
+                {
+                    __instance.cosmetics.nameText.text = $"<color=#E1E0B3>{__instance?.name}</color>";
+                }
+            }
+            else if (GameStates.IsInGame)
+            {
+                if (Main.playerVersion.ContainsKey(0))
+                {
+                    Main.playerVersion.TryGetValue(0, out var ver);
+                    if (Main.ForkId != ver.forkId)
+                        return;
+                }
+
+                var roleType = __instance.Data.Role.Role;
+                var cr = roleType.GetCustomRoleTypes();
+                var color = Utils.GetRoleColorCode(cr);
+
+                if (__instance == PlayerControl.LocalPlayer || (PlayerControl.LocalPlayer.Data.IsDead && __instance.Data.IsDead))
+                {
+                    __instance.cosmetics.nameText.text = $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
+                }
+                else if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsImpostor() && cr.IsImpostor())
+                {
+                    if (PlayerControl.LocalPlayer.Data.IsDead)
                     {
-
-                        if (Main.ForkId != ver.forkId) // フォークIDが違う場合
-                            __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>{ver.forkId}</size>\n{__instance?.name}</color>";
-                        else if (Main.version.CompareTo(ver.version) == 0)
-                            __instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#31D5BA>{__instance.name}</color>" : $"<color=#ffff00><size=1.5>{ver.tag}</size>\n{__instance?.name}</color>";
-                        else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.5>v{ver.version}</size>\n{__instance?.name}</color>";
-
-                    }
-                    else if (__instance == PlayerControl.LocalPlayer)
-                    {
-
-                        __instance.cosmetics.nameText.text =
-                            $"<color=#31D5BA>{__instance?.name}</color>";
+                        __instance.cosmetics.nameText.text = $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
                     }
                     else
                     {
-                        __instance.cosmetics.nameText.text =
-                            $"<color=#E1E0B3>{__instance?.name}</color>";
+                        __instance.cosmetics.nameText.text = $"<color=#FF1919>{__instance?.name}</color>";
                     }
                 }
-                else if (GameStates.IsInGame)
+                else
                 {
-                    if (Main.playerVersion.ContainsKey(0))
-                    {
-                        Main.playerVersion.TryGetValue(0, out var ver);
-                        if (Main.ForkId != ver.forkId) 
-                            return;
-                    }
-                    var roleType = __instance.Data.Role.Role;
-                    var cr = roleType.GetCustomRoleTypes();
-                    var color = Utils.GetRoleColorCode(cr);
-                    if (__instance == PlayerControl.LocalPlayer)
-                    {
-                        __instance.cosmetics.nameText.text =
-                            $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
-                    }
-                    else
-                    {
-
-                        if (PlayerControl.LocalPlayer.Data.IsDead && __instance.Data.IsDead)
-                        {
-
-                            __instance.cosmetics.nameText.text =
-                                $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
-                        }
-                        else if (PlayerControl.LocalPlayer.Data.Role.Role.GetCustomRoleTypes().IsImpostor() && cr.IsImpostor())
-                        {
-                            if (PlayerControl.LocalPlayer.Data.IsDead)
-                            {
-                                __instance.cosmetics.nameText.text =
-                                       $"<color={color}><size=80%>{Translator.GetRoleString(cr.ToString())}</size>\n\r{__instance?.name}</color>";
-                            }
-                            else
-                            {
-
-                                __instance.cosmetics.nameText.text =
-                                $"<color=#FF1919>{__instance?.name}</color>";
-
-                            }
-                        }
-                        else
-                        {
-
-                            __instance.cosmetics.nameText.text =
-                            $"<color=#FFFFFF>{__instance?.name}</color>";
-
-
-
-                        }
-
-                    }
+                    __instance.cosmetics.nameText.text = $"<color=#FFFFFF>{__instance?.name}</color>";
                 }
-                
+
+            }
+
             return;
-            } 
+
         }
            
 

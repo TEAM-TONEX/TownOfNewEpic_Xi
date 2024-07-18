@@ -1466,11 +1466,10 @@ public static class Utils
             builder.Append(ColorString(Palette.PlayerColors[colorId], Main.AllPlayerNames[id]));
             pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
             builder.AppendFormat("<pos={0}em>", pos);
-            builder.Append(ColorString(GetRoleColor(pc.Data.RoleWhenAlive.Value.GetCustomRoleTypes()),GetString($"{pc.Data.RoleWhenAlive.Value}")));
+            var oldrole = ChangeRoleSettings.PlayerRoleWhenAlive[id];
+            builder.Append(ColorString(GetRoleColor(oldrole.GetCustomRoleTypes()),GetString($"{oldrole}")));
             if (!pc.Data.Disconnected && pc.Data.IsDead)
             {
-                builder.Append("</pos>");
-                builder.AppendFormat("<pos={0}em>", pos);
                 builder.Append($"=> {ColorString(GetRoleColor(pc.Data.Role.Role.GetCustomRoleTypes()), GetString($"{pc.Data.Role.Role}"))}");
             }
             builder.Append("</pos>");
