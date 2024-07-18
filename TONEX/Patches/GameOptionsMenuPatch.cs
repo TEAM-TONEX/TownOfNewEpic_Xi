@@ -73,7 +73,7 @@ public static class GameSettingMenuPatch
         // 各設定スイッチを作成
         var template = __instance.GameSettingsTab.stringOptionOrigin;
         var scOptions = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
-        foreach (var option in OptionItem.AllOptions)
+        foreach (var option in OptionItem.AllOptions.Where(o => o is not TextOptionItem))
         {
             if (option.OptionBehaviour == null)
             {
@@ -140,18 +140,18 @@ public static class GameSettingMenuPatch
     private const float JumpButtonSpacing = 0.55f;
     // ジャンプしたカテゴリヘッダのScrollerとの相対Y座標がこの値になる
     private const float CategoryJumpY = 2f;
-    private static string GetTabColor(TabGroup tab)
+    private static Color GetTabColor(TabGroup tab)
     {
         return tab switch
         {
-            TabGroup.SystemSettings => Main.ModColor,
-            TabGroup.ModSettings => "#59ef83",
-            TabGroup.ImpostorRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Impostor),
-            TabGroup.CrewmateRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Crewmate),
-            TabGroup.NeutralRoles => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Neutral),
-            TabGroup.Addons => Utils.GetCustomRoleTypeColorCode(Roles.Core.CustomRoleTypes.Addon),
-            TabGroup.OtherRoles => "#76b8e0",
-            _ => "#ffffff",
+            TabGroup.SystemSettings => Main.ModColor32,
+            TabGroup.ModSettings => new Color32(89, 239, 131, 255),
+            TabGroup.ImpostorRoles => Utils.GetCustomRoleTypeColor(Roles.Core.CustomRoleTypes.Impostor),
+            TabGroup.CrewmateRoles => Utils.GetCustomRoleTypeColor(Roles.Core.CustomRoleTypes.Crewmate),
+            TabGroup.NeutralRoles => Utils.GetCustomRoleTypeColor(Roles.Core.CustomRoleTypes.Neutral),
+            TabGroup.Addons => Utils.GetCustomRoleTypeColor(Roles.Core.CustomRoleTypes.Addon),
+            TabGroup.OtherRoles => new Color32(118, 184, 224, 255),
+            _ => Color.white,
         };
     }
     private static CategoryHeaderMasked CreateCategoryHeader(GameSettingMenu __instance, GameOptionsMenu tonexTab, TabGroup translationKey)
@@ -160,7 +160,7 @@ public static class GameSettingMenuPatch
         categoryHeader.name = $"TabGroup.{translationKey}";
         
         categoryHeader.Title.text = GetString(categoryHeader.name);
-        categoryHeader.Title.color = ColorHelper.GetTabColor(translationKey)
+        categoryHeader.Title.color = GetTabColor(translationKey);
         var maskLayer = GameOptionsMenu.MASK_LAYER;
         categoryHeader.Background.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
         if (categoryHeader.Divider != null)
