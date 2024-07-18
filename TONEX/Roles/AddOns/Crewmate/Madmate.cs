@@ -96,11 +96,14 @@ public static class Madmate
     public static void KnowTargetRoleColor(PlayerControl seer, PlayerControl target, ref string color)
     {
         // ÄÚ¹íÅÑÍ½»¥ÈÏ
-        if (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor)) color = (target.Is(CustomRoles.Egoist) && Egoist.OptionImpEgoVisibalToAllies.GetBool() && seer != target) ? Utils.GetRoleColorCode(CustomRoles.Egoist) : Utils.GetRoleColorCode(CustomRoles.Impostor);
-        if (seer.Is(CustomRoles.Madmate) && target.Is(CustomRoleTypes.Impostor) && MadmateKnowWhosImp.GetBool()) color = Main.roleColors[CustomRoles.Impostor];
-        if (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoles.Madmate) && ImpKnowWhosMadmate.GetBool()) color = Main.roleColors[CustomRoles.Madmate];
-        if (seer.Is(CustomRoles.Madmate) && target.Is(CustomRoles.Madmate) && MadmateKnowWhosMadmate.GetBool()) color = Main.roleColors[CustomRoles.Madmate];
-        if (seer.Is(CustomRoles.Gangster) && target.Is(CustomRoles.Madmate)) color = Main.roleColors[CustomRoles.Madmate];
+        if (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor))
+            color = (target.Is(CustomRoles.Egoist) && Egoist.OptionImpEgoVisibalToAllies.GetBool() && seer != target) 
+                ? Utils.GetRoleColorCode(CustomRoles.Egoist) : Utils.GetRoleColorCode(CustomRoles.Impostor);
+        if (seer.Is(CustomRoles.Madmate) && target.Is(CustomRoleTypes.Impostor) && MadmateKnowWhosImp.GetBool()) 
+            color = Utils.GetRoleColorCode(CustomRoles.Impostor);
+        if (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoles.Madmate) && ImpKnowWhosMadmate.GetBool()) color = Utils.GetRoleColorCode(CustomRoles.Impostor);
+        if (seer.Is(CustomRoles.Madmate) && target.Is(CustomRoles.Madmate) && MadmateKnowWhosMadmate.GetBool()) color = Utils.GetRoleColorCode(CustomRoles.Impostor);
+        if (seer.Is(CustomRoles.Gangster) && target.Is(CustomRoles.Madmate)) color = Utils.GetRoleColorCode(CustomRoles.Impostor);
     }
     public static bool CanKnowOthers(PlayerControl seer, PlayerControl seen)
     {
