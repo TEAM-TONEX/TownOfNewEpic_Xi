@@ -147,5 +147,5 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 ## :warning: Problem/bug encountered:warning:
 |                               You                                |          How to resolve          |
 |:----------------------------------------------------------------:|:--------------------------------:|
-|                        Issue a IQ Quesion                        |    Don't even think about it     |
+|                        Issue a Stupid Quesion                        |    Don't even think about it     |
 |   Attitude is polite and the clear problemis and give the log    |     do our best to help you      |
