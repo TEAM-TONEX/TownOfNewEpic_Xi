@@ -64,7 +64,18 @@ class IntroCutscenePatch
                 __instance.RoleBlurbText.color = color;
                 __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
             }
-           else
+            else if (Options.CurrentGameMode == CustomGameMode.FFA)
+            {
+                var color = ColorUtility.TryParseHtmlString("#FF3333", out var c) ? c : new(255, 255, 255, 255);
+                CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
+                __instance.YouAreText.color = color;
+                __instance.RoleText.text = Utils.GetRoleName(roles);
+                __instance.RoleText.color = Utils.GetRoleColor(roles);
+                __instance.RoleBlurbText.color = color;
+                __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+            }
+
+            else
             {
                 CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
                 if (!(role.IsVanilla() && Options.DisableVanillaRoles.GetBool()))
@@ -253,7 +264,12 @@ class IntroCutscenePatch
         }
         else
         {
-        switch (role.GetCustomRoleTypes())
+            if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)
+            {
+                PlayerControl.LocalPlayer.Data.Role.IntroSound = introSound;
+            }
+            else { 
+             switch (role.GetCustomRoleTypes())
         {
             case CustomRoleTypes.Impostor:
                 if (PlayerControl.LocalPlayer.Is(RoleTypes.Shapeshifter))
@@ -303,8 +319,10 @@ class IntroCutscenePatch
                     }, 4f, "Sound");  
                     break;
                 } 
-        }
-        }
+             }
+            }
+           
+      }
           
 
         switch (role)
@@ -317,10 +335,7 @@ class IntroCutscenePatch
                 break;
         }
 
-        if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)
-        {
-            PlayerControl.LocalPlayer.Data.Role.IntroSound = introSound;
-        }
+
 
         if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
         {
@@ -348,7 +363,17 @@ class IntroCutscenePatch
             __instance.BackgroundBar.material.color = color;
             PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
         }
-        
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            var color = ColorUtility.TryParseHtmlString("#FF3333", out var c) ? c : new(255, 255, 255, 255);
+            __instance.TeamTitle.text = Utils.GetRoleName(role);
+            __instance.TeamTitle.color = Utils.GetRoleColor(role);
+            __instance.ImpostorText.gameObject.SetActive(true);
+            __instance.ImpostorText.text = GetString("ModeFFAMode");
+            __instance.BackgroundBar.material.color = color;
+            PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
+        }
+
 
         if (Input.GetKey(KeyCode.RightShift))
         {
@@ -483,7 +508,7 @@ class IntroCutscenePatch
             if (mapId != 4)
             {
                 Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
-                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato && Options.CurrentGameMode != CustomGameMode.InfectorMode)
+                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato && Options.CurrentGameMode != CustomGameMode.InfectorMode && Options.CurrentGameMode != CustomGameMode.FFA)
                     _ = new LateTask(() =>
                     {
                         if (GameStates.IsInTask)
@@ -518,7 +543,7 @@ class IntroCutscenePatch
                         break;
                 }
             }
-            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.InfectorMode)
+            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.FFA)
             {
                 RandomSpawn.SpawnMap map;
                 switch (Main.NormalOptions.MapId)

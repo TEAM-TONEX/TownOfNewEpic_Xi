@@ -30,6 +30,7 @@ using UnityEngine;
 using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.ParticleSystem.PlaybackState;
+using TONEX.MoreGameModes;
 
 namespace TONEX;
 
@@ -124,7 +125,7 @@ class CheckMurderPatch
             return false;
         }
         // 根据游戏模式设定的时间间隔检查是否连续杀人
-        var device = Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode ? 3000f : 2000f;
+        var device = Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode or CustomGameMode.FFA ? 3000f : 2000f;
         float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / device * 6f); //※AmongUsClient.Instance.Ping的值是毫秒(ms)，因此要除以1000
                                                                                      // 如果距离上次杀人时间不足设定的最小时间，则取消杀人行为
         if (TimeSinceLastKill.TryGetValue(killer.PlayerId, out var time) && time < minTime)
@@ -137,6 +138,12 @@ class CheckMurderPatch
         // 检查是否是可以执行杀人操作的玩家（排除远程杀人）
         if (!info.IsFakeSuicide && !killer.CanUseKillButton())
         {
+            return false;
+        }
+        //FFA
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            FFAManager.OnPlayerAttack(killer, target);
             return false;
         }
 
@@ -387,7 +394,7 @@ class ReportDeadBodyPatch
         if (Main.AssistivePluginMode.Value) return true;
         if (GameStates.IsMeeting) return false;
         if (Options.DisableMeeting.GetBool()) return false;
-        if (Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode) return false; 
+        if (Options.CurrentGameMode is CustomGameMode.HotPotato or CustomGameMode.InfectorMode or CustomGameMode.FFA) return false; 
         if (__instance.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Report, ExtendedPlayerControl.PlayerActionInUse.All))
         {
             WaitReport[__instance.PlayerId].Add(target);
@@ -696,6 +703,10 @@ class FixedUpdatePatch
                 //    var hasRole = main.AllPlayerCustomRoles.TryGetValue(__instance.PlayerId, out var role);
                 //    if (hasRole) RoleTextData = Utils.GetRoleTextHideAndSeek(__instance.Data.Role.Role, role);
                 //}
+                if (Options.CurrentGameMode == CustomGameMode.FFA) RoleText.text = string.Empty;
+
+                if (__instance.AmOwner || Options.CurrentGameMode == CustomGameMode.FFA) RoleText.enabled = true;
+
                 (RoleText.enabled, RoleText.text) = Utils.GetRoleNameAndProgressTextData(PlayerControl.LocalPlayer, __instance);
                 if (!AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
                 {
@@ -718,6 +729,9 @@ class FixedUpdatePatch
                 //自分自身の名前の色を変更
                 if (target.AmOwner && GameStates.IsInTask)
                 { //targetが自分自身
+                    if (Options.CurrentGameMode == CustomGameMode.FFA)
+                        FFAManager.GetNameNotify(target, ref RealName);
+
                     if (seer.IsEaten())
                         RealName = Utils.ColorString(Utils.GetRoleColor(CustomRoles.Pelican), GetString("EatenByPelican"));
                     if (NameNotifyManager.GetNameNotify(target, out var name))
@@ -758,6 +772,8 @@ class FixedUpdatePatch
                 //seerに関わらず発動するSuffix
                 Suffix.Append(CustomRoleManager.GetSuffixOthers(seer, target));
 
+                if (Options.CurrentGameMode == CustomGameMode.FFA)
+                    Suffix.Append(FFAManager.GetPlayerArrow(seer, target));
                 /*if(main.AmDebugger.Value && main.BlockKilling.TryGetValue(target.PlayerId, out var isBlocked)) {
                     Mark = isBlocked ? "(true)" : "(false)";
                 }*/
@@ -839,7 +855,10 @@ class CoEnterVentPatch
         if (!AmongUsClient.Instance.AmHost) return true;
         if (Main.AssistivePluginMode.Value) return true;
         Logger.Info($"{__instance.myPlayer.GetNameWithRole()} CoEnterVent: {id}", "CoEnterVent");
-
+        //FFA
+        if (Options.CurrentGameMode == CustomGameMode.FFA && FFAManager.CheckCoEnterVent(__instance, id))
+            return true;
+       
         var user = __instance.myPlayer;
         if (user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.EnterVent) 
             || user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.EnterVent, ExtendedPlayerControl.PlayerActionInUse.Skill) 
@@ -888,6 +907,9 @@ class CoExitVentPatch
         Logger.Info($"{__instance.myPlayer.GetNameWithRole()} CoExitVent: {id}", "CoExitVent");
         
         var user = __instance.myPlayer;
+        if (Options.CurrentGameMode == CustomGameMode.FFA && FFAManager.FFA_DisableVentingWhenKCDIsUp.GetBool())
+                    FFAManager.CoExitVent(user);
+        
         if (user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.ExitVent) 
             || user.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.ExitVent, ExtendedPlayerControl.PlayerActionInUse.Skill))
         {
@@ -1286,7 +1308,7 @@ class CheckVanishPatch
     }
 }
 
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
 class CheckAppearPatch
 {
     public static bool Prefix(PlayerControl __instance, bool shouldAnimate)

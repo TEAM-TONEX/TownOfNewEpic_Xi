@@ -89,13 +89,56 @@ class GameEndChecker
             }
 
         }
+        //个人竞技模式
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            if (FFAManager.RoundTime <= 0)
+            {
+                var winner = Main.AllPlayerControls.Where(x => !x.Is(CustomRoles.GM) && x != null).OrderBy(x => FFAManager.GetRankOfScore(x.PlayerId)).First();
+
+                byte winnerId;
+                if (winner == null) winnerId = 0;
+                else winnerId = winner.PlayerId;
+
+                var WinnerIds = winnerId;
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Killer);
+                CustomWinnerHolder.WinnerIds.Add(WinnerIds);
+                ShipStatus.Instance.enabled = false;
+                AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
+                predicate = null;
+                return false;
+            }
+            else if (Main.AllAlivePlayerControls.Count() == 1)
+            {
+                var winner = Main.AllAlivePlayerControls.FirstOrDefault();
+
+                Logger.Info($"Winner: {winner.GetRealName().RemoveHtmlTags()}", "FFA");
+
+                var WinnerIds = winner.PlayerId;
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Killer);
+                CustomWinnerHolder.WinnerIds.Add(WinnerIds);
+                ShipStatus.Instance.enabled = false;
+                AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
+                predicate = null;
+                return false;
+            }
+            else if (Main.AllAlivePlayerControls.Count() == 0)
+            {
+                FFAManager.RoundTime = 0;
+                Logger.Warn("No players alive. Force ending the game", "FFA");
+                ShipStatus.Instance.enabled = false;
+                AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
+                predicate = null;
+                return false;
+            }
+        }
 
         // 游戏结束时
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default)
         {
             // 强制解除伪装
             Main.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(pc, ForceRevert: true, RevertToDefault: true));
-  
+
             if (reason == GameOverReason.ImpostorBySabotage && CustomRoles.Jackal.IsExist() && Jackal.WinBySabotage && !Main.AllAlivePlayerControls.Any(x => x.GetCustomRole().IsImpostorTeam()))
             {
                 reason = GameOverReason.ImpostorByKill;
@@ -137,13 +180,13 @@ class GameEndChecker
 
                 case CustomWinner.Succubus:
                     Main.AllPlayerControls
-                        .Where(pc =>pc.IsSuccubusTeam())
+                        .Where(pc => pc.IsSuccubusTeam())
                         .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
 
                 case CustomWinner.Vagator:
                     Main.AllPlayerControls
-                     .Where(pc => pc.Is(CustomRoles.Vagator) )
+                     .Where(pc => pc.Is(CustomRoles.Vagator))
                      .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                     break;
 
@@ -211,7 +254,7 @@ class GameEndChecker
             }
 
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw and not CustomWinner.None and not CustomWinner.Error)
-            { 
+            {
                 foreach (var pc in Main.AllPlayerControls)
                 {
                     var roleClass = pc.GetRoleClass();
@@ -231,12 +274,12 @@ class GameEndChecker
                         {
                             CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
                             if (pc.GetCustomRole() is not CustomRoles.SchrodingerCat)
-                            CustomWinnerHolder.AdditionalWinnerRoles.Add(winnerRole);
+                                CustomWinnerHolder.AdditionalWinnerRoles.Add(winnerRole);
                         }
                     }
 
                     //Instigator 胜利时移除玩家ID了
-                    Instigator.CheckWin() ;
+                    Instigator.CheckWin();
                 }
                 //if (CustomRoles.Non_Villain.IsExist() && Non_Villain.DigitalLifeList.Count <= 0)
                 //    foreach (var pc in Non_Villain.DigitalLifeList)
@@ -273,7 +316,7 @@ class GameEndChecker
 
     private static System.Collections.IEnumerator CoEndGame(AmongUsClient self, GameOverReason reason)
     {
-       
+
 
         //变灵魂
         List<byte> ReviveRequiredPlayerIds = new();
@@ -314,16 +357,16 @@ class GameEndChecker
 
         yield return new WaitForSeconds(EndGameDelay);
 
-        if (ReviveRequiredPlayerIds.Count >0)
-        // GameDataによる蘇生処理
-        for (int i = 0; i < ReviveRequiredPlayerIds.Count; i++)
-        {
-            var id = ReviveRequiredPlayerIds[i];
-            var info = GameData.Instance.GetPlayerById(id);
-            info.IsDead = false;
-            info.MarkDirty();
-            AmongUsClient.Instance.SendAllStreamedObjects();
-        }
+        if (ReviveRequiredPlayerIds.Count > 0)
+            // GameDataによる蘇生処理
+            for (int i = 0; i < ReviveRequiredPlayerIds.Count; i++)
+            {
+                var id = ReviveRequiredPlayerIds[i];
+                var info = GameData.Instance.GetPlayerById(id);
+                info.IsDead = false;
+                info.MarkDirty();
+                AmongUsClient.Instance.SendAllStreamedObjects();
+            }
         yield return new WaitForSeconds(EndGameDelay);
         // バニラ側のゲーム終了RPC
         GameManager.Instance.RpcEndGame(reason, false);
@@ -332,6 +375,7 @@ class GameEndChecker
     public static void SetPredicateToNormal() => predicate = new NormalGameEndPredicate();
     public static void SetPredicateToHotPotato() => predicate = new HotPotatoGameEndPredicate();
     public static void SetPredicateToZombie() => predicate = new ZombieGameEndPredicate();
+    public static void SetPredicateToFFA() => predicate = new FFAGameEndPredicate();
 
     // ===== ゲーム終了条件 =====
     // 通常ゲーム用
@@ -403,7 +447,7 @@ class GameEndChecker
                 .Where(p => p.Key is not CountTypes.Crew)
                 .ToDictionary(p => p.Key, v => v.Value);
 
-            if (validPlayerTypeCounts.All(pair => pair.Value == 0) && Main.AllAlivePlayerControls.Count() <1) //无人生还
+            if (validPlayerTypeCounts.All(pair => pair.Value == 0) && Main.AllAlivePlayerControls.Count() < 1) //无人生还
             {
                 reason = GameOverReason.ImpostorByKill;
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
@@ -422,7 +466,7 @@ class GameEndChecker
             if (!potentialWinners.Any(p => p.Key != winningCandidate.Key && p.Value != 0))// 判断是否有其他有机会的胜利者
             {
                 winnerFound = true;
-                winningType = (CustomWinner)winningCandidate.Key; 
+                winningType = (CustomWinner)winningCandidate.Key;
             }
 
             // 所有链子的数组
@@ -436,12 +480,12 @@ class GameEndChecker
 
             bool IsNotLover(PlayerControl p) => validLovers.Count > 0 && validLovers.All(role => !p.Is(role));
 
-            if (hasTypeSansLover || validLovers.Count() >1)// 如果有、或者不止一对链子，那就滚犊子
+            if (hasTypeSansLover || validLovers.Count() > 1)// 如果有、或者不止一对链子，那就滚犊子
             {
                 winnerFound = false;
             }
             // 否则，如果只有一对链子或者这对链子人数大于等于总人数一半
-            else if (validLovers.Count() == 1 && Main.AllAlivePlayerControls.Count(p => p.Is(validLovers[0])) >= Main.AllAlivePlayerControls.Count()/2)
+            else if (validLovers.Count() == 1 && Main.AllAlivePlayerControls.Count(p => p.Is(validLovers[0])) >= Main.AllAlivePlayerControls.Count() / 2)
             {
                 var loverRole = validLovers[0];
                 winningType = (CustomWinner)loverRole;
@@ -463,17 +507,17 @@ class GameEndChecker
     class HotPotatoGameEndPredicate : GameEndPredicate
     {
         public override bool CheckForEndGame(out GameOverReason reason)
-        {   
+        {
             reason = GameOverReason.ImpostorByKill;
             var playerList = Main.AllAlivePlayerControls.ToList();
             if (playerList.Count == 1)
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.ColdPotato);
                 foreach (var cp in playerList)
-                    CustomWinnerHolder.WinnerIds.Add(cp.PlayerId);  
+                    CustomWinnerHolder.WinnerIds.Add(cp.PlayerId);
                 return true;
             }
-            return false; 
+            return false;
         }
     }
     class ZombieGameEndPredicate : GameEndPredicate
@@ -496,12 +540,53 @@ class GameEndChecker
                     CustomWinnerHolder.WinnerIds.Add(hm);
                 return true;
             }
-            return false; 
+            return false;
+        }
+    }
+    class FFAGameEndPredicate : GameEndPredicate
+    {
+        public override bool CheckForEndGame(out GameOverReason reason)
+        {
+            reason = GameOverReason.ImpostorByKill;
+
+            if (FFAManager.RoundTime <= 0)
+            {
+                var winner = Main.AllPlayerControls.Where(x => !x.Is(CustomRoles.GM) && x != null).OrderBy(x => FFAManager.GetRankOfScore(x.PlayerId)).First();
+
+                byte winnerId;
+                if (winner == null) winnerId = 0;
+                else winnerId = winner.PlayerId;
+
+                var WinnerIds = winnerId;
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Killer);
+                CustomWinnerHolder.WinnerIds.Add(WinnerIds);
+
+                return true;
+            }
+            else if (Main.AllAlivePlayerControls.Count() == 1)
+            {
+                var winner = Main.AllAlivePlayerControls.FirstOrDefault();
+
+                Logger.Info($"Winner: {winner.GetRealName().RemoveHtmlTags()}", "FFA");
+
+                var WinnerIds = winner.PlayerId;
+                CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Killer);
+                CustomWinnerHolder.WinnerIds.Add(WinnerIds);
+
+                return true;
+            }
+            else if (Main.AllAlivePlayerControls.Count() == 0)
+            {
+                FFAManager.RoundTime = 0;
+                Logger.Warn("No players alive. Force ending the game", "FFA");
+                return false;
+            }
+            else return false;
         }
     }
 }
 
-public abstract class GameEndPredicate
+    public abstract class GameEndPredicate
 {
     /// <summary>ゲームの終了条件をチェックし、CustomWinnerHolderに値を格納します。</summary>
     /// <params name="reason">バニラのゲーム終了処理に使用するGameOverReason</params>

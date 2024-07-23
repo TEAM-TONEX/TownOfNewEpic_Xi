@@ -10,6 +10,7 @@ using TONEX.Patches;
 using TONEX.Templates;
 using UnityEngine;
 using static TONEX.Translator;
+using TONEX.MoreGameModes;
 
 namespace TONEX;
 

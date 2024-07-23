@@ -40,6 +40,7 @@ HotPotato: "热土豆"
 ColdPotato: "冷土豆"
 Infector: "感染者"
 Survivor: "幸存者"
+Killer: "挑战者"
 
 ## 原版职业 / Vanilla
 Crewmate: "船员"
@@ -339,6 +340,7 @@ WinnerRoleText.SplitPersonality: "我是你们滴一员，对吧？嘿嘿嘿嘿"
 WinnerRoleText.Infector: "Brain~"
 WinnerRoleText.Survivor: "安全了，暂时..."
 WinnerRoleText.ColdPotato: "还是我技高一筹)))))"
+WinnerRoleText.Killer: "lol"
 
 ## 胜利界面职业名 / Role Name for End Screen
 WinnerRoleText.InEnd.Impostor: "伪装者阵营"
@@ -388,6 +390,7 @@ WinnerRoleText.InEnd.Specterraid: "幽掠"
 WinnerRoleText.InEnd.Yandere: "病娇"
 WinnerRoleText.InEnd.Alternate: "伪人"
 WinnerRoleText.InEnd.SplitPersonality: "人格分裂者"
+WinnerRoleText.InEnd.Killer: "个人竞技胜利者"
 
 # 以下是职业简介（显示在开局以及任务栏的文本）/ Shows at Impostor/Crewmate Screen
 
@@ -599,6 +602,7 @@ InfectorInfo: "感染其他幸存者"
 SurvivorInfo: "完成任务并且存活下去"
 HotPotatoInfo: "把热土豆传给其他人！"
 ColdPotatoInfo: "躲避热土豆"
+KillerInfo: "挑战所有人！"
 
 # 以下是职业描述（使用/m或/r指令后得到的文本）/ Role Descriptions
 
@@ -804,6 +808,7 @@ InfectorInfoLong: "跟随其他感染者感染幸存者（贴贴即感染）"
 SurvivorInfoLong: "完成你的所有任务并且不被感染"
 HotPotatoInfoLong: "通过击杀把热土豆传给其他人（所有人都可以看见谁是冷/热土豆）"
 ColdPotatoInfoLong: "躲避热土豆（所有人都可以看见谁是冷/热土豆）"
+KillerInfoLong: "努力去击杀其他人"
 
 # 选项菜单标题 / Option Menu Titles
 MenuTitle.Disable: "乂 禁用相关设定"
@@ -1820,6 +1825,34 @@ NothingIsWorthTheRisk: "Nothing Is Worth The Risk"
 ZombieTimeRemain: "游戏结束倒计时：{0}"
 HotPotatoTimeRemain: "热土豆分配&爆炸倒计时：{0}"
 
+FFA_GameTime: 最长游戏时间
+FFA_KCD: 击杀冷却时间
+FFA_DisableVentingWhenTwoPlayersAlive: 当只剩2名玩家时禁用通风管
+FFA_EnableRandomAbilities: 启用随机事件
+FFA_ShieldDuration: 护盾持续时间
+FFA_IncreasedSpeed: 提高速度
+FFA_DecreasedSpeed: 降低速度
+FFA_ModifiedSpeedDuration: 修改后的速度持续时间
+FFA_LowerVision: 视野下降
+FFA_ModifiedVisionDuration: 视野下降持续时间
+FFA_EnableRandomTwists: 不定时地随机交换位置
+FFA-Event-GetShield: 你有一个临时护盾
+FFA-Event-GetIncreasedSpeed: 你的速度会暂时提升！
+FFA-Event-GetLowKCD: 你下一次的击杀冷却时间更短
+FFA-Event-GetHighKCD: 你的击杀冷却时间变长了
+FFA-Event-GetLowVision: 你的视野暂时下降
+FFA-Event-GetDecreasedSpeed: 你的速度暂时下降
+FFA-Event-GetTP: 你被传送到了一个随机通风管上
+FFA-Event-RandomTP: 每个人都和别人交换了位置
+FFA-NoVentingBecauseTwoPlayers: 就剩2人了，快去跟他爆了
+FFA-NoVentingBecauseKCDIsUP: 你的击杀冷却时间已到，别苟着了
+FFA_DisableVentingWhenKCDIsUp: 阻止击杀冷却时间已到的玩家使用通风管
+FFA_TargetIsShielded: <color=#ffff00>你试图杀死的玩家已被保护！</color>
+FFA_ShieldIsOneTimeUse: 护盾在尝试 1 次击杀后破裂
+FFA_ShieldBroken: <color=#ffff00>有人想击杀你，你的盾牌现在坏了！</color>
+FFADisplayScore: 第{0}名：{1}分
+FFATimeRemain: <color=#00ffa5>剩余时间：</color> 【{0}】 秒
+
 # 信息 / Messages
 Message.SetToSeconds: "信息发送冷却时间为【{0}】秒"
 Message.MessageWaitHelp: "指定一个数设定秒数"
@@ -2299,10 +2332,16 @@ BaseOn: "基于"
 Standard: "标准"
 HotPotatoMode: "烫手山芋"
 InfectorMode: "感染模式"
+FFAMode: "个人竞技模式"
+FFA: "个人竞技"
 AllCrewModMode: "全员模组（试验性）"
 GameMode: "游戏模式"
 ModeHotPotato: "烫手山芋模式"
 ModeZombieMode: "感染模式"
+ModeFFAMode: "个人竞技模式"
+ModeDescribe.FFA: 在游戏模式自由对战中，每个玩家都是带刀玩家，都可以击杀任何人。最后活着的玩家获胜！\n同时，一些随机事件会让游戏更加有趣~
+ModeDescribe.HotPotato: 在热土豆模式中，每个玩家都有可能是冷/热土豆，热土豆必须把热土豆传给其他冷土豆，否则在倒计时结束时自己就会被炸死。\n冷土豆需要时刻提防热土豆，并且存活下去。\n最后一个存活的人获胜
+ModeDescribe.InfectorMode: 在感染模式中，开局会随机分配伪装者数量的感染者，感染者需要感染所有人或者等待倒计时结束，感染者可以通过接触幸存者来进行感染。\n幸存者需要做完所有任务才能胜利。
 
 # 发送
 SendTargets.Default: "发送给：默认"

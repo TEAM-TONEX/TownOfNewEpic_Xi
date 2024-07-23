@@ -594,7 +594,7 @@ public static class GuesserHelper
 
                 if (role.IsTODO()) continue;
                 if (role is CustomRoles.GM or CustomRoles.NotAssigned or CustomRoles.SuperStar) continue;
-                if (role is CustomRoles.HotPotato or CustomRoles.ColdPotato or CustomRoles.Survivor or CustomRoles.Infector) continue;
+                if (role is CustomRoles.HotPotato or CustomRoles.ColdPotato or CustomRoles.Survivor or CustomRoles.Infector or CustomRoles.Killer) continue;
                 if (role is  CustomRoles.Mini or CustomRoles.InjusticeSpirit or CustomRoles.Specterraid or CustomRoles.EvilAngel or CustomRoles.GuardianAngel) continue;
 
                 CreateRole(role);

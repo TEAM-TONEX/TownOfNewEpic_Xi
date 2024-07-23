@@ -5,10 +5,12 @@ using LibCpp2IL.Elf;
 using System.Linq;
 using System.Text;
 using TMPro;
+using TONEX.MoreGameModes;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
-using TONEX.Roles.Crewmate;
+using System;
 using UnityEngine;
+using System.Collections.Generic;
 using static TONEX.Translator;
 
 namespace TONEX;
@@ -24,6 +26,7 @@ class HudManagerPatch
     public static int NowFrameCount = 0;
     public static float FrameRateTimer = 0.0f;
     public static TMPro.TextMeshPro LowerInfoText;
+    public static GameObject TempLowerInfoText;
     public static void Postfix(HudManager __instance)
     {
         if (Main.AssistivePluginMode.Value) return;
@@ -64,6 +67,27 @@ class HudManagerPatch
 
         if (SetHudActivePatch.IsActive && !Main.AssistivePluginMode.Value)
         {
+            if (Options.CurrentGameMode == CustomGameMode.FFA)
+            {
+                if (LowerInfoText == null)
+                {
+                    TempLowerInfoText = new GameObject("CountdownText");
+                    TempLowerInfoText.transform.position = new Vector3(0f, -2f, 1f);
+                    LowerInfoText = TempLowerInfoText.AddComponent<TextMeshPro>();
+                    //LowerInfoText.text = string.Format(GetString("CountdownText"));
+                    LowerInfoText.alignment = TextAlignmentOptions.Center;
+                    //LowerInfoText = Object.Instantiate(__instance.KillButton.buttonLabelText);
+                    LowerInfoText.transform.parent = __instance.transform;
+                    LowerInfoText.transform.localPosition = new Vector3(0, -2f, 0);
+                    LowerInfoText.overflowMode = TextOverflowModes.Overflow;
+                    LowerInfoText.enableWordWrapping = false;
+                    LowerInfoText.color = Color.white;
+                    LowerInfoText.outlineColor = Color.black;
+                    LowerInfoText.outlineWidth = 20000000f;
+                    LowerInfoText.fontSize = 2f;
+                }
+                LowerInfoText.text = FFAManager.GetHudText();
+            }
             if (player.IsAlive())
             {
                 
@@ -332,6 +356,24 @@ class TaskPanelBehaviourPatch
 
                     if (MeetingStates.FirstMeeting)
                         AllText += $"\r\n\r\n</color><size=70%>{GetString("PressF1ShowRoleDescription")}</size>";
+
+                    break;
+                case CustomGameMode.FFA:
+                    Dictionary<byte, string> SummaryText2 = [];
+                    foreach (var id in Main.AllAlivePlayerControls)
+                    {
+                        string name = Main.AllPlayerNames[id.PlayerId].RemoveHtmlTags().Replace("\r\n", string.Empty);
+                        string summary = $"{Utils.GetProgressText(id)}  {Utils.ColorString(Main.PlayerColors[id.PlayerId], name)}";
+                        if (Utils.GetProgressText(id).Trim() == string.Empty) continue;
+                        SummaryText2[id.PlayerId] = summary;
+                    }
+                    
+                    List<(int, byte)> list2 = [];
+                    foreach (var id in PlayerState.AllPlayerStates.Keys) list2.Add((FFAManager.GetRankOfScore(id), id));
+                    list2.Sort();
+                    foreach (var id in list2.Where(x => SummaryText2.ContainsKey(x.Item2))) AllText += "\r\n" + SummaryText2[id.Item2];
+
+                    AllText = $"<size=70%>{AllText}</size>";
 
                     break;
             }

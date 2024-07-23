@@ -29,6 +29,7 @@ using UnityEngine;
 using static TONEX.Translator;
 using TMPro;
 using TONEX.Roles.Vanilla;
+using TONEX.MoreGameModes;
 
 namespace TONEX;
 
@@ -653,7 +654,7 @@ public static class Utils
             }
         return hasTasks;
     }
-    private static string GetProgressText(PlayerControl seer, PlayerControl seen = null)
+   public static string GetProgressText(PlayerControl seer, PlayerControl seen = null)
     {
         seen ??= seer;
         var comms = IsActive(SystemTypes.Comms) || Concealer.IsHidding;
@@ -681,6 +682,10 @@ public static class Utils
         //SubRoles
         ProgressText.Append(TicketsStealer.GetProgressText(playerId, comms));
         ProgressText.Append(Mini.GetProgressText(playerId, comms));
+        //GameMode
+        if (Options.CurrentGameMode == CustomGameMode.FFA && role == CustomRoles.Killer)
+            ProgressText.Append(FFAManager.GetDisplayScore(playerId));
+        
 
         return ProgressText.ToString();
     }
@@ -947,6 +952,7 @@ public static class Utils
             SendMessage(GetString("CantUse.lastresult"), PlayerId);
             return;
         }
+
         var sb = new StringBuilder();
         var winnerColor = ((CustomRoles)CustomWinnerHolder.WinnerTeam).GetRoleInfo()?.RoleColor ?? Palette.DisabledGrey;
 
@@ -1187,7 +1193,12 @@ public static class Utils
                 SelfSuffix.Append(seerRole?.GetSuffix(seer, isForMeeting: isForMeeting));
                 //seerに関わらず発動するSuffix
                 SelfSuffix.Append(CustomRoleManager.GetSuffixOthers(seer, isForMeeting: isForMeeting));
-
+                switch (Options.CurrentGameMode)
+                {
+                    case CustomGameMode.FFA:
+                        SelfSuffix.Append(FFAManager.GetPlayerArrow(seer));
+                        break;
+                }
                 //RealNameを取得 なければ現在の名前をRealNamesに書き込む
                 string SeerRealName = seer.GetRealName(isForMeeting);
 
@@ -1204,6 +1215,14 @@ public static class Utils
                     SelfName = $"{ColorString(GetRoleColor(CustomRoles.Pelican), GetString("EatenByPelican"))}";
                 if (NameNotifyManager.GetNameNotify(seer, out var name))
                     SelfName = name;
+
+
+                 if(Options.CurrentGameMode == CustomGameMode.FFA) { 
+                         FFAManager.GetNameNotify(seer, ref SelfName);
+                    string SelfTaskText = GetProgressText(seer);
+                    SelfName = $"<size={fontSize}>{SelfTaskText}</size>\r\n{SelfName}";
+                }
+               
 
                 SelfName = SelfRoleName + "\r\n" + SelfName;
                 SelfName += SelfSuffix.ToString() == "" ? "" : "\r\n " + SelfSuffix.ToString();
@@ -1597,7 +1616,15 @@ public static class Utils
         float B = (color.b + Weight) / (Darkness + 1);
         return new Color(R, G, B, color.a);
     }
+    public static void SetChatVisibleForEveryone()
+    {
+        if (!GameStates.IsInGame || !AmongUsClient.Instance.AmHost) return;
 
+        MeetingHud.Instance = UnityEngine.Object.Instantiate(HudManager.Instance.MeetingPrefab);
+        MeetingHud.Instance.ServerStart(PlayerControl.LocalPlayer.PlayerId);
+        AmongUsClient.Instance.Spawn(MeetingHud.Instance, -2, SpawnFlags.None);
+        MeetingHud.Instance.RpcClose();
+    }
     /// <summary>
     /// 乱数の簡易的なヒストグラムを取得する関数
     /// <params name="nums">生成した乱数を格納したint配列</params>

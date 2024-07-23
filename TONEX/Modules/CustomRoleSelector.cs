@@ -76,7 +76,13 @@ internal static class CustomRoleSelector
             Zb.SetOutFit(2);
             return;
         }
-        
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            foreach (var pc in Main.AllAlivePlayerControls)
+                RoleResult.Add(pc, CustomRoles.Killer);
+            return;
+        }
+
 
         // 在职业列表中搜索职业
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
@@ -428,6 +434,7 @@ internal static class CustomRoleSelector
     {
         if (Options.CurrentGameMode == CustomGameMode.HotPotato) return;
         if (Options.CurrentGameMode == CustomGameMode.InfectorMode) return;
+        if (Options.CurrentGameMode == CustomGameMode.FFA) return;
         AddonRolesList = new();
         foreach (var cr in Enum.GetValues(typeof(CustomRoles)))
         {

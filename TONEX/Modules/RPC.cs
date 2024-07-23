@@ -14,6 +14,7 @@ using static TONEX.Translator;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
 using TONEX.Modules.SoundInterface;
+using TONEX.MoreGameModes;
 namespace TONEX;
 
 public enum CustomRPC
@@ -108,6 +109,10 @@ public enum CustomRPC
     SetDeputyList,
     //伪人
     SetSubstituteLimit,
+
+    //游戏模式
+    SyncFFAPlayer,
+    SyncFFANameNotify,
 }
 public enum Sounds
 {
@@ -442,6 +447,12 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetDeputyList:
                 Deputy.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.SyncFFAPlayer:
+                FFAManager.ReceiveRPCSyncFFAPlayer(reader);
+                break;
+            case CustomRPC.SyncFFANameNotify:
+                FFAManager.ReceiveRPCSyncNameNotify(reader);
                 break;
         }
     }

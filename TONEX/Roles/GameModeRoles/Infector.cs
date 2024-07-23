@@ -34,6 +34,7 @@ public sealed class Infector : RoleBase
         () => HasTask.False
         )
     { }
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetFloat(FloatOptionNames.ImpostorLightMod, 0.2f);
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;

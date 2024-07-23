@@ -243,6 +243,11 @@ public static class NameTagManager
                    $"<color=#F39C12>{Main.ShowVersion}</color>";
                     name = prefixV2 + "</size>" + "\n" + name;
                     break;
+                case CustomGameMode.FFA:
+                    var prefixV3 = $"<size=80%><color=#F39C12>{GetString("FFAMode")}</color>" +
+                   $"<color=#F39C12>{Main.ShowVersion}</color>";
+                    name = prefixV3 + "</size>" + "\n" + name;
+                    break;
 
             };
             return name;

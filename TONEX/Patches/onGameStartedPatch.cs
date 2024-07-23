@@ -343,6 +343,9 @@ internal class SelectRolesPatch
                 case CustomGameMode.InfectorMode:
                     GameEndChecker.SetPredicateToZombie();
                     break;
+                case CustomGameMode.FFA:
+                    GameEndChecker.SetPredicateToFFA();
+                    break;
             }
 
             GameOptionsSender.AllSenders.Clear();

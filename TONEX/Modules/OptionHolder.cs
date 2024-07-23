@@ -24,8 +24,9 @@ public enum CustomGameMode
     Standard = 0x01,
     HotPotato = 0x02,
     InfectorMode = 0x04,
-    AllCrewModMode = Standard | 0x08,
-    All = Standard | HotPotato | AllCrewModMode | InfectorMode
+    FFA = 0x08,
+    AllCrewModMode = Standard | 0x16,
+    All = Standard | HotPotato | AllCrewModMode | InfectorMode | FFA
 }
 
 [HarmonyPatch]
@@ -59,8 +60,9 @@ public static class Options
         {    
             1 => CustomGameMode.HotPotato,
             2 => CustomGameMode.InfectorMode,
+            3 => CustomGameMode.FFA,
 #if DEBUG
-            3 => CustomGameMode.AllCrewModMode,
+            4 => CustomGameMode.AllCrewModMode,
 #endif
             
             _ => CustomGameMode.Standard
@@ -71,6 +73,7 @@ public static class Options
         "Standard",
         "HotPotatoMode",
         "InfectorMode",
+        "FFA",
 #if DEBUG
         "AllCrewModMode"
 #endif
@@ -797,6 +800,7 @@ public static class Options
         #region 游戏设置
         HotPotatoManager.SetupCustomOption();
         InfectorManager.SetupCustomOption();
+        FFAManager.SetupCustomOption();
 
         // 更多游戏模式
         TextOptionItem.Create(3_020_000, "MenuTitle.GameMode", TabGroup.ModSettings)

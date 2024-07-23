@@ -432,6 +432,11 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.InfectorMode"), playerId);
             return;
         }
+        else if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            Utils.SendMessage(GetString("ModeDescribe.FFA"), playerId);
+            return;
+        }
 
 
 
@@ -473,7 +478,12 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
             Utils.SendMessage(GetString("ModeDescribe.InfectorMode"), playerId);
             return;
         }
-        
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            Utils.SendMessage(GetString("ModeDescribe.FFA"), playerId);
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(input))
         {
             Utils.ShowActiveRoles(playerId);

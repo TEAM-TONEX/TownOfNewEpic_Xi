@@ -783,6 +783,7 @@ public enum CustomRoles
     ColdPotato,
     Survivor,
     Infector,
+    Killer,
 
     //GM
     GM,

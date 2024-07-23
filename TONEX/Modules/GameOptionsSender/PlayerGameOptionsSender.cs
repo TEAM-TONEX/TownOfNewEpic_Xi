@@ -6,6 +6,7 @@ using InnerNet;
 using MS.Internal.Xml.XPath;
 using System.Linq;
 using TONEX.Attributes;
+using TONEX.MoreGameModes;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
@@ -166,7 +167,21 @@ public class PlayerGameOptionsSender : GameOptionsSender
             opt.SetFloat(FloatOptionNames.ImpostorLightMod, 5f);
         }
         //*/
-
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            if (FFAManager.FFALowerVisionList.ContainsKey(player.PlayerId))
+            {
+                opt.SetVision(true);
+                opt.SetFloat(FloatOptionNames.CrewLightMod, FFAManager.FFA_LowerVision.GetFloat());
+                opt.SetFloat(FloatOptionNames.ImpostorLightMod, FFAManager.FFA_LowerVision.GetFloat());
+            }
+            else
+            {
+                opt.SetVision(true);
+                opt.SetFloat(FloatOptionNames.CrewLightMod, 1.25f);
+                opt.SetFloat(FloatOptionNames.ImpostorLightMod, 1.25f);
+            }
+        }
         AURoleOptions.EngineerCooldown = Mathf.Max(0.01f, AURoleOptions.EngineerCooldown);
 
         if (Main.AllPlayerKillCooldown.TryGetValue(player.PlayerId, out var killCooldown))
