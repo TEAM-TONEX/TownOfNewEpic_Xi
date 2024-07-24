@@ -118,7 +118,7 @@ internal class EAC
                     {
                         WarnHost();
                         Report(pc, "非法报告尸体");
-                        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】非游戏内开会，已驳回", "EAC");
+                        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】非法报告尸体，已驳回", "EAC");
                         return true;
                     }
                     else
@@ -194,15 +194,6 @@ internal class EAC
                     Report(pc, "AUM");
                     HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                     return true;
-                case unchecked((byte)420): // 164 Sicko
-                    if (sr.BytesRemaining == 0)
-                    {
-                        Report(pc, "Sicko RPC");
-                        HandleCheat(pc, "Sicko RPC");
-                        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】发送Sicko RPC，已驳回", "EAC");
-                        return true;
-                    }
-                    break;
                 case 7:
                 case 8:
                     if (!GameStates.IsLobby)
@@ -337,6 +328,23 @@ internal class EAC
         {
             case unchecked((byte)42069):
                 Report(pc, "AUM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
+            case 101:
+                Report(pc, "AUM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
+            //Slok你个歌姬
+            case unchecked((byte)520)://YuMenu
+                Report(pc, "YM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
+            case 168:
+                Report(pc, "SM");
+                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+                return true;
+            case unchecked((byte)420):
+                Report(pc, "SM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
         }
