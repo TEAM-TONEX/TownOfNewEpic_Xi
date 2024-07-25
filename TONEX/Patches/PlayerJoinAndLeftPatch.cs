@@ -47,7 +47,6 @@ class OnGameJoinedPatch
             Main.DoBlockNameChange = false;
             Main.NewLobby = true;
             Main.DevRole = new();
-            //EAC.DeNum = new();
 
             if (Main.NormalOptions.KillCooldown == 0f)
                 Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
