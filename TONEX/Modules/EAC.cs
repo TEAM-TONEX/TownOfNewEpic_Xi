@@ -173,16 +173,16 @@ internal class EAC
                         return true;
                     }
                     break;
-                case RpcCalls.ExtendLobbyTimer:
-                {
-                    if (GameStates.IsLobby)
-                    {
-                        WarnHost();
-                        Report(pc, "非法延长大厅计时器");
-                        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】非法延长大厅计时器，已驳回", "EAC");
-                        return true;
-                    }
-                    break;
+                //case RpcCalls.ExtendLobbyTimer:
+                //{
+                //    if (GameStates.IsLobby)
+                //    {
+                //        WarnHost();
+                //        Report(pc, "非法延长大厅计时器");
+                //        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】非法延长大厅计时器，已驳回", "EAC");
+                //        return true;
+                //    }
+                //    break;
                 }
             }
             
@@ -297,16 +297,16 @@ internal class EAC
                 //        return true;
                 //    }
                 //    break;
-                case 61:
-                    if (GameStates.IsLobby)
-                    {
-                        WarnHost();
-                        Report(pc, "非法延长大厅计时器");
-                        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】非法延长大厅计时器，已驳回", "EAC");
-                        return true;
-                    }
-                    break;
-            }
+                //case 61:
+                //    if (GameStates.IsLobby)
+                //    {
+                //        WarnHost();
+                //        Report(pc, "非法延长大厅计时器");
+                //        Logger.Fatal($"玩家【{pc.GetClientId()}:{pc.GetRealName()}】非法延长大厅计时器，已驳回", "EAC");
+                //        return true;
+                //    }
+                //    break;
+            //}
         }
         catch (Exception e)
         {
