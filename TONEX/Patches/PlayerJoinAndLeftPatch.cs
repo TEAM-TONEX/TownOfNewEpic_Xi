@@ -39,13 +39,15 @@ class OnGameJoinedPatch
         ErrorText.Instance.Clear();
         ServerAddManager.SetServerName();
 
+        EAC.Init();
+
         if (AmongUsClient.Instance.AmHost) //以下、ホストのみ実行
         {
             GameStartManagerPatch.GameStartManagerUpdatePatch.exitTimer = -1;
             Main.DoBlockNameChange = false;
             Main.NewLobby = true;
             Main.DevRole = new();
-            EAC.DeNum = new();
+            //EAC.DeNum = new();
 
             if (Main.NormalOptions.KillCooldown == 0f)
                 Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
