@@ -305,7 +305,6 @@ internal class HandleHUDPatch
 {
     public static void Postfix(Rewired.Player player)
     {
-        Logger.Info("Button Down", "HandleHUDPatch");
         if (Main.AssistivePluginMode.Value) return;
         if (player.GetButtonDown(8) && // 8:キルボタンのactionId
         PlayerControl.LocalPlayer.Data?.Role?.IsImpostor == false &&

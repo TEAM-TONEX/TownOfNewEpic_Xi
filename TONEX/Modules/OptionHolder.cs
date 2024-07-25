@@ -25,7 +25,7 @@ public enum CustomGameMode
     HotPotato = 0x02,
     InfectorMode = 0x04,
     FFA = 0x08,
-    AllCrewModMode = Standard | 0x16,
+    AllCrewModMode = Standard | 0x10,
     All = Standard | HotPotato | AllCrewModMode | InfectorMode | FFA
 }
 
@@ -684,7 +684,6 @@ public static class Options
 
         // 自动踢出相关设定
         TextOptionItem.Create(2_100_001, "MenuTitle.AutoKick", TabGroup.SystemSettings)
-            .SetGameMode(CustomGameMode.Standard)
             .SetColor(new Color32(0, 121, 255, byte.MaxValue));
 
         KickLowLevelPlayer = IntegerOptionItem.Create(2_000_001, "KickLowLevelPlayer", new(0, 100, 1), 0, TabGroup.SystemSettings, false)
@@ -718,7 +717,6 @@ public static class Options
 
         // 云服务相关设定
         TextOptionItem.Create(2_100_002, "MenuTitle.CloudServer", TabGroup.SystemSettings)
-            .SetGameMode(CustomGameMode.Standard)
             .SetColor(new Color32(0, 223, 162, byte.MaxValue));
 
         ShareLobby = BooleanOptionItem.Create(2_001_001, "ShareLobby", true, TabGroup.SystemSettings, false)
@@ -730,7 +728,6 @@ public static class Options
 
         // 游戏信息相关设定
         TextOptionItem.Create(2_100_003, "MenuTitle.GameInfo", TabGroup.SystemSettings)
-            .SetGameMode(CustomGameMode.Standard)
             .SetColor(new Color32(246, 250, 112, byte.MaxValue));
 
         AutoDisplayKillLog = BooleanOptionItem.Create(2_002_001, "AutoDisplayKillLog", true, TabGroup.SystemSettings, false)
@@ -771,7 +768,6 @@ public static class Options
 
         // 高级设定
         TextOptionItem.Create(2_100_005, "MenuTitle.Advanced", TabGroup.SystemSettings)
-            .SetGameMode(CustomGameMode.Standard)
             .SetColor(new Color32(147, 118, 224, byte.MaxValue));
 
         NoGameEnd = BooleanOptionItem.Create(2_004_001, "NoGameEnd", false, TabGroup.SystemSettings, false)
@@ -1143,7 +1139,7 @@ public static class Options
     }
     public static void SetupRoleOptions(SimpleRoleInfo info) =>
         SetupRoleOptions(info.ConfigId, info.Tab, info.RoleName);
-    public static void SetupRoleOptions(int id, TabGroup tab, CustomRoles role, IntegerValueRule assignCountRule = null, CustomGameMode customGameMode = CustomGameMode.Standard | CustomGameMode.AllCrewModMode)
+    public static void SetupRoleOptions(int id, TabGroup tab, CustomRoles role, IntegerValueRule assignCountRule = null, CustomGameMode customGameMode = CustomGameMode.Standard)
     {
         if (role.IsHidden() || role.IsCanNotOpen()) return;
         
@@ -1182,16 +1178,17 @@ public static class Options
             Role = role;
             Dictionary<string, string> replacementDic = new() { { "%role%", Utils.ColorString(Utils.GetRoleColor(role), Utils.GetRoleName(role)) } };
             doOverride = BooleanOptionItem.Create(idStart++, "doOverride", false, tab, false).SetParent(CustomRoleSpawnChances[role])
-                .SetValueFormat(OptionFormat.None);
+                .SetValueFormat(OptionFormat.None)
+            .SetGameMode(CustomGameMode.Standard | CustomGameMode.AllCrewModMode);
             doOverride.ReplacementDictionary = replacementDic;
             assignCommonTasks = BooleanOptionItem.Create(idStart++, "assignCommonTasks", true, tab, false).SetParent(doOverride)
-                .SetValueFormat(OptionFormat.None);
+                .SetValueFormat(OptionFormat.None).SetGameMode(CustomGameMode.Standard | CustomGameMode.AllCrewModMode);
             assignCommonTasks.ReplacementDictionary = replacementDic;
             numLongTasks = IntegerOptionItem.Create(idStart++, "roleLongTasksNum", new(0, 99, 1), 3, tab, false).SetParent(doOverride)
-                .SetValueFormat(OptionFormat.Pieces);
+                .SetValueFormat(OptionFormat.Pieces).SetGameMode(CustomGameMode.Standard | CustomGameMode.AllCrewModMode);
             numLongTasks.ReplacementDictionary = replacementDic;
             numShortTasks = IntegerOptionItem.Create(idStart++, "roleShortTasksNum", new(0, 99, 1), 3, tab, false).SetParent(doOverride)
-                .SetValueFormat(OptionFormat.Pieces);
+                .SetValueFormat(OptionFormat.Pieces).SetGameMode(CustomGameMode.Standard | CustomGameMode.AllCrewModMode);
             numShortTasks.ReplacementDictionary = replacementDic;
 
             if (!AllData.ContainsKey(role)) AllData.Add(role, this);
