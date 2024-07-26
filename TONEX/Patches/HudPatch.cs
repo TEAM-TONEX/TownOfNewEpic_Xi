@@ -358,24 +358,6 @@ class TaskPanelBehaviourPatch
                         AllText += $"\r\n\r\n</color><size=70%>{GetString("PressF1ShowRoleDescription")}</size>";
 
                     break;
-                case CustomGameMode.FFA:
-                    Dictionary<byte, string> SummaryText2 = [];
-                    foreach (var id in Main.AllAlivePlayerControls)
-                    {
-                        string name = Main.AllPlayerNames[id.PlayerId].RemoveHtmlTags().Replace("\r\n", string.Empty);
-                        string summary = $"{Utils.GetProgressText(id)}  {Utils.ColorString(Main.PlayerColors[id.PlayerId], name)}";
-                        if (Utils.GetProgressText(id).Trim() == string.Empty) continue;
-                        SummaryText2[id.PlayerId] = summary;
-                    }
-                    
-                    List<(int, byte)> list2 = [];
-                    foreach (var id in PlayerState.AllPlayerStates.Keys) list2.Add((FFAManager.GetRankOfScore(id), id));
-                    list2.Sort();
-                    foreach (var id in list2.Where(x => SummaryText2.ContainsKey(x.Item2))) AllText += "\r\n" + SummaryText2[id.Item2];
-
-                    AllText = $"<size=70%>{AllText}</size>";
-
-                    break;
             }
 
             __instance.taskText.text = AllText;

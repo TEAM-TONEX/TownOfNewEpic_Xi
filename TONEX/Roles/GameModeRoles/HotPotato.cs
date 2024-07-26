@@ -68,13 +68,8 @@ public sealed class HotPotato : RoleBase, IKiller
         info.CanKill = false;
         return false;
     }
-    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    public override void OnSecondsUpdate(PlayerControl player, long now)
     {
-        //seenが省略の場合seer
-        seen ??= seer;
-        //seeおよびseenが自分である場合以外は関係なし
-        if (!Is(seer) || !Is(seen)) return "";
-
-        return string.Format(GetString("HotPotatoTimeRemain"), HotPotatoManager.RemainExplosionTime);
+        Player.Notify(string.Format(GetString("HotPotatoTimeRemain"), HotPotatoManager.RemainExplosionTime));
     }
 }

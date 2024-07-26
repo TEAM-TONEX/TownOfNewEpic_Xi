@@ -682,10 +682,10 @@ public static class Utils
         //SubRoles
         ProgressText.Append(TicketsStealer.GetProgressText(playerId, comms));
         ProgressText.Append(Mini.GetProgressText(playerId, comms));
-        //GameMode
+        ////GameMode
         if (Options.CurrentGameMode == CustomGameMode.FFA && role == CustomRoles.Killer)
             ProgressText.Append(FFAManager.GetDisplayScore(playerId));
-        
+
 
         return ProgressText.ToString();
     }
@@ -1217,12 +1217,13 @@ public static class Utils
                     SelfName = name;
 
 
-                 if(Options.CurrentGameMode == CustomGameMode.FFA) { 
-                         FFAManager.GetNameNotify(seer, ref SelfName);
+                if (Options.CurrentGameMode == CustomGameMode.FFA)
+                {
+                    FFAManager.GetNameNotify(seer, ref SelfName);
                     string SelfTaskText = GetProgressText(seer);
                     SelfName = $"<size={fontSize}>{SelfTaskText}</size>\r\n{SelfName}";
                 }
-               
+
 
                 SelfName = SelfRoleName + "\r\n" + SelfName;
                 SelfName += SelfSuffix.ToString() == "" ? "" : "\r\n " + SelfSuffix.ToString();
@@ -1464,10 +1465,11 @@ public static class Utils
             builder.AppendFormat("<pos={0}em>", pos).Append(GetProgressText(id)).Append("</pos>");
 
             pos += 4f;
-            builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
+            if (Options.CurrentGameMode == CustomGameMode.Standard)
+              builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true, true)).Append("</pos>");
 
             pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
-            string oldRoleName = GetOldRoleName(id, pos);
+                        string oldRoleName = GetOldRoleName(id, pos);
             var newRoleName = GetTrueRoleName(id, false) + Utils.GetSubRolesText(id, false, false, true);
 
             builder.AppendFormat("<pos={0}em>", pos);
@@ -1477,6 +1479,7 @@ public static class Utils
             }
             builder.Append(newRoleName);
             builder.Append("</pos>");
+            
         }
         else
         {
@@ -1500,6 +1503,8 @@ public static class Utils
 
     private static string GetOldRoleName(byte id, float pos)
     {
+        if(Options.CurrentGameMode != CustomGameMode.Standard)
+            return "";
         StringBuilder sb = new();
         var count = 0;
         var maxi = 4;

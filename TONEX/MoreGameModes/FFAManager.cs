@@ -212,11 +212,9 @@ internal static class FFAManager
             }
             return;
         }
-
+        
         OnPlayerKill(killer);
-
         SendRPCSyncFFAPlayer(target.PlayerId);
-
         if (totalalive == 3)
         {
             PlayerControl otherPC = null;
@@ -348,6 +346,7 @@ internal static class FFAManager
             PlayerControl.LocalPlayer.KillFlash();
 
         KBScore[killer.PlayerId]++;
+        SendRPCSyncFFAPlayer(killer.PlayerId);
     }
 
     public static bool CheckCoEnterVent(PlayerPhysics physics, int ventId)
@@ -444,7 +443,7 @@ internal static class FFAManager
                 {
                     NameNotify.Remove(pc.PlayerId);
                     SendRPCSyncNameNotify(pc);
-                    Utils.NotifyRoles(SpecifySeer: pc);
+                    Utils.NotifyRoles();
                    // Utils.NotifyRoles(SpecifySeer: pc, SpecifyTarget: pc);
                 }
 
@@ -526,6 +525,7 @@ internal static class FFAManager
                     if (sync) pc.MarkDirtySettings();
                 }
             }
+            Utils.NotifyRoles();
         }
     }
 }
