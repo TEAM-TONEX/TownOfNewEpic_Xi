@@ -69,7 +69,8 @@ public sealed class Provocateur : RoleBase, INeutralKiller, IAdditionalWinner
     }
     public bool CheckWin(ref CustomRoles winnerRole, ref CountTypes winnerCountType)
     {
-        if (CustomWinnerHolder.WinnerIds.Contains(Player.GetRealKiller().PlayerId) || !IsKilled) return false;
+        if (Player.IsAlive()) return false;
+        if (CustomWinnerHolder.WinnerIds.Contains(Player?.GetRealKiller()?.PlayerId ?? 255) || !IsKilled) return false;
         return true;
 
     }

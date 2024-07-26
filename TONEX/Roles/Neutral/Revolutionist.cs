@@ -1,7 +1,8 @@
-/*using AmongUs.GameOptions;
+using AmongUs.GameOptions;
 using Hazel;
 using MS.Internal.Xml.XPath;
 using System.Collections.Generic;
+using System.Linq;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
@@ -19,10 +20,10 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
             CustomRoles.Revolutionist,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            75_1_2_1300,
+            75_1_3_0100,
             SetupOptionItem,
             "re|革命|改个",
-            "#ff6633",
+            "#ba4d06",
             isDesyncImpostor: true,
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );
@@ -33,11 +34,10 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
         () => HasTask.False
     )
     {
-        DouseTime = OptionDouseTime.GetFloat();
-        DouseCooldown = OptionDouseCooldown.GetFloat();
+        DouseTime = RevolutionistDrawTime.GetFloat();
+        DouseCooldown = RevolutionistCooldown.GetFloat();
 
         TargetInfo = null;
-        RevolutionistTimer = new(GameData.Instance.PlayerCount);
     }
     private static OptionItem RevolutionistDrawTime;
     private static OptionItem RevolutionistCooldown;
@@ -49,7 +49,10 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
     private static float DouseTime;
     private static float DouseCooldown;
     private TimerInfo TargetInfo;
-    public Dictionary<byte, (PlayerControl, float)> RevolutionistTimer;
+    public static Dictionary<byte, bool> Isdraw = new();
+    public static Dictionary<byte, long> RevolutionistStart = new();
+    public static Dictionary<byte, long> RevolutionistLastTime = new();
+    public static Dictionary<byte, int> RevolutionistCountdown = new();
 
     public class TimerInfo
     {
@@ -87,18 +90,14 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
         RevolutionistVentCountDown = FloatOptionItem.Create(RoleInfo, 14, OptionName.RevolutionistVentCountDown, new(1f, 180f, 1f), 15f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    public override void Add()
-    {
-
-    }
-    public bool CanUseKillButton() => !IsDouseDone(Player);
-    public bool CanUseImpostorVentButton() => IsDouseDone(Player) && !Player.inVent;
+    public bool CanUseKillButton() => !IsDrawDone(Player);
+    public bool CanUseImpostorVentButton() => IsDrawDone(Player) && !Player.inVent;
     public float CalculateKillCooldown() => DouseCooldown;
     public bool CanUseSabotageButton() => false;
     public override string GetProgressText(bool comms = false)
     {
-        var doused = GetDousedPlayerCount();
-        return Utils.ColorString(RoleInfo.RoleColor.ShadeColor(0.25f), $"({doused.Item1}/{doused.Item2})");
+        var draw = GetDrawPlayerCount(out var _);
+        return Utils.ColorString(RoleInfo.RoleColor.ShadeColor(0.25f), $"({draw.Item1}/{draw.Item2})");
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -106,17 +105,17 @@ public sealed class Revolutionist : RoleBase, INeutralKiller
     }
     enum RPC_type
     {
-SetDousedPlayer,
-        SetCurrentDousingTarget
+        SetDrawPlayer,
+        SetCurrentDrawTarget
     }
-    private void SendRPC(RPC_type rpcType, byte targetId = byte.MaxValue, bool isDoused = false)
+    private void SendRPC(RPC_type rpcType, byte targetId = byte.MaxValue, bool Isdraw = false)
     {
         using var sender = CreateSender();
         sender.Writer.Write(targetId);
 
         sender.Writer.Write((byte)rpcType);
-        if (rpcType == RPC_type.SetDousedPlayer)
-            sender.Writer.Write(isDoused);
+        if (rpcType == RPC_type.SetDrawPlayer)
+            sender.Writer.Write(Isdraw);
     }
     public override void ReceiveRPC(MessageReader reader)
     {
@@ -124,134 +123,134 @@ SetDousedPlayer,
         var rpcType = (RPC_type)reader.ReadByte();
         switch (rpcType)
         {
-            case RPC_type.SetDousedPlayer:
-                bool doused = reader.ReadBoolean();
-                IsDoused[targetId] = doused;
+            case RPC_type.SetDrawPlayer:
+                bool draw = reader.ReadBoolean();
+                Isdraw[targetId] = draw;
                 break;
-            case RPC_type.SetCurrentDousingTarget:
+            case RPC_type.SetCurrentDrawTarget:
                 TargetInfo = new(targetId, 0f);
                 break;
         }
     }
+
     public bool OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
 
         Logger.Info("Revolutionist start douse", "OnCheckMurderAsKiller");
         killer.SetKillCooldown(DouseTime);
-        if (!IsDoused[target.PlayerId] && TargetInfo == null)
+        if (!Isdraw[target.PlayerId] && TargetInfo == null)
         {
             TargetInfo = new(target.PlayerId, 0f);
             Utils.NotifyRoles(SpecifySeer: killer);
-            SendRPC(RPC_type.SetCurrentDousingTarget, target.PlayerId);
+            SendRPC(RPC_type.SetCurrentDrawTarget, target.PlayerId);
         }
         return false;
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         TargetInfo = null;
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (GameStates.IsInTask && RevolutionistTimer.ContainsKey(player.PlayerId))//当革命家拉拢一个玩家时
+        if (GameStates.IsInTask && TargetInfo != null)//当革命家拉拢一个玩家时
         {
-            if (!player.IsAlive() || Pelican.IsEaten(player.PlayerId))
+            if (!Player.IsAlive())
             {
-                RevolutionistTimer.Remove(player.PlayerId);
-                Utils.NotifyRoles(player);
-                RPC.ResetCurrentDrawTarget(player.PlayerId);
+                TargetInfo = null;
+                Utils.NotifyRoles(SpecifySeer: Player);
+                SendRPC(RPC_type.SetCurrentDrawTarget);
             }
             else
             {
-                var rv_target = RevolutionistTimer[player.PlayerId].Item1;//拉拢的人
-                var rv_time = RevolutionistTimer[player.PlayerId].Item2;//拉拢时间
+                var rv_target = Utils.GetPlayerById(TargetInfo.TargetId);//塗られる人
+                var rv_time = TargetInfo.Timer;//拉拢时间
                 if (!rv_target.IsAlive())
                 {
-                    RevolutionistTimer.Remove(player.PlayerId);
+                    TargetInfo = null;
                 }
-                else if (rv_time >= Options.RevolutionistDrawTime.GetFloat())//在一起时间超过多久
+                else if (rv_time >= RevolutionistDrawTime.GetFloat())//在一起时间超过多久
                 {
                     player.SetKillCooldown();
-                    RevolutionistTimer.Remove(player.PlayerId);//拉拢完成从字典中删除
-                    isDraw[(player.PlayerId, rv_target.PlayerId)] = true;//完成拉拢
-                    player.RpcSetDrawPlayer(rv_target, true);
+                    TargetInfo = null;//拉拢完成从字典中删除
+                    Isdraw[rv_target.PlayerId] = true;//完成拉拢
+                    SendRPC(RPC_type.SetDrawPlayer, rv_target.PlayerId, true);
                     Utils.NotifyRoles(player);
-                    RPC.ResetCurrentDrawTarget(player.PlayerId);
-                    if (IRandom.Instance.Next(1, 100) <= Options.RevolutionistKillProbability.GetInt())
+                    SendRPC(RPC_type.SetCurrentDrawTarget);
+                    if (IRandom.Instance.Next(1, 100) <= RevolutionistKillProbability.GetInt())
                     {
                         rv_target.SetRealKiller(player);
-                        PlayerStates[rv_target.PlayerId].deathReason = PlayerState.DeathReason.Sacrifice;
-                        player.RpcMurderPlayerV3(rv_target);
-                        PlayerStates[rv_target.PlayerId].SetDead();
+                        rv_target.SetDeathReason(CustomDeathReason.Sacrifice);
+                        player.RpcMurderPlayerV2(rv_target);
                         Logger.Info($"Revolutionist: {player.GetNameWithRole()} killed {rv_target.GetNameWithRole()}", "Revolutionist");
                     }
                 }
                 else
                 {
-                    float range = NormalGameOptionsV07.KillDistances[Mathf.Clamp(player.Is(CustomRoles.Reach) ? 2 : NormalOptions.KillDistance, 0, 2)] + 0.5f;
-                    float dis = Vector2.Distance(player.transform.position, rv_target.transform.position);//超出距离
-                    if (dis <= range)//在一定距离内则计算时间
+                    float dis;
+                    dis = Vector2.Distance(Player.transform.position, rv_target.transform.position);//距離を出す
+       
+                    if (dis <= 1.75f)//在一定距离内则计算时间
                     {
-                        RevolutionistTimer[player.PlayerId] = (rv_target, rv_time + Time.fixedDeltaTime);
+                        TargetInfo.Timer += Time.fixedDeltaTime;
                     }
                     else//否则删除
                     {
-                        RevolutionistTimer.Remove(player.PlayerId);
-                        Utils.NotifyRoles(__instance);
-                        RPC.ResetCurrentDrawTarget(player.PlayerId);
+                        TargetInfo = null;
+                        Utils.NotifyRoles(SpecifySeer: Player);
+                        SendRPC(RPC_type.SetCurrentDrawTarget);
 
-                        Logger.Info($"Canceled: {__instance.GetNameWithRole()}", "Revolutionist");
+                        Logger.Info($"Canceled: {Player.GetNameWithRole()}", "Revolutionist");
                     }
                 }
             }
         }
-        if (GameStates.IsInTask && player.IsDrawDone() && player.IsAlive())
+        if (GameStates.IsInTask && IsDrawDone(Player) && player.IsAlive())
         {
-            if (RevolutionistStart.ContainsKey(player.PlayerId)) //如果存在字典
+            if (RevolutionistLastTime.ContainsKey(player.PlayerId))
             {
-                if (RevolutionistLastTime.ContainsKey(player.PlayerId))
+                long nowtime = Utils.GetTimeStamp();
+                if (RevolutionistLastTime[player.PlayerId] != nowtime) RevolutionistLastTime[player.PlayerId] = nowtime;
+                int time = (int)(RevolutionistLastTime[player.PlayerId] - RevolutionistStart[player.PlayerId]);
+                int countdown = RevolutionistVentCountDown.GetInt() - time;
+                RevolutionistCountdown.Clear();
+                if (countdown <= 0)//倒计时结束
                 {
-                    long nowtime = Utils.GetTimeStamp();
-                    if (RevolutionistLastTime[player.PlayerId] != nowtime) RevolutionistLastTime[player.PlayerId] = nowtime;
-                    int time = (int)(RevolutionistLastTime[player.PlayerId] - RevolutionistStart[player.PlayerId]);
-                    int countdown = Options.RevolutionistVentCountDown.GetInt() - time;
-                    RevolutionistCountdown.Clear();
-                    if (countdown <= 0)//倒计时结束
+                    GetDrawPlayerCount(out var y);
+                    foreach (var pc in y.Where(x => x != null && x.IsAlive()))
                     {
-                        Utils.GetDrawPlayerCount(player.PlayerId, out var y);
-                        foreach (var pc in y.Where(x => x != null && x.IsAlive()))
-                        {
-                            pc.Data.IsDead = true;
-                            PlayerStates[pc.PlayerId].deathReason = PlayerState.DeathReason.Sacrifice;
-                            pc.RpcMurderPlayerV3(pc);
-                            PlayerStates[pc.PlayerId].SetDead();
-                            Utils.NotifyRoles(pc);
-                        }
-                        player.Data.IsDead = true;
-                        PlayerStates[player.PlayerId].deathReason = PlayerState.DeathReason.Sacrifice;
-                        player.RpcMurderPlayerV3(player);
-                        PlayerStates[player.PlayerId].SetDead();
+                        pc.Data.IsDead = true;
+                        pc.SetDeathReason(CustomDeathReason.Sacrifice);
+                        pc.RpcMurderPlayerV2(pc);
+                        pc.SetDeathReason(CustomDeathReason.Sacrifice);
+                        Utils.NotifyRoles(pc);
                     }
-                    else
-                    {
-                        RevolutionistCountdown.Add(player.PlayerId, countdown);
-                    }
+                    player.Data.IsDead = true;
+                    player.SetDeathReason(CustomDeathReason.Sacrifice);
+                    player.RpcMurderPlayerV2(player);
                 }
                 else
                 {
-                    RevolutionistLastTime.TryAdd(player.PlayerId, RevolutionistStart[player.PlayerId]);
+                    RevolutionistCountdown.Add(player.PlayerId, countdown);
                 }
             }
-            else //如果不存在字典
+            else
             {
-                RevolutionistStart.TryAdd(player.PlayerId, Utils.GetTimeStamp());
+                RevolutionistLastTime.TryAdd(player.PlayerId, RevolutionistStart[player.PlayerId]);
             }
         }
+        else //如果不存在字典
+        {
+            RevolutionistStart.TryAdd(player.PlayerId, Utils.GetTimeStamp());
+        }
+
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool EnablePetSkill() => true;
+
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
-        if (GameStates.IsInGame && IsDouseDone(Player))
+        if (GameStates.IsInGame && IsDrawDone(Player))
         {
             foreach (var pc in Main.AllAlivePlayerControls)
             {
@@ -273,30 +272,7 @@ SetDousedPlayer,
         }
         return false;
     }
-    public override void OnUsePet()
-    {
-                if (GameStates.IsInGame && IsDouseDone(Player))
-        {
-            foreach (var pc in Main.AllAlivePlayerControls)
-            {
-                if (pc.PlayerId != Player.PlayerId)
-                {
-                    //生存者は焼殺
-                    pc.SetRealKiller(Player);
-                    pc.RpcMurderPlayer(pc);
-                    var state = PlayerState.GetByPlayerId(pc.PlayerId);
-                    state.DeathReason = CustomDeathReason.Torched;
-                    state.SetDead();
-                }
-                else
-                    RPC.PlaySoundRPC(pc.PlayerId, Sounds.KillSound);
-            }
-            CustomWinnerHolder.ShiftWinnerAndSetWinner(CustomWinner.Revolutionist); //焼殺で勝利した人も勝利させる
-            CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
-            return;
-        }
-        return;
-    }
+    
     public bool OverrideKillButtonText(out string text)
     {
         text = GetString("RevolutionistDouseButtonText");
@@ -323,10 +299,10 @@ SetDousedPlayer,
         //seenが省略の場合seer
         seen ??= seer;
 
-        if (IsDousedPlayer(seen.PlayerId)) //seerがtargetに既にオイルを塗っている(完了)
-            return Utils.ColorString(RoleInfo.RoleColor, "▲");
+        if (IsDrawPlayer(seen.PlayerId)) //seerがtargetに既にオイルを塗っている(完了)
+            return Utils.ColorString(RoleInfo.RoleColor, "●");
         if (!isForMeeting && TargetInfo?.TargetId == seen.PlayerId) //オイルを塗っている対象がtarget
-            return Utils.ColorString(RoleInfo.RoleColor, "△");
+            return Utils.ColorString(RoleInfo.RoleColor, "○");
 
         return "";
     }
@@ -338,29 +314,32 @@ SetDousedPlayer,
         //seeおよびseenが自分である場合以外は関係なし
         if (!Is(seer) || !Is(seen)) return "";
 
-        return IsDouseDone(Player) ? Utils.ColorString(RoleInfo.RoleColor, GetString("EnterVentToWin")) : "";
+        return IsDrawDone(Player) ? Utils.ColorString(RoleInfo.RoleColor, GetString("EnterVentToWin")) : "";
     }
-    public bool IsDousedPlayer(byte targetId) => IsDoused.TryGetValue(targetId, out bool isDoused) && isDoused;
-    public static bool IsDouseDone(PlayerControl player)
+    public bool IsDrawPlayer(byte targetId) => Isdraw.TryGetValue(targetId, out bool isdraw) && isdraw;
+    public static bool IsDrawDone(PlayerControl player)
     {
-        if (player.GetRoleClass() is not Revolutionist Revolutionist) return false;
-        var count = Revolutionist.GetDousedPlayerCount();
+        if (player.GetRoleClass() is not Revolutionist revolutionist) return false;
+        var count = revolutionist.GetDrawPlayerCount(out var _);
         return count.Item1 == count.Item2;
     }
-    public (int, int) GetDousedPlayerCount()
+    public (int, int) GetDrawPlayerCount(out List<PlayerControl> winnerList)
     {
-        int doused = 0, all = 0;
-        //多分この方がMain.isDousedでforeachするより他のアーソニストの分ループ数少なくて済む
-        foreach (var pc in Main.AllAlivePlayerControls)
+        int draw = 0;
+        int all = RevolutionistDrawCount.GetInt();
+        int max = Main.AllAlivePlayerControls.Count();
+        if (Player.IsAlive()) max--;
+        winnerList = new();
+        if (all > max) all = max;
+        foreach (var pc in Main.AllPlayerControls)
         {
-            if (pc.PlayerId == Player.PlayerId) continue; //アーソニストは除外
-
-            all++;
-            if (IsDoused.TryGetValue(pc.PlayerId, out var isDoused) && isDoused)
-                //塗れている場合
-                doused++;
+            if (Isdraw.TryGetValue(pc.PlayerId, out var isDraw) && isDraw)
+            {
+                winnerList.Add(pc);
+                draw++;
+            }
         }
-
-        return (doused, all);
+        return (draw, all);
     }
-}*/
+}
+//*/

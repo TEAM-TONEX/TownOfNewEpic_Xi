@@ -137,55 +137,68 @@ public sealed class Sniper : RoleBase, IImpostor
 
     Dictionary<PlayerControl, float> GetSnipeTargets()
     {
+        // 创建一个空字典来存储狙击目标和它们的误差值
         var targets = new Dictionary<PlayerControl, float>();
-        //変身開始地点→解除地点のベクトル
+
+        // 狙击起始位置
         var snipeBasePos = SnipeBasePosition;
+        // 玩家当前位置
         var snipePos = Player.transform.position;
+        // 狙击方向
         var dir = (snipePos - snipeBasePos).normalized;
 
-        //至近距離で外す対策に一歩後ろから判定を開始する
+        // 从略微后方开始检测，以防止在极近距离出现未命中的情况
         snipePos -= dir;
 
+        // 遍历所有存活玩家的控制器
         foreach (var target in Main.AllAlivePlayerControls)
         {
-            //自分には当たらない
+            // 跳过自己
             if (target.PlayerId == Player.PlayerId) continue;
-            //死んでいない対象の方角ベクトル作成
+
+            // 计算目标相对于狙击位置的向量
             var target_pos = target.transform.position - snipePos;
-            //自分より後ろの場合はあたらない
+
+            // 如果目标在狙击者的后方，跳过
             if (target_pos.magnitude < 1) continue;
-            //正規化して
+
+            // 计算目标位置的单位方向向量
             var target_dir = target_pos.normalized;
-            //内積を取る
+
+            // 计算狙击方向和目标方向的点积
             var target_dot = Vector3.Dot(dir, target_dir);
+
+            // 输出日志信息，显示目标玩家名称、位置向量和方向向量
             Logger.Info($"{target?.Data?.PlayerName}:pos={target_pos} dir={target_dir}", "Sniper");
             Logger.Info($"  Dot={target_dot}", "Sniper");
 
-            //ある程度正確なら登録
+            // 如果点积足够接近于1，则说明目标在狙击方向上
             if (target_dot < 0.995) continue;
 
+            // 如果是精准射击模式
             if (PrecisionShooting)
             {
-                //射線との誤差確認
-                //単位ベクトルとの外積をとれば大きさ=誤差になる。
+                // 计算射线和目标位置之间的误差
                 var err = Vector3.Cross(dir, target_pos).magnitude;
                 Logger.Info($"  err={err}", "Sniper");
+
+                // 如果误差小于0.5，则将目标添加到字典中
                 if (err < 0.5)
                 {
-                    //ある程度正確なら登録
                     targets.Add(target, err);
                 }
             }
             else
             {
-                //近い順に判定する
+                // 如果是普通射击模式，使用距离作为判定依据
                 var err = target_pos.magnitude;
                 Logger.Info($"  err={err}", "Sniper");
                 targets.Add(target, err);
             }
         }
-        return targets;
 
+        // 返回狙击目标字典
+        return targets;
     }
     public override void OnShapeshift(PlayerControl target)
     {
@@ -254,6 +267,7 @@ public sealed class Sniper : RoleBase, IImpostor
                 snList.Add(otherPc.PlayerId);
                 Utils.NotifyRoles(SpecifySeer: otherPc);
             }
+
             SendRPC();
             _ = new LateTask(
                 () =>
@@ -305,7 +319,7 @@ public sealed class Sniper : RoleBase, IImpostor
             Utils.NotifyRoles(SpecifySeer: Player);
         }
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         MeetingReset = true;
     }

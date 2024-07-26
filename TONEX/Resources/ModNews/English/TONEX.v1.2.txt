@@ -118,7 +118,7 @@ But I believe that Cupid's arrow of love will eventually find its way to you!
 (Fixed By Slok)
 - Fixed the bug of the EvilSwapper wasn't displaying the remaining skill uses
 (Fixed By Slok)
-- Fixed the bug of players affected by Time Stop were unable to use vents in vanilla clients
+- Fixed the bug of players affected by Time Stopper were unable to use vents in vanilla clients
 (Fixed By Slok)
 - Fixed the bug of April Fools' horse mode would cause the game to crash.
 (Fixed by Slok)
@@ -221,7 +221,7 @@ But I believe that Cupid's arrow of love will eventually find its way to you!
 Impostors：
 - New Impostor Role：Evil Grenadier
 (Source Of The Idea：Town Of Us, Made By Slok)
-- New Impostor Role：Evil Time Stop
+- New Impostor Role：Evil Time Stopper
 (Idea&Made By Slok)
 - New Impostor Role：Assaulter
 (Idea By Zeyan, Made By Slok)

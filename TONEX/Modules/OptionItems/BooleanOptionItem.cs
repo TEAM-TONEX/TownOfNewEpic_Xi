@@ -37,6 +37,7 @@ public class BooleanOptionItem : OptionItem
             roleInfo.ConfigId + idOffset, name.ToString(), defaultValue, roleInfo.Tab, isSingleValue
         );
         opt.SetParent(parent ?? roleInfo.RoleOption);
+        opt.SetGameMode(CustomGameMode.Standard);
         return opt;
     }
 

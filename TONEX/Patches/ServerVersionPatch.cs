@@ -14,8 +14,7 @@ class ServerUpdatePatch
         if (GameStates.IsOnlineGame)
         {
             // Changing server version for AU mods
-            //if (!Main.VersionCheat.Value)
-
+            if (!Main.AssistivePluginMode.Value) 
             __result += 25;
             Logger.Info($"IsOnlineGame: {__result}", "VersionServer");
         }
@@ -26,6 +25,7 @@ public static class IsVersionModdedPatch
 {
     public static bool Prefix(ref bool __result)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         __result = true;
         return false;
     }

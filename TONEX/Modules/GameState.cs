@@ -59,9 +59,12 @@ public class PlayerState
                 RoleTypes.Crewmate => CustomRoles.Crewmate,
                 RoleTypes.Engineer => CustomRoles.Engineer,
                 RoleTypes.Scientist => CustomRoles.Scientist,
+                RoleTypes.Tracker => CustomRoles.Tracker,
+                RoleTypes.Noisemaker => CustomRoles.Noisemaker,
                 RoleTypes.GuardianAngel => CustomRoles.GuardianAngel,
                 RoleTypes.Impostor => CustomRoles.Impostor,
                 RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,
+                RoleTypes.Phantom => CustomRoles.Phantom,
                 _ => CustomRoles.Crewmate,
             };
     }
@@ -83,7 +86,7 @@ public class PlayerState
             SubRoles.Remove(CustomRoles.Charmed);
             SubRoles.Remove(CustomRoles.LastImpostor);
         }
-        if (role is CustomRoles.EvilAngle)
+        if (role is CustomRoles.EvilAngel)
         {
             SubRoles.Remove(CustomRoles.Madmate);
             SubRoles.Remove(CustomRoles.LastImpostor);
@@ -255,9 +258,9 @@ public static class GameStates
 {
     public static bool InGame = false;
     public static bool AlreadyDied = false;
-    public static bool IsModHost => PlayerControl.AllPlayerControls.ToArray().FirstOrDefault(x => x.PlayerId == 0 && x.IsModClient());
+    public static bool IsModHost => Main.AllPlayerControls.ToArray().FirstOrDefault(x => x.OwnerId == AmongUsClient.Instance.HostId && x.IsModClient());
     public static bool IsLobby => AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Joined;
-    public static bool IsInGame => InGame;
+    public static bool IsInGame => InGame ||IsFreePlay;
     public static bool IsEnded => AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Ended;
     public static bool IsNotJoined => AmongUsClient.Instance.GameState == AmongUsClient.GameStates.NotJoined;
     public static bool IsOnlineGame => AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame;
@@ -270,11 +273,12 @@ public static class GameStates
     public static bool IsShip => ShipStatus.Instance != null;
     public static bool IsCanMove => PlayerControl.LocalPlayer?.CanMove is true;
     public static bool IsDead => PlayerControl.LocalPlayer?.Data?.IsDead is true;
+    public static bool AirshipIsActive => (MapNames)GameOptionsManager.Instance.CurrentGameOptions.MapId == MapNames.Airship;
 }
 public static class MeetingStates
 {
     public static DeadBody[] DeadBodies = null;
-    public static GameData.PlayerInfo ReportTarget = null;
+    public static NetworkedPlayerInfo ReportTarget = null;
     public static bool IsEmergencyMeeting => ReportTarget == null;
     public static bool IsExistDeadBody => DeadBodies.Length > 0;
     public static bool MeetingCalled = false;

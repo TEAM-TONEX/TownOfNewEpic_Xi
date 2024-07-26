@@ -10,6 +10,7 @@ using TONEX.Patches;
 using TONEX.Templates;
 using UnityEngine;
 using static TONEX.Translator;
+using TONEX.MoreGameModes;
 
 namespace TONEX;
 
@@ -20,15 +21,27 @@ class EndGamePatch
     public static string KillLog = "";
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ref EndGameResult endGameResult)
     {
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         GameStates.InGame = false;
-        //SetRolePatch.playanima = true;
-        HudSpritePatch.IsEnd = true;
         Logger.Info("-----------游戏结束-----------", "Phase");
-        if (!GameStates.IsModHost) return;
+
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (Main.AssistivePluginMode.Value)
+        {
+            SummaryText = new();
+            foreach (var id in ChangeRoleSettings.AllPlayers.Keys)
+                SummaryText[id] = Utils.SummaryTexts(id, false);
+            return;
+        }
+
+        //if (!GameStates.IsModHost) return;
         SummaryText = new();
         foreach (var id in PlayerState.AllPlayerStates.Keys)
             SummaryText[id] = Utils.SummaryTexts(id, false);
+
+       
 
         var sb = new StringBuilder(GetString("KillLog"));
         sb.Append("<size=70%>");
@@ -47,7 +60,7 @@ class EndGamePatch
 
         Main.NormalOptions.KillCooldown = Options.DefaultKillCooldown;
         //winnerListリセット
-        TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+        EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
         var winner = new List<PlayerControl>();
         foreach (var pc in Main.AllPlayerControls)
         {
@@ -64,7 +77,7 @@ class EndGamePatch
         {
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw && pc.Is(CustomRoles.GM)) continue;
 
-            TempData.winners.Add(new WinningPlayerData(pc.Data));
+            EndGameResult.CachedWinners.Add(new CachedPlayerData(pc.Data));
             Main.winnerList.Add(pc.PlayerId);
             Main.winnerNameList.Add(pc.GetRealName());
         }
@@ -88,13 +101,32 @@ class SetEverythingUpPatch
     public static string LastWinsReason = "";
     private static TextMeshPro roleSummary;
     private static SimpleButton showHideButton;
-
+    static bool DidHumansWin;
+    public static void Prefix()
+    {
+        if (Main.AssistivePluginMode.Value)
+        DidHumansWin = GameManager.Instance.DidHumansWin(EndGameResult.CachedGameOverReason);
+    }
     public static void Postfix(EndGameManager __instance)
     {
-        if (!Main.playerVersion.ContainsKey(0)) return;
+        
+        var showInitially = Main.ShowResults.Value;
+
         //#######################################
         //          ==勝利陣営表示==
         //#######################################
+        Logger.Info("胜利阵营显示", "SetEverythingUpPatch");
+
+
+        string CustomWinnerText = "";
+        string EndWinnerText = "";
+        var AdditionalWinnerText = new StringBuilder(32);
+        var EndAdditionalWinnerText = new StringBuilder(32);
+        string CustomWinnerColor = "#ffffff";
+        string EndWinnerColor = "#ffffff";
+
+        if (Main.AssistivePluginMode.Value) goto ShowResult;
+        if (!Main.playerVersion.ContainsKey(0)) return;
 
         var WinnerTextObject = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
         WinnerTextObject.transform.position = new(__instance.WinText.transform.position.x, __instance.WinText.transform.position.y - 0.5f, __instance.WinText.transform.position.z);
@@ -104,13 +136,6 @@ class SetEverythingUpPatch
         WinnerText.text = "";
         var InEndWinnerText = "";
 
-
-        string CustomWinnerText = "";
-        string EndWinnerText = "";
-        var AdditionalWinnerText = new StringBuilder(32);
-        var EndAdditionalWinnerText = new StringBuilder(32);
-        string CustomWinnerColor = Utils.GetRoleColorCode(CustomRoles.Crewmate);
-        string EndWinnerColor = Utils.GetRoleColorCode(CustomRoles.Crewmate);
 
         var winnerRole = (CustomRoles)CustomWinnerHolder.WinnerTeam;
         if (winnerRole >= 0)
@@ -134,8 +159,8 @@ class SetEverythingUpPatch
         {
             //通常勝利
             case CustomWinner.Crewmate:
-                CustomWinnerColor = Utils.GetRoleColorCode(CustomRoles.Engineer);
-                EndWinnerColor = Utils.GetRoleColorCode(CustomRoles.Engineer);
+                CustomWinnerColor = "#8cffff";
+                EndWinnerColor = "#8cffff";
                 break;
             //特殊勝利
             case CustomWinner.Terrorist:
@@ -213,14 +238,14 @@ class SetEverythingUpPatch
         LastWinsText = InEndWinnerText;
 
 
-
+        ShowResult:
+        Logger.Info("最终结果显示", "SetEverythingUpPatch");
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //#######################################
         //           ==最終結果表示==
         //#######################################
 
-        var showInitially = Main.ShowResults.Value;
         showHideButton = new SimpleButton(
            __instance.transform,
            "ShowHideResultsButton",
@@ -241,16 +266,60 @@ class SetEverythingUpPatch
         };
 
         StringBuilder sb = new($"{GetString("RoleSummaryText")}");
-        List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
-        foreach (var id in Main.winnerList.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+
+        if (!Main.AssistivePluginMode.Value)
         {
-            sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[id]);
-            cloneRoles.Remove(id);
+            List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
+            foreach (var id in Main.winnerList.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+            {
+                sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[id]);
+                cloneRoles.Remove(id);
+            }
+            foreach (var id in cloneRoles.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+            {
+                sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[id]);
+            }
         }
-        foreach (var id in cloneRoles.Where(i => !EndGamePatch.SummaryText[i].Contains("NotAssigned")))
+        else
         {
-            sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[id]);
+            
+
+            CustomWinnerColor = !DidHumansWin ? "#FF1919" : "#8CFFFF";
+
+            if (DidHumansWin)
+            {
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+
+                    if (pc.Value) continue;
+                    sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[pc.Key]);
+                }
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+                    if (!pc.Value) continue;
+                    sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[pc.Key]);
+
+                }
+                Logger.Info("船员胜利", "SetEverythingUpPatch");
+            }
+            else
+            {
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+
+                    if (!pc.Value) continue;
+                    sb.Append($"\n<color={CustomWinnerColor}>★</color> ").Append(EndGamePatch.SummaryText[pc.Key]);
+                }
+                foreach (var pc in ChangeRoleSettings.AllPlayers)
+                {
+                    if (pc.Value) continue;
+                    sb.Append($"\n　 ").Append(EndGamePatch.SummaryText[pc.Key]);
+
+                }
+                Logger.Info("内鬼胜利", "SetEverythingUpPatch");
+            }
         }
+
         roleSummary = TMPTemplate.Create(
                 "RoleSummaryText",
                 sb.ToString(),
@@ -264,6 +333,6 @@ class SetEverythingUpPatch
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //Utils.ApplySuffix();
+        ////////Utils.ApplySuffix();
     }
 }

@@ -20,6 +20,16 @@ public static class CustomPopup
     public static TextMeshPro? InfoTMP;
 
     public static PassiveButton? ActionButtonPrefab;
+
+
+    public static GameObject? FillTemp;
+    public static GameObject? InfoScreenTemp;
+
+    public static TextMeshPro? TitleTMPTemp;
+    public static TextMeshPro? InfoTMPTemp;
+
+    public static PassiveButton? ActionButtonPrefabTemp;
+
     public static List<PassiveButton>? ActionButtons;
 
     private static bool busy = false;
@@ -122,7 +132,14 @@ public static class CustomPopup
         var DOBScreen = AccountManager.Instance.transform.FindChild("DOBEnterScreen");
         if (DOBScreen != null && (Fill == null || InfoScreen == null || ActionButtons == null))
         {
-            Fill = Object.Instantiate(DOBScreen.FindChild("Fill").gameObject);
+
+            if (Fill == null && FillTemp != null)
+                Fill = FillTemp;
+            else
+            {
+                Fill = Object.Instantiate(DOBScreen.FindChild("Fill").gameObject);
+                FillTemp = Fill;
+            }
             Fill.transform.SetLocalZ(-100f);
            Fill.name = "TONEX Info Popup Fill";
          //   Fill.transform.localPosition += Vector3.back * 150;

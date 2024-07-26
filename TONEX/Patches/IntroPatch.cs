@@ -23,10 +23,29 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.ShowRole)), HarmonyPostfix]
     public static void ShowRole_Postfix(IntroCutscene __instance)
     {
+
+        if (Main.AssistivePluginMode.Value)
+        {
+            _ = new LateTask(() =>
+            {
+                var roleType = PlayerControl.LocalPlayer.Data.Role.Role;
+            var cr = roleType.GetCustomRoleTypes();
+            __instance.YouAreText.color = Utils.GetRoleColor(cr);
+            __instance.RoleText.text = Utils.GetRoleName(cr);
+            __instance.RoleText.color = Utils.GetRoleColor(cr);
+            __instance.RoleText.fontWeight = TMPro.FontWeight.Thin;
+            __instance.RoleText.SetOutlineColor(Utils.ShadeColor(Utils.GetRoleColor(cr), 0.1f).SetAlpha(0.38f));
+            __instance.RoleText.SetOutlineThickness(0.17f);
+            __instance.RoleBlurbText.color = Utils.GetRoleColor(cr);
+            __instance.RoleBlurbText.text = cr.GetRoleInfoForVanilla();
+            
+            }, 0.0001f, "Override Role Text");
+            return;
+        }
         if (!GameStates.IsModHost) return;
         _ = new LateTask(() =>
         {
-           if (Options.CurrentGameMode == CustomGameMode.HotPotato)
+            if (Options.CurrentGameMode == CustomGameMode.HotPotato)
             {
                 var color = ColorUtility.TryParseHtmlString("#FF9900", out var c) ? c : new(255, 255, 255, 255);
                 CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
@@ -36,24 +55,44 @@ class IntroCutscenePatch
                 __instance.RoleBlurbText.color = color;
                 __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
             }
-           else
-            {
-            CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
-            if (!role.IsVanilla())
-            {
-                __instance.YouAreText.color = Utils.GetRoleColor(role);
-                __instance.RoleText.text = Utils.GetRoleName(role);
-                __instance.RoleText.color = Utils.GetRoleColor(role);
-                __instance.RoleText.fontWeight = TMPro.FontWeight.Thin;
-                __instance.RoleText.SetOutlineColor(Utils.ShadeColor(Utils.GetRoleColor(role), 0.1f).SetAlpha(0.38f));
-                __instance.RoleText.SetOutlineThickness(0.17f);
-                __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
+           else if (Options.CurrentGameMode == CustomGameMode.InfectorMode){
+                var color = ColorUtility.TryParseHtmlString("#009900", out var c) ? c : new(255, 255, 255, 255);
+                CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
+                __instance.YouAreText.color = color;
+                __instance.RoleText.text = Utils.GetRoleName(roles);
+                __instance.RoleText.color = Utils.GetRoleColor(roles);
+                __instance.RoleBlurbText.color = color;
                 __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
             }
-            foreach (var subRole in PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SubRoles)
-                __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(subRole), GetString($"{subRole}Info"));
+            else if (Options.CurrentGameMode == CustomGameMode.FFA)
+            {
+                var color = ColorUtility.TryParseHtmlString("#FF3333", out var c) ? c : new(255, 255, 255, 255);
+                CustomRoles roles = PlayerControl.LocalPlayer.GetCustomRole();
+                __instance.YouAreText.color = color;
+                __instance.RoleText.text = Utils.GetRoleName(roles);
+                __instance.RoleText.color = Utils.GetRoleColor(roles);
+                __instance.RoleBlurbText.color = color;
+                __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+            }
+
+            else
+            {
+                CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
+                if (!(role.IsVanilla() && Options.DisableVanillaRoles.GetBool()))
+                {
+                    __instance.YouAreText.color = Utils.GetRoleColor(role);
+                    __instance.RoleText.text = Utils.GetRoleName(role);
+                    __instance.RoleText.color = Utils.GetRoleColor(role);
+                    __instance.RoleText.fontWeight = TMPro.FontWeight.Thin;
+                    __instance.RoleText.SetOutlineColor(Utils.ShadeColor(Utils.GetRoleColor(role), 0.1f).SetAlpha(0.38f));
+                    __instance.RoleText.SetOutlineThickness(0.17f);
+                    __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
+                    __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+                }
+                foreach (var subRole in PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SubRoles)
+                    __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(subRole), GetString($"{subRole}Info"));
                 Neptune.Intro(ref __instance);
-            __instance.RoleText.text += Utils.GetSubRolesText(PlayerControl.LocalPlayer.PlayerId, false, true);
+                __instance.RoleText.text += Utils.GetSubRolesText(PlayerControl.LocalPlayer.PlayerId, false, true);
             }
 
         }, 0.0001f, "Override Role Text");
@@ -61,86 +100,110 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.CoBegin)), HarmonyPrefix]
     public static void CoBegin_Prefix()
     {
-        var logger = Logger.Handler("Info");
-        Logger.Info("------------显示名称------------", "CoBegin");
-        foreach (var pc in Main.AllPlayerControls)
+        if (!Main.AssistivePluginMode.Value)
         {
-            Logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc.name.PadRightV2(20)}:{pc.cosmetics.nameText.text}({Palette.ColorNames[pc.Data.DefaultOutfit.ColorId].ToString().Replace("Color", "")})", "CoBegin");
-            pc.cosmetics.nameText.text = pc.name;
-        }
-        Logger.Info("------------职业分配------------", "CoBegin");
-        foreach (var pc in Main.AllPlayerControls)
-        {
-            Logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc?.Data?.PlayerName?.PadRightV2(20)}:{pc.GetAllRoleName().RemoveHtmlTags()}", "CoBegin");
-        }
-        Logger.Info("------------运行环境------------", "CoBegin");
-        foreach (var pc in Main.AllPlayerControls)
-        {
-            try
+            var logger = Logger.Handler("Info");
+            Logger.Info("------------显示名称------------", "CoBegin");
+            foreach (var pc in Main.AllPlayerControls)
             {
-                var text = pc.AmOwner ? "[*]" : "   ";
-                text += $"{pc.PlayerId,-2}:{pc.Data?.PlayerName?.PadRightV2(20)}:{pc.GetClient()?.PlatformData?.Platform.ToString()?.Replace("Standalone", ""),-11}";
-                if (Main.playerVersion.TryGetValue(pc.PlayerId, out PlayerVersion pv))
-                    text += $":Mod({pv.forkId}/{pv.version}:{pv.tag})";
-                else text += ":Vanilla";
-                Logger.Info(text, "CoBegin");
+                Logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc.name.PadRightV2(20)}:{pc.cosmetics.nameText.text}({Palette.ColorNames[pc.Data.DefaultOutfit.ColorId].ToString().Replace("Color", "")})", "CoBegin");
+                pc.cosmetics.nameText.text = pc.name;
             }
-            catch (Exception ex)
+            Logger.Info("------------职业分配------------", "CoBegin");
+            foreach (var pc in Main.AllPlayerControls)
             {
-                Logger.Exception(ex, "Platform");
+                Logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc?.Data?.PlayerName?.PadRightV2(20)}:{pc.GetAllRoleName().RemoveHtmlTags()}", "CoBegin");
             }
+            Logger.Info("------------运行环境------------", "CoBegin");
+            foreach (var pc in Main.AllPlayerControls)
+            {
+                try
+                {
+                    var text = pc.AmOwner ? "[*]" : "   ";
+                    text += $"{pc.PlayerId,-2}:{pc.Data?.PlayerName?.PadRightV2(20)}:{pc.GetClient()?.PlatformData?.Platform.ToString()?.Replace("Standalone", ""),-11}";
+                    if (Main.playerVersion.TryGetValue(pc.PlayerId, out PlayerVersion pv))
+                        text += $":Mod({pv.forkId}/{pv.version}:{pv.tag})";
+                    else text += ":Vanilla";
+                    Logger.Info(text, "CoBegin");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex, "Platform");
+                }
+            }
+            Logger.Info("------------基本设置------------", "CoBegin");
+            var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1);
+            foreach (var t in tmp) Logger.Info(t, "CoBegin");
+            Logger.Info("------------详细设置------------", "CoBegin");
+            foreach (var o in OptionItem.AllOptions)
+                if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
+                    Logger.Info(
+                        $"{(o.Parent == null ? o.GetName(true, true).RemoveHtmlTags().PadRightV2(40) : $"┗ {o.GetName(true, true).RemoveHtmlTags()}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}"
+                        , "CoBegin");
+            Logger.Info("-------------其它信息-------------", "CoBegin");
+            Logger.Info($"玩家人数: {Main.AllPlayerControls.Count()}", "CoBegin");
+            Main.AllPlayerControls.Do(x => PlayerState.GetByPlayerId(x.PlayerId).InitTask(x));
+            GameData.Instance.RecomputeTaskCounts();
+            TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
+
+            Utils.NotifyRoles();
+
+            
         }
-        Logger.Info("------------基本设置------------", "CoBegin");
-        var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1);
-        foreach (var t in tmp) Logger.Info(t, "CoBegin");
-        Logger.Info("------------详细设置------------", "CoBegin");
-        foreach (var o in OptionItem.AllOptions)
-            if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
-                Logger.Info(
-                    $"{(o.Parent == null ? o.GetName(true, true).RemoveHtmlTags().PadRightV2(40) : $"┗ {o.GetName(true, true).RemoveHtmlTags()}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}"
-                    , "CoBegin");
-        Logger.Info("-------------其它信息-------------", "CoBegin");
-        Logger.Info($"玩家人数: {Main.AllPlayerControls.Count()}", "CoBegin");
-        Main.AllPlayerControls.Do(x => PlayerState.GetByPlayerId(x.PlayerId).InitTask(x));
-        GameData.Instance.RecomputeTaskCounts();
-        TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
-
-        Utils.NotifyRoles();
-
         GameStates.InGame = true;
     }
     [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate)), HarmonyPrefix]
     public static bool BeginCrewmate_Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
     {
-        if (PlayerControl.LocalPlayer.Is(CustomRoles.CrewPostor))
-        {
-            teamToDisplay = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            teamToDisplay.Add(PlayerControl.LocalPlayer);
-            foreach (var pc in Main.AllPlayerControls.Where(x => !x.AmOwner && x.GetCustomRole().IsImpostor())) teamToDisplay.Add(pc);
-            __instance.BeginImpostor(teamToDisplay);
-            __instance.overlayHandle.color = Palette.ImpostorRed;
-            return false;
-        }
-        else if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral))
-        {
-            teamToDisplay = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            teamToDisplay.Add(PlayerControl.LocalPlayer);
-        }
-        else if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
-        {
-            teamToDisplay = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            teamToDisplay.Add(PlayerControl.LocalPlayer);
-            __instance.BeginImpostor(teamToDisplay);
-            __instance.overlayHandle.color = Palette.ImpostorRed;
-            return false;
-        }
+        if (Main.AssistivePluginMode.Value) return true;
+        
+            if (PlayerControl.LocalPlayer.Is(CustomRoles.CrewPostor))
+            {
+                teamToDisplay = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                teamToDisplay.Add(PlayerControl.LocalPlayer);
+                foreach (var pc in Main.AllPlayerControls.Where(x => !x.AmOwner && x.GetCustomRole().IsImpostor())) teamToDisplay.Add(pc);
+                __instance.BeginImpostor(teamToDisplay);
+                __instance.overlayHandle.color = Palette.ImpostorRed;
+                return false;
+            }
+            else if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral))
+            {
+                teamToDisplay = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                teamToDisplay.Add(PlayerControl.LocalPlayer);
+            }
+            else if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
+            {
+                teamToDisplay = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                teamToDisplay.Add(PlayerControl.LocalPlayer);
+                __instance.BeginImpostor(teamToDisplay);
+                __instance.overlayHandle.color = Palette.ImpostorRed;
+                return false;
+            }
+        
         return true;
     }
     [HarmonyPatch(nameof(IntroCutscene.BeginCrewmate)), HarmonyPostfix]
     public static void BeginCrewmate_Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
     {
-        //チーム表示変更
-        CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
+        if (Main.AssistivePluginMode.Value)
+        {
+            if (Main.playerVersion.ContainsKey(0))
+            {
+                Main.playerVersion.TryGetValue(0, out var ver);
+                if (Main.ForkId != ver.forkId)
+                    return;
+            }
+            __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
+
+            __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
+            __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
+            __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
+
+
+            return;
+        }
+            //チーム表示変更
+            CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
         __instance.ImpostorText.gameObject.SetActive(true);
         PlayerControl.LocalPlayer.Data.Role.IntroSound = null;
         PlayerControl.LocalPlayer.Data.Role.UseSound = GetIntroSound(RoleTypes.Impostor);
@@ -150,10 +213,19 @@ class IntroCutscenePatch
             {
                 case CustomRoleTypes.Impostor:
                     __instance.TeamTitle.text = GetString("TeamImpostor");
-                    __instance.ImpostorText.text = GetString("ImpostorIntroText");
+                    __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}"; 
+                    __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
                     __instance.TeamTitle.color = __instance.BackgroundBar.material.color =  new Color32(255, 25, 25, byte.MaxValue);
                     break;
                 case CustomRoleTypes.Crewmate:
+                    if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
+                    {
+                        __instance.TeamTitle.text = GetString("TeamImpostor");
+                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                        __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
+                        __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
+                        break;
+                    }
                     __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
                     __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
                     __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
@@ -192,7 +264,12 @@ class IntroCutscenePatch
         }
         else
         {
-        switch (role.GetCustomRoleTypes())
+            if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)
+            {
+                PlayerControl.LocalPlayer.Data.Role.IntroSound = introSound;
+            }
+            else { 
+             switch (role.GetCustomRoleTypes())
         {
             case CustomRoleTypes.Impostor:
                 if (PlayerControl.LocalPlayer.Is(RoleTypes.Shapeshifter))
@@ -242,8 +319,10 @@ class IntroCutscenePatch
                     }, 4f, "Sound");  
                     break;
                 } 
-        }
-        }
+             }
+            }
+           
+      }
           
 
         switch (role)
@@ -256,10 +335,7 @@ class IntroCutscenePatch
                 break;
         }
 
-        if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)
-        {
-            PlayerControl.LocalPlayer.Data.Role.IntroSound = introSound;
-        }
+
 
         if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
         {
@@ -277,6 +353,27 @@ class IntroCutscenePatch
             __instance.BackgroundBar.material.color = color;
             PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
         }
+        if (Options.CurrentGameMode == CustomGameMode.InfectorMode)
+        {
+            var color = ColorUtility.TryParseHtmlString("#009900", out var c) ? c : new(255, 255, 255, 255);
+            __instance.TeamTitle.text = Utils.GetRoleName(role);
+            __instance.TeamTitle.color = Utils.GetRoleColor(role);
+            __instance.ImpostorText.gameObject.SetActive(true);
+            __instance.ImpostorText.text = GetString("ModeZombieMode");
+            __instance.BackgroundBar.material.color = color;
+            PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
+        }
+        if (Options.CurrentGameMode == CustomGameMode.FFA)
+        {
+            var color = ColorUtility.TryParseHtmlString("#FF3333", out var c) ? c : new(255, 255, 255, 255);
+            __instance.TeamTitle.text = Utils.GetRoleName(role);
+            __instance.TeamTitle.color = Utils.GetRoleColor(role);
+            __instance.ImpostorText.gameObject.SetActive(true);
+            __instance.ImpostorText.text = GetString("ModeFFAMode");
+            __instance.BackgroundBar.material.color = color;
+            PlayerControl.LocalPlayer.Data.Role.IntroSound = PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
+        }
+
 
         if (Input.GetKey(KeyCode.RightShift))
         {
@@ -320,42 +417,78 @@ class IntroCutscenePatch
     [HarmonyPatch(nameof(IntroCutscene.BeginImpostor)), HarmonyPrefix]
     public static bool BeginImpostor_Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
+        if (Main.AssistivePluginMode.Value) return true;
+        if (Main.playerVersion.ContainsKey(0))
+        {
+            Main.playerVersion.TryGetValue(0, out var ver);
+            if (Main.ForkId != ver.forkId)
+                return true;
+        }
         var role = PlayerControl.LocalPlayer.GetCustomRole();
-        if (role is CustomRoles.CrewPostor)
-        {
-            yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            yourTeam.Add(PlayerControl.LocalPlayer);
-            foreach (var pc in Main.AllPlayerControls.Where(x => !x.AmOwner && x.GetCustomRole().IsImpostor())) yourTeam.Add(pc);
-            __instance.overlayHandle.color = Palette.ImpostorRed;
+            if (role is CustomRoles.CrewPostor)
+            {
+                yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                yourTeam.Add(PlayerControl.LocalPlayer);
+                foreach (var pc in Main.AllPlayerControls.Where(x => !x.AmOwner && x.GetCustomRole().IsImpostor())) yourTeam.Add(pc);
+                __instance.overlayHandle.color = Palette.ImpostorRed;
+                return true;
+            }
+            else if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
+            {
+                yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                yourTeam.Add(PlayerControl.LocalPlayer);
+                __instance.overlayHandle.color = Palette.ImpostorRed;
+                return true;
+            }
+            else if (role.IsCrewmate() && role.GetRoleInfo().IsDesyncImpostor)
+            {
+                yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                yourTeam.Add(PlayerControl.LocalPlayer);
+                foreach (var pc in Main.AllPlayerControls.Where(x => !x.AmOwner)) yourTeam.Add(pc);
+                __instance.BeginCrewmate(yourTeam);
+                __instance.overlayHandle.color = Palette.CrewmateBlue;
+                return false;
+            }
+            BeginCrewmate_Prefix(__instance, ref yourTeam);
+        
             return true;
-        }
-        else if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
-        {
-            yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            yourTeam.Add(PlayerControl.LocalPlayer);
-            __instance.overlayHandle.color = Palette.ImpostorRed;
-            return true;
-        }
-        else if (role.IsCrewmate() && role.GetRoleInfo().IsDesyncImpostor)
-        {
-            yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-            yourTeam.Add(PlayerControl.LocalPlayer);
-            foreach (var pc in Main.AllPlayerControls.Where(x => !x.AmOwner)) yourTeam.Add(pc);
-            __instance.BeginCrewmate(yourTeam);
-            __instance.overlayHandle.color = Palette.CrewmateBlue;
-            return false;
-        }
-        BeginCrewmate_Prefix(__instance, ref yourTeam);
-        return true;
     }
     [HarmonyPatch(nameof(IntroCutscene.BeginImpostor)), HarmonyPostfix]
     public static void BeginImpostor_Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
+        if (Main.AssistivePluginMode.Value)
+        {
+            __instance.ImpostorText.gameObject.SetActive(true);
+
+            __instance.TeamTitle.text = GetString("TeamImpostor");
+            __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors)}";
+
+            __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
+            __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
+
+            return;
+        }
+
         BeginCrewmate_Postfix(__instance, ref yourTeam);
     }
     [HarmonyPatch(nameof(IntroCutscene.OnDestroy)), HarmonyPostfix]
     public static void OnDestroy_Postfix(IntroCutscene __instance)
     {
+
+        if (Main.AssistivePluginMode.Value)
+        {
+            foreach (var id in ChangeRoleSettings.AllPlayers.Keys)
+            {
+                var pc = Utils.GetPlayerById(id);
+                ChangeRoleSettings.AllPlayers[id] = pc.Data.Role.IsImpostor;
+            }
+            foreach (var id in ChangeRoleSettings.PlayerRoleWhenAlive.Keys)
+            {
+                var pc = Utils.GetPlayerById(id);
+                ChangeRoleSettings.PlayerRoleWhenAlive[id] = pc.Data.RoleWhenAlive.Value;
+            }
+            return;
+        }
         if (!GameStates.IsInGame) return;
 
         Main.introDestroyed = true;
@@ -375,7 +508,7 @@ class IntroCutscenePatch
             if (mapId != 4)
             {
                 Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
-                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato)
+                if (Options.FixFirstKillCooldown.GetBool() && Options.CurrentGameMode != CustomGameMode.HotPotato && Options.CurrentGameMode != CustomGameMode.InfectorMode && Options.CurrentGameMode != CustomGameMode.FFA)
                     _ = new LateTask(() =>
                     {
                         if (GameStates.IsInTask)
@@ -389,7 +522,7 @@ class IntroCutscenePatch
                     CustomRoleManager.AllActiveRoles.Values.Do(x => x?.OnGameStart());
                 }, 0.1f, "RoleClassOnGameStartTask");
             }
-            _ = new LateTask(() => Main.AllPlayerControls.Do(pc => pc.RpcSetRoleDesync(RoleTypes.Shapeshifter, -3)), 2f, "SetImpostorForServer");
+            _ = new LateTask(() => Main.AllPlayerControls.Do(pc => pc.RpcSetRoleDesync(RoleTypes.Shapeshifter, false, -3)), 2f, "SetImpostorForServer");
             if (PlayerControl.LocalPlayer.Is(CustomRoles.GM))
             {
                 PlayerControl.LocalPlayer.RpcExile();
@@ -410,7 +543,7 @@ class IntroCutscenePatch
                         break;
                 }
             }
-            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato)
+            if (RandomSpawn.IsRandomSpawn() || Options.CurrentGameMode == CustomGameMode.HotPotato || Options.CurrentGameMode == CustomGameMode.FFA)
             {
                 RandomSpawn.SpawnMap map;
                 switch (Main.NormalOptions.MapId)
@@ -433,6 +566,7 @@ class IntroCutscenePatch
             {
                 PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
             }
+
         }
         Logger.Info("OnDestroy", "IntroCutscene");
     }

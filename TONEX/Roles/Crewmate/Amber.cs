@@ -33,6 +33,8 @@ public sealed class Amber : RoleBase, IKiller, ISchrodingerCatOwner
         () => HasTask.False
     )
     {
+        AmberMaxNum = 0;
+        AmberPercent = 0;
         ProtectList = new();
         ProtectList.Add(Player.PlayerId, AmberGetmarkStart.GetBool() ?1:0);
         SendRPC_SyncList();
@@ -65,11 +67,6 @@ public sealed class Amber : RoleBase, IKiller, ISchrodingerCatOwner
         AmberGetmarkStart = BooleanOptionItem.Create(RoleInfo, 13, OptionName.AmberGetmarkStart, true, false);
         AmberAdd = FloatOptionItem.Create(RoleInfo, 14, OptionName.AmberAdd, new(2.5f, 100f, 2.5f), 5f, false).SetValueFormat(OptionFormat.Percent); ;
 
-    }
-    public override void Add()
-    {
-        AmberMaxNum = 0;
-        AmberPercent = 0;
     }
     private void SendRPC_SyncLimit()
     {

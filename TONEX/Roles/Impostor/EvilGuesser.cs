@@ -17,7 +17,7 @@ public sealed class EvilGuesser : RoleBase, IImpostor, IMeetingButton
             CustomRoleTypes.Impostor,
             1000,
             SetupOptionItem,
-            "eg|邪惡賭怪|邪恶的赌怪|坏赌|邪恶赌|恶赌|赌怪"
+            "eg|邪惡賭怪|邪恶的赌怪|坏赌|邪恶赌|恶赌"
         );
     public EvilGuesser(PlayerControl player)
     : base(

@@ -27,8 +27,8 @@ public class GameStartManagerPatch
     private static float timer = 600f;
     private static TextMeshPro warningText;
     public static TextMeshPro HideName;
-    private static TextMeshPro timerText;
-    private static SpriteRenderer cancelButton;
+    public static TextMeshPro GameCountdown;
+    private static PassiveButton cancelButton;
 
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
     public class GameStartManagerStartPatch
@@ -45,55 +45,61 @@ public class GameStartManagerPatch
             HideName.gameObject.SetActive(true);
             HideName.name = "HideName";
             HideName.color =
-                    ColorUtility.TryParseHtmlString(Main.HideColor.Value, out var color) ? color :
-                    ColorUtility.TryParseHtmlString(Main.ModColor, out var modColor) ? modColor : HideName.color;
+                ColorUtility.TryParseHtmlString(Main.HideColor.Value, out var color) ? color :
+                ColorUtility.TryParseHtmlString(Main.ModColor, out var modColor) ? modColor : HideName.color;
             HideName.text = Main.HideName.Value;
+
+            Logger.Info("HideName instantiated and configured", "test");
 
             warningText = Object.Instantiate(__instance.GameStartText, __instance.transform);
             warningText.name = "WarningText";
             warningText.transform.localPosition = new(0f, 0f - __instance.transform.localPosition.y, -1f);
             warningText.gameObject.SetActive(false);
 
-            timerText = Object.Instantiate(__instance.PlayerCounter, __instance.PlayerCounter.transform.parent);
-            timerText.autoSizeTextContainer = true;
-            timerText.fontSize = 3.2f;
-            timerText.name = "Timer";
-            timerText.DestroyChildren();
-            timerText.transform.localPosition += Vector3.down * 0.2f;
-            timerText.gameObject.SetActive(AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame && AmongUsClient.Instance.AmHost);
+            Logger.Info("WarningText instantiated and configured", "test");
+
+            //timerText = Object.Instantiate(__instance.PlayerCounter, __instance.PlayerCounter.transform.parent);
+            //timerText.autoSizeTextContainer = true;
+            //timerText.fontSize = 3.2f;
+            //timerText.name = "Timer";
+            //timerText.DestroyChildren();
+            //timerText.transform.localPosition += Vector3.down * 0.2f;
+            //timerText.gameObject.SetActive(AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame && AmongUsClient.Instance.AmHost);
+
+            //Logger.Info("TimerText instantiated and configured", "test");
 
             cancelButton = Object.Instantiate(__instance.StartButton, __instance.transform);
-            cancelButton.name = "CancelButton";
             var cancelLabel = cancelButton.GetComponentInChildren<TextMeshPro>();
             cancelLabel.DestroyTranslator();
             cancelLabel.text = GetString("Cancel");
             cancelButton.transform.localScale = new(0.4f, 0.4f, 1f);
-            cancelButton.color = Color.red;
             cancelButton.transform.localPosition = new(0f, -0.37f, 0f);
-            var buttonComponent = cancelButton.GetComponent<PassiveButton>();
-            buttonComponent.OnClick = new();
-            buttonComponent.OnClick.AddListener((Action)(() => __instance.ResetStartState()));
+
+            cancelButton.OnClick = new();
+            cancelButton.OnClick.AddListener((Action)(() => __instance.ResetStartState()));
             cancelButton.gameObject.SetActive(false);
 
+            Logger.Info("CancelButton instantiated and configured", "test");
             if (!AmongUsClient.Instance.AmHost) return;
 
             // Make Public Button
             //#if RELEASE
-            
-                if (ModUpdater.isBroken || (ModUpdater.hasUpdate && ModUpdater.forceUpdate) || !Main.AllowPublicRoom || !VersionChecker.IsSupported || !Main.IsPublicAvailableOnThisVersion)
-                {
-                    __instance.MakePublicButton.color = Palette.DisabledClear;
-                    __instance.privatePublicText.color = Palette.DisabledClear;
-                }
-            
+
+            if (ModUpdater.isBroken || (ModUpdater.hasUpdate && ModUpdater.forceUpdate) || !Main.AllowPublicRoom || !VersionChecker.IsSupported || !Main.IsPublicAvailableOnThisVersion)
+            {
+                __instance.HostPrivateButton.inactiveTextColor = Palette.DisabledClear;
+                __instance.HostPrivateButton.activeTextColor = Palette.DisabledClear;
+            }
+
             //#endif
 
             if (Main.NormalOptions.KillCooldown == 0f)
                 Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
-
+            Logger.Info("Set Kill Cooldown", "test");
             AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
             if (AURoleOptions.ShapeshifterCooldown == 0f)
                 AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
+            Logger.Info("Set Shapeshifter Cooldown", "test");
         }
     }
 
@@ -107,16 +113,16 @@ public class GameStartManagerPatch
             // Lobby code
             if (DataManager.Settings.Gameplay.StreamerMode)
             {
-                __instance.GameRoomNameCode.color = new(255, 255, 255, 0);
+                __instance.GameRoomNameCode.color = new(__instance.GameRoomNameCode.color.r, __instance.GameRoomNameCode.color.g, __instance.GameRoomNameCode.color.b, 0);
                 HideName.enabled = false;
             }
             else
             {
-                __instance.GameRoomNameCode.color = new(255, 255, 255, 255);
+                __instance.GameRoomNameCode.color = new(__instance.GameRoomNameCode.color.r, __instance.GameRoomNameCode.color.g, __instance.GameRoomNameCode.color.b, 255);
                 HideName.enabled = false;
             }
 
-            if (Main.AutoStartGame.Value)
+            if (Main.AutoStartGame.Value && !Main.AssistivePluginMode.Value)
             {
                 updateTimer++;
                 if (updateTimer >= 50)
@@ -133,7 +139,6 @@ public class GameStartManagerPatch
         public static void Postfix(GameStartManager __instance)
         {
             if (!AmongUsClient.Instance) return;
-
             string warningMessage = "";
             if (AmongUsClient.Instance.AmHost)
             {
@@ -200,7 +205,8 @@ public class GameStartManagerPatch
             int seconds = (int)timer % 60;
             string countDown = $"({minutes:00}:{seconds:00})";
             if (timer <= 60) countDown = Utils.ColorString(Color.red, countDown);
-            timerText.text = countDown;
+            //timerText.text = countDown;
+            __instance.StartButton.buttonText.text = GetString("Start") + countDown;
         }
         private static bool MatchVersions(byte playerId, bool acceptVanilla = false)
         {
@@ -216,6 +222,7 @@ public static class GameStartManagerBeginGamePatch
 {
     public static bool Prefix(GameStartManager __instance)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         var invalidColor = Main.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
         if (invalidColor.Any())
         {
@@ -297,6 +304,7 @@ class UnrestrictedNumImpostorsPatch
 {
     public static bool Prefix(ref int __result)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         __result = Main.NormalOptions.NumImpostors;
         return false;
     }

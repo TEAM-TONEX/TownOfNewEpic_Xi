@@ -25,7 +25,8 @@ public sealed class Adventurer : RoleBase
         player
     )
     {
-        
+        SabotageFalseLimit = OptionLimit.GetInt();
+        ForAdventurer = new();
     }
     
     public static List<byte> ForAdventurer;
@@ -39,11 +40,6 @@ public int SabotageFalseLimit;
     {
         OptionLimit = IntegerOptionItem.Create(RoleInfo, 10, OptionName.AdventurerLimit, new(1, 15, 1), 2, false)
             .SetValueFormat(OptionFormat.Times);
-    }
-    public override void Add()
-    {
-        SabotageFalseLimit = OptionLimit.GetInt();
-        ForAdventurer = new();
     }
     private void SendRPC()
     {

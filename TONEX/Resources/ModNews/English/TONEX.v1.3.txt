@@ -1,0 +1,47 @@
+#Number:100050
+#Title:TownOfNewEpic_Xtreme v1.3
+#SubTitle:★★★★Summer Holiday！★★★★
+#ShortTitle:★TONEX v1.3
+#Date:2024-07-21T00:00:00Z
+#-----------------------------
+# English
+
+
+## Base
+- Based on AmongUs v2024.3.5
+- Based on Town Of Host v5.1.5 & Town Of Next v3.0.1
+
+## Warning
+- Create/join public lobbies in Official Servers is temporarily unavailable
+- This change is due to a server-side update that makes modded public lobbies unavailable for vanilla. Private lobbies and Private Servers are not affected.
+- Currently, this change is NOT permanent.
+
+## Summary of Updates
+- Fixed  bugs
+- Implemented  optimizations
+- Made changes to  elements
+- Added  New/Remade features (including roles, settings, etc.)
+- Temporarily removed  elements
+
+## Fix
+
+
+## Optimization
+
+
+## Changing
+
+
+## Deletion
+
+
+## New/Remade Roles
+
+
+## New/Remade Feature
+
+
+## New Others：
+
+
+## Supplement

@@ -32,7 +32,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
              "#E6AD0A",
             true,
             true,
-            countType: CountTypes.FAFL
+            countType: CountTypes.Vagator
         );
     public Vagator(PlayerControl player)
     : base(
@@ -58,7 +58,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
     public int ShieldsCount;
     public static List<byte> Feeble;
     private float KillCooldown;
-    public int UsePetCooldown;
+    public new int UsePetCooldown;
     #endregion
     public override bool GetGameStartSound(out string sound)
     {
@@ -166,7 +166,6 @@ public sealed class Vagator : RoleBase, INeutralKiller
         }
         return false;
     }
-    public bool IsKiller { get; private set; } = true;
     public override void OnSecondsUpdate(PlayerControl player, long now)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -178,6 +177,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
             player.Notify(string.Format(GetString("PetSkillCanUse")), 2f);
         }
     }
+    public override bool EnablePetSkill() => true;
 
     public override void OnUsePet()
     {
@@ -253,7 +253,7 @@ public sealed class Vagator : RoleBase, INeutralKiller
                         var ProtectStartTime = Utils.GetTimeStamp();
                         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
                         Player.Notify(GetString("BeGeo"));
-                        List<byte> NiceTimeStopsstop = new();
+                        List<byte> NiceTimePauserstop = new();
                         if (!pc.IsAlive() || Pelican.IsEaten(pc.PlayerId)) continue;
                         NameNotifyManager.Notify(pc, Utils.ColorString(Utils.GetRoleColor(CustomRoles.Vagator), GetString("ForZhongLi")));
                         Player.DisableAction(pc, ExtendedPlayerControl.PlayerActionType.All, ExtendedPlayerControl.PlayerActionInUse.All);

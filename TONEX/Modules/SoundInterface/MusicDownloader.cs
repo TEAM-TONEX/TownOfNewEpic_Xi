@@ -46,7 +46,7 @@ public class MusicDownloader
             downloadUrl_gitee = Url_gitee.Replace("{{sound}}", $"{sound}");
             downloadUrl_website = Url_website.Replace("{{sound}}", $"{sound}");
             downloadUrl_website2 = Url_website2.Replace("{{sound}}", $"{sound}");
-            url = IsChineseUser ? downloadUrl_website : downloadUrl_github;
+            url = IsChineseLanguageUser ? downloadUrl_website : downloadUrl_github;
         }
 
         if (!IsValidUrl(url))
@@ -111,8 +111,14 @@ public class MusicDownloader
                 }
                 return;
             }
-            succeed = true;
-            Logger.Info($"Succeed in {url}", "DownloadSound");
+            
+            var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
+            if (File.Exists(path))
+            {
+                AudioManager.StartLoadAC(path, sound);
+                Logger.Info($"Succeed in {url}", "DownloadSound");
+                succeed = true;
+            }
         }
         catch (Exception ex)
         {

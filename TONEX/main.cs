@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using TONEX.Attributes;
 using TONEX.Roles.Core;
 using TONEX.Modules;
 using UnityEngine;
+using TONEX.OptionUI;
 
 [assembly: AssemblyFileVersion(TONEX.Main.PluginVersion)]
 [assembly: AssemblyInformationalVersion(TONEX.Main.PluginVersion)]
@@ -29,7 +31,7 @@ public class Main : BasePlugin
     public static readonly Color32 ModColor32 = new(205, 255, 253, 255);
     public static readonly bool AllowPublicRoom = true;
     public static readonly string ForkId = "TONEX";
-    public const string OriginalForkId = "OriginalTOH";
+    public const string OriginalForkId = "OriginalTONEX";
     public const string PluginGuid = "cn.tonex.xtremewave";
     // == 认证设定 / Authentication Config ==
     public static HashAuth DebugKeyAuth { get; private set; }
@@ -37,10 +39,12 @@ public class Main : BasePlugin
     public const string DebugKeySalt = "59687b";
     public static ConfigEntry<string> DebugKeyInput { get; private set; }
     // == 版本相关设定 / Version Config ==
-    public const string LowestSupportedVersion = "2024.3.5";
+    public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.2.0";
-    public const string PluginShowVersion = "1.2_20240521";
+    public const string PluginVersion = "1.3.2.3";
+    public const string ShowVersion_Head = "1.3_20240724";
+    public const string ShowVersion_TestText = "_Debug_53";
+    public const string ShowVersion = ShowVersion_Head + ShowVersion_TestText;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
     public static readonly bool ShowWebsiteButton = true;
@@ -51,6 +55,7 @@ public class Main : BasePlugin
     public static readonly string DiscordInviteUrl = "https://discord.gg/kz787Zg7h8";
     public static readonly bool ShowGithubUrl = true;
     public static readonly string GithubRepoUrl = "https://github.com/XtremeWave/TownOfNewEpic_Xtreme";
+
     // ==========
 
     public Harmony Harmony { get; } = new Harmony(PluginGuid);
@@ -60,7 +65,8 @@ public class Main : BasePlugin
     public static string ExceptionMessage;
     public static bool ExceptionMessageIsShown = false;
     public static string CredentialsText;
-    public static NormalGameOptionsV07 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+    public CreateUIElements UI;
+    public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
     //Client Options
     public static ConfigEntry<string> HideName { get; private set; }
     public static ConfigEntry<string> HideColor { get; private set; }
@@ -68,6 +74,7 @@ public class Main : BasePlugin
     public static ConfigEntry<bool> ShowResults { get; private set; }
     public static ConfigEntry<bool> UnlockFPS { get; private set; }
     //public static ConfigEntry<bool> CanPublic { get; private set; }
+    public static ConfigEntry<bool> AssistivePluginMode { get; private set; }
     public static ConfigEntry<bool> HorseMode { get; private set; }
     public static ConfigEntry<bool> LongMode { get; private set; }
     public static ConfigEntry<bool> AutoStartGame { get; private set; }
@@ -81,8 +88,8 @@ public class Main : BasePlugin
     public static ConfigEntry<bool> VersionCheat { get; private set; }
     public static ConfigEntry<bool> GodMode { get; private set; }
 
-
     public static Dictionary<byte, PlayerVersion> playerVersion = new();
+
     //Preset Name Options
     public static ConfigEntry<string> Preset1 { get; private set; }
     public static ConfigEntry<string> Preset2 { get; private set; }
@@ -105,6 +112,7 @@ public class Main : BasePlugin
     public static List<(string, byte, string)> MessagesToSend = new();
 
     public static Dictionary<byte, float> AllPlayerKillCooldown = new();
+    public static Dictionary<byte, float> AllPlayerVision = new();
     public static Dictionary<byte, List<string>> SetRolesList = new();
     /// <summary>
     /// 基本的に速度の代入は禁止.スピードは増減で対応してください.
@@ -119,16 +127,23 @@ public class Main : BasePlugin
     public static bool introDestroyed = false;
     public static float DefaultCrewmateVision;
     public static float DefaultImpostorVision;
-    public static bool IsTOHEInitialRelease = DateTime.Now.Month == 1 && DateTime.Now.Day is 17;
-    public static bool IsTOHEXInitialRelease = DateTime.Now.Month == 5 && DateTime.Now.Day is 21;
+    public static bool IsTONEXEInitialRelease = DateTime.Now.Month == 1 && DateTime.Now.Day is 17;
+    public static bool IsTONEXEXInitialRelease = DateTime.Now.Month == 5 && DateTime.Now.Day is 21;
     public static bool IsTONEXInitialRelease = DateTime.Now.Month == 2 && DateTime.Now.Day is 9;
     public static bool IsAprilFools = DateTime.Now.Month == 4 && DateTime.Now.Day is 1;
     public const float RoleTextSize = 2f;
 
     public static Dictionary<byte, CustomRoles> DevRole = new();
 
-    public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
-    public static IEnumerable<PlayerControl> AllAlivePlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive() && !p.Data.Disconnected && !p.IsEaten());
+    static bool LoadEnd = false;
+    public static IEnumerable<PlayerControl> AllPlayerControls => 
+        //(PlayerControl.AllPlayerControls == null || PlayerControl.AllPlayerControls.Count == 0) && LoadEnd
+        //? AllPlayerControls : 
+        PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
+    public static IEnumerable<PlayerControl> AllAlivePlayerControls => 
+        //(PlayerControl.AllPlayerControls == null || PlayerControl.AllPlayerControls.Count == 0) && LoadEnd
+        //? AllAlivePlayerControls :
+        PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive() && !p.Data.Disconnected && !p.IsEaten());
 
     public static Main Instance;
 
@@ -155,6 +170,7 @@ public class Main : BasePlugin
     {
         Instance = this;
 
+        LoadEnd = false;
         //Client Options
         HideName = Config.Bind("Client Options", "Hide Game Code Name", "TONEX");
         HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
@@ -162,6 +178,7 @@ public class Main : BasePlugin
         ShowResults = Config.Bind("Result", "Show Results", true);
         UnlockFPS = Config.Bind("Client Options", "UnlockFPS", false);
         //CanPublic = Config.Bind("Client Options", "CanPublic", true);
+        AssistivePluginMode = Config.Bind("Client Options", "AssistivePluginMode", false);
         HorseMode = Config.Bind("Client Options", "HorseMode", false);
         LongMode = Config.Bind("Client Options", "LongMode", false);
         AutoStartGame = Config.Bind("Client Options", "AutoStartGame", false);
@@ -233,16 +250,12 @@ public class Main : BasePlugin
         {
             roleColors = new Dictionary<CustomRoles, string>()
             {
+                //Vanilla
+                {CustomRoles.CrewmateGhost, "#8cffff"},
+                {CustomRoles.ImpostorGhost, "#ff1919"},
+
                 //GM
                 {CustomRoles.GM, "#ff5b70"},
-
-                //Vanilla
-                {CustomRoles.Crewmate, "#ffffff"},
-                {CustomRoles.Engineer, "#8cffff"},
-                {CustomRoles.Scientist, "#8cffff"},
-                {CustomRoles.GuardianAngel, "#ffffff"},
-                {CustomRoles.Impostor, "#ff1919"},
-                {CustomRoles.Shapeshifter, "#ff1919"},
 
                 //Add-Ons
                 {CustomRoles.NotAssigned, "#ffffff"},
@@ -284,6 +297,7 @@ public class Main : BasePlugin
                 {CustomRoles.Nihility,"#444444" },
                 {CustomRoles.Believer,"#007169" },
                 {CustomRoles.PublicOpinionShaper, "#ff1919"},
+                {CustomRoles.Guesser, "#DF9965" },
             };
             var type = typeof(RoleBase);
             var roleClassArray =
@@ -320,6 +334,15 @@ public class Main : BasePlugin
         handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
+        //   AddComponent<CanvasManager>();
+        //   AddComponent<MainUIManager>();
+        //   AddComponent<OpenButtonManager>();
+        //   AddComponent<SettingItemManager>();
+        //   AddComponent<SidebarManager>();
+        //   AddComponent<TabGroupManager>();
+        //   AddComponent<UIBase>();
+        //   UI = AddComponent<CreateUIElements>();
+
 
         SystemEnvironment.SetEnvironmentVariables();
 
@@ -329,6 +352,7 @@ public class Main : BasePlugin
         else ConsoleManager.CreateConsole();
 
         TONEX.Logger.Msg("========= TONEX loaded! =========", "Plugin Load");
+        LoadEnd = true;
     }
 }
 public enum CustomDeathReason
@@ -337,7 +361,7 @@ public enum CustomDeathReason
     Kill,
     Vote,
 
-    // TOH
+    // TONEX
     Suicide,
     Spell,
     FollowingSuicide,
@@ -363,6 +387,7 @@ public enum CustomDeathReason
     Dismembered,
     LossOfHead,
     Trialed,
+    Redemption,
 
 
     // TONEX
@@ -404,7 +429,7 @@ public enum CustomWinner
     Despair = CustomRoles.Despair,
     RewardOfficer = CustomRoles.RewardOfficer,
     ColdPotato = CustomRoles.ColdPotato,
-    FAFL = CustomRoles.Vagator,
+    Vagator = CustomRoles.Vagator,
     Congu = CustomRoles.Non_Villain,
     Lawyer = CustomRoles.Lawyer,
     Rebels = CustomRoles.Rebels,
@@ -419,8 +444,11 @@ public enum CustomWinner
     AdmirerLovers = CustomRoles.AdmirerLovers,
     AkujoLovers = CustomRoles.AkujoLovers,
     CupidLovers = CustomRoles.CupidLovers,
-    Phantom = CustomRoles.Phantom,
+    Specterraid = CustomRoles.Specterraid,
     Yandere = CustomRoles.Yandere,
+    Infector = CustomRoles.Infector,
+    Survivor = CustomRoles.Survivor,
+    Killer = CustomRoles.Killer,
 }
 public enum SuffixModes
 {

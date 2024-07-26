@@ -69,6 +69,7 @@ class LadderPatch
 {
     public static void Postfix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
     {
+        if (Main.AssistivePluginMode.Value) return;
         FallFromLadder.OnClimbLadder(__instance, source);
     }
 }

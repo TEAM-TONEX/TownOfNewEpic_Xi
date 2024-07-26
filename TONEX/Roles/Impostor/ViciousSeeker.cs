@@ -121,7 +121,7 @@ public sealed class ViciousSeeker : RoleBase, IImpostor
         
         SendRPC();
     }
-    public override bool OnCheckReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (Is(reporter) && target == null && !OptionCanStartMeet.GetBool())   return false;
         return true;

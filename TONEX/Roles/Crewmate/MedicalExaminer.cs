@@ -49,7 +49,7 @@ public sealed class MedicalExaminer : RoleBase, IDeathReasonSeeable
         AURoleOptions.ScientistCooldown = 0f;
         AURoleOptions.ScientistBatteryCharge = TaskCompletedBatteryCharge;
     }
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         
         if (reporter == null || !Is(reporter) || target == null || reporter.PlayerId == target.PlayerId) return;

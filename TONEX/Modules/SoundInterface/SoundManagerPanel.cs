@@ -90,6 +90,7 @@ public static class SoundManagerPanel
     }
     public static void RefreshTagList()
     {
+        numItems = 0;
         var scroller = Slider.GetComponent<Scroller>();
         scroller.Inner.gameObject.ForEachChild((Action<GameObject>)(DestroyObj));
         static void DestroyObj(GameObject obj)
@@ -115,9 +116,10 @@ public static class SoundManagerPanel
             Object.Destroy(button.GetComponent<UIScrollbarHelper>());
             Object.Destroy(button.GetComponent<NumberButton>());
             var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
-           // GetPostfix(path);
+           // getExtension(path);
             var renderer = button.GetComponent<SpriteRenderer>();
             var rollover = button.GetComponent<ButtonRolloverHandler>();
+
             if (File.Exists(path) || File.Exists(@$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/SoundNames/{sound}.json"))
             {
                 button.transform.GetChild(0).GetComponent<TextMeshPro>().text = GetString("delete");

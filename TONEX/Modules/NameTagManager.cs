@@ -16,7 +16,7 @@ namespace TONEX;
 public static class NameTagManager
 {
     public static readonly string TAGS_DIRECTORY_PATH = @"./TONEX_Data/NameTags/";
-    private static Dictionary<string, NameTag> NameTags = new();
+    public static Dictionary<string, NameTag> NameTags = new();
     public static IReadOnlyDictionary<string, NameTag> AllNameTags => NameTags;
     public static IReadOnlyDictionary<string, NameTag> AllInternalNameTags => AllNameTags.Where(t => t.Value.Isinternal).ToDictionary(x => x.Key, x => x.Value);
     public static IReadOnlyDictionary<string, NameTag> AllExternalNameTags => AllNameTags.Where(t => !t.Value.Isinternal).ToDictionary(x => x.Key, x => x.Value);
@@ -43,6 +43,7 @@ public static class NameTagManager
     }
     public static void ApplyFor(PlayerControl player)
     {
+        return;
         if (!AmongUsClient.Instance.AmHost || player == null) return;
         if (!player.AmOwner && !AllNameTags.ContainsKey(player.FriendCode)) return;
 
@@ -56,10 +57,10 @@ public static class NameTagManager
         }
 
         
-        if (player.AmOwner && GameStates.IsLobby && Options.GetSuffixMode() != 0)
+        if (player.AmOwner && GameStates.IsLobby && Options.GetSuffixMode() != 0 && Options.RemoveModNameTag.GetBool())
             name = Options.GetSuffixMode() switch
             {
-                SuffixModes.TONEX => name += $"\r\n<color={Main.ModColor}>TONEX v{Main.PluginShowVersion}</color>",
+                SuffixModes.TONEX => name += $"\r\n<color={Main.ModColor}>TONEX v{Main.ShowVersion}</color>",
                 SuffixModes.Streaming => name += $"\r\n<size=1.7><color={Main.ModColor}>{GetString("SuffixMode.Streaming")}</color></size>",
                 SuffixModes.Recording => name += $"\r\n<size=1.7><color={Main.ModColor}>{GetString("SuffixMode.Recording")}</color></size>",
                 SuffixModes.RoomHost => name += $"\r\n<size=1.7><color={Main.ModColor}>{GetString("SuffixMode.RoomHost")}</color></size>",
@@ -206,7 +207,7 @@ public static class NameTagManager
         public Component? Prefix { get; set; }
         public Component? Suffix { get; set; }
         public Component? Name { get; set; }
-        public string Apply(string name, bool host, bool onlyName = false, bool inOneLine = false)
+        public string Apply(string name, bool host, bool onlyName = false, bool inOneLine = false, bool force = false)
         {
             if (Name != null)
             {
@@ -234,8 +235,18 @@ public static class NameTagManager
             {
                 case CustomGameMode.HotPotato:
                     var prefix = $"<size=80%><color=#F39C12>{GetString("HotPotatoMode")}</color>" +
-                    $"<color=#F39C12>{Main.PluginShowVersion}</color>";
+                    $"<color=#F39C12>{Main.ShowVersion}</color>";
                     name = prefix + "</size>" +"\n"+ name;
+                    break;
+                case CustomGameMode.InfectorMode:
+                    var prefixV2 = $"<size=80%><color=#F39C12>{GetString("ZombieMode")}</color>" +
+                   $"<color=#F39C12>{Main.ShowVersion}</color>";
+                    name = prefixV2 + "</size>" + "\n" + name;
+                    break;
+                case CustomGameMode.FFA:
+                    var prefixV3 = $"<size=80%><color=#F39C12>{GetString("FFAMode")}</color>" +
+                   $"<color=#F39C12>{Main.ShowVersion}</color>";
+                    name = prefixV3 + "</size>" + "\n" + name;
                     break;
 
             };

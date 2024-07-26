@@ -40,6 +40,7 @@ public class StringOptionItem : OptionItem
             roleInfo.ConfigId + idOffset, name.ToString(), defaultIndex, roleInfo.Tab, isSingleValue, selections
         );
         opt.SetParent(parent ?? roleInfo.RoleOption);
+        opt.SetGameMode(CustomGameMode.Standard);
         return opt;
     }
 

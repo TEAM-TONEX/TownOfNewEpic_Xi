@@ -14,8 +14,29 @@ internal class PingTrackerUpdatePatch
 {
     private static float deltaTime;
     public static string ServerName = "";
+    private static TextMeshPro pingTrackerCredential = null;
+    private static AspectPosition pingTrackerCredentialAspectPos = null;
     private static void Postfix(PingTracker __instance)
     {
+        __instance.text.text = "";
+        if (pingTrackerCredential == null)
+        {
+            var uselessPingTracker = Object.Instantiate(__instance, __instance.transform.parent);
+            pingTrackerCredential = uselessPingTracker.GetComponent<TextMeshPro>();
+            Object.Destroy(uselessPingTracker);
+            pingTrackerCredential.alignment = TextAlignmentOptions.TopRight;
+            pingTrackerCredential.color = new(1f, 1f, 1f, 0.7f);
+            pingTrackerCredential.rectTransform.pivot = new(1f, 1f);  // 中心を右上角に設定
+            pingTrackerCredentialAspectPos = pingTrackerCredential.GetComponent<AspectPosition>();
+            pingTrackerCredentialAspectPos.Alignment = AspectPosition.EdgeAlignments.RightTop;
+        }
+        if (pingTrackerCredentialAspectPos)
+        {
+            pingTrackerCredentialAspectPos.DistanceFromEdge = 
+                DestroyableSingleton<HudManager>.InstanceExists && DestroyableSingleton<HudManager>.Instance.Chat.chatButton.gameObject.active 
+                ? new(2.5f, 0f, -800f)
+                        : new(1.8f, 0f, -800f);
+        }
         __instance.text.alignment = TextAlignmentOptions.TopRight;
 
         StringBuilder sb = new();
@@ -33,25 +54,36 @@ internal class PingTrackerUpdatePatch
 
         sb.Append($"\r\n").Append($"<color={color}>{ping} <size=60%>Ping</size></color>  <color=#00a4ff>{fps} <size=60%>FPS</size></color>{"  " + (GameStates.IsOnlineGame ? ServerName : GetString("Local"))}");
 
-        if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
+        if (Main.AssistivePluginMode.Value) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Main.ModColor32, GetString("Warning.AssistivePluginMode")) + "</size>");
+        else if (!GameStates.IsModHost) sb.Append($"\r\n").Append("<size=135%>" + Utils.ColorString(Color.red, GetString("Warning.NoModHost")) + "</size>");
         else
         {
             sb.Append("<size=110%>");
-            if (Options.NoGameEnd.GetBool()) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
-            if (Options.AllowConsole.GetBool()) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("AllowConsole")));
-            if (DebugModeManager.IsDebugMode) sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("DebugMode")));
-            if (Options.LowLoadMode.GetBool()) sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("LowLoadMode")));
-            if (Options.EnableDirectorMode.GetBool()) sb.Append("\r\n").Append(Utils.ColorString(new Color32(214, 157, 133, byte.MaxValue), GetString("DirectorMode")));
-            if (Options.UsePets.GetBool()) sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
+            if (Options.NoGameEnd.GetBool())
+                sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
+            if (Options.AllowConsole.GetBool())
+                sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("AllowConsole")));
+            if (DebugModeManager.IsDebugMode)
+                sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("DebugMode")));
+            if (Options.LowLoadMode.GetBool())
+                sb.Append("\r\n").Append(Utils.ColorString(Color.green, GetString("LowLoadMode")));
+            if (Options.EnableDirectorMode.GetBool())
+                sb.Append("\r\n").Append(Utils.ColorString(new Color32(214, 157, 133, byte.MaxValue), GetString("DirectorMode")));
+            if (Options.UsePets.GetBool())
+                sb.Append("\r\n").Append(Utils.ColorString(Color.cyan, GetString("PetMode")));
             sb.Append($"\r\n").Append("</size>");
         }
+        pingTrackerCredential.gameObject.SetActive(true);
+        pingTrackerCredential.text = sb.ToString();
+        if (GameSettingMenu.Instance?.gameObject?.active ?? false)
+            pingTrackerCredential.text = "";
 
-        var offset_x = 1.2f; //右端からのオフセット
-        if (HudManager.InstanceExists && HudManager._instance.Chat.chatButton.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
-        if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
-        __instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, 0f, 0f);
+        //var offset_x = 2.5f; //右端からのオフセット
+        //var offset_y = 6.1f; //右端からのオフセット
+        //if (HudManager.InstanceExists && !HudManager._instance.Chat.chatButton.gameObject.active) offset_x += 0.8f; //チャットボタンがある場合の追加オフセット
+        ////if (FriendsListManager.InstanceExists && FriendsListManager._instance.FriendsListButton.Button.active) offset_x += 0.8f; //フレンドリストボタンがある場合の追加オフセット
+        //__instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(offset_x, offset_y, 0f);
 
-        __instance.text.text = sb.ToString();
     }
 }
 [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
@@ -64,14 +96,15 @@ internal class VersionShowerStartPatch
     {
         TMPTemplate.SetBase(__instance.text);
        
-        Main.CredentialsText = $"\r\n<color={Main.ModColor}>T</color><color=#FFC0CB>O</color><color={Main.ModColor}>N</color><color=#fffcbe>E</color><color={Main.ModColor}>X</color> - <color=#ffff00>v{Main.PluginShowVersion}</color>";
+        //Main.CredentialsText = $"\r\n<color={Main.ModColor}>T</color><color=#FFC0CB>O</color><color={Main.ModColor}>N</color><color=#fffcbe>E</color><color={Main.ModColor}>X</color> - <color=#ffff00>v{Main.ShowVersion}</color>";
+        Main.CredentialsText = $"\r\n<color={Main.ModColor}>{Main.ModName}</color> - <color=#ffff00>v{Main.ShowVersion}</color>";
 
 #if DEBUG
         Main.CredentialsText += $"\r\n<color={Main.ModColor}>{ThisAssembly.Git.Branch}</color> - {ThisAssembly.Git.Commit}";
 #endif
 
         Main.CredentialsText += $"\r\n<size=80%><color=#FFC0CB>Town Of Next</color><color=#D77DFF> &</color><color=#FFC0CB> Town Of Host Edited</color><color=#D77DFF> By </color><color=#FFC0CB>KARPED1EM</color>";
-        Main.CredentialsText += $"\r\n <color=#fffcbe>Town Of Host Edited-Xi</color><color=#ffb100> By </color><color=#fffcbe>喜</color>";
+        //Main.CredentialsText += $"\r\n <color=#fffcbe>Town Of Host Edited-Xi</color><color=#ffb100> By </color><color=#fffcbe>喜</color>";
         Main.CredentialsText += $"\r\n <color=#cdfffd>Town Of New Epic_Xtreme</color><color=#ffff00> By </color><color=#cdfffd>XtremeWave</color></size>";
 #if RELEASE
         string additionalCredentials = GetString("TextBelowVersionText");
@@ -235,6 +268,7 @@ internal class TitleLogoPatch
         AULogo.transform.position += new Vector3(0f, 0.1f, 0f);
         var logoRenderer = AULogo.GetComponent<SpriteRenderer>();
         logoRenderer.sprite = Utils.LoadSprite("TONEX.Resources.Images.TONEX-Logo.png");
+        Logger.Info($"{logoRenderer.transform.position}", "test");
 
         if (!(BottomButtonBounds = GameObject.Find("BottomButtonBounds"))) return;
         BottomButtonBounds.transform.localPosition -= new Vector3(0f, 0.1f, 0f);

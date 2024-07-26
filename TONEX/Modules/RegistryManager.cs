@@ -36,7 +36,8 @@ public static class RegistryManager
         List<string> FoldersNFileToDel =
             [
                 @"./TOH_DATA",
-                @"./TOHE_DATA",
+                @"./TOHEX_DATA",
+                @"./TONX_DATA",
             ];
 
         Logger.Warn("上次启动的TONEX版本：" + LastVersion, "Registry Manager");

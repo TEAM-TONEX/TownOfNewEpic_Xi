@@ -40,15 +40,15 @@ public sealed class Instigator : RoleBase
     static OptionItem MaxCooldown;
     enum OptionName
     {
-        NiceTimeStopsSkillCooldown,
-        NiceTimeStopsSkillDuration,
+        NiceTimePauserSkillCooldown,
+        NiceTimePauserSkillDuration,
         ReduceCooldown,
         MaxCooldown,
     }
    public static List<byte> ForInstigator;
     private long ProtectStartTime;
     private float Cooldown;
-    public long UsePetCooldown;
+    
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.SkillCooldown, new(2.5f, 180f, 2.5f), 15f, false)
@@ -60,12 +60,15 @@ public sealed class Instigator : RoleBase
         MaxCooldown = FloatOptionItem.Create(RoleInfo, 12, OptionName.MaxCooldown, new(2.5f, 250f, 2.5f), 60f, false)
           .SetValueFormat(OptionFormat.Seconds);
     }
+    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public override void Add()
     {
         ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
         ForInstigator = new();
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+        CooldownList.Add((long)OptionSkillDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -75,7 +78,7 @@ public sealed class Instigator : RoleBase
     
 public override void OnGameStart()
 {
-    if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+    
 }
 public override bool GetAbilityButtonText(out string text)
     {
@@ -85,15 +88,18 @@ public override bool GetAbilityButtonText(out string text)
     public override bool GetPetButtonText(out string text)
     {
         text = GetString("InstigatorVetnButtonText");
-        return !(UsePetCooldown != -1);
+        return PetUnSet();
     }
-    public void CheckWin(ref CustomWinner WinnerTeam, ref HashSet<byte> WinnerIds)
+    public static void CheckWin()
     {
-        if (ForInstigator.Count != 0)
+        if (CustomRoles.Instigator.IsExist() && ForInstigator.Count != 0)
         {
-            foreach(var item in ForInstigator)
+            foreach (var pc in Main.AllPlayerControls)
             {
-                if (WinnerIds.Contains(item))   CustomWinnerHolder.WinnerIds.Remove(item);
+                if (ForInstigator.Contains(pc.PlayerId))
+                {
+                    CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+                }
             }
         }
     }
@@ -102,53 +108,19 @@ public override bool GetAbilityButtonText(out string text)
         Cooldown = Cooldown + ReduceCooldown.GetFloat();
         if (Cooldown > MaxCooldown.GetFloat()) Cooldown -= ReduceCooldown.GetFloat();
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
         ReduceNowCooldown();
         Player.SyncSettings();
-        ProtectStartTime = Utils.GetTimeStamp();
+        ResetCountdown(0);
         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
         Player.Notify(GetString("InstigatorOnGuard"),2f);
         return true;
     }
-    public override void OnUsePet()
-    {
-        if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)OptionSkillCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
-        ReduceNowCooldown();
-        Player.SyncSettings();
-        ProtectStartTime = Utils.GetTimeStamp();
-        if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
-        Player.Notify(GetString("InstigatorOnGuard"), 2f);
-        UsePetCooldown = Utils.GetTimeStamp();
-
-    }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (ProtectStartTime + (long)OptionSkillDuration.GetFloat() < now && ProtectStartTime != -1)
-        {
-            ProtectStartTime = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("NiceTimeStopsOffGuard")));
-        }
-        if (UsePetCooldown + (long)Cooldown < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
     public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         if (info.IsSuicide) return true;
-        if (ProtectStartTime != -1 && ProtectStartTime + (long)OptionSkillDuration.GetFloat() >= Utils.GetTimeStamp())
+        if (CheckForOnGuard(0))
         {
             var (killer, target) = info.AttemptTuple;
             target.RpcMurderPlayerV2(killer);
@@ -158,16 +130,8 @@ public override bool GetAbilityButtonText(out string text)
         }
         return true;
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         Player.RpcResetAbilityCooldown();
-    }
-    public override void AfterMeetingTasks()
-    {
-        UsePetCooldown = Utils.GetTimeStamp();
-    }
-    public override void OnStartMeeting()
-    {
-        ProtectStartTime = -1;
     }
 }

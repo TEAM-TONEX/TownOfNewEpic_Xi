@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
 using TONEX.Roles.AddOns.Impostor;
 using TONEX.Roles.Core;
@@ -49,6 +50,12 @@ public class AddOnsAssignData
         if (role is CustomRoles.Seer && pc.Is(CustomRoles.Mortician)) return false;
         if (role is CustomRoles.Reach && !pc.CanUseKillButton()) return false;
         if (role is CustomRoles.Flashman && pc.Is(CustomRoles.EvilInvisibler)) return false;
+        if (role is CustomRoles.Guesser && pc.GetCustomRole() is CustomRoles.NiceGuesser or CustomRoles.EvilGuesser
+            or CustomRoles.SuperStar or CustomRoles.Judge
+            or CustomRoles.NiceSwapper or CustomRoles.EvilSwapper) return false;
+        if (role is CustomRoles.Guesser && pc.Is(CustomRoles.IncorruptibleOfficial))return false;
+        if (role is CustomRoles.IncorruptibleOfficial && pc.Is(CustomRoles.Guesser))return false;
+
         return true;
     }
     static readonly IEnumerable<CustomRoles> ValidRoles = CustomRolesHelper.AllRoles.Where(role => !InvalidRoles.Contains(role));
@@ -111,6 +118,8 @@ public class AddOnsAssignData
     ///</summary>
     public static void AssignAddOnsFromList()
     {
+        Lovers.AssignLoversRoles();
+        Madmate.AssignMadmateRoles();
         foreach (var kvp in AllData)
         {
             var (role, data) = kvp;

@@ -57,7 +57,16 @@ public sealed class BloodKnight : RoleBase, INeutralKiller
         OptionProtectDuration = FloatOptionItem.Create(RoleInfo, 14, OptionName.BKProtectDuration, new(1f, 999f, 1f), 15f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    public override void Add() => ProtectStartTime = 0;
+    public override void Add() 
+    {
+        ProtectStartTime = 0;
+        CooldownList.Add((long)OptionProtectDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
+    }
+    public override void CD_Update()
+    {
+        ProtectStartTime = CountdownList[0];
+    }
     private void SendRPC()
     {
         using var sender = CreateSender();
@@ -72,31 +81,22 @@ public sealed class BloodKnight : RoleBase, INeutralKiller
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(OptionHasImpostorVision.GetBool());
     public static void SetHudActive(HudManager __instance, bool _) => __instance.SabotageButton.ToggleVisible(false);
     public bool CanUseSabotageButton() => false;
-    private bool InProtect() => ProtectStartTime != 0 && ProtectStartTime + OptionProtectDuration.GetFloat() > Utils.GetTimeStamp();
     public void OnMurderPlayerAsKiller(MurderInfo info)
     {
         if (info.IsSuicide) return;
-        ProtectStartTime = Utils.GetTimeStamp();
+        ResetCountdown(0);
         SendRPC();
         Utils.NotifyRoles(Player);
-    }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (ProtectStartTime != 0 && ProtectStartTime + (long)OptionProtectDuration.GetFloat() < Utils.GetTimeStamp())
-        {
-            ProtectStartTime = 0;
-            player.Notify(GetString("BKProtectOut"));
-        }
     }
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         if (!Is(seer) || seen != null || isForMeeting) return "";
-        if (!InProtect())
+        if (!CheckForOnGuard(0))
         {
             return isForHud ? GetString("BKSkillNotice") : "";
         }
         else return isForHud
-            ? string.Format(GetString("BKSkillTimeRemain"), ProtectStartTime + OptionProtectDuration.GetFloat() - Utils.GetTimeStamp())
+            ? string.Format(GetString("BKSkillTimeRemain"), RemainTime(0))
             : GetString("BKInProtectForUnModed");
     }
 }

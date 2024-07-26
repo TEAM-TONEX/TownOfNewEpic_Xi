@@ -10,6 +10,7 @@ public static class HqHudSystemTypeUpdateSystemPatch
 {
     public static bool Prefix(HqHudSystemType __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
+        if (Main.AssistivePluginMode.Value) return true;
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -28,6 +29,7 @@ public static class HqHudSystemTypeUpdateSystemPatch
     }
     public static void Postfix()
     {
+        if (Main.AssistivePluginMode.Value) return;
         Camouflage.CheckCamouflage();
         Utils.NotifyRoles();
     }

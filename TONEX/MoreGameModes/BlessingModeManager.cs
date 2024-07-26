@@ -23,14 +23,14 @@ namespace TONEX.MoreGameModes;
 
 internal static class BlessingModeManager
 {
-    public static Dictionary<byte, int> MoneyCount;
-    public static Dictionary<byte, int> WealthAndBrillianceDictionary;
-    public static List<byte> ComeAndAwayList;
-    public static List<byte> OvercomeList;
-    public static List<byte> FarAheadList;
-    public static List<byte> HasFarAheadList;
-    public static List<byte> EtiquetteList;
-    public static List<byte> DigitalLifeList;
+    //public static Dictionary<byte, int> MoneyCount;
+    //public static Dictionary<byte, int> WealthAndBrillianceDictionary;
+    //public static List<byte> ComeAndAwayList;
+    //public static List<byte> OvercomeList;
+    //public static List<byte> FarAheadList;
+    //public static List<byte> HasFarAheadList;
+    //public static List<byte> EtiquetteList;
+    //public static List<byte> DigitalLifeList;
     //设置11
 
 

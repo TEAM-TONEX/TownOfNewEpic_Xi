@@ -36,9 +36,10 @@ public sealed class Ninja : RoleBase, IImpostor
         NinjaNinjaateCooldown,
         NinjaCanKillAfterNinjaate,
     }
-
+    public override long UsePetCooldown { get; set; } = (long)NinjaateCooldown.GetFloat();
+    public override bool EnablePetSkill() => true;
     public byte MarkedPlayer = new();
-    public long UsePetCooldown;
+    
     private static void SetupOptionItem()
     {
         MarkCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NinjaMarkCooldown, new(2.5f, 180f, 2.5f), 20f, false)
@@ -51,11 +52,7 @@ public sealed class Ninja : RoleBase, IImpostor
     {
         MarkedPlayer = byte.MaxValue;
         Shapeshifting = false;
-         if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
-    }
-    public override void OnGameStart()
-    {
-        if (Options.UsePets.GetBool()) UsePetCooldown = Utils.GetTimeStamp();
+         
     }
     private void SendRPC()
     {
@@ -72,21 +69,6 @@ public sealed class Ninja : RoleBase, IImpostor
         if (!Player.IsAlive()) return false;
         if (!CanKillAfterNinjaate.GetBool() && Shapeshifting) return false;
         return true;
-    }
-        public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        var now = Utils.GetTimeStamp();
-        if (Player.IsAlive() &&  UsePetCooldown + (long)NinjaateCooldown.GetFloat() < now && UsePetCooldown != -1 && Options.UsePets.GetBool())
-        {
-            UsePetCooldown = -1;
-            player.RpcProtectedMurderPlayer();
-            player.Notify(string.Format(GetString("PetSkillCanUse")));
-        }
-    }
-  public override void AfterMeetingTasks()
-    {
-        UsePetCooldown = Utils.GetTimeStamp(); 
     }
     public float CalculateKillCooldown() => Shapeshifting ? Options.DefaultKillCooldown : MarkCooldown.GetFloat();
     public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.ShapeshifterCooldown = NinjaateCooldown.GetFloat();
@@ -135,26 +117,18 @@ public sealed class Ninja : RoleBase, IImpostor
     public override void OnUsePet()
     {
         if (!Options.UsePets.GetBool()) return;
-        if (UsePetCooldown != -1)
-        {
-            var cooldown = UsePetCooldown + (long)NinjaateCooldown.GetFloat() - Utils.GetTimeStamp();
-            Player.Notify(string.Format(GetString("ShowUsePetCooldown"), cooldown, 1f));
-            return;
-        }
         Player.SetKillCooldownV2();
         if (MarkedPlayer != byte.MaxValue)
         {
+           var target = Utils.GetPlayerById(MarkedPlayer);
+            MarkedPlayer = byte.MaxValue;
             SendRPC();
             new LateTask(() =>
             {
-                foreach (var pc in Main.AllAlivePlayerControls)
+                if (!(target == null || !target.IsAlive() || target.IsEaten() || target.inVent || !GameStates.IsInTask))
                 {
-                    if (pc.PlayerId == MarkedPlayer && !(pc == null || !pc.IsAlive() || pc.IsEaten() || pc.inVent || !GameStates.IsInTask))
-                    {
-
-                        Utils.TP(Player.NetTransform, pc.GetTruePosition());
-                        CustomRoleManager.OnCheckMurder(Player, pc);
-                    }
+                    Utils.TP(Player.NetTransform, target.GetTruePosition());
+                    CustomRoleManager.OnCheckMurder(Player, target);
                 }
             }, 1.5f, "Ninja Ninjaate");
         }
@@ -182,12 +156,12 @@ public sealed class Ninja : RoleBase, IImpostor
             public override bool GetPetButtonText(out string text)
     {
                        text = GetString("NinjaShapeshiftText");
-        return MarkedPlayer != byte.MaxValue && !(UsePetCooldown != -1);
+        return MarkedPlayer != byte.MaxValue && PetUnSet();
     }
     
     public override bool GetPetButtonSprite(out string buttonName)
     {
                  buttonName = "Ninjaate";
-        return MarkedPlayer != byte.MaxValue && !(UsePetCooldown != -1);
+        return MarkedPlayer != byte.MaxValue && PetUnSet();
     }
 }

@@ -7,11 +7,17 @@ namespace TONEX.Roles.Vanilla;
 public sealed class Crewmate : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
-        SimpleRoleInfo.CreateForVanilla(
+        SimpleRoleInfo.Create(
             typeof(Crewmate),
             player => new Crewmate(player),
-            RoleTypes.Crewmate,
+            CustomRoles.Crewmate,
+            () => RoleTypes.Crewmate,
+            CustomRoleTypes.Crewmate,
+            0010,
+            null,
+            "crew",
             "#8cffff"
+
         );
     public Crewmate(PlayerControl player)
     : base(

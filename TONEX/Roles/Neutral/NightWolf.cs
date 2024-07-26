@@ -68,16 +68,18 @@ ctop:true
     }
     public override void Add()
     {
-     ProtectStartTime = -1;
-       Cooldown = Utils.GetTimeStamp();
+        ProtectStartTime = -1;
+        Cooldown = Utils.GetTimeStamp();
         Speed = Main.AllPlayerSpeed[Player.PlayerId];
+        CooldownList.Add((long)OptionProtectDuration.GetFloat());
+        CountdownList.Add(ProtectStartTime);
     }
     public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(OptionHasImpostorVision.GetBool());
     public bool CanUseSabotageButton() => false;
     public bool OnCheckMurderAsKiller(MurderInfo info)
     {
-        if (ProtectStartTime == -1)
+        if (CheckForUnSet(0))
         {
             Logger.Info("非狂暴状态，击杀被阻塞", "Night _瓜（划掉）Wolf");
             return false;
@@ -85,49 +87,19 @@ ctop:true
         return true;
     }
     public float Speed;
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    public override bool EnablePetSkill() => true;
+
+    public override bool OnEnterVentWithUsePet(PlayerPhysics physics, int ventId)
     {
-        if (Options.UsePets.GetBool()) return true;
         if (Cooldown == -1)
         {
             Speed = Main.AllPlayerSpeed[Player.PlayerId];
-            ProtectStartTime = Utils.GetTimeStamp();
+            ResetCountdown(0);
             Cooldown = Utils.GetTimeStamp();
             Main.AllPlayerSpeed[Player.PlayerId] = OptionSpeed.GetFloat();
             Player.MarkDirtySettings();
             return false;
         }
         else return true;
-    }
-    public override void OnUsePet()
-    {
-        if (!Options.UsePets.GetBool()) return;
-        if (Cooldown == -1)
-        {
-            Speed = Main.AllPlayerSpeed[Player.PlayerId];
-            ProtectStartTime = Utils.GetTimeStamp();
-            Cooldown = Utils.GetTimeStamp();
-            Main.AllPlayerSpeed[Player.PlayerId] = OptionSpeed.GetFloat();
-            Player.MarkDirtySettings();
-        }
-    }
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (ProtectStartTime != -1 && ProtectStartTime + (long)OptionProtectDuration.GetFloat() < Utils.GetTimeStamp())
-        {
-            ProtectStartTime = -1;
-            Main.AllPlayerSpeed[Player.PlayerId] = Speed;
-            Player.MarkDirtySettings();
-            Player.Notify(GetString("NWProtectOut"));
-        }
-        if (Cooldown != -1 && Cooldown + (long)OptionCooldown.GetFloat() < Utils.GetTimeStamp())
-        {
-            Cooldown = -1;
-            Player.Notify(GetString("NWReady"));
-        }
-    }
-    public override void OnSecondsUpdate(PlayerControl player, long now)
-    {
-        Logger.Info($"{ProtectStartTime}", "test");
     }
 }

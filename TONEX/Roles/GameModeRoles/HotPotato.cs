@@ -7,6 +7,7 @@ using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
 using TONEX.MoreGameModes;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
+using RewiredConsts;
 
 namespace TONEX.Roles.GameModeRoles;
 public sealed class HotPotato : RoleBase, IKiller
@@ -35,19 +36,7 @@ public sealed class HotPotato : RoleBase, IKiller
     {
         CustomRoleManager.MarkOthers.Add(MarkOthers);
     }
-    public static int BoomTime;
     public bool IsKiller { get; private set; } = false;
-    //public override bool CanUseAbilityButton() => true;
-    public bool CanUseShapeShiftButton() => true;
-    public override bool GetAbilityButtonText(out string text)
-    {
-        text = GetString("HotBoom");
-        return true;
-    }
-    public override void Add()
-    {
-        BoomTime = HotPotatoManager.ExplosionTotalTime.GetInt();
-    }
     public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
     => target.Is(CustomRoles.HotPotato);
     public static string MarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
@@ -57,15 +46,10 @@ public sealed class HotPotato : RoleBase, IKiller
     }
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref Color roleColor, ref string roleText)
         => enabled |= true;
-    public float CalculateKillCooldown() => CanUseKillButton() ? 3f : 255f;
-    public bool CanUseKillButton() => Player.Is(CustomRoles.HotPotato);
+    public float CalculateKillCooldown() => 0f;
+    public bool CanUseKillButton() => true;
     public bool CanUseSabotageButton() => false;
     public bool CanUseImpostorVentButton() => false;
-    public override void ApplyGameOptions(IGameOptions opt)
-    {
-        opt.SetVision(false);
-        AURoleOptions.ShapeshifterCooldown = HotPotatoManager.ExplosionTotalTime.GetInt();
-    }
     public bool OnCheckMurderAsKiller(MurderInfo info)
     {
         info.CanKill = false;
@@ -75,19 +59,17 @@ public sealed class HotPotato : RoleBase, IKiller
         killer.RpcSetCustomRole(CustomRoles.ColdPotato);
         RPC.PlaySoundRPC(killer.PlayerId, Sounds.KillSound);
         RPC.PlaySoundRPC(target.PlayerId, Sounds.KillSound);
-        killer.SetKillCooldownV2(target: target, forceAnime: true);
+        new LateTask(() =>
+        {
+             target.SetKillCooldownV2(0f);
+        }, 0.1f, "Clam");
         Utils.NotifyRoles(killer);
         Utils.NotifyRoles(target);
         info.CanKill = false;
         return false;
     }
-    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    public override void OnSecondsUpdate(PlayerControl player, long now)
     {
-        //seenが省略の場合seer
-        seen ??= seer;
-        //seeおよびseenが自分である場合以外は関係なし
-        if (!Is(seer) || !Is(seen)) return "";
-
-        return string.Format(GetString("HotPotatoTimeRemain"), HotPotatoManager.RemainExplosionTime);
+        Player.Notify(string.Format(GetString("HotPotatoTimeRemain"), HotPotatoManager.RemainExplosionTime));
     }
 }

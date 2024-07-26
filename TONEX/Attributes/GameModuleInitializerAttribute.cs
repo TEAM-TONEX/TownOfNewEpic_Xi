@@ -1,8 +1,8 @@
 ﻿namespace TONEX.Attributes;
 
 /// <summary>
-/// <see cref="AmongUsClient.CoStartGame"/>のPostfixで毎ゲーム初期化するメソッドに使う<br/>
-/// staticメソッドの前に [GameModuleInitializer] と付けるとゲーム開始時に自動で呼び出される<br/>
-/// [GameModuleInitializer(InitializePriority.High)] のようにすることで呼び出される順番を指定できる
+/// 用于在 <see cref="AmongUsClient.CoStartGame"/> 的后期修饰中，用于每次游戏初始化的方法
+/// 在静态方法前加上 [GameModuleInitializer]，可以在游戏开始时自动调用
+/// 通过 [GameModuleInitializer(InitializePriority.High)] 可以指定调用顺序
 /// </summary>
 public sealed class GameModuleInitializerAttribute : InitializerAttribute<GameModuleInitializerAttribute> { }

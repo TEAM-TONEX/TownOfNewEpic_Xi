@@ -322,7 +322,7 @@ public static class InternalNameTags
                 }
             }
         },
-        //TONEX&TOHEX
+        //TONEX&TONEXEX
         {
             "squishyhod#5187", //野生的猴子，TONEX
             new()

@@ -13,9 +13,10 @@ internal class MakePublicPatch
     public static bool Prefix(GameStartManager __instance)
     {
         // 定数設定による公開ルームブロック
+
         //#if RELEASE
-        
-            if (!Main.AllowPublicRoom)
+
+        if (!Main.AllowPublicRoom)
             {
                 var message = GetString("DisabledByProgram");
                 Logger.Info(message, "MakePublicPatch");
@@ -113,7 +114,9 @@ internal class BanMenuSetVisiblePatch
 {
     public static bool Prefix(BanMenu __instance, bool show)
     {
-        if (!AmongUsClient.Instance.AmHost) return true;
+        if (Main.AssistivePluginMode.Value) return true;
+        
+            if (!AmongUsClient.Instance.AmHost) return true;
         show &= PlayerControl.LocalPlayer && PlayerControl.LocalPlayer.Data != null;
         __instance.BanButton.gameObject.SetActive(AmongUsClient.Instance.CanBan());
         __instance.KickButton.gameObject.SetActive(AmongUsClient.Instance.CanKick());
@@ -163,7 +166,7 @@ internal class InnerNetObjectSerializePatch
 {
     public static void Prefix()
     {
-        if (AmongUsClient.Instance.AmHost)
+        if (AmongUsClient.Instance.AmHost && !Main.AssistivePluginMode.Value)
             GameOptionsSender.SendAllGameOptions();
     }
 }

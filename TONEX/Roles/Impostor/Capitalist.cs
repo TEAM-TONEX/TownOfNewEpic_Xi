@@ -53,7 +53,7 @@ public sealed class Capitalist : RoleBase, IImpostor
     public static int GetShortTasks(byte playerId, int shortTasks) => (NumShortTasks != null && NumShortTasks.TryGetValue(playerId, out var x)) ? x : shortTasks;
     public static bool OnCompleteTask(PlayerControl pc)
     {
-        if (!CustomRoles.Capitalist.IsExistCountDeath()) return true;
+        if (!CustomRoles.Capitalist.IsExist(true)) return true;
         if (pc.Is(CustomRoles.Workhorse)) return true;
         if (!Utils.HasTasks(pc.Data) || pc.AllTasksCompleted()) return true;
         if (TasksWaitToAdd == null || !TasksWaitToAdd.ContainsKey(pc.PlayerId)) return true;
@@ -68,7 +68,7 @@ public sealed class Capitalist : RoleBase, IImpostor
 
         if (AmongUsClient.Instance.AmHost)
         {
-            GameData.Instance.RpcSetTasks(pc.PlayerId, new byte[0]);
+            pc.Data.RpcSetTasks(new byte[0]);
             pc.SyncSettings();
             Utils.NotifyRoles();
         }

@@ -32,3 +32,4 @@ TONEX/FodyWeavers.xsd
 /TONEX/obj/Release/net6.0/GitHead.cache
 /TONEX/obj/Release/net6.0/GitIsDirty.cache
 *.zip
+/TONEX/obj/TONEX.csproj.nuget.g.targets

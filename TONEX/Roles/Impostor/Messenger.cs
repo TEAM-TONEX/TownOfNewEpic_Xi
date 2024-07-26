@@ -83,7 +83,7 @@ public sealed class Messenger : RoleBase, IImpostor, IKillFlashSeeable
         }
     }
 
-    public override void OnReportDeadBody(PlayerControl reporter, GameData.PlayerInfo target)
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (!Player.IsAlive())
         {

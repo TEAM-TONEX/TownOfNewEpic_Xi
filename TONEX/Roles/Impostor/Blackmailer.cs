@@ -44,11 +44,11 @@ public sealed class Blackmailer : RoleBase, IImpostor
         OptionShapeshiftCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.BlackmailerCooldown, new(2.5f, 180f, 2.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    public override string GetMark(PlayerControl seer, PlayerControl seen, bool _ = false)
+    public override string GetMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)
     {
         //seenが省略の場合seer
         seen ??= seer;
-        if (ForBlackmailer.Contains(seen.PlayerId)) return Utils.ColorString(RoleInfo.RoleColor, "‼");
+        if (ForBlackmailer.Contains(seen.PlayerId) && (seer == Player || isForMeeting)) return Utils.ColorString(RoleInfo.RoleColor, "‼");
         else
             return "";
     }
@@ -91,7 +91,7 @@ public sealed class Blackmailer : RoleBase, IImpostor
         }
         return false;
     }
-    public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         ForBlackmailer.Clear();
     }

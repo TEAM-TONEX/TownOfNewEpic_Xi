@@ -151,19 +151,12 @@ public sealed class Lawyer : RoleBase, IAdditionalWinner,INeutralKiller
     }
     public bool CheckWin(ref CustomRoles winnerRole , ref CountTypes winnerCountType)
     {
-        if (!Player.IsAlive())
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                if (pc.PlayerId == TargetId && pc.GetCountTypes() == winnerCountType)
-                    return true;
-            }
-        else
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                if (pc.PlayerId == TargetId && pc.GetCountTypes() == winnerCountType)
-                { CustomWinnerHolder.WinnerIds.Remove(TargetId); return true; }
-
-            }
+        if (Utils.GetPlayerById(TargetId).GetCountTypes() == winnerCountType)
+        {
+            if (Player.IsAlive())
+                CustomWinnerHolder.WinnerIds.Remove(TargetId);
+            return true;
+        }
         return false;
     }
     public void ChangeRole()
