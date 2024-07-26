@@ -1,7 +1,7 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.5",
   "verHead": "1.3",
-  "verDate": "20240716",
+  "verDate": "20240726",
 
   "versionPre": "",
   "verDatePre": "",
@@ -20,8 +20,8 @@
   "md5": "",
   "announcement": {
     "Preview": "Welcome",
-    "SChinese": "感谢一年来所有玩家的支持！",
-    "English": "Thank you to all players for your support over the past year!"
+    "SChinese": "感谢所有玩家对我们的支持！",
+    "English": "Thank you to all players for your support!"
   },
 
   "url": {
