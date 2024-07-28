@@ -261,7 +261,6 @@ public class Main : BasePlugin
                 {CustomRoles.NotAssigned, "#ffffff"},
                 {CustomRoles.LastImpostor, "#ff1919"},
                 {CustomRoles.Lovers, "#ff9ace"},
-                {CustomRoles.AdmirerLovers, "#FFC8EE"},
                 {CustomRoles.AkujoLovers, "#8E4593"},
                 {CustomRoles.AkujoFakeLovers, "#9C709F"},
                 {CustomRoles.CupidLovers, "#F69896"},
@@ -290,7 +289,6 @@ public class Main : BasePlugin
                 {CustomRoles.Rambler,"#ccffff" },
                 {CustomRoles.Chameleon,"#8cffff" },
                 {CustomRoles.Signal,"#F39C12" },
-                {CustomRoles.Mini,"#ffebd7" },
                 {CustomRoles.Libertarian,"#33CC99" },
                 {CustomRoles.Spiders, "#ff1919"},
                 {CustomRoles.Diseased,"#c0c0c0" },
@@ -299,14 +297,23 @@ public class Main : BasePlugin
                 {CustomRoles.PublicOpinionShaper, "#ff1919"},
                 {CustomRoles.Guesser, "#DF9965" },
             };
-            var type = typeof(RoleBase);
-            var roleClassArray =
-            CustomRoleManager.AllRolesClassType = Assembly.GetAssembly(type)
+            var roletype = typeof(RoleBase);
+            var roleClassArray = Assembly.GetAssembly(roletype)
                 .GetTypes()
-                .Where(x => x.IsSubclassOf(type)).ToArray();
+                .Where(x => x.IsSubclassOf(roletype)).ToArray();
 
             foreach (var roleClassType in roleClassArray)
-                roleClassType.GetField("RoleInfo")?.GetValue(type);
+                roleClassType.GetField("RoleInfo")?.GetValue(roletype);
+
+            var addontype = typeof(AddonBase);
+            var addonClassArray = Assembly.GetAssembly(addontype)
+                .GetTypes()
+                .Where(x => x.IsSubclassOf(addontype)).ToArray();
+
+            foreach (var addonClassType in addonClassArray)
+                addonClassType.GetField("RoleInfo")?.GetValue(addontype);
+
+            CustomRoleManager.AllRolesClassType = roleClassArray.Concat(addonClassArray).ToArray();
         }
         catch (ArgumentException ex)
         {

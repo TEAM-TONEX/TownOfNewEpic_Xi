@@ -32,10 +32,10 @@ public sealed class MeteorArbiter : RoleBase, INeutralKiller, IAdditionalWinner
             true,
             countType: CountTypes.MeteorArbiter,
             assignCountRule: new(1, 1, 1)
-//#if RELEASE
-//,
-//ctop:true
-//#endif
+#if RELEASE
+,
+ctop:true
+#endif
         );
     public MeteorArbiter(PlayerControl player)
     : base(
@@ -295,7 +295,7 @@ public sealed class MeteorArbiter : RoleBase, INeutralKiller, IAdditionalWinner
   
     public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
-        if (!Is(reporter) || target != null || !OptionCanGetLoveByReport.GetBool()) return true;
+        if (!Is(reporter) || target == null || !OptionCanGetLoveByReport.GetBool()) return true;
 
         int lv = LOVE;
         var player = target.Object;

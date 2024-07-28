@@ -83,20 +83,32 @@ class ExileControllerWrapUpPatch
             {
                 roleClass.OnExileWrapUp(exiled, ref DecidedWinner);
                 var now = Utils.GetTimeStamp();
-                foreach (var player in Main.AllPlayerControls)
-                {
-                    var roleclass = (player.GetRoleClass());
-                    if (player.IsAlive())
-                    {
-                        for (int i = 0; i < roleclass.CountdownList.Count;  i++)
-                        {
-                            roleclass.CountdownList[i] = now;
-                        }
-                        roleclass.UsePetCooldown_Timer = now;
-                    }
-                }
-            }
 
+                if (roleClass.Player.IsAlive())
+                {
+                    for (int i = 0; i < roleClass.CountdownList.Count; i++)
+                    {
+                        roleClass.CountdownList[i] = now;
+                    }
+                    roleClass.UsePetCooldown_Timer = now;
+                }
+
+            }
+            foreach (var roleClass in CustomRoleManager.AllActiveAddons.Values)
+            {
+                roleClass.Do_Addons(x=>x.OnExileWrapUp(exiled, ref DecidedWinner));
+                var now = Utils.GetTimeStamp();
+
+                roleClass.Do_Addons(x =>
+                {
+                    for (int i = 0; i < x.CountdownList.Count; i++)
+                    {
+                        x.CountdownList[i] = now;
+                    }
+                    x.UsePetCooldown_Timer = now;
+                });
+
+            }
             if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();
         }
 
@@ -155,7 +167,7 @@ class ExileControllerWrapUpPatch
                 Main.AfterMeetingDeathPlayers.Do(x =>
                 {
                     var player = Utils.GetPlayerById(x.Key);
-                    var roleClass = CustomRoleManager.GetByPlayerId(x.Key);
+                    var roleClass = CustomRoleManager.GetRoleBaseByPlayerId(x.Key);
                     var requireResetCam = player?.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true;
                     var state = PlayerState.GetByPlayerId(x.Key);
                     Logger.Info($"{player.GetNameWithRole()}を{x.Value}で死亡させました", "AfterMeetingDeath");

@@ -90,9 +90,8 @@ static class CustomRolesHelper
     public static bool IsHidden(this CustomRoles role)
     {
         var roleInfo = role.GetRoleInfo();
-        if (roleInfo != null)
-            return roleInfo.IsHidden;
-        return false;
+
+        return roleInfo?.IsHidden ?? false;
     }
     public static bool IsTODO(this CustomRoles role)
     {

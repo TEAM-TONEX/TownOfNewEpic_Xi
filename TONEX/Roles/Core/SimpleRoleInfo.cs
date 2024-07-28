@@ -10,12 +10,14 @@ namespace TONEX.Roles.Core;
 public class SimpleRoleInfo
 {
     public Type ClassType;
-    public Func<PlayerControl, RoleBase> CreateInstance;
+    public Func<PlayerControl, RoleBase> CreateRoleInstance;
+    public Func<PlayerControl, AddonBase> CreateAddonInstance;
     public CustomRoles RoleName;
+
     public Func<RoleTypes> BaseRoleType;
     public CustomRoleTypes CustomRoleType;
     public CountTypes CountType;
-    
+    public int AddonType;
     public Color RoleColor;
     public string RoleColorCode;
     public int ConfigId;
@@ -39,14 +41,16 @@ public class SimpleRoleInfo
     /// </summary>
     public IntegerValueRule AssignCountRule;
     /// <summary>
-    /// 人数应该分配多少
-    /// 役職の抽選回数 = 設定人数 / AssignUnitCount
+    /// 确定需要分配的单位数量。
+    /// 役职的分配次数 = 设定人数 / AssignUnitCount
     /// </summary>
     public int AssignUnitCount => AssignCountRule?.Step ?? 1;
+
     /// <summary>
-    /// 実際にアサインされる役職の内訳
+    /// 分配给实际角色的详细内部设置。
     /// </summary>
     public CustomRoles[] AssignUnitRoles;
+
     /// <summary>役職の説明関係</summary>
     public RoleDescription Description { get; private set; }
 
@@ -74,7 +78,7 @@ public class SimpleRoleInfo
     )
     {
         ClassType = classType;
-        CreateInstance = createInstance;
+        CreateRoleInstance = createInstance;
         RoleName = roleName;
         BaseRoleType = baseRoleType;
         CustomRoleType = customRoleType;
@@ -172,6 +176,90 @@ public class SimpleRoleInfo
         roleInfo.Description = roleName.IsVanilla()? new VanillaRoleDescription(roleInfo, baseRoleType()): new SingleRoleDescription(roleInfo);
         return roleInfo;
     }
+
+
+    private SimpleRoleInfo(
+    Type classType,
+    Func<PlayerControl, AddonBase> createInstance,
+    CustomRoles roleName,
+    CountTypes countType,
+    int configId,
+    OptionCreatorDelegate optionCreator,
+    string chatCommand,
+    string colorCode,
+    int addonType,
+    Func<AudioClip> introSound,
+    bool experimental,
+    bool Hidden,
+    bool ctop,
+    bool broken
+)
+    {
+        ClassType = classType;
+        CreateAddonInstance = createInstance;
+        RoleName = roleName;
+        CountType = countType;
+        CustomRoleType = CustomRoleTypes.Addon;
+        ConfigId = configId;
+        OptionCreator = optionCreator;
+        AddonType = addonType;
+        this.introSound = introSound;
+        ChatCommand = chatCommand;
+        Experimental = experimental;
+        IsHidden = Hidden;
+        CantOpen = ctop;
+        Broken = broken;
+
+        if (colorCode == "")
+            colorCode =  "#ffffff";
+        RoleColorCode = colorCode;
+
+        _ = ColorUtility.TryParseHtmlString(colorCode, out RoleColor);
+
+
+        var tab = TabGroup.Addons;
+        if (Experimental) tab = TabGroup.OtherRoles;
+        Tab = tab;
+
+        CustomRoleManager.AllRolesInfo.Add(roleName, this);
+    }
+    public static SimpleRoleInfo Create(
+    Type classType,
+    Func<PlayerControl, AddonBase> createInstance,
+    CustomRoles roleName,
+    int configId,
+    OptionCreatorDelegate optionCreator,
+    string chatCommand,
+    string colorCode = "",
+    int addonType = 0,
+    Func<AudioClip> introSound = null,
+    CountTypes? countType = null,
+    bool experimental = false,
+    bool Hidden = false,
+    bool ctop = false,
+    bool broken = false
+)
+    {
+        countType ??= CountTypes.Crew;
+        var roleInfo = new SimpleRoleInfo(
+                classType,
+                createInstance,
+                roleName,
+                countType.Value,
+                configId,
+                optionCreator,
+                chatCommand,
+                colorCode,
+                addonType,
+                introSound,
+                experimental,
+                Hidden,
+                ctop,
+                broken
+            );
+        return roleInfo;
+    }
+
     //public static SimpleRoleInfo CreateForVanilla(
     //    Type classType,
     //    Func<PlayerControl, RoleBase> createInstance,

@@ -190,6 +190,7 @@ internal class RPCHandlerPatch
     {
 
         if (Main.AssistivePluginMode.Value && (CustomRPC)callId is not CustomRPC.VersionCheck and not CustomRPC.RequestRetryVersionCheck) return;
+        
         //CustomRPC以外は処理しない
         if (callId < (byte)CustomRPC.VersionCheck) return;
 
@@ -296,7 +297,7 @@ internal class RPCHandlerPatch
                 CustomRoles role = (CustomRoles)reader.ReadPackedInt32();
                 RPC.SetCustomRole(CustomRoleTargetId, role);
                 bool IsGM = role is CustomRoles.GM;
-                if (!IsGM)
+                if (!IsGM && GameStates.IsInGame)
                 {
                     if (!Main.SetRolesList.ContainsKey(CustomRoleTargetId))
                     {
@@ -380,7 +381,7 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.OnClickMeetingButton:
                 var target = Utils.GetPlayerById(reader.ReadByte());
-                if (__instance.GetRoleClass() is IMeetingButton meetingButton) meetingButton.OnClickButton(target);
+                if (__instance.GetRoleClass() is IMeetingButton meetingButton || __instance.Contains_Addons(out meetingButton)) meetingButton.OnClickButton(target);
                 break;
             case CustomRPC.Guess:
                 GuesserHelper.ReceiveRPC(reader, __instance);
@@ -397,9 +398,7 @@ internal class RPCHandlerPatch
             case CustomRPC.SetProphetList:
                Prophet.ReceiveRPC_SyncList(reader);
                 break;
-            case CustomRPC.MiniAge:
-                Mini.ReceiveRPC(reader,rpcType);
-                break;
+
             case CustomRPC.SignalPosition:
                 Signal.ReceiveRPC(reader, rpcType);
                 break;
@@ -454,6 +453,10 @@ internal class RPCHandlerPatch
             case CustomRPC.SyncFFANameNotify:
                 FFAManager.ReceiveRPCSyncNameNotify(reader);
                 break;
+            default:
+                CustomRoleManager.DispatchRpc(reader, rpcType);
+                break;
+
         }
     }
 }
@@ -665,9 +668,10 @@ internal static class RPC
     }
     public static void SetCustomRole(byte targetId, CustomRoles role)
     {
+        if (Utils.GetPlayerById(targetId).Is(role)) return;
         if (role < CustomRoles.NotAssigned)
         {
-            CustomRoleManager.GetByPlayerId(targetId)?.Dispose();
+            CustomRoleManager.GetRoleBaseByPlayerId(targetId)?.Dispose();
             PlayerState.GetByPlayerId(targetId).SetMainRole(role);
         }
         else if (role >= CustomRoles.NotAssigned)   //500:NoSubRole 501~:SubRole

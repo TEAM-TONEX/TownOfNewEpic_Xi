@@ -93,6 +93,8 @@ public class PlayerGameOptionsSender : GameOptionsSender
 
         var roleClass = player.GetRoleClass()?? null;
         roleClass?.ApplyGameOptions(opt);
+
+        player.Do_Addons(x=>x.ApplyGameOptions(opt));
         foreach (var subRole in player.GetCustomSubRoles())
         {
             switch (subRole)

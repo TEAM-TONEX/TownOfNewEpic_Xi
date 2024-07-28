@@ -407,14 +407,13 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
         RoleCommands.Add(CustomRoles.TicketsStealer, new() { "ts", "竊票者", "偷票", "偷票者", "窃票师", "窃票" });
         RoleCommands.Add(CustomRoles.Rambler, new() { "ra", "漫步者", "漫步" });
         RoleCommands.Add(CustomRoles.Chameleon, new() { "ch", "变色龙","变色" });
-        RoleCommands.Add(CustomRoles.Mini, new() { "mini", "迷你" });
         RoleCommands.Add(CustomRoles.Libertarian, new() { "li", "广播", "自主主义者" });
         RoleCommands.Add(CustomRoles.Spiders, new() { "sd", "蜘蛛"});
         RoleCommands.Add(CustomRoles.Diseased, new() { "dis", "患者", "病人" });
         RoleCommands.Add(CustomRoles.Nihility, new() { "nihi", "虚无" });
         RoleCommands.Add(CustomRoles.Believer, new() { "bel", "信徒" });
         RoleCommands.Add(CustomRoles.PublicOpinionShaper, new() { "pos", "舆论缔造者" });
-        RoleCommands.Add(CustomRoles.AdmirerLovers, new() { "alo", "暗恋情人", "暗恋愛人", "暗恋链子" });
+        RoleCommands.Add(CustomRoles.AdmirerLovers, new() {  });
         RoleCommands.Add(CustomRoles.AkujoLovers, new() { "aklo", "魅魔情人", "魅魔愛人", "魅魔链子" });
         RoleCommands.Add(CustomRoles.AkujoFakeLovers, new() { "akflo", "魅魔假情人", "魅魔假愛人", "魅魔假链子" });
         RoleCommands.Add(CustomRoles.CupidLovers, new() { "culo", "丘比特情人", "丘比特愛人", "丘比特链子" });

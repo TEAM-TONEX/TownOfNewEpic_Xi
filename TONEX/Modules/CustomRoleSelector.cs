@@ -441,7 +441,9 @@ internal static class CustomRoleSelector
             CustomRoles role = (CustomRoles)Enum.Parse(typeof(CustomRoles), cr.ToString());
             if (!role.IsAddon()) continue;
             //if (role is CustomRoles.Madmate && Options.MadmateSpawnMode.GetInt() != 0) continue;
-            if (role is CustomRoles.Lovers or CustomRoles.AdmirerLovers or CustomRoles.AkujoLovers or CustomRoles.AkujoFakeLovers or CustomRoles.CupidLovers or CustomRoles.LastImpostor or CustomRoles.Workhorse) continue;
+            if (role is 
+                CustomRoles.Lovers or CustomRoles.AdmirerLovers or CustomRoles.AkujoLovers or CustomRoles.AkujoFakeLovers 
+                or CustomRoles.CupidLovers or CustomRoles.LastImpostor or CustomRoles.Workhorse) continue;
             AddonRolesList.Add(role);
         }
     }

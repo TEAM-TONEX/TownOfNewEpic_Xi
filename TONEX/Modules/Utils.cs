@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using UnityEditor;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -30,6 +31,9 @@ using static TONEX.Translator;
 using TMPro;
 using TONEX.Roles.Vanilla;
 using TONEX.MoreGameModes;
+using UnityEngine.TextCore.LowLevel;
+using UnityEngine.TextCore;
+using HarmonyLib;
 
 namespace TONEX;
 
@@ -287,7 +291,7 @@ public static class Utils
         if (seer.Is(CustomRoles.GM) || seer.Is(CustomRoles.Seer) || seer.Is(CustomRoles.ViciousSeeker) && ViciousSeeker.Limit>=4) return true;
         if (seer.Data.IsDead || killer == seer || target == seer) return false;
 
-        if (seer.GetRoleClass() is IKillFlashSeeable killFlashSeeable)
+        if (seer.GetRoleClass() is IKillFlashSeeable killFlashSeeable || seer.Contains_Addons(out killFlashSeeable))
         {
             return killFlashSeeable.CheckKillFlash(info);
         }
@@ -412,9 +416,10 @@ public static class Utils
 
         //seen側による変更
         seen.GetRoleClass()?.OverrideDisplayRoleNameAsSeen(seer, ref enabled, ref roleColor, ref roleText);
-
+        seen.Do_Addons(x => x?.OverrideDisplayRoleNameAsSeen(seer, ref enabled, ref roleColor, ref roleText));
         //seer側による変更
         seer.GetRoleClass()?.OverrideDisplayRoleNameAsSeer(seen, ref enabled, ref roleColor, ref roleText);
+        seer.Do_Addons(x => x?.OverrideDisplayRoleNameAsSeer(seen, ref enabled, ref roleColor, ref roleText));
 
         return enabled ? ColorString(roleColor, roleText) : "";
     }
@@ -487,7 +492,7 @@ public static class Utils
     {
         var state = PlayerState.GetByPlayerId(playerId);
         var (color, text) = GetRoleNameData(state.MainRole, state.SubRoles, showSubRoleMarks);
-        CustomRoleManager.GetByPlayerId(playerId)?.OverrideTrueRoleName(ref color, ref text);
+        CustomRoleManager.GetRoleBaseByPlayerId(playerId)?.OverrideTrueRoleName(ref color, ref text);
         return (color, text);
     }
     /// <summary>
@@ -605,7 +610,7 @@ public static class Utils
             return false;
         }
         var role = States.MainRole;
-        var roleClass = CustomRoleManager.GetByPlayerId(p.PlayerId);
+        var roleClass = CustomRoleManager.GetRoleBaseByPlayerId(p.PlayerId);
        // Logger.Info($"7", "test");
         if (roleClass != null)
         {
@@ -664,7 +669,7 @@ public static class Utils
 
         //seer側による変更
         seer.GetRoleClass()?.OverrideProgressTextAsSeer(seen, ref enabled, ref text);
-
+        seer.Do_Addons(x => x?.OverrideProgressTextAsSeer(seen, ref enabled, ref text));
         return enabled ? text : "";
     }
     private static string GetProgressText(byte playerId, bool comms = false)
@@ -672,16 +677,18 @@ public static class Utils
         var ProgressText = new StringBuilder();
         var State = PlayerState.GetByPlayerId(playerId);
         var role = State.MainRole;
-        var roleClass = CustomRoleManager.GetByPlayerId(playerId);
+        var roleClass = CustomRoleManager.GetRoleBaseByPlayerId(playerId);
+        var addonClasses = CustomRoleManager.GetAddonBaseByPlayerId(playerId);
+
         ProgressText.Append(GetTaskProgressText(playerId, comms));
         if (roleClass != null)
         {
             ProgressText.Append(roleClass.GetProgressText(comms));
         }
-
         //SubRoles
+        addonClasses?.Where(x => x != null).Do(x => x.GetProgressText(comms));
+  
         ProgressText.Append(TicketsStealer.GetProgressText(playerId, comms));
-        ProgressText.Append(Mini.GetProgressText(playerId, comms));
         ////GameMode
         if (Options.CurrentGameMode == CustomGameMode.FFA && role == CustomRoles.Killer)
             ProgressText.Append(FFAManager.GetDisplayScore(playerId));
@@ -1153,6 +1160,7 @@ public static class Utils
 
             if (seer.IsModClient()) continue;
             var seerRole = seer.GetRoleClass();
+            var seerAddon = seer.GetAddonClasses();
             string fontSize = isForMeeting ? "1.5" : Main.RoleTextSize.ToString();
             if (isForMeeting && (seer.GetClient().PlatformData.Platform is Platforms.Playstation or Platforms.Switch)) fontSize = "70%";
           //  logger.Info("NotifyRoles-Loop1-" + seer.GetNameWithRole() + ":START");
@@ -1169,6 +1177,7 @@ public static class Utils
 
                 //seer役職が対象のMark
                 SelfMark.Append(seerRole?.GetMark(seer, isForMeeting: isForMeeting));
+                seerAddon.Do_Addons(x => SelfMark.Append(x?.GetMark(seer, isForMeeting: isForMeeting)));
                 //seerに関わらず発動するMark
                 SelfMark.Append(CustomRoleManager.GetMarkOthers(seer, isForMeeting: isForMeeting));
 
@@ -1184,13 +1193,20 @@ public static class Utils
 
                 //seer役職が対象のLowerText
                 if (!seer.IsModClient())
-                SelfSuffix.Append(seerRole?.GetLowerText(seer, isForMeeting: isForMeeting));
+                {
+                    SelfSuffix.Append(seerRole?.GetLowerText(seer, isForMeeting: isForMeeting));
+
+                    seerAddon.Do_Addons(x => SelfMark.Append(x?.GetLowerText(seer, isForMeeting: isForMeeting)));
+                    SelfSuffix.Append(CustomRoleManager.GetLowerTextOthers(seer, isForMeeting: isForMeeting));
+
+                }
                 //seerに関わらず発動するLowerText
 
-                SelfSuffix.Append(CustomRoleManager.GetLowerTextOthers(seer, isForMeeting: isForMeeting));
 
                 //seer役職が対象のSuffix
                 SelfSuffix.Append(seerRole?.GetSuffix(seer, isForMeeting: isForMeeting));
+                seerAddon.Do_Addons(x => SelfMark.Append(x?.GetSuffix(seer, isForMeeting: isForMeeting)));
+
                 //seerに関わらず発動するSuffix
                 SelfSuffix.Append(CustomRoleManager.GetSuffixOthers(seer, isForMeeting: isForMeeting));
                 switch (Options.CurrentGameMode)
@@ -1252,6 +1268,8 @@ public static class Utils
 
                     //seer役職が対象のMark
                     TargetMark.Append(seerRole?.GetMark(seer, target, isForMeeting));
+                    TargetMark.Append(seerRole?.GetMark(seer, isForMeeting: isForMeeting));
+
                     //seerに関わらず発動するMark
                     TargetMark.Append(CustomRoleManager.GetMarkOthers(seer, target, isForMeeting));
 
@@ -1271,13 +1289,17 @@ public static class Utils
 
                     TargetSuffix.Clear();
                     if (!seer.IsModClient())
+                    {
                         TargetSuffix.Append(seerRole?.GetLowerText(seer, target, isForMeeting: isForMeeting));
-                    //seerに関わらず発動するLowerText
-                    if (!seer.IsModClient())
-                        TargetSuffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target, isForMeeting: isForMeeting));
+                        seerAddon.Do_Addons(x => TargetMark.Append(x?.GetLowerText(seer, isForMeeting: isForMeeting)));
 
+                        //seerに関わらず発動するLowerText
+                        TargetSuffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target, isForMeeting: isForMeeting));
+                    }
                     //seer役職が対象のSuffix
                     TargetSuffix.Append(seerRole?.GetSuffix(seer, target, isForMeeting: isForMeeting));
+                    TargetSuffix.Append(seerRole?.GetSuffix(seer, isForMeeting: isForMeeting));
+
                     //seerに関わらず発動するSuffix
                     TargetSuffix.Append(CustomRoleManager.GetSuffixOthers(seer, target, isForMeeting: isForMeeting));
                     // 空でなければ先頭に改行を挿入
@@ -1285,15 +1307,17 @@ public static class Utils
                     {
                         TargetSuffix.Insert(0, "\r\n");
                     }
-                    Mini.TargetSuffixs(seer, target, ref TargetSuffix);
 
                     //RealNameを取得 なければ現在の名前をRealNamesに書き込む
                     string TargetPlayerName = target.GetRealName(isForMeeting);
 
                     //调用职业类通过 seer 重写 name
                     seer.GetRoleClass()?.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting);
+                    seer.Do_Addons(x => x?.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting));
                     //调用职业类通过 seen 重写 name
                     target.GetRoleClass()?.OverrideNameAsSeen(seer, ref TargetPlayerName, isForMeeting);
+                    target.Do_Addons(x => x?.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting));
+
                     Guesser.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting);
                     //ターゲットのプレイヤー名の色を書き換えます。
                     TargetPlayerName = TargetPlayerName.ApplyNameColorData(seer, target, isForMeeting);

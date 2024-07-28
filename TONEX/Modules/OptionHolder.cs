@@ -14,6 +14,8 @@ using TONEX.Roles.Ghost.Impostor;
 using TONEX.Roles.Ghost.Crewmate;
 using TONEX.Roles.Ghost.Neutral;
 using TONEX.Roles.Vanilla;
+using TONEX.Roles.AddOns;
+using Epic.OnlineServices;
 
 namespace TONEX;
 
@@ -502,7 +504,8 @@ public static class Options
         CustomRoleCounts = new();
         CustomRoleSpawnChances = new();
 
-        var sortedRoleInfo = CustomRoleManager.AllRolesInfo.Values.Where(role => !role.RoleName.IsHidden() && !role.RoleName.IsCanNotOpen()).OrderBy(role => role.ConfigId);
+        var sortedRoleInfo = CustomRoleManager.AllRolesInfo.Values
+            .Where(role => !role.RoleName.IsHidden() && !role.RoleName.IsCanNotOpen()).OrderBy(role => role.ConfigId);
 
         // 各职业的总体设定
         ImpKnowAlliesRole = BooleanOptionItem.Create(1_000_001, "ImpKnowAlliesRole", true, TabGroup.ImpostorRoles, false)
@@ -609,13 +612,55 @@ public static class Options
             info.OptionCreator?.Invoke();
         });
 
-        if (setupExpNow)
+        if (setupExpNow)// Addon
         {
             TextOptionItem.Create(1_100_004, "OtherRoles.Addons", TabGroup.OtherRoles)
             .SetGameMode(CustomGameMode.Standard)
             .SetColor(new Color32(255, 154, 206, byte.MaxValue));
+            sortedRoleInfo.Where(role => role.CustomRoleType == CustomRoleTypes.Addon && role.Experimental == setupExpNow).Do(info =>
+            {
+                SetupAddonOptions(info);
+                info.OptionCreator?.Invoke();
+            });
         }
+        else
+        {
 
+            TextOptionItem.Create(5_100_001, "MenuTitle.Addon.Common", TabGroup.Addons)
+            .SetGameMode(CustomGameMode.Standard)
+            .SetColor(Utils.GetCustomRoleTypeColor(CustomRoleTypes.Addon));
+
+            sortedRoleInfo.Where(role => 
+            role.CustomRoleType == CustomRoleTypes.Addon && role.Experimental == setupExpNow && role.AddonType is 0).Do(info =>
+            {
+                SetupAddonOptions(info);
+                info.OptionCreator?.Invoke();
+            });
+
+            // 船员专属附加
+            TextOptionItem.Create(5_100_002, "MenuTitle.Addon.Crew", TabGroup.Addons)
+                .SetGameMode(CustomGameMode.Standard)
+                .SetColor(Utils.GetCustomRoleTypeColor(CustomRoleTypes.Crewmate));
+
+            sortedRoleInfo.Where(role => 
+            role.CustomRoleType == CustomRoleTypes.Addon && role.Experimental == setupExpNow && role.AddonType == 1).Do(info =>
+            {
+                SetupAddonOptions(info);
+                info.OptionCreator?.Invoke();
+            });
+
+            // 内鬼专属附加
+            TextOptionItem.Create(5_100_003, "MenuTitle.Addon.Imp", TabGroup.Addons)
+                .SetGameMode(CustomGameMode.Standard)
+                .SetColor(Utils.GetCustomRoleTypeColor(CustomRoleTypes.Impostor));
+
+            sortedRoleInfo.Where(role => role.CustomRoleType == CustomRoleTypes.Addon && role.Experimental == setupExpNow && role.AddonType == 2).Do(info =>
+            {
+                SetupAddonOptions(info);
+                info.OptionCreator?.Invoke();
+            });
+
+        }
         // Experimental Roles
         if (!setupExpNow)
         {
@@ -626,9 +671,6 @@ public static class Options
         // Add-Ons
 
         // 通用附加
-        TextOptionItem.Create(5_100_001, "MenuTitle.Addon.Common", TabGroup.Addons)
-            .SetGameMode(CustomGameMode.Standard)
-            .SetColor(Utils.GetCustomRoleTypeColor(CustomRoleTypes.Addon));
 
         Lovers.SetupCustomOption();
         Neptune.SetupCustomOption();
@@ -647,8 +689,6 @@ public static class Options
         Bait.SetupCustomOption();
         Beartrap.SetupCustomOption();
         Rambler.SetupCustomOption() ;
-        //Chameleon.SetupCustomOption();
-        Mini.SetupCustomOption();
         Signal.SetupCustomOption();
         Libertarian.SetupCustomOption();
         Diseased.SetupCustomOption();
@@ -656,19 +696,11 @@ public static class Options
         Believer.SetupCustomOption();
         Guesser.SetupCustomOption();
 
-        // 船员专属附加
-        TextOptionItem.Create(5_100_002, "MenuTitle.Addon.Crew", TabGroup.Addons)
-            .SetGameMode(CustomGameMode.Standard)
-            .SetColor(Utils.GetCustomRoleTypeColor(CustomRoleTypes.Crewmate));
 
         YouTuber.SetupCustomOption();
         Workhorse.SetupCustomOption();
         Madmate.SetupMadmateRoleOptionsToggle(75_1_2_1500);
 
-        // 内鬼专属附加
-        TextOptionItem.Create(5_100_003, "MenuTitle.Addon.Imp", TabGroup.Addons)
-            .SetGameMode(CustomGameMode.Standard)
-            .SetColor(Utils.GetCustomRoleTypeColor(CustomRoleTypes.Impostor));
 
         LastImpostor.SetupCustomOption();
         TicketsStealer.SetupCustomOption();
@@ -1122,6 +1154,16 @@ public static class Options
         Logger.Msg("All Mod Options Loaded!", "Load Options");
     }
 
+    public static void SetupAddonOptions(SimpleRoleInfo info)
+    {
+        SetupAddonOptions(info.ConfigId, info.Tab, info.RoleName, Rates, true, CustomGameMode.Standard);
+        var assgincrew = info.AddonType is 0 or 1;
+        var assginimp = info.AddonType is 0 or 2;
+        var assginneu = info.AddonType is 0;
+
+        AddOnsAssignData.Create(info.ConfigId + 10, info.RoleName, assgincrew, assginimp, assginneu);
+    }
+
     public static void SetupAddonOptions(int id, TabGroup tab, CustomRoles role, CustomGameMode customGameMode = CustomGameMode.Standard)
         => SetupAddonOptions(id, tab, role, Rates, true, customGameMode);
     public static void SetupAddonOptions(int id, TabGroup tab, CustomRoles role, string[] selections, bool canSetNum, CustomGameMode customGameMode = CustomGameMode.Standard)
@@ -1134,6 +1176,7 @@ public static class Options
             .SetHidden(!canSetNum)
             .SetGameMode(customGameMode);
 
+
         CustomRoleSpawnChances.Add(role, spawnOption);
         CustomRoleCounts.Add(role, countOption);
     }
@@ -1141,7 +1184,6 @@ public static class Options
         SetupRoleOptions(info.ConfigId, info.Tab, info.RoleName);
     public static void SetupRoleOptions(int id, TabGroup tab, CustomRoles role, IntegerValueRule assignCountRule = null, CustomGameMode customGameMode = CustomGameMode.Standard)
     {
-        if (role.IsHidden() || role.IsCanNotOpen()) return;
         
         assignCountRule ??= role.GetRoleInfo()?.AssignCountRule??new(1, 15, 1);
 

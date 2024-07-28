@@ -717,6 +717,7 @@ class FixedUpdatePatch
                 //変数定義
                 var seer = PlayerControl.LocalPlayer;
                 var seerRole = seer.GetRoleClass();
+                var seerAddon = seer.GetAddonClasses();
                 var target = __instance;
                 string RealName;
                 Mark.Clear();
@@ -748,6 +749,8 @@ class FixedUpdatePatch
 
                 //seer役職が対象のMark
                 Mark.Append(seerRole?.GetMark(seer, target, false));
+                seerAddon.Do_Addons(x => Mark.Append(x?.GetMark(seer, target, false)));
+
                 //seerに関わらず発動するMark
                 Mark.Append(CustomRoleManager.GetMarkOthers(seer, target, false));
 
@@ -758,16 +761,18 @@ class FixedUpdatePatch
                 AkujoFakeLovers.Marks(__instance, ref Mark);
                 CupidLovers.Marks(__instance, ref Mark);
                 Neptune.Marks(__instance, ref Mark);
-                Mini.Marks(__instance, ref Mark);
 
                 if (!seer.IsModClient())
+                {
                     Suffix.Append(seerRole?.GetLowerText(seer, target));
-                //seerに関わらず発動するLowerText
-                if (!seer.IsModClient())
-                    Suffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target));
+                    seerAddon.Do_Addons(x => Suffix.Append(x?.GetLowerText(seer, target)));
 
+                    //seerに関わらず発動するLowerText
+                    Suffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target));
+                }
                 //seer役職が対象のSuffix
                 Suffix.Append(seerRole?.GetSuffix(seer, target));
+                seerAddon?.Do_Addons(x => Suffix.Append(x?.GetSuffix(seer, target)));
 
                 //seerに関わらず発動するSuffix
                 Suffix.Append(CustomRoleManager.GetSuffixOthers(seer, target));

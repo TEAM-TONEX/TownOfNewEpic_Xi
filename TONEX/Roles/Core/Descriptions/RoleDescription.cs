@@ -16,7 +16,7 @@ public abstract class RoleDescription
     /// ヘルプコマンドで使用される長い説明文<br/>
     /// AmongUs2023.7.12時点で，Impostor, Crewmateに関してはバニラ側でロング説明文が未実装のため「タスクを行う」と表示される
     /// </summary>
-    public abstract string Description { get; }
+    public abstract string Description { get;}
     public string FullFormatHelp
     {
         get
@@ -24,26 +24,31 @@ public abstract class RoleDescription
             var builder = new StringBuilder(256);
             builder.AppendFormat("<size={0}>\n", BlankLineSize);
             // 职业名
-            builder.AppendFormat("<size={0}>{1}", FirstHeaderSize, Translator.GetRoleString(RoleInfo.RoleName.ToString()).Color(RoleInfo.RoleColor.ToReadableColor()));
+            builder.AppendFormat
+                ("<size={0}>{1}", FirstHeaderSize, 
+                Translator.GetRoleString(RoleInfo.RoleName.ToString()).Color(RoleInfo.RoleColor.ToReadableColor()));
+
+            
+
+            var rn = RoleInfo.RoleName;
             // 职业阵营 / 原版职业
             var roleTeam = RoleInfo.CustomRoleType;
             builder.AppendFormat("<size={0}> ({1}, {2})\n", BodySize, Translator.GetString($"Team{roleTeam}"), Translator.GetString("BaseOn") + Translator.GetString(RoleInfo.BaseRoleType.Invoke().ToString()));
             builder.AppendFormat("<size={0}>{1}\n", BodySize, Description);
+
             // 职业设定
-            var rn = RoleInfo.RoleName;
             if (rn is CustomRoles.Prosecutors)
-                RoleInfo.RoleName = CustomRoles.Lawyer;
+                rn = CustomRoles.Lawyer;
             else if (rn is CustomRoles.MimicKiller or CustomRoles.MimicAssistant)
-                RoleInfo.RoleName = CustomRoles.Mimic;
+                rn = CustomRoles.Mimic;
             else if (rn is CustomRoles.GodOfPlagues)
-                RoleInfo.RoleName = CustomRoles.Plaguebearer;
+                rn = CustomRoles.Plaguebearer;
             else if (rn is CustomRoles.Sidekick or CustomRoles.Whoops)
-                RoleInfo.RoleName = CustomRoles.Jackal;
+                rn = CustomRoles.Jackal;
             else if (rn is CustomRoles.Deputy)
-                RoleInfo.RoleName = CustomRoles.Sheriff;
-            if (Options.CustomRoleSpawnChances.TryGetValue(RoleInfo.RoleName, out var opt))
+                rn = CustomRoles.Sheriff;
+            if (Options.CustomRoleSpawnChances.TryGetValue(rn, out var opt))
                 Utils.ShowChildrenSettings(opt, ref builder, forChat: true);
-            RoleInfo.RoleName = rn;
             return builder.ToString();
         }
     }

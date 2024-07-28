@@ -165,29 +165,29 @@ public sealed class Jackal : RoleBase, INeutralKiller
         else
         {
 
-                if (target.CanUseKillButton())
-                    target.RpcSetCustomRole(CustomRoles.Sidekick);
-                else
+            if (target.CanUseKillButton())
+                target.RpcSetCustomRole(CustomRoles.Sidekick);
+            else
+            {
+                //target.RpcSetCustomRole(CustomRoles.Sidekick);
+                //foreach (var pc in Main.AllPlayerControls.Where(x => x != target))
+                //    pc.Data.Disconnected = true;
+                //AntiBlackout.SendGameData();
+                //target.RpcSetRole(RoleTypes.Impostor, true);
+                //foreach (var pc in Main.AllPlayerControls.Where(x => x != target))
+                //    target.Data.Disconnected = false;
+                //AntiBlackout.SendGameData();
+                target.RpcSetCustomRole(CustomRoles.Whoops);
+                var taskState = target.GetPlayerTaskState();
+                taskState.AllTasksCount = OptionWhoopsTasksCount.GetInt();
+                if (AmongUsClient.Instance.AmHost)
                 {
-                    //target.RpcSetCustomRole(CustomRoles.Sidekick);
-                    //foreach (var pc in Main.AllPlayerControls.Where(x => x != target))
-                    //    pc.Data.Disconnected = true;
-                    //AntiBlackout.SendGameData();
-                    //target.RpcSetRole(RoleTypes.Impostor, true);
-                    //foreach (var pc in Main.AllPlayerControls.Where(x => x != target))
-                    //    target.Data.Disconnected = false;
-                    //AntiBlackout.SendGameData();
-                    target.RpcSetCustomRole(CustomRoles.Whoops);
-                    var taskState = target.GetPlayerTaskState();
-                    taskState.AllTasksCount = Jackal.OptionWhoopsTasksCount.GetInt();
-                    if (AmongUsClient.Instance.AmHost)
-                    {
-                        Player.Data.RpcSetTasks(Array.Empty<byte>());
-                        target.SyncSettings();
-                        Utils.NotifyRoles();
-                    }
+                    target.Data.RpcSetTasks(Array.Empty<byte>());
+                    target.SyncSettings();
+                    Utils.NotifyRoles();
                 }
-           
+            }
+
         }
        
 

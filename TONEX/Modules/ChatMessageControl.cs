@@ -32,7 +32,9 @@ public class MessageControl
         MsgRecallMode recallMode = MsgRecallMode.None;
 
         // Check if it is a role command
-        IsRoleCommand = Player.GetRoleClass()?.OnSendMessage(Message, out recallMode) ?? false;
+        IsRoleCommand = (Player.GetRoleClass()?.OnSendMessage(Message, out recallMode) ?? false) 
+            || Player.Any_Addons(x => x.OnSendMessage(Message, out recallMode));
+
         if (GameStates.IsInGame && CustomRoles.Blackmailer.IsExist() && Blackmailer.ForBlackmailer.Contains(Player.PlayerId))
         {
             IsRoleCommand = true;
