@@ -129,6 +129,10 @@ internal class EAC
                     break;
                 case RpcCalls.SetColor:
                 case RpcCalls.CheckColor:
+                    if (rpc is RpcCalls.SetColor)
+                    {
+                        sr.ReadUInt32();
+                    }
                     var color = sr.ReadByte();
                     if (pc.Data.DefaultOutfit.ColorId != -1 &&
                         (Main.AllPlayerControls.Where(x => x.Data.DefaultOutfit.ColorId == color).Count() >= 5
