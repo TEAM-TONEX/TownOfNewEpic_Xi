@@ -9,7 +9,6 @@ using TONEX.Attributes;
 using TONEX.Modules;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.Impostor;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using static TONEX.Translator;
@@ -252,10 +251,6 @@ public static class CustomRoleManager
         //ターゲットの処理
         var targetRole = attemptTarget.GetRoleClass();
         targetRole?.OnMurderPlayerAsTarget(info);
-        //SubRoles
-        Bait.OnMurderPlayerOthers(info);
-        Beartrap.OnMurderPlayerOthers(info);
-        Avenger.OnMurderPlayerOthers(info);
         
         //その他視点の処理があれば実行
         foreach (var onMurderPlayer in OnMurderPlayerOthers.ToArray())
@@ -314,7 +309,6 @@ public static class CustomRoleManager
             {
                 player.GetRoleClass()?.OnSecondsUpdate(player, now);
                 player.Do_Addons(x => x.OnSecondsUpdate(player, now));
-                Chameleon.OnSecondsUpdate(player, now);
                 LastSecondsUpdate[player.PlayerId] = now;
             }
             var roleclass = player.GetRoleClass();
@@ -351,7 +345,6 @@ public static class CustomRoleManager
 
             player.GetRoleClass()?.OnFixedUpdate(player);
             
-            Bait.OnFixedUpdate(player);
             //その他視点処理があれば実行
             foreach (var onFixedUpdate in OnFixedUpdateOthers)
             {
@@ -424,97 +417,7 @@ public static class CustomRoleManager
             Main.CheckShapeshift.TryAdd(player.PlayerId, false);
         }
     }
-    public static void OtherRolesAdd(PlayerControl pc)
-    {
 
-        foreach (var subRole in pc.GetCustomSubRoles())
-        {
-            switch (subRole)
-            {
-                case CustomRoles.Watcher:
-                    Watcher.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Avenger:
-                    Avenger.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Bait:
-                    Bait.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Bewilder:
-                    Bewilder.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Tiebreaker:
-                    Tiebreaker.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Schizophrenic:
-                    Schizophrenic.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Egoist:
-                    Egoist.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Flashman:
-                    Flashman.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Fool:
-                    Fool.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Lighter:
-                    Lighter.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Neptune:
-                    Neptune.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Oblivious:
-                    Oblivious.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Reach:
-                    Reach.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Seer:
-                    Seer.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Beartrap:
-                    Beartrap.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.YouTuber:
-                    YouTuber.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Mimic:
-                    Mimic.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.TicketsStealer:
-                    TicketsStealer.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Rambler:
-                    Rambler.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Chameleon:
-                    Chameleon.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Libertarian:
-                    Libertarian.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Signal:
-                    Signal.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Spiders:
-                    Spiders.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Diseased:
-                    Diseased.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Believer:
-                    Believer.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Nihility:
-                    Nihility.Add(pc.PlayerId);
-                    break;
-                case CustomRoles.Guesser:
-                    Guesser.Add(pc.PlayerId);
-                    break;
-            }
-        }
-    }
     /// <summary>
     /// 从收到的RPC中取得目标并传给职业类
     /// </summary>

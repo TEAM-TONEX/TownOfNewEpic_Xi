@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using TONEX.Modules;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.Impostor;
 using TONEX.MoreGameModes;
 using TONEX.Roles.Core;
 using UnityEngine;
@@ -672,41 +671,10 @@ public static class Options
 
         // 通用附加
 
-        Lovers.SetupCustomOption();
-        Neptune.SetupCustomOption();
-        Watcher.SetupCustomOption();
-        Lighter.SetupCustomOption();
-        Seer.SetupCustomOption();
-        Flashman.SetupCustomOption();
-        Tiebreaker.SetupCustomOption();
-        Oblivious.SetupCustomOption();
-        Bewilder.SetupCustomOption();
-        Fool.SetupCustomOption();
-        Avenger.SetupCustomOption();
-        Egoist.SetupCustomOption();
-        Schizophrenic.SetupCustomOption();
-        Reach.SetupCustomOption();
-        Bait.SetupCustomOption();
-        Beartrap.SetupCustomOption();
-        Rambler.SetupCustomOption() ;
-        Signal.SetupCustomOption();
-        Libertarian.SetupCustomOption();
-        Diseased.SetupCustomOption();
-        Nihility.SetupCustomOption();
-        Believer.SetupCustomOption();
-        Guesser.SetupCustomOption();
 
-
-        YouTuber.SetupCustomOption();
-        Workhorse.SetupCustomOption();
         Madmate.SetupMadmateRoleOptionsToggle(75_1_2_1500);
 
 
-        LastImpostor.SetupCustomOption();
-        TicketsStealer.SetupCustomOption();
-        Mimic.SetupCustomOption();
-        Spiders.SetupCustomOption();
-        PublicOpinionShaper.SetupCustomOption();
 
         #endregion
 

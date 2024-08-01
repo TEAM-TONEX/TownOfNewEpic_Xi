@@ -11,32 +11,45 @@ using System.Text;
 using InnerNet;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Lovers
+public sealed class Lovers : AddonBase
 {
-    private static readonly int Id = 75_1_2_1400;
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Lovers),
+    player => new Lovers(player),
+    CustomRoles.Lovers,
+    75_1_2_1400,
+    SetupOptionItem,
+    "lo|情人|愛人|链子",
+    "#ff9ace"
+    );
+    public Lovers(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
+
 
     public static OptionItem LoverKnowRoles;
     public static OptionItem LoverSuicide;
 
     public static List<PlayerControl> LoversPlayers = new();
     public static bool isLoversDead = true;
-    public static void SetupCustomOption()
+
+    enum OptionName
     {
-        SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.Lovers, assignCountRule: new(2, 2, 2));
-        LoverKnowRoles = BooleanOptionItem.Create(Id + 4, "LoverKnowRoles", true, TabGroup.Addons, false).SetParent(Options.CustomRoleSpawnChances[CustomRoles.Lovers])
-            .SetGameMode(CustomGameMode.Standard);
-        LoverSuicide = BooleanOptionItem.Create(Id + 3, "LoverSuicide", true, TabGroup.Addons, false).SetParent(Options.CustomRoleSpawnChances[CustomRoles.Lovers])
-            .SetGameMode(CustomGameMode.Standard);
+        LoverKnowRoles,
+             LoverSuicide,
     }
-    [GameModuleInitializer]
-    public static void Init()
+
+    static void SetupOptionItem()
     {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
+        LoverKnowRoles = BooleanOptionItem.Create(RoleInfo, 20, OptionName.LoverKnowRoles, true, false)
+      .SetGameMode(CustomGameMode.Standard);
+        LoverSuicide = BooleanOptionItem.Create(RoleInfo, 21, OptionName.LoverSuicide, true,false)
+            .SetGameMode(CustomGameMode.Standard);
     }
     public static void ReceiveRPC(MessageReader reader)
     {
@@ -45,8 +58,6 @@ public static class Lovers
         for (int i = 0; i < count; i++)
             LoversPlayers.Add(Utils.GetPlayerById(reader.ReadByte()));
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
     public static void SyncLoversPlayers()
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -76,11 +87,11 @@ public static class Lovers
             if (CustomRoles.Lovers.IsExist(true) && !isLoversDead && LoversPlayers.Find(lp => lp.PlayerId == playerId) != null)
                 LoversSuicide(playerId, true);
         }
-    }
+    } 
     public static void AssignLoversRoles(int RawCount = -1)
     {
         if (!CustomRoles.Lovers.IsEnable()) return;
-            if (Main.AllPlayerControls.Count() < 2) return;
+        if (Main.AllPlayerControls.Count() < 2) return;
         //Loversを初期化
         LoversPlayers.Clear();
         isLoversDead = false;
@@ -172,15 +183,15 @@ public static class Lovers
             targetMark.Append($"<color={GetRoleColorCode(CustomRoles.Lovers)}>♡</color>");
         }
     }
-    public static void Marks(PlayerControl __instance,ref StringBuilder Mark)
+    public static void Marks(PlayerControl __instance, ref StringBuilder Mark)
     {
-    if (__instance.Is(CustomRoles.Lovers) && PlayerControl.LocalPlayer.Is(CustomRoles.Lovers))
-                {
-                    Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.Lovers)}>♡</color>");
-                }
-                else if (__instance.Is(CustomRoles.Lovers) && PlayerControl.LocalPlayer.Data.IsDead)
-                {
-                    Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.Lovers)}>♡</color>");
-                }
+        if (__instance.Is(CustomRoles.Lovers) && PlayerControl.LocalPlayer.Is(CustomRoles.Lovers))
+        {
+            Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.Lovers)}>♡</color>");
+        }
+        else if (__instance.Is(CustomRoles.Lovers) && PlayerControl.LocalPlayer.Data.IsDead)
+        {
+            Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.Lovers)}>♡</color>");
+        }
     }
 }

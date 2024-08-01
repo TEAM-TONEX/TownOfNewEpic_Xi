@@ -20,7 +20,6 @@ using TONEX.Roles.Ghost.Crewmate;
 using TONEX.Roles.Ghost.Impostor;
 using TONEX.Roles.Ghost.Neutral;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.Impostor;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Crewmate;
@@ -688,7 +687,6 @@ public static class Utils
         //SubRoles
         addonClasses?.Where(x => x != null).Do(x => x.GetProgressText(comms));
   
-        ProgressText.Append(TicketsStealer.GetProgressText(playerId, comms));
         ////GameMode
         if (Options.CurrentGameMode == CustomGameMode.FFA && role == CustomRoles.Killer)
             ProgressText.Append(FFAManager.GetDisplayScore(playerId));
@@ -709,8 +707,8 @@ public static class Utils
         var TaskCompleteColor = HasTasks(info) ? Color.green : GetRoleColor(state.MainRole).ShadeColor(0.5f); //タスク完了後の色
         var NonCompleteColor = HasTasks(info) ? Color.yellow : Color.white; //カウントされない人外は白色
 
-        if (Workhorse.IsThisRole(playerId))
-            NonCompleteColor = Workhorse.RoleColor;
+        if (GetPlayerById(playerId).Is(CustomRoles.Workhorse))
+            NonCompleteColor = Workhorse.RoleInfo.RoleColor;
 
         var NormalColor = state.taskState.IsTaskFinished ? TaskCompleteColor : NonCompleteColor;
 
@@ -1355,7 +1353,6 @@ public static class Utils
         if (Main.AssistivePluginMode.Value) return;
         foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
             roleClass.AfterMeetingTasks();
-        Signal.AfterMeet();
 
 #if DEBUG
         if (InjusticeSpirit.SetPlayer != null)

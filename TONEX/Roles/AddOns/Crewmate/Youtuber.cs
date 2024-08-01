@@ -1,31 +1,24 @@
-using System.Collections.Generic;
-using TONEX.Attributes;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
 
-namespace TONEX.Roles.AddOns.Crewmate;
-public static class YouTuber
+namespace TONEX.Roles.AddOns.Common;
+public sealed class YouTuber : AddonBase
 {
-    private static readonly int Id = 80700;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.YouTuber);
-    private static List<byte> playerIdList = new();
-
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.YouTuber);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.YouTuber, true, false, false);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(YouTuber),
+    player => new YouTuber(player),
+    CustomRoles.YouTuber,
+   80700,
+    null,
+    "yt|up",
+    "#fb749b",
+    1
+    );
+    public YouTuber(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
 }

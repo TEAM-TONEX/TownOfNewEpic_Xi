@@ -1,64 +1,69 @@
 using System;
-using System.Collections.Generic;
-using TONEX.Attributes;
 using TONEX.Modules.SoundInterface;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
 using static TONEX.Translator;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Bait
+public sealed class Bait : AddonBase
 {
-    private static readonly int Id = 81700;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Bait);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Bait),
+    player => new Bait(player),
+    CustomRoles.Bait,
+    81700,
+    SetupOptionItem,
+    "ba|´ó½±|Í·½±|ÕTðD",
+    "#00f7ff"
+    );
+    public Bait(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
 
     public static OptionItem OptionReportDelayMin;
     public static OptionItem OptionReportDelayMax;
     public static OptionItem OptionDelayNotifyForKiller;
     public static OptionItem OptionCanSeePlayerInVent;
 
-    public static void SetupCustomOption()
+    enum OptionName
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Bait);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Bait, true, true, true);
-        OptionReportDelayMin = FloatOptionItem.Create(Id + 20, "BaitDelayMin", new(0f, 5f, 1f), 0f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Bait])
-            .SetValueFormat(OptionFormat.Seconds);
-        OptionReportDelayMax = FloatOptionItem.Create(Id + 21, "BaitDelayMax", new(0f, 10f, 1f), 0f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Bait])
-            .SetValueFormat(OptionFormat.Seconds);
-        OptionDelayNotifyForKiller = BooleanOptionItem.Create(Id + 22, "BaitDelayNotify", true, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Bait]);
-        OptionCanSeePlayerInVent = BooleanOptionItem.Create(Id + 23, "BaitanSeePlayerInVent", true, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Bait]);
+        BaitDelayMin,
+        BaitDelayMax,
+        BaitDelayNotify,
+        BaitanSeePlayerInVent,
     }
-    [GameModuleInitializer]
-    public static void Init()
+
+    static void SetupOptionItem()
     {
-        playerIdList = new();
+        OptionReportDelayMin = FloatOptionItem.Create(RoleInfo, 20, OptionName.BaitDelayMin, new(0f, 5f, 1f), 0f, false)
+.SetValueFormat(OptionFormat.Seconds);
+        OptionReportDelayMax = FloatOptionItem.Create(RoleInfo, 21, OptionName.BaitDelayMax, new(0f, 10f, 1f), 0f, false)
+.SetValueFormat(OptionFormat.Seconds);
+        OptionDelayNotifyForKiller = BooleanOptionItem.Create(RoleInfo, 22, OptionName.BaitDelayNotify, true, false);
+        OptionCanSeePlayerInVent = BooleanOptionItem.Create(RoleInfo, 23, OptionName.BaitanSeePlayerInVent, true, false);
     }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-    public static void OnMurderPlayerOthers(MurderInfo info)
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (!playerIdList.Contains(target.PlayerId) || info.IsSuicide) return;
-        if (!info.IsSuicide)
-        {
-            killer.RPCPlayCustomSound("Congrats");
-            target.RPCPlayCustomSound("Congrats");
-            float delay;
-            if (OptionReportDelayMax.GetFloat() < OptionReportDelayMin.GetFloat()) delay = 0f;
-            else delay = IRandom.Instance.Next((int)OptionReportDelayMin.GetFloat(), (int)OptionReportDelayMax.GetFloat() + 1);
-            delay = Math.Max(delay, 0.15f);
-            if (delay > 0.15f && OptionDelayNotifyForKiller.GetBool()) killer.Notify(Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), string.Format(Translator.GetString("KillBaitNotify"), (int)delay)), delay);
-            Logger.Info($"{killer.GetNameWithRole()} Killed Bait => {target.GetNameWithRole()}", "Bait.OnMurderPlayerAsTarget");
-            _ = new LateTask(() => { if (GameStates.IsInTask) killer.CmdReportDeadBody(target.Data); }, delay, "Bait Self Report");
-        }
+        if (info.IsSuicide) return true;
+
+        killer.RPCPlayCustomSound("Congrats");
+        target.RPCPlayCustomSound("Congrats");
+        float delay;
+        if (OptionReportDelayMax.GetFloat() < OptionReportDelayMin.GetFloat()) delay = 0f;
+        else delay = IRandom.Instance.Next((int)OptionReportDelayMin.GetFloat(), (int)OptionReportDelayMax.GetFloat() + 1);
+        delay = Math.Max(delay, 0.15f);
+        if (delay > 0.15f && OptionDelayNotifyForKiller.GetBool()) killer.Notify(Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), string.Format(Translator.GetString("KillBaitNotify"), (int)delay)), delay);
+        Logger.Info($"{killer.GetNameWithRole()} Killed Bait => {target.GetNameWithRole()}", "Bait.OnMurderPlayerAsTarget");
+        _ = new LateTask(() => { if (GameStates.IsInTask) killer.CmdReportDeadBody(target.Data); }, delay, "Bait Self Report");
+        return true;
     }
-    public static void OnFixedUpdate(PlayerControl player)
+    public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (player.Is(CustomRoles.Bait) && OptionCanSeePlayerInVent.GetBool())
@@ -74,3 +79,4 @@ public static class Bait
         }
     }
 }
+

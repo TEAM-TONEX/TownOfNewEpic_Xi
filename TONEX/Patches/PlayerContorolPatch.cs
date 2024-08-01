@@ -16,7 +16,6 @@ using TONEX.Modules.SoundInterface;
 using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.Impostor;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using TONEX.Roles.Crewmate;
@@ -1243,19 +1242,6 @@ public static class PlayerControlDiePatch
                 }
             }
 #endif
-            // Libertarian
-            if (!GameStates.IsMeeting)
-            {
-                var playerIdListCopy = Libertarian.playerIdList;
-                foreach (var player in playerIdListCopy)
-                {
-                    var li = Utils.GetPlayerById(player);
-                    if (li != null && Vector2.Distance(li.transform.position, __instance.transform.position) <= Libertarian.OptionRadius.GetFloat())
-                    {
-                        li.NoCheckStartMeeting(__instance?.Data);
-                    }
-                }
-            }
             // 死者の最終位置にペットが残るバグ対応
             __instance.SetOutFit(petId:"");
         }

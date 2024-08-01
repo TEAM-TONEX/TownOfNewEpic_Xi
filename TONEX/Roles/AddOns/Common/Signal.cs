@@ -4,52 +4,41 @@ using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
-using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Signal
+public sealed class Signal : AddonBase
 {
-    private static readonly int Id = 75_1_0_0300;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Signal);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Signal),
+    player => new Signal(player),
+    CustomRoles.Signal,
+    75_1_0_0300,
+    null,
+    "si|通讯",
+    "#F39C12"
+    );
+    public Signal(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
     public static Dictionary<byte, Vector2> Signalbacktrack = new();
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Signal);
-        AddOnsAssignData.Create(Id + 10, TabGroup.Addons, CustomRoles.Signal, true, true, true);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-        Signalbacktrack = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
     public static void AddPosi()
     {
         Signalbacktrack = new();
         foreach (var player in Main.AllPlayerControls)
         {
-            if (!AmongUsClient.Instance.AmHost ||  !player.Is(CustomRoles.Signal)) return;
+            if (!AmongUsClient.Instance.AmHost || !player.Is(CustomRoles.Signal)) return;
             Signalbacktrack.Add(player.PlayerId, player.GetTruePosition());
-            
         }
         SendRPC();
     }
-    public static void AfterMeet()
+    public override void AfterMeetingTasks()
     {
-        foreach (var pc in Main.AllPlayerControls)
-        {
-            if (pc.Is(CustomRoles.Signal) && Signalbacktrack.ContainsKey(pc.PlayerId))
-            {
-                pc.RpcTeleport(Signalbacktrack[pc.PlayerId]);
-            }
-        }
+        if (Signalbacktrack.ContainsKey(Player.PlayerId))
+            Player.RpcTeleport(Signalbacktrack[Player.PlayerId]);
         Signalbacktrack = new();
     }
     public static void SendRPC()
@@ -73,6 +62,6 @@ public static class Signal
         var x = reader.ReadSingle();
         var y = reader.ReadSingle();
         Signalbacktrack = new();
-        Signalbacktrack.Add(pc,new(x, y));
+        Signalbacktrack.Add(pc, new(x, y));
     }
 }

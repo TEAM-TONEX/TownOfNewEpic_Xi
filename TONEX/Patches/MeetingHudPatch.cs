@@ -250,7 +250,6 @@ public static class MeetingHudPatch
                     }
                 }));
                 MeetingStartNotify.OnMeetingStart();
-                Tiebreaker.OnMeetingStart();
 
             }
 

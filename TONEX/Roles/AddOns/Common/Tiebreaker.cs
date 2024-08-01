@@ -3,37 +3,31 @@ using System.Linq;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
+using System.Drawing;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Tiebreaker
+public sealed class Tiebreaker : AddonBase
 {
-    private static readonly int Id = 81000;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Tiebreaker);
-    private static List<byte> playerIdList = new();
-
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Tiebreaker),
+    player => new Tiebreaker(player),
+    CustomRoles.Tiebreaker,
+   81000,
+    null,
+    "br|ÆÆÆ½",
+    "#1447af"
+    );
+    public Tiebreaker(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
     private static Dictionary<byte, byte> TiebreakerVotes = new();
-
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Tiebreaker);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Tiebreaker, true, true, true);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-        TiebreakerVotes = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
     public static void OnVote(byte voter, byte target)
     {
-        if (playerIdList.Contains(voter))
+        if (Utils.GetPlayerById(voter).Is(CustomRoles.Tiebreaker))
         {
             TiebreakerVotes.TryAdd(voter, target);
             TiebreakerVotes[voter] = target;
@@ -50,7 +44,7 @@ public static class Tiebreaker
         }
         return false;
     }
-    public static void OnMeetingStart()
+    public override void OnStartMeeting()
     {
         TiebreakerVotes = new();
     }

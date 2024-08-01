@@ -2,29 +2,26 @@ using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
 
-namespace TONEX.Roles.AddOns.Impostor;
-public static class Mimic
+namespace TONEX.Roles.AddOns.Common;
+public sealed class Mimic : AddonBase
 {
-    private static readonly int Id = 82000;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Mimic);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Mimic),
+    player => new Mimic(player),
+    CustomRoles.Mimic,
+    82000,
+    null,
+    "mi|ŒšÏä¹Ö|±¦Ïä",
+    "#ff1919",
+    2
+    );
+    public Mimic(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Mimic);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Mimic, false, true, false);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }

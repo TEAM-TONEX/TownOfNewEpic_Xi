@@ -99,24 +99,8 @@ public class PlayerGameOptionsSender : GameOptionsSender
         {
             switch (subRole)
             {
-                case CustomRoles.Watcher:
-                    opt.SetBool(BoolOptionNames.AnonymousVotes, false);
-                    break;
                 case CustomRoles.Flashman:
                     Main.AllPlayerSpeed[player.PlayerId] = Flashman.OptionSpeed.GetFloat();
-                    break;
-                case CustomRoles.Lighter:
-                    opt.SetVision(true);
-                    opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision + Lighter.OptionVistion.GetFloat()) > 5f?5f : Main.DefaultCrewmateVision + Lighter.OptionVistion.GetFloat());
-                    opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultImpostorVision + Lighter.OptionVistion.GetFloat()) > 5f ? 5f : Main.DefaultImpostorVision + Lighter.OptionVistion.GetFloat());
-                    break;
-                case CustomRoles.Bewilder:
-                    opt.SetVision(false);
-                    opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat()) <0f? 0f: Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat());
-                    opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat()) < 0f ? 0f : Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat());
-                    break;
-                case CustomRoles.Reach:
-                    opt.SetInt(Int32OptionNames.KillDistance, 2);
                     break;
                 case CustomRoles.Mini:
                     

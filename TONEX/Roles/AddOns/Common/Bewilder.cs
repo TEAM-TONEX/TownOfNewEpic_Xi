@@ -1,34 +1,42 @@
-using System.Collections.Generic;
-using TONEX.Attributes;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
+using AmongUs.GameOptions;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Bewilder
+public sealed class Bewilder : AddonBase
 {
-    private static readonly int Id = 81200;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Bewilder);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Bewilder),
+    player => new Bewilder(player),
+    CustomRoles.Bewilder,
+    81200,
+    SetupOptionItem,
+    "bwd|√‘ªÛ’ﬂ",
+    "#c894f5"
+    );
+    public Bewilder(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
+
 
     public static OptionItem OptionVision;
+    enum OptionName
+    {
+        BewilderVision
+    }
 
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Bewilder);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Bewilder, true, false, true);
-        OptionVision = FloatOptionItem.Create(Id + 20, "BewilderVision", new(0f, 5f, 0.05f), 0.6f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Bewilder])
-            .SetValueFormat(OptionFormat.Multiplier);
+    static void SetupOptionItem()
+    {;
+        OptionVision = FloatOptionItem.Create(RoleInfo, 20, OptionName.BewilderVision, new(0f, 5f, 0.05f), 0.6f, false)
+.SetValueFormat(OptionFormat.Multiplier);
     }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
+    public override void ApplyGameOptions(IGameOptions opt) {
+        opt.SetVision(false);
+        opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision - OptionVision.GetFloat()) < 0f ? 0f : Main.DefaultCrewmateVision - OptionVision.GetFloat());
+        opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultCrewmateVision - OptionVision.GetFloat()) < 0f ? 0f : Main.DefaultCrewmateVision - OptionVision.GetFloat());
     }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }

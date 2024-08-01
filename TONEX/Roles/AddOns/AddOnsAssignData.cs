@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.Impostor;
 using TONEX.Roles.Core;
 using UnityEngine;
 using static TONEX.Options;

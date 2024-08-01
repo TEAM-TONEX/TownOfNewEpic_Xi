@@ -2,30 +2,26 @@ using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
+using System.Drawing;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Seer
+public sealed class Seer : AddonBase
 {
-    private static readonly int Id = 80900;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Seer);
-    private static List<byte> playerIdList = new();
-
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Seer);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Seer, true, true, true);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Seer),
+    player => new Seer(player),
+    CustomRoles.Seer,
+   80900,
+    null,
+    "se|ì`Ã½",
+    "#61b26c"
+    );
+    public Seer(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
 }

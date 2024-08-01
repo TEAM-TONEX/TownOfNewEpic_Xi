@@ -1,40 +1,42 @@
-using System.Collections.Generic;
-using TONEX.Attributes;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Beartrap
+public sealed class Beartrap : AddonBase
 {
-    private static readonly int Id = 81800;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Beartrap);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Beartrap),
+    player => new Beartrap(player),
+    CustomRoles.Beartrap,
+    81800,
+    SetupOptionItem,
+    "tra|ÏÝÚåŽŸ|ÏÝÚå|Ð¡½±",
+    "#5a8fd0"
+    );
+    public Beartrap(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
 
     public static OptionItem OptionBlockMoveTime;
 
-    public static void SetupCustomOption()
+    enum OptionName
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Beartrap);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Beartrap, true, true, true);
-        OptionBlockMoveTime = FloatOptionItem.Create(Id + 20, "BeartrapBlockMoveTime", new(1f, 180f, 1f), 5f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Beartrap])
-            .SetValueFormat(OptionFormat.Seconds);
+        BeartrapBlockMoveTime
     }
-    [GameModuleInitializer]
-    public static void Init()
+
+    static void SetupOptionItem()
     {
-        playerIdList = new();
+        OptionBlockMoveTime = FloatOptionItem.Create(RoleInfo, 20, OptionName.BeartrapBlockMoveTime, new(1f, 180f, 1f), 5f, false)
+         .SetValueFormat(OptionFormat.Seconds);
     }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-    public static void OnMurderPlayerOthers(MurderInfo info)
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (!playerIdList.Contains(target.PlayerId) || info.IsSuicide) return;
+        if (info.IsSuicide) return true;
 
         var tmpSpeed = Main.AllPlayerSpeed[killer.PlayerId];
         Main.AllPlayerSpeed[killer.PlayerId] = Main.MinSpeed;    //tmpSpeed¤Çáá¤Û¤É‚Ž¤ò‘ø¤¹¤Î¤Ç´úÈë¤·¤Æ¤¤¤Þ¤¹¡£
@@ -47,5 +49,6 @@ public static class Beartrap
             killer.MarkDirtySettings();
             RPC.PlaySoundRPC(killer.PlayerId, Sounds.TaskComplete);
         }, OptionBlockMoveTime.GetFloat(), "Beartrap BlockMove");
+        return true;
     }
 }

@@ -2,29 +2,26 @@ using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
+using System.Drawing;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Schizophrenic
+public sealed class Schizophrenic : AddonBase
 {
-    private static readonly int Id = 81500;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Schizophrenic);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Schizophrenic),
+    player => new Schizophrenic(player),
+    CustomRoles.Schizophrenic,
+    81500,
+    null,
+    "sp|雙重人格|双重|双人格|人格",
+    "#3a648f"
+    );
+    public Schizophrenic(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Schizophrenic);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Schizophrenic, true, true, false);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }

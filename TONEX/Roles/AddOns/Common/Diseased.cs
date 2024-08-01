@@ -7,52 +7,55 @@ using UnityEngine.UIElements.UIR;
 using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Diseased
+public sealed class Diseased : AddonBase
 {
-    private static readonly int Id = 75_1_1_0500;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Diseased);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Diseased),
+    player => new Diseased(player),
+    CustomRoles.Diseased,
+    75_1_1_0500,
+   SetupOptionItem,
+    "dis|ªº’ﬂ|≤°»À",
+    "#c0c0c0"
+    );
+    public Diseased(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
     public static List<byte> DisList = new();
     public static OptionItem OptionVistion;
+    enum OptionName
+    {
+        DiseasedVision
+    }
 
-    public static void SetupCustomOption()
+    static void SetupOptionItem()
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Diseased);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Diseased, true, true, true);
-        OptionVistion = FloatOptionItem.Create(Id + 20, "DiseasedVision", new(0.5f, 5f, 0.25f), 1.5f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Diseased])
-            .SetValueFormat(OptionFormat.Multiplier);
+        OptionVistion = FloatOptionItem.Create(RoleInfo, 20, OptionName.DiseasedVision, new(0.5f, 5f, 0.25f), 1.5f, false)
+.SetValueFormat(OptionFormat.Multiplier);
     }
-    [GameModuleInitializer]
-    public static void Init()
+    public override void Add() => DisList = new();
+    public void SendRPC()
     {
-        playerIdList = new();
-        DisList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static void SendRPC()
-    {
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetDiseasedList, SendOption.Reliable, -1);
-        writer.Write(DisList.Count);
+        var sender = CreateSender(CustomRPC.SetDiseasedList);
+        sender.Writer.Write(DisList.Count);
         foreach (var pc in DisList)
         {
-            writer.Write(pc);
+            sender.Writer.Write(pc);
         }
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
-    public static void ReceiveRPC(MessageReader reader)
+    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcTypes)
     {
+        if (rpcTypes != CustomRPC.SetDiseasedList) return;
         var dis = reader.ReadInt32();
-        for (int i =0;i<dis; i++)
+        for (int i = 0; i < dis; i++)
         {
             var pc = reader.ReadByte();
-            if(!DisList.Contains(pc))
-            DisList.Add(pc);
+            if (!DisList.Contains(pc))
+                DisList.Add(pc);
         }
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-
 }

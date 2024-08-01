@@ -429,9 +429,6 @@ internal class RPCHandlerPatch
             case CustomRPC.Swap:
                 SwapperHelper.ReceiveRPC(reader, __instance);
                 break;
-            case CustomRPC.SetDiseasedList:
-                Diseased.ReceiveRPC(reader);
-                break;
             case CustomRPC.SetAmberProtectList:
                 Amber.ReceiveRPC_SyncList(reader);
                 break;

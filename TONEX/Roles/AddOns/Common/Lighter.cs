@@ -1,3 +1,4 @@
+using AmongUs.GameOptions;
 using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
@@ -5,31 +6,43 @@ using UnityEngine;
 using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Lighter
+public sealed class Lighter : AddonBase
 {
-    private static readonly int Id = 82100;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Lighter);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Lighter),
+    player => new Lighter(player),
+    CustomRoles.Lighter,
+    82100,
+    SetupOptionItem,
+    "li|執燈人|执灯|灯人|小灯人",
+    "#eee5be"
+    );
+    public Lighter(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
+
+
 
     public static OptionItem OptionVistion;
+    enum OptionName
+    {
+        LighterVision
+    }
 
-    public static void SetupCustomOption()
+    static void SetupOptionItem()
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Lighter);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Lighter, true, true, true);
-        OptionVistion = FloatOptionItem.Create(Id + 20, "LighterVision", new(0.5f, 5f, 0.25f), 1.5f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Lighter])
-            .SetValueFormat(OptionFormat.Multiplier);
+        OptionVistion = FloatOptionItem.Create(RoleInfo, 20, OptionName.LighterVision, new(0.5f, 5f, 0.25f), 1.5f,  false)
+       .SetValueFormat(OptionFormat.Multiplier);
     }
-    [GameModuleInitializer]
-    public static void Init()
+    public override void ApplyGameOptions(IGameOptions opt)
     {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-
+            opt.SetVision(true);
+            opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision +OptionVistion.GetFloat()) > 5f ? 5f : Main.DefaultCrewmateVision + OptionVistion.GetFloat());
+            opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultImpostorVision + OptionVistion.GetFloat()) > 5f ? 5f : Main.DefaultImpostorVision + OptionVistion.GetFloat());
+        }
 }

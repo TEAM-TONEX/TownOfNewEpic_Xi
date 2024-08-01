@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TONEX.Modules;
-using TONEX.Roles.AddOns.Impostor;
 using static TONEX.PlayerControlSetRolePatch;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
