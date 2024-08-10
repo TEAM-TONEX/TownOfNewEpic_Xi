@@ -334,10 +334,11 @@ internal class EAC
                 Report(pc, "AUM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
-            case 101:
-                Report(pc, "AUM");
-                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
-                return true;
+            //N你个歌姬，我们RPC有101！
+            //case 101:
+            //    Report(pc, "AUM");
+            //    HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+            //    return true;
             //Slok你个歌姬
             case unchecked((byte)520)://YuMenu
                 Report(pc, "YM");

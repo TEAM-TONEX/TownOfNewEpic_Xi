@@ -23,45 +23,38 @@ public sealed class Signal : AddonBase
         RoleInfo,
         player
     )
-    { }
-    public static Dictionary<byte, Vector2> Signalbacktrack = new();
-    public static void AddPosi()
     {
-        Signalbacktrack = new();
-        foreach (var player in Main.AllPlayerControls)
-        {
-            if (!AmongUsClient.Instance.AmHost || !player.Is(CustomRoles.Signal)) return;
-            Signalbacktrack.Add(player.PlayerId, player.GetTruePosition());
-        }
+        Signalbacktrack = new Vector2(9999, 9999);
+    }
+    public Vector2 Signalbacktrack = new();
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
+    {
+        
+        Signalbacktrack= Player.GetTruePosition();
         SendRPC();
+        return true;
     }
     public override void AfterMeetingTasks()
     {
-        if (Signalbacktrack.ContainsKey(Player.PlayerId))
-            Player.RpcTeleport(Signalbacktrack[Player.PlayerId]);
-        Signalbacktrack = new();
+        if (Signalbacktrack != new Vector2(9999, 9999))
+            Player.RpcTeleport(Signalbacktrack);
+        Signalbacktrack = new Vector2(9999, 9999);
     }
-    public static void SendRPC()
+    public void SendRPC()
     {
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SignalPosition, SendOption.Reliable, -1);
-        foreach (var pc in Main.AllAlivePlayerControls)
-        {
-            if (Signalbacktrack.ContainsKey(pc.PlayerId))
-            {
-                writer.Write(pc.PlayerId);
-                writer.Write(Signalbacktrack[pc.PlayerId].x);
-                writer.Write(Signalbacktrack[pc.PlayerId].y);
-            }
-        }
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        var sender = CreateSender(CustomRPC.SignalPosition);
+
+        sender.Writer.Write(Signalbacktrack.x);
+        sender.Writer.Write(Signalbacktrack.y);
+
     }
-    public static void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
+    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
     {
         if (rpcType != CustomRPC.SignalPosition) return;
         var pc = reader.ReadByte();
         var x = reader.ReadSingle();
         var y = reader.ReadSingle();
         Signalbacktrack = new();
-        Signalbacktrack.Add(pc, new(x, y));
+        Signalbacktrack=new(x, y);
     }
 }

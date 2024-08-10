@@ -444,6 +444,28 @@ class ReportDeadBodyPatch
                 Logger.Info($" {role.Player.GetNameWithRole()} 技能被禁用", "ReportDeadBody");
             }
         }
+        foreach (var item in CustomRoleManager.AllActiveAddons.Values)
+        {
+            if (!item.Any_Addons(role =>
+            {
+                if (!__instance.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Report, ExtendedPlayerControl.PlayerActionInUse.Skill))
+                {
+                    if (role.OnCheckReportDeadBody(__instance, target) == false)
+                    {
+                        Logger.Info($"会议被 {role.Player.GetNameWithRole()} 取消", "ReportDeadBody");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Logger.Info($" {role.Player.GetNameWithRole()} 技能被禁用", "ReportDeadBody");
+                }
+                return true;
+            }))
+            {
+                return false;
+            }
+        }
 
         //=============================================
         //以下、ボタンが押されることが確定したものとする。
@@ -472,7 +494,6 @@ class ReportDeadBodyPatch
 
         Utils.SyncAllSettings();
         
-            Signal.AddPosi();
         if (target != null)
             if (target.Object.GetRealKiller() != null && target.Object.GetRealKiller().Is(CustomRoles.Spiders))
             {
