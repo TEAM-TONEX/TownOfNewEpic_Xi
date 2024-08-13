@@ -28,7 +28,7 @@ public sealed class TicketsStealer : AddonBase
     {
         TicketsPerKill
     }
-    public static void SetupCustomOption()
+    static void SetupCustomOption()
     {
         OptionTicketsPerKill = FloatOptionItem.Create(RoleInfo, 20, OptionName.TicketsPerKill, new(0.1f, 10f, 0.1f), 0.5f, false)
             .SetValueFormat(OptionFormat.Votes);

@@ -10,26 +10,31 @@ using static TONEX.Utils;
 using System.Text;
 using InnerNet;
 
-namespace TONEX.Roles.AddOns.CanNotOpened;
-public static class AdmirerLovers
+namespace TONEX.Roles.AddOns.Common;
+public sealed class AdmirerLovers : AddonBase
 {
-    //private static readonly int Id = 75_1_2_1800;
-    private static List<byte> playerIdList = new();
-
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(AdmirerLovers),
+    player => new AdmirerLovers(player),
+    CustomRoles.AdmirerLovers,
+    75_1_2_180,
+    null,
+    "al",
+    "#74ba43",
+        ctop:false
+    );
+    public AdmirerLovers(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
     public static OptionItem AdmirerLoverKnowRoles;
     public static OptionItem AdmirerLoverSuicide;
 
     public static List<PlayerControl> AdmirerLoversPlayers = new();
     public static bool isAdmirerLoversDead = true;
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
     public static void ReceiveRPC(MessageReader reader)
     {
         AdmirerLoversPlayers.Clear();
@@ -37,8 +42,6 @@ public static class AdmirerLovers
         for (int i = 0; i < count; i++)
             AdmirerLoversPlayers.Add(Utils.GetPlayerById(reader.ReadByte()));
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
     public static void SyncAdmirerLoversPlayers()
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -134,15 +137,15 @@ public static class AdmirerLovers
             targetMark.Append($"<color={GetRoleColorCode(CustomRoles.AdmirerLovers)}>♡</color>");
         }
     }
-    public static void Marks(PlayerControl __instance,ref StringBuilder Mark)
+    public static void Marks(PlayerControl __instance, ref StringBuilder Mark)
     {
-    if (__instance.Is(CustomRoles.AdmirerLovers) && PlayerControl.LocalPlayer.Is(CustomRoles.AdmirerLovers))
-                {
-                    Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.AdmirerLovers)}>♡</color>");
-                }
-                else if (__instance.Is(CustomRoles.AdmirerLovers) && PlayerControl.LocalPlayer.Data.IsDead)
-                {
-                    Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.AdmirerLovers)}>♡</color>");
-                }
+        if (__instance.Is(CustomRoles.AdmirerLovers) && PlayerControl.LocalPlayer.Is(CustomRoles.AdmirerLovers))
+        {
+            Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.AdmirerLovers)}>♡</color>");
+        }
+        else if (__instance.Is(CustomRoles.AdmirerLovers) && PlayerControl.LocalPlayer.Data.IsDead)
+        {
+            Mark.Append($"<color={Utils.GetRoleColorCode(CustomRoles.AdmirerLovers)}>♡</color>");
+        }
     }
 }

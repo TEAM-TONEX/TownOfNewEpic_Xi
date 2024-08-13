@@ -14,7 +14,7 @@ public sealed class Reach : AddonBase
     CustomRoles.Reach,
      81600,
     null,
-    "re|持槍|手长",
+    "re|持槍|手长|长臂猿|关了吧没意思|开reach|reach开的真长",
     "#74ba43"
     );
     public Reach(PlayerControl player)

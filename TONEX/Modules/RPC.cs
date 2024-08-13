@@ -9,7 +9,6 @@ using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Crewmate;
 using TONEX.Roles.AddOns.Common;
-using TONEX.Roles.AddOns.CanNotOpened;
 using static TONEX.Translator;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
@@ -109,6 +108,8 @@ public enum CustomRPC
     SetDeputyList,
     //伪人
     SetSubstituteLimit,
+    //基因学家
+    SetGeneticistDNA2,
 
     //游戏模式
     SyncFFAPlayer,
@@ -439,6 +440,9 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetDeputyList:
                 Deputy.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.SetGeneticistDNA2:
+                Geneticist.ReceiveRPC_DNA2(reader);
                 break;
             case CustomRPC.SyncFFAPlayer:
                 FFAManager.ReceiveRPCSyncFFAPlayer(reader);

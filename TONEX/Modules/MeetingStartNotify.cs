@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Core;
 using static TONEX.Translator;

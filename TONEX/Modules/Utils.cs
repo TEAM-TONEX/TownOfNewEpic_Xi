@@ -14,7 +14,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using TONEX.Modules;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Ghost.Crewmate;
 using TONEX.Roles.Ghost.Impostor;
@@ -1316,7 +1315,7 @@ public static class Utils
                     target.GetRoleClass()?.OverrideNameAsSeen(seer, ref TargetPlayerName, isForMeeting);
                     target.Do_Addons(x => x?.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting));
 
-                    Guesser.OverrideNameAsSeer(target, ref TargetPlayerName, isForMeeting);
+
                     //ターゲットのプレイヤー名の色を書き換えます。
                     TargetPlayerName = TargetPlayerName.ApplyNameColorData(seer, target, isForMeeting);
 

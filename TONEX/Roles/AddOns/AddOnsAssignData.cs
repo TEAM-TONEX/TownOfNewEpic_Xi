@@ -54,6 +54,7 @@ public class AddOnsAssignData
             or CustomRoles.NiceSwapper or CustomRoles.EvilSwapper) return false;
         if (role is CustomRoles.Guesser && pc.Is(CustomRoles.IncorruptibleOfficial))return false;
         if (role is CustomRoles.IncorruptibleOfficial && pc.Is(CustomRoles.Guesser))return false;
+        if (role is CustomRoles.Awake) return false;
 
         return true;
     }

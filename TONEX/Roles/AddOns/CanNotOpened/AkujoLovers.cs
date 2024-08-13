@@ -10,26 +10,32 @@ using static TONEX.Utils;
 using System.Text;
 using InnerNet;
 
-namespace TONEX.Roles.AddOns.CanNotOpened;
-public static class AkujoLovers
-{
-    //private static readonly int Id = 75_1_2_1900;
-    private static List<byte> playerIdList = new();
 
+namespace TONEX.Roles.AddOns.Common;
+public sealed class AkujoLovers : AddonBase
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(AkujoLovers),
+    player => new AkujoLovers(player),
+    CustomRoles.AkujoLovers,
+     75_1_2_2000,
+    null,
+    "aklo|魅魔情人|魅魔愛人|魅魔链子",
+    "#8E4593",
+    ctop: false
+    );
+    public AkujoLovers(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
     public static OptionItem AkujoLoverKnowRoles;
     public static OptionItem AkujoLoverSuicide;
 
     public static List<PlayerControl> AkujoLoversPlayers = new();
     public static bool isAkujoLoversDead = true;
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
     public static void ReceiveRPC(MessageReader reader)
     {
         AkujoLoversPlayers.Clear();
@@ -37,8 +43,6 @@ public static class AkujoLovers
         for (int i = 0; i < count; i++)
             AkujoLoversPlayers.Add(Utils.GetPlayerById(reader.ReadByte()));
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
     public static void SyncAkujoLoversPlayers()
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -138,7 +142,7 @@ public static class AkujoLovers
             targetMark.Append($"<color={GetRoleColorCode(CustomRoles.AkujoLovers)}>❤</color>");
         }
     }
-    public static void Marks(PlayerControl __instance,ref StringBuilder Mark)
+    public static void Marks(PlayerControl __instance, ref StringBuilder Mark)
     {
         if (__instance.Is(CustomRoles.AkujoLovers) && PlayerControl.LocalPlayer.Is(CustomRoles.Akujo))
         {

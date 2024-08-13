@@ -5,7 +5,6 @@ using System.Text;
 using TONEX.Modules;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.Core;
 using TONEX.Roles.Crewmate;
 using TONEX.Roles.Neutral;
@@ -276,7 +275,6 @@ public static class MeetingHudPatch
                 //调用职业类通过 seen 重写 name
                 target.GetRoleClass()?.OverrideNameAsSeen(seer, ref overrideName, true);
                 target.Do_Addons(x => x?.OverrideNameAsSeen(seer, ref overrideName, true));
-                Guesser.OverrideNameAsSeer(target, ref overrideName, true);
 
                 pva.NameText.text = overrideName;
                 //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。

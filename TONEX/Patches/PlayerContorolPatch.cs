@@ -13,7 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TONEX.Modules;
 using TONEX.Modules.SoundInterface;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
 using TONEX.Roles.Core;
@@ -1316,15 +1315,52 @@ class CheckVanishPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (__instance.GetRoleClass()?.OnVanish() == false && AmongUsClient.Instance.AmHost)
+        {
+
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.StartVanish, SendOption.Reliable, __instance.GetClientId());
+            messageWriter.WriteNetObject(__instance);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+
+
+            MessageWriter messageWriter1 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.StartAppear, SendOption.Reliable, __instance.GetClientId());
+            messageWriter1.WriteNetObject(__instance);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter1);
+
+
+            __instance.RpcResetAbilityCooldown();
+
+
+            return false;
+        }
+
+        return true;
+    }
+}
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdCheckAppear))]
+class CmdCheckAppearPatch
+{
+    public static bool Prefix([HarmonyArgument(0)] PlayerControl __instance, [HarmonyArgument(1)] bool shouldAnimate)
+    {
+        if (!__instance.IsEaten())
+        {
+            if (__instance.GetRoleClass()?.OnAppear(__instance, shouldAnimate) == false)
+                return false;
+        }
         return true;
     }
 }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
 class CheckAppearPatch
 {
-    public static bool Prefix(PlayerControl __instance, bool shouldAnimate)
+    public static bool Prefix([HarmonyArgument(0)] PlayerControl __instance, [HarmonyArgument(1)] bool shouldAnimate)
     {
+        if (!__instance.IsEaten())
+        {
+            if (__instance.GetRoleClass()?.OnAppear(__instance,shouldAnimate) == false)
+                return false; 
+        }
         return true;
     }
 }

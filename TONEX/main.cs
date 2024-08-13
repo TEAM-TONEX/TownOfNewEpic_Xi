@@ -260,13 +260,9 @@ public class Main : BasePlugin
                 //Add-Ons
                 {CustomRoles.NotAssigned, "#ffffff"},
                 {CustomRoles.LastImpostor, "#ff1919"},
-                {CustomRoles.AkujoLovers, "#8E4593"},
-                {CustomRoles.AkujoFakeLovers, "#9C709F"},
-                {CustomRoles.CupidLovers, "#F69896"},
                 {CustomRoles.Madmate, "#ff1919"},
                 {CustomRoles.Charmed, "#ff00ff"},
                 {CustomRoles.Wolfmate,"#00b4eb" },
-                {CustomRoles.Guesser, "#DF9965" },
             };
             var roletype = typeof(RoleBase);
             var roleClassArray = Assembly.GetAssembly(roletype)

@@ -36,10 +36,6 @@ public class MeetingButtonManager
             {
                 CreateMeetingButton(__instance, meetingButton);
             }
-            else if (PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && Guesser.ShouldShowButton())
-            {
-                CreateMeetingButton(__instance, null);
-            }
         }
     }
 
@@ -73,11 +69,6 @@ public class MeetingButtonManager
             ButtonCreated = false;
         }
 
-        if (ButtonCreated && Guesser.ShouldShowButton())
-        {
-            ClearMeetingButton(__instance, true);
-            ButtonCreated = false;
-        }
 
         //检查是否应该创建按钮
         if (!ButtonCreated && meetingButton.ShouldShowButton())
@@ -85,10 +76,6 @@ public class MeetingButtonManager
             CreateMeetingButton(__instance, meetingButton);
         }
 
-        if (!ButtonCreated && Guesser.ShouldShowButton())
-        {
-            CreateMeetingButton(__instance, meetingButton);
-        }
 
         //销毁死亡玩家身上的技能按钮
         ClearMeetingButton(__instance);
@@ -101,8 +88,7 @@ public class MeetingButtonManager
             var pc = Utils.GetPlayerById(pva.TargetPlayerId);
             Logger.Info("Try To Create M Button", "test");
             if (pc == null 
-                || !PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !(meetingButton?.ShouldShowButtonFor(pc) ?? false)
-                || PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !Guesser.ShouldShowButtonFor(pc)) continue;
+                || !PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !(meetingButton?.ShouldShowButtonFor(pc) ?? false)) continue;
 
 
             GameObject template = pva.Buttons.transform.Find("CancelButton").gameObject;
@@ -144,16 +130,6 @@ public class MeetingButtonManager
                         
                     }
                     
-                }
-                else if (Guesser.OnClickButtonLocal(pc))
-                {
-                    if (AmongUsClient.Instance.AmHost) {}
-                    else
-                    {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OnClickMeetingButton, SendOption.Reliable, -1);
-                        writer.Write(pc.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    }
                 }
                 ClearMeetingButton(__instance, true);
                 CreateMeetingButton(__instance, meetingButton);

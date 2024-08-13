@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using TONEX.Roles.Core;
+using TONEX.Roles.Core.Interfaces;
 using static TONEX.GuesserHelper;
 
 
 namespace TONEX.Roles.AddOns.Common;
-public sealed class Guesser : AddonBase
+public sealed class Guesser : AddonBase, IMeetingButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
     SimpleRoleInfo.Create(
@@ -13,8 +14,8 @@ public sealed class Guesser : AddonBase
     CustomRoles.Guesser,
    75_1_3_0200,
     SetupOptionItem,
-    "li|广播|自主主义者",
-    "#33CC99"
+    "Gu|附加赌|赌怪",
+    "#DF9965"
     );
     public Guesser(PlayerControl player)
     : base(
@@ -59,13 +60,12 @@ public sealed class Guesser : AddonBase
         player = Player.PlayerId;
         GuessLimit.TryAdd(Player.PlayerId, OptionGuessNums.GetInt());
     }
-    public static void OverrideNameAsSeer(PlayerControl seen, ref string nameText, bool isForMeeting = false)
-    {
-          nameText = Utils.ColorString(Utils.GetRoleColor(CustomRoles.EvilGuesser), seen.PlayerId.ToString()) + " " + nameText;    
-    }
-    public static bool ShouldShowButton() => PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.PlayerId == player;
-    public static bool ShouldShowButtonFor(PlayerControl target) => target.IsAlive() && PlayerControl.LocalPlayer.PlayerId == player;
-    public static bool OnClickButtonLocal(PlayerControl target)
+    public override void OverrideNameAsSeer(PlayerControl seen, ref string nameText, bool isForMeeting = false)
+    => nameText = Utils.ColorString(Utils.GetRoleColor(CustomRoles.EvilGuesser), seen.PlayerId.ToString()) + " " + nameText;
+
+    public bool ShouldShowButton() => PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.PlayerId == player;
+    public bool ShouldShowButtonFor(PlayerControl target) => target.IsAlive() && PlayerControl.LocalPlayer.PlayerId == player;
+    public bool OnClickButtonLocal(PlayerControl target)
     {
         ShowGuessPanel(target.PlayerId, MeetingHud.Instance);
         return false;

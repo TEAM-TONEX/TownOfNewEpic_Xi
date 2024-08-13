@@ -7,8 +7,8 @@ using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
-using static TONEX.Roles.AddOns.CanNotOpened.AkujoLovers;
 using UnityEngine.ProBuilder;
+using TONEX.Roles.AddOns.Common;
 
 namespace TONEX.Roles.Neutral;
 public sealed class Akujo : RoleBase, INeutralKiller
@@ -59,8 +59,8 @@ public sealed class Akujo : RoleBase, INeutralKiller
     {
         OptionModeSwitchAction = StringOptionItem.Create(RoleInfo, 10, OptionName.AkujoModeSwitchAction, EnumHelper.GetAllNames<SwitchTrigger>(), 1, false);
         AkujoFakeLimited = IntegerOptionItem.Create(RoleInfo, 11, OptionName.AkujoFakeLimited, new(1,15,1),2, false).SetValueFormat(OptionFormat.Players);
-        AkujoLoverKnowRoles = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LoverKnowRoles, true, false);
-        AkujoLoverSuicide = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LoverSuicide, true, false);
+        AkujoLovers.AkujoLoverKnowRoles = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LoverKnowRoles, true, false);
+        AkujoLovers.AkujoLoverSuicide = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LoverSuicide, true, false);
     }
     public bool IsKiller { get; private set; } = false;
 
@@ -118,14 +118,14 @@ public sealed class Akujo : RoleBase, INeutralKiller
                 else if (!ChooseFake && AkujoLimit >= 1)
                 {
                     AkujoLimit--;
-                    AkujoLoversPlayers.Clear();
-                    isAkujoLoversDead = false;
-                    AkujoLoversPlayers.Add(killer);
-                    AkujoLoversPlayers.Add(target);
+                    AkujoLovers.AkujoLoversPlayers.Clear();
+                    AkujoLovers.isAkujoLoversDead = false;
+                    AkujoLovers.AkujoLoversPlayers.Add(killer);
+                    AkujoLovers.AkujoLoversPlayers.Add(target);
                     PlayerState.GetByPlayerId(target.PlayerId).SetSubRole(CustomRoles.AkujoLovers);
                     NameColorManager.Add(Player.PlayerId, target.PlayerId, $"{ColorHelper.ColorToHex(RoleInfo.RoleColor)}");
                     NameColorManager.Add(target.PlayerId, Player.PlayerId, $"{ColorHelper.ColorToHex(RoleInfo.RoleColor)}");
-                    SyncAkujoLoversPlayers();
+                    AkujoLovers.SyncAkujoLoversPlayers();
                     SendRPC();
                     killer.RpcProtectedMurderPlayer(target);
                     target.RpcProtectedMurderPlayer(killer);
@@ -171,14 +171,14 @@ public sealed class Akujo : RoleBase, INeutralKiller
                 if (AkujoLimit >= 1 && CanBeLover(target))
                 {
                     AkujoLimit--;
-                    AkujoLoversPlayers.Clear();
-                    isAkujoLoversDead = false;
-                    AkujoLoversPlayers.Add(killer);
-                    AkujoLoversPlayers.Add(target);
+                    AkujoLovers.AkujoLoversPlayers.Clear();
+                    AkujoLovers.isAkujoLoversDead = false;
+                    AkujoLovers.AkujoLoversPlayers.Add(killer);
+                    AkujoLovers.AkujoLoversPlayers.Add(target);
                     PlayerState.GetByPlayerId(target.PlayerId).SetSubRole(CustomRoles.AkujoLovers);
                     NameColorManager.Add(Player.PlayerId, target.PlayerId, $"{ColorHelper.ColorToHex(RoleInfo.RoleColor)}");
                     NameColorManager.Add(target.PlayerId, Player.PlayerId, $"{ColorHelper.ColorToHex(RoleInfo.RoleColor)}");
-                    SyncAkujoLoversPlayers();
+                    AkujoLovers.SyncAkujoLoversPlayers();
                     SendRPC();
                     killer.RpcProtectedMurderPlayer(target);
                     target.RpcProtectedMurderPlayer(killer);

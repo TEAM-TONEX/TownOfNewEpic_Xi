@@ -7,7 +7,6 @@ using InnerNet;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TONEX.Modules;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Core;
 using static TONEX.Translator;

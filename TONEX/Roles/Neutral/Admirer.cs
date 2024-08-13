@@ -7,7 +7,7 @@ using static TONEX.Translator;
 using static UnityEngine.GraphicsBuffer;
 using System.Collections.Generic;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
-using static TONEX.Roles.AddOns.CanNotOpened.AdmirerLovers;
+using TONEX.Roles.AddOns.Common;
 
 namespace TONEX.Roles.Neutral;
 public sealed class Admirer : RoleBase, INeutralKiller
@@ -44,9 +44,9 @@ public sealed class Admirer : RoleBase, INeutralKiller
     }
     public static void SetupOptionItem()
     {
-       
-        AdmirerLoverKnowRoles = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LoverKnowRoles, true, false);
-        AdmirerLoverSuicide = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LoverSuicide, true, false);
+
+        AdmirerLovers.AdmirerLoverKnowRoles = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LoverKnowRoles, true, false);
+        AdmirerLovers.AdmirerLoverSuicide = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LoverSuicide, true, false);
     }
     public bool IsKiller { get; private set; } = false;
 
@@ -76,13 +76,13 @@ public sealed class Admirer : RoleBase, INeutralKiller
         if (AdmirerLimit >= 1 && CanBeLover (target))
         {
             AdmirerLimit--;
-            AdmirerLoversPlayers.Clear();
-            isAdmirerLoversDead = false;
-            AdmirerLoversPlayers.Add(killer);
+            AdmirerLovers.AdmirerLoversPlayers.Clear();
+            AdmirerLovers.isAdmirerLoversDead = false;
+            AdmirerLovers.AdmirerLoversPlayers.Add(killer);
             PlayerState.GetByPlayerId(killer.PlayerId).SetSubRole(CustomRoles.AdmirerLovers);
-            AdmirerLoversPlayers.Add(target);
+            AdmirerLovers.AdmirerLoversPlayers.Add(target);
             PlayerState.GetByPlayerId(target.PlayerId).SetSubRole(CustomRoles.AdmirerLovers);
-            SyncAdmirerLoversPlayers();
+            AdmirerLovers.SyncAdmirerLoversPlayers();
             SendRPC();
             NameColorManager.Add(Player.PlayerId, target.PlayerId, $"{ColorHelper.ColorToHex(RoleInfo.RoleColor)}");
             NameColorManager.Add(target.PlayerId, Player.PlayerId, $"{ColorHelper.ColorToHex(RoleInfo.RoleColor)}");
@@ -94,14 +94,14 @@ public sealed class Admirer : RoleBase, INeutralKiller
         }
         else if (CanBeLover(target))
         {
-            if (AdmirerLoversPlayers.Contains(target))
+            if (AdmirerLovers.AdmirerLoversPlayers.Contains(target))
             Player.Notify(GetString("AkujoSixSix"));
             else
                 Player.Notify(GetString("AkujoSixSix"));
         }
         else if (AdmirerLimit <= 0)
         {
-            if (AdmirerLoversPlayers.Contains(target))
+            if (AdmirerLovers.AdmirerLoversPlayers.Contains(target))
                 Player.Notify(GetString("AdmirerCant"));
         }
         return false;

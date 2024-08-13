@@ -27,12 +27,6 @@ public sealed class Neptune : AddonBase
     { }
 
 
-    public static void MeetingngStartNotifyOthers(ref StringBuilder sb, CustomRoles role)
-    {
-        if (CustomRoles.Neptune.IsExist() && (role is not CustomRoles.GM and not CustomRoles.Neptune))
-            sb.Append($"\n\n" + GetString($"Lovers") + Utils.GetRoleDisplaySpawnMode(CustomRoles.Lovers) + GetString($"LoversInfoLong"));
-
-    }
     public static void GetSubRolesText(bool intro, bool disableColor, List<CustomRoles> SubRoles, ref StringBuilder sb)
     {
         if (intro && !SubRoles.Contains(CustomRoles.Lovers) && !SubRoles.Contains(CustomRoles.Neptune) && CustomRoles.Neptune.IsExist())

@@ -2,35 +2,39 @@
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
-using TONEX.Attributes;
-using System;
 using TONEX.Roles.Core;
 using TONEX.Roles.Neutral;
 using static TONEX.Utils;
 using System.Text;
 using InnerNet;
 
-namespace TONEX.Roles.AddOns.CanNotOpened;
-public static class CupidLovers
+
+namespace TONEX.Roles.AddOns.Common;
+public sealed class CupidLovers : AddonBase
 {
-    //private static readonly int Id = 75_1_2_2200;
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(CupidLovers),
+    player => new CupidLovers(player),
+    CustomRoles.CupidLovers,
+    75_1_2_2200,
+    null,
+    "culo|丘比特情人|丘比特愛人|丘比特链子",
+    "#F69896",
+    ctop: false
+    );
+    public CupidLovers(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
     public static OptionItem CupidLoverKnowRoles;
     public static OptionItem CupidLoverSuicide;
 
     public static List<PlayerControl> CupidLoversPlayers = new();
     public static bool isCupidLoversDead = true;
-
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
     public static void ReceiveRPC(MessageReader reader)
     {
         CupidLoversPlayers.Clear();
@@ -38,8 +42,6 @@ public static class CupidLovers
         for (int i = 0; i < count; i++)
             CupidLoversPlayers.Add(Utils.GetPlayerById(reader.ReadByte()));
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
     public static void SyncCupidLoversPlayers()
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -122,7 +124,7 @@ public static class CupidLovers
             }
         }
 
-        }
+    }
     public static void OnPlayerLeft(ClientData data)
     {
 
@@ -136,7 +138,7 @@ public static class CupidLovers
     }
     public static bool CanKnowOthers(PlayerControl seer, PlayerControl seen)
     {
-        if ((seer.Is(CustomRoles.CupidLovers) || seer.Is(CustomRoles.Cupid)) && seen.Is(CustomRoles.CupidLovers) && CupidLoverKnowRoles.GetBool() 
+        if ((seer.Is(CustomRoles.CupidLovers) || seer.Is(CustomRoles.Cupid)) && seen.Is(CustomRoles.CupidLovers) && CupidLoverKnowRoles.GetBool()
             || seer.Is(CustomRoles.CupidLovers) && seen.Is(CustomRoles.Cupid) && Cupid.CupidLoverKnowCupid.GetBool())
             return true;
         return false;
@@ -154,7 +156,7 @@ public static class CupidLovers
             targetMark.Append($"<color={GetRoleColorCode(CustomRoles.CupidLovers)}>♡</color>");
         }
     }
-    public static void Marks(PlayerControl __instance,ref StringBuilder Mark)
+    public static void Marks(PlayerControl __instance, ref StringBuilder Mark)
     {
         if (__instance.Is(CustomRoles.CupidLovers) && (PlayerControl.LocalPlayer.Is(CustomRoles.CupidLovers) || PlayerControl.LocalPlayer.Is(CustomRoles.Cupid)))
         {

@@ -701,6 +701,9 @@ public enum CustomRoles
     Scout,
     Amber,
     Saint,
+    Geneticist,
+    Awake,
+    SuperPower,
 
     //Neutral
     Arsonist = 800,
