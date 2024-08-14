@@ -91,7 +91,8 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
         return true;
     }
 
-    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
+    public override bool OnVanish()
+
     {
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();

@@ -116,7 +116,7 @@ public sealed class Warlock : RoleBase, IImpostor
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterCooldown = IsCursed ? 1f : Options.DefaultKillCooldown;
+        AURoleOptions.PhantomCooldown = IsCursed ? 1f : Options.DefaultKillCooldown;
     }
     public bool OnCheckMurderAsKiller(MurderInfo info)
     {

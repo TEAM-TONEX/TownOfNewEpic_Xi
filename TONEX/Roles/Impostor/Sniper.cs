@@ -200,92 +200,91 @@ public sealed class Sniper : RoleBase, IImpostor
         // 返回狙击目标字典
         return targets;
     }
-    public override void OnShapeshift(PlayerControl target)
-    {
-        var shapeshifting = !Is(target);
+    //public override bool OnVanish()
+    //{
 
-        if (BulletCount <= 0) return;
+    //    if (BulletCount <= 0) return;
 
-        //弾が残ってたら
-        if (shapeshifting)
-        {
-            //Aim開始
-            MeetingReset = false;
+    //    //弾が残ってたら
+    //    if (shapeshifting)
+    //    {
+    //        //Aim開始
+    //        MeetingReset = false;
 
-            //スナイプ地点の登録
-            SnipeBasePosition = Player.transform.position;
+    //        //スナイプ地点の登録
+    //        SnipeBasePosition = Player.transform.position;
 
-            LastPosition = Player.transform.position;
-            IsAim = true;
-            AimTime = 0f;
+    //        LastPosition = Player.transform.position;
+    //        IsAim = true;
+    //        AimTime = 0f;
 
-            return;
-        }
+    //        return;
+    //    }
 
-        //エイム終了
-        IsAim = false;
-        AimTime = 0f;
+    //    //エイム終了
+    //    IsAim = false;
+    //    AimTime = 0f;
 
-        //ミーティングによる変身解除なら射撃しない
-        if (MeetingReset)
-        {
-            MeetingReset = false;
-            return;
-        }
+    //    //ミーティングによる変身解除なら射撃しない
+    //    if (MeetingReset)
+    //    {
+    //        MeetingReset = false;
+    //        return;
+    //    }
 
-        //一発消費して
-        BulletCount--;
+    //    //一発消費して
+    //    BulletCount--;
 
-        //命中判定はホストのみ行う
-        if (!AmongUsClient.Instance.AmHost) return;
+    //    //命中判定はホストのみ行う
+    //    if (!AmongUsClient.Instance.AmHost) return;
 
-        var targets = GetSnipeTargets();
+    //    var targets = GetSnipeTargets();
 
-        if (targets.Count != 0)
-        {
-            //一番正確な対象がターゲット
-            var snipedTarget = targets.OrderBy(c => c.Value).First().Key;
-            var killed = false;
-            CustomRoleManager.OnCheckMurder(
-                Player, snipedTarget,       // sniperがsnipedTargetを打ち抜く
-                snipedTarget, snipedTarget,  // 表示上はsnipedTargetの自爆
-                () => killed = true
-            );
+    //    if (targets.Count != 0)
+    //    {
+    //        //一番正確な対象がターゲット
+    //        var snipedTarget = targets.OrderBy(c => c.Value).First().Key;
+    //        var killed = false;
+    //        CustomRoleManager.OnCheckMurder(
+    //            Player, snipedTarget,       // sniperがsnipedTargetを打ち抜く
+    //            snipedTarget, snipedTarget,  // 表示上はsnipedTargetの自爆
+    //            () => killed = true
+    //        );
 
-            //あたった通知
-            Player.RPCPlayCustomSound("AWP");
-            if (!Player.IsModClient() && killed) Player.RpcProtectedMurderPlayer();
-            if (killed) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
-            else Player.Notify(GetString("SniperKillFaild"));
+    //        //あたった通知
+    //        Player.RPCPlayCustomSound("AWP");
+    //        if (!Player.IsModClient() && killed) Player.RpcProtectedMurderPlayer();
+    //        if (killed) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
+    //        else Player.Notify(GetString("SniperKillFaild"));
 
-            //スナイプが起きたことを聞こえそうな対象に通知したい
-            targets.Remove(snipedTarget);
-            var snList = ShotNotify;
-            snList.Clear();
-            foreach (var otherPc in targets.Keys)
-            {
-                snList.Add(otherPc.PlayerId);
-                Utils.NotifyRoles(SpecifySeer: otherPc);
-            }
+    //        //スナイプが起きたことを聞こえそうな対象に通知したい
+    //        targets.Remove(snipedTarget);
+    //        var snList = ShotNotify;
+    //        snList.Clear();
+    //        foreach (var otherPc in targets.Keys)
+    //        {
+    //            snList.Add(otherPc.PlayerId);
+    //            Utils.NotifyRoles(SpecifySeer: otherPc);
+    //        }
 
-            SendRPC();
-            _ = new LateTask(
-                () =>
-                {
-                    snList.Clear();
-                    if (targets.Count != 0)
-                    {
-                        foreach (var otherPc in targets.Keys)
-                        {
-                            Utils.NotifyRoles(SpecifySeer: otherPc);
-                        }
-                        SendRPC();
-                    }
-                },
-                0.5f, "Sniper shot Notify"
-                );
-        }
-    }
+    //        SendRPC();
+    //        _ = new LateTask(
+    //            () =>
+    //            {
+    //                snList.Clear();
+    //                if (targets.Count != 0)
+    //                {
+    //                    foreach (var otherPc in targets.Keys)
+    //                    {
+    //                        Utils.NotifyRoles(SpecifySeer: otherPc);
+    //                    }
+    //                    SendRPC();
+    //                }
+    //            },
+    //            0.5f, "Sniper shot Notify"
+    //            );
+    //    }
+    //}
     public override bool GetGameStartSound(out string sound)
     {
         sound = "AWP";

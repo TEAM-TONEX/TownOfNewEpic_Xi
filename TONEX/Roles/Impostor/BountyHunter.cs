@@ -89,7 +89,7 @@ public sealed class BountyHunter : RoleBase, IImpostor
         Logger.Info($"{Player.GetNameWithRole()}のターゲットを{Target.GetNameWithRole()}に変更", "BountyHunter");
     }
     //public static void SetKillCooldown(byte id, float amount) => Main.AllPlayerKillCooldown[id] = amount;
-    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.ShapeshifterCooldown = TargetChangeTime;
+    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = TargetChangeTime;
 
     public void BeforeMurderPlayerAsKiller(MurderInfo info)
     {

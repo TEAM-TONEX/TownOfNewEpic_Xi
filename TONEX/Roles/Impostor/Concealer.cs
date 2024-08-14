@@ -41,13 +41,11 @@ public sealed class Concealer : RoleBase, IImpostor
     
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterCooldown = OptionShapeshiftCooldown.GetFloat();
-        AURoleOptions.ShapeshifterDuration = OptionShapeshiftDuration.GetFloat();
+        AURoleOptions.PhantomCooldown = OptionShapeshiftCooldown.GetFloat();
+        AURoleOptions.PhantomDuration = OptionShapeshiftDuration.GetFloat();
     }
-    private bool Shapeshifting = false;
-    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
+    public override bool OnVanish()
     {
-        Shapeshifting = !Is(target);
         Player.RpcResetAbilityCooldown();
         if (!AmongUsClient.Instance.AmHost) return false;
 
@@ -58,7 +56,7 @@ public sealed class Concealer : RoleBase, IImpostor
     public override bool GetAbilityButtonSprite(out string buttonName)
     {
         buttonName = "Camo";
-        return !Shapeshifting;
+        return PetUnSet();
     }
     public override bool GetPetButtonSprite(out string buttonName)
     {
@@ -66,9 +64,8 @@ public sealed class Concealer : RoleBase, IImpostor
         return PetUnSet();
     }
     
-   public override void OnUsePet()
+    public override void OnUsePet()
     {
-        if (!Options.UsePets.GetBool()) return;
         if (!AmongUsClient.Instance.AmHost) return;
         Camouflage.CheckCamouflage();
         return;

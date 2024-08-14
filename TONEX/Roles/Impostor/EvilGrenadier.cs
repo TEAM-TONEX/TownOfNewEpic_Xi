@@ -91,8 +91,10 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.ShapeshifterLeaveSkin = false;
-        AURoleOptions.ShapeshifterCooldown = OptionSkillDuration.GetFloat();
-        AURoleOptions.ShapeshifterDuration = 1f;
+        AURoleOptions.PhantomCooldown = OptionSkillDuration.GetFloat();
+        AURoleOptions.PhantomDuration = 1f;
+        AURoleOptions.PhantomCooldown = OptionSkillDuration.GetFloat();
+        AURoleOptions.PhantomDuration = 1f;
     }
     public override bool GetAbilityButtonText(out string text)
     {
@@ -104,7 +106,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
         text = GetString("GrenadierVentButtonText");
         return PetUnSet();
     }
-    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
+    public override bool OnVanish()
     {
         Player.RpcResetAbilityCooldown();
         ResetCountdown(0);

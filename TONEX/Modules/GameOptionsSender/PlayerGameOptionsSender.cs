@@ -87,7 +87,7 @@ public class PlayerGameOptionsSender : GameOptionsSender
         switch (role.GetCustomRoleTypes())
         {
             case CustomRoleTypes.Impostor:
-                AURoleOptions.ShapeshifterCooldown = Options.DefaultShapeshiftCooldown.GetFloat();
+                AURoleOptions.PhantomCooldown = Options.DefaultShapeshiftCooldown.GetFloat();
                 break;
         }
 
@@ -207,7 +207,7 @@ public class PlayerGameOptionsSender : GameOptionsSender
             Main.AllPlayerVision.TryAdd(player.PlayerId, opt.GetFloat(FloatOptionNames.ImpostorLightMod));
         }
 
-        AURoleOptions.ShapeshifterCooldown = Mathf.Max(1f, AURoleOptions.ShapeshifterCooldown);
+        AURoleOptions.PhantomCooldown = Mathf.Max(1f, AURoleOptions.PhantomCooldown);
         AURoleOptions.ProtectionDurationSeconds = 0f;
         return opt;
     }

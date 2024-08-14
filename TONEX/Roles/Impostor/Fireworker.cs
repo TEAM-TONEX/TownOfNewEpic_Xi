@@ -80,18 +80,16 @@ public sealed class Fireworker : RoleBase, IImpostor
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterDuration = State != FireworkerState.FireEnd ? 1f : 30f;
+        AURoleOptions.PhantomDuration = State != FireworkerState.FireEnd ? 1f : 30f;
     }
     public override bool GetGameStartSound(out string sound)
     {
         sound = "Boom";
         return true;
     }
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnVanish()
     {
-        var shapeshifting = !Is(target);
         Logger.Info($"Fireworker ShapeShift", "Fireworker");
-        if (!shapeshifting) return;
         switch (State)
         {
             case FireworkerState.Initial:
@@ -149,6 +147,7 @@ public sealed class Fireworker : RoleBase, IImpostor
                 break;
         }
         Utils.NotifyRoles();
+        return false;
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)

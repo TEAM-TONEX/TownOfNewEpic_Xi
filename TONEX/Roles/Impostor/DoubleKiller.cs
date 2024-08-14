@@ -65,7 +65,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterCooldown = ShCooldown;
+        AURoleOptions.PhantomCooldown = ShCooldown;
     }
     public void BeforeMurderPlayerAsKiller(MurderInfo info)
     {

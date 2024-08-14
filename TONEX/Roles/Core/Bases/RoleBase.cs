@@ -285,7 +285,7 @@ public abstract class RoleBase : IDisposable
     /// 不需要验证您的身份，因为调用前已经验证
     /// 请注意：全部模组端都会调用
     /// </summary>
-    /// <param name="shapeshifter">变形目标</param>
+    /// <param name="target">变形目标</param>
     public virtual void OnShapeshift(PlayerControl target)
     { }
     public virtual void OnShapeshiftWithUsePet(PlayerControl target = null) { }
@@ -316,7 +316,7 @@ public abstract class RoleBase : IDisposable
     /// 请注意：全部模组端都会调用
     /// </summary>
     /// <returns>true：继续往下执行隐身操作</returns>
-    public virtual bool OnVanish() => false;
+    public virtual bool OnVanish() => true;
     /// <summary>
     /// 解除隐身时调用的函数
     /// 不需要验证您的身份，因为调用前已经验证

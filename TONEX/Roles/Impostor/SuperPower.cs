@@ -65,7 +65,7 @@ public sealed class SuperPower : RoleBase, IImpostor
             Position = new();
             }
         }, OptionSkillDuration.GetFloat(), "SuperPower");
-        return true;
+        return true ;
     }
     public override bool OnAppear(PlayerControl player, bool animate)
     {

@@ -59,7 +59,7 @@ class Penguin : RoleBase, IImpostor
         AbductTimer = 255f;
         stopCount = false;
     }
-    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.ShapeshifterCooldown = AbductVictim != null ? AbductTimer : 255f;
+    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = AbductVictim != null ? AbductTimer : 255f;
     private void SendRPC()
     {
         using var sender = CreateSender();

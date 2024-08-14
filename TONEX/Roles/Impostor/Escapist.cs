@@ -39,7 +39,7 @@ public sealed class Escapist : RoleBase, IImpostor
         Shapeshifting = false;
         
     }
-    public override long UsePetCooldown { get; set; } = (long)AURoleOptions.ShapeshifterCooldown;
+    public override long UsePetCooldown { get; set; } = (long)AURoleOptions.PhantomCooldown;
     public override bool EnablePetSkill() => true;
     private void SendRPC()
     {
@@ -84,13 +84,10 @@ public sealed class Escapist : RoleBase, IImpostor
         }
         return;
     }
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnVanish()
     {
-        Shapeshifting = !Is(target);
 
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        if (!Shapeshifting) return;
+        if (!AmongUsClient.Instance.AmHost) return false;
 
         if (Marked)
         {
@@ -105,5 +102,6 @@ public sealed class Escapist : RoleBase, IImpostor
             Marked = true;
             SendRPC();
         }
+        return false;
     }
 }

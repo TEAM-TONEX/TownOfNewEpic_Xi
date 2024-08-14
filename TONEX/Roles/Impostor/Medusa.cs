@@ -63,11 +63,11 @@ public sealed class Medusa : RoleBase, IImpostor
         return !Shapeshifting;
     }
     private bool Shapeshifting;
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
     {
         Shapeshifting = !Is(target);
 
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost) return false;
 
         if (Shapeshifting)
         {
@@ -97,8 +97,8 @@ public sealed class Medusa : RoleBase, IImpostor
                     Utils.NotifyRoles();
                 }, OptionStone.GetFloat(), "Bomber Suiscide");
             }
-               
         }
+        return false;
     }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner) => ForMedusa.Clear();
     public override void OnStartMeeting() => ForMedusa.Clear();

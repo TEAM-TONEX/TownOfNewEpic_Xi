@@ -65,7 +65,7 @@ public sealed class Miner : RoleBase, IImpostor
         text = Translator.GetString("MinerTeleButtonText");
         return Main.LastEnteredVent.ContainsKey(Player.PlayerId);
     }
-    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
+    public override bool OnVanish()
     {
         if (!AmongUsClient.Instance.AmHost) return false;
         Player.RpcResetAbilityCooldown();

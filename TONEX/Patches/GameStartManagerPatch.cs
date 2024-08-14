@@ -97,8 +97,8 @@ public class GameStartManagerPatch
                 Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
             Logger.Info("Set Kill Cooldown", "test");
             AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
-            if (AURoleOptions.ShapeshifterCooldown == 0f)
-                AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
+            if (AURoleOptions.PhantomCooldown == 0f)
+                AURoleOptions.PhantomCooldown = Main.LastShapeshifterCooldown.Value;
             Logger.Info("Set Shapeshifter Cooldown", "test");
         }
     }
@@ -244,8 +244,8 @@ public static class GameStartManagerBeginGamePatch
 
         var opt = Main.NormalOptions.Cast<IGameOptions>();
         AURoleOptions.SetOpt(opt);
-        Main.LastShapeshifterCooldown.Value = AURoleOptions.ShapeshifterCooldown;
-        AURoleOptions.ShapeshifterCooldown = 0f;
+        Main.LastShapeshifterCooldown.Value = AURoleOptions.PhantomCooldown;
+        AURoleOptions.PhantomCooldown = 0f;
 
         PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(opt, Main.IsAprilFools));
 

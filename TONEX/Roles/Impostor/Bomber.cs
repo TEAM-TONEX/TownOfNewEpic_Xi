@@ -40,7 +40,7 @@ public sealed class Bomber : RoleBase, IImpostor
     }
     public bool CanKill { get; private set; } = false;
     public float CalculateKillCooldown() => 255f;
-    public override long UsePetCooldown { get; set; } = (long)AURoleOptions.ShapeshifterCooldown;
+    public override long UsePetCooldown { get; set; } = (long)AURoleOptions.PhantomCooldown;
     public override bool EnablePetSkill() => true;
     public override bool GetAbilityButtonText(out string text)
     {

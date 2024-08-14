@@ -85,13 +85,13 @@ public sealed class Hacker : RoleBase, IImpostor
             DeadBodyList.Add(player.PlayerId);
     }
     private bool Shapeshifting;
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
     {
         Shapeshifting = !Is(target);
 
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost) return false;
 
-        if (!Shapeshifting || HackLimit < 1 || target == null || target.Is(CustomRoles.LazyGuy)) return;
+        if (!Shapeshifting || HackLimit < 1 || target == null || target.Is(CustomRoles.LazyGuy)) return false;
 
         HackLimit--;
         SendRPC();
@@ -114,5 +114,6 @@ public sealed class Hacker : RoleBase, IImpostor
             _ = new LateTask(() => target?.NoCheckStartMeeting(target?.Data), 0.15f, "Hacker Hacking Report Self");
         else
             _ = new LateTask(() => target?.NoCheckStartMeeting(Utils.GetPlayerById(targetId)?.Data), 0.15f, "Hacker Hacking Report");
+        return false;
     }
 }

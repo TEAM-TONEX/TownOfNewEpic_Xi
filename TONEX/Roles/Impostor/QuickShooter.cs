@@ -70,7 +70,7 @@ public sealed class QuickShooter : RoleBase, IImpostor
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterCooldown = OptionShapeshiftCooldown.GetFloat();
+        AURoleOptions.PhantomCooldown = OptionShapeshiftCooldown.GetFloat();
     }
     public override string GetProgressText(bool comms = false) => Utils.ColorString(ShotLimit >= 1 ? Color.red : Color.gray, $"({ShotLimit})");
     public override bool GetAbilityButtonText(out string text)
