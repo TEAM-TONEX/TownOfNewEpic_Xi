@@ -1315,7 +1315,7 @@ class CheckVanishPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
-        if (__instance.GetRoleClass()?.OnVanish() == false && AmongUsClient.Instance.AmHost)
+        if (__instance.GetRoleClass()?.OnCheckVanish() == false && AmongUsClient.Instance.AmHost)
         {
 
             MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.StartVanish, SendOption.Reliable, __instance.GetClientId());
@@ -1344,7 +1344,7 @@ class CmdCheckAppearPatch
     {
         if (!__instance.IsEaten())
         {
-            if (__instance.GetRoleClass()?.OnAppear(__instance, shouldAnimate) == false)
+            if (__instance.GetRoleClass()?.OnAppear(shouldAnimate) == false)
                 return false;
         }
         return true;
@@ -1358,7 +1358,7 @@ class CheckAppearPatch
     {
         if (!__instance.IsEaten())
         {
-            if (__instance.GetRoleClass()?.OnAppear(__instance,shouldAnimate) == false)
+            if (__instance.GetRoleClass()?.OnAppear(shouldAnimate) == false)
                 return false; 
         }
         return true;

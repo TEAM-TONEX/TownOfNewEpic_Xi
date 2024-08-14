@@ -25,7 +25,7 @@ public sealed class Fireworker : RoleBase, IImpostor
             typeof(Fireworker),
             player => new Fireworker(player),
             CustomRoles.Fireworker,
-            () => RoleTypes.Shapeshifter,
+            () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             2300,
             SetupCustomOption,
@@ -87,7 +87,7 @@ public sealed class Fireworker : RoleBase, IImpostor
         sound = "Boom";
         return true;
     }
-    public override bool OnVanish()
+    public override bool OnCheckVanish()
     {
         Logger.Info($"Fireworker ShapeShift", "Fireworker");
         switch (State)

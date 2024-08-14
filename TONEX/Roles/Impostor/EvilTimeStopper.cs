@@ -17,7 +17,7 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
             typeof(EvilTimePauser),
             player => new EvilTimePauser(player),
             CustomRoles.EvilTimePauser,
-            () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
+            () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             75_1_2_0300,
             SetupOptionItem,
@@ -58,12 +58,10 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
         CooldownList.Add((long)OptionSkillDuration.GetFloat());
         CountdownList.Add(ProtectStartTime);
     }
-    public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
-    public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.EngineerCooldown = Cooldown;
-        AURoleOptions.EngineerInVentMaxTime = 1f;
+        AURoleOptions.PhantomCooldown = Cooldown;
+        AURoleOptions.PhantomDuration = 1f;
     }
     public override bool GetAbilityButtonText(out string text)
     {
@@ -75,24 +73,13 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
         buttonName = "TheWorld";
         return true;
     }
-    public override bool GetPetButtonSprite(out string buttonName)
-    {
-        buttonName = "TheWorld";
-        return PetUnSet();
-    }
-    public override bool GetPetButtonText(out string text)
-    {
-        text = GetString("NiceTimePauserVetnButtonText");
-        return PetUnSet();
-    }
     public override bool GetGameStartSound(out string sound)
     {
         sound = "TheWorld";
         return true;
     }
 
-    public override bool OnVanish()
-
+    public override bool OnCheckVanish()
     {
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
@@ -117,31 +104,6 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
             }, OptionSkillDuration.GetFloat(), "Time Pauser");
         }
         return false;
-    }
-    public override void OnUsePet()
-    {
-        Player.SyncSettings();
-        Player.RpcResetAbilityCooldown();
-        ResetCountdown(0);
-        
-        foreach (var pc in Main.AllPlayerControls.Where(p => p.IsImpTeam()))
-            pc.Notify(GetString("NiceTimePauserOnGuard"));
-        foreach (var player in Main.AllAlivePlayerControls)
-        {
-            if (Player == player) continue;
-            if (!player.IsAlive() || Pelican.IsEaten(player.PlayerId)) continue;
-            NameNotifyManager.Notify(player, Utils.ColorString(Utils.GetRoleColor(CustomRoles.NiceTimePauser), GetString("ForNiceTimePauser")));
-            EvilTimePauserstop.Add(player.PlayerId);
-            Player.DisableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-
-
-            new LateTask(() =>
-            {
-                Player.EnableAction(player, ExtendedPlayerControl.PlayerActionType.All);
-                EvilTimePauserstop.Remove(player.PlayerId);
-                RPC.PlaySoundRPC(player.PlayerId, Sounds.TaskComplete);
-            }, OptionSkillDuration.GetFloat(), "Time Pauser");
-        }
     }
     public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {

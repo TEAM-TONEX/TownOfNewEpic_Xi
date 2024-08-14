@@ -14,7 +14,7 @@ public sealed class Bomber : RoleBase, IImpostor
             typeof(Bomber),
             player => new Bomber(player),
             CustomRoles.Bomber,
-       () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
+            () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             3100,
             SetupOptionItem,
@@ -28,7 +28,6 @@ public sealed class Bomber : RoleBase, IImpostor
     { }
 
     static OptionItem OptionRadius;
-    bool Shapeshifting;
     enum OptionName
     {
         BomberRadius
@@ -52,29 +51,16 @@ public sealed class Bomber : RoleBase, IImpostor
         buttonName = "Bomb";
         return true;
     }
-            public override bool GetPetButtonText(out string text)
-    {
-                       text = GetString("BomberShapeshiftText");
-        return PetUnSet();
-    }
-    public override bool GetPetButtonSprite(out string buttonName)
-    {
-                 buttonName = "Bomb";
-        return PetUnSet();
-    }
+            
     public override bool GetGameStartSound(out string sound)
     {
         sound = "Boom";
         return true;
     }
-    public override void OnShapeshiftWithUsePet(PlayerControl target)
+    public override bool OnCheckVanish()
     {
+        if (!AmongUsClient.Instance.AmHost) return false;
 
-        Shapeshifting = !Is(target);
-
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        if (!Shapeshifting) return;
 
         Logger.Info("炸弹爆炸了", "Boom");
         CustomSoundsManager.RPCPlayCustomSoundAll("Boom");
@@ -102,10 +88,12 @@ public sealed class Bomber : RoleBase, IImpostor
                 state.DeathReason = CustomDeathReason.Bombed;
                 Player.RpcExileV2();
                 state.SetDead();
+
             }
             Utils.NotifyRoles();
         }, 1.5f, "Bomber Suiscide");
-        UsePetCooldown_Timer = Utils.GetTimeStamp();
+        return false;
+
     }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner) => Player.RpcResetAbilityCooldown();
 }

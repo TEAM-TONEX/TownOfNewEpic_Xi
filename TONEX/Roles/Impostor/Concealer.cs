@@ -14,7 +14,7 @@ public sealed class Concealer : RoleBase, IImpostor
             typeof(Concealer),
             player => new Concealer(player),
             CustomRoles.Concealer,
-            () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
+            () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             4500,
             SetupOptionItem,
@@ -44,34 +44,22 @@ public sealed class Concealer : RoleBase, IImpostor
         AURoleOptions.PhantomCooldown = OptionShapeshiftCooldown.GetFloat();
         AURoleOptions.PhantomDuration = OptionShapeshiftDuration.GetFloat();
     }
-    public override bool OnVanish()
+    public bool vanish;
+    public override bool OnCheckVanish()
     {
+        vanish = true;
         Player.RpcResetAbilityCooldown();
         if (!AmongUsClient.Instance.AmHost) return false;
-
+        new LateTask(() =>
+        {
+            vanish = false;
+        }, OptionShapeshiftDuration.GetFloat());
         Camouflage.CheckCamouflage();
         
         return false;
     }
-    public override bool GetAbilityButtonSprite(out string buttonName)
-    {
-        buttonName = "Camo";
-        return PetUnSet();
-    }
-    public override bool GetPetButtonSprite(out string buttonName)
-    {
-        buttonName = "Camo";
-        return PetUnSet();
-    }
-    
-    public override void OnUsePet()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        Camouflage.CheckCamouflage();
-        return;
-    }
     public override long UsePetCooldown { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     public static bool IsHidding
-        => Main.AllAlivePlayerControls.Any(x => (x.GetRoleClass() is Concealer roleClass) && roleClass.Shapeshifting) && GameStates.IsInTask;
+        => Main.AllAlivePlayerControls.Any(x => (x.GetRoleClass() is Concealer roleClass) && roleClass.vanish) && GameStates.IsInTask;
 }

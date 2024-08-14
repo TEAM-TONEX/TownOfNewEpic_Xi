@@ -16,7 +16,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor
             typeof(DoubleKiller),
             player => new DoubleKiller(player),
             CustomRoles.DoubleKiller,
-            () => RoleTypes.Shapeshifter,
+            () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             1238687,
             SetupOptionItem,

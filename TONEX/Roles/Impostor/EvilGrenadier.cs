@@ -18,7 +18,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
             typeof(EvilGrenadier),
             player => new EvilGrenadier(player),
             CustomRoles.EvilGrenadier,
-         () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
+         () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             75_1_2_0500,
             SetupOptionItem,
@@ -90,9 +90,6 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override bool EnablePetSkill() => true;
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterLeaveSkin = false;
-        AURoleOptions.PhantomCooldown = OptionSkillDuration.GetFloat();
-        AURoleOptions.PhantomDuration = 1f;
         AURoleOptions.PhantomCooldown = OptionSkillDuration.GetFloat();
         AURoleOptions.PhantomDuration = 1f;
     }
@@ -101,12 +98,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
         text = GetString("GrenadierVentButtonText");
         return true;
     }
-    public override bool GetPetButtonText(out string text)
-    {
-        text = GetString("GrenadierVentButtonText");
-        return PetUnSet();
-    }
-    public override bool OnVanish()
+    public override bool OnCheckVanish()
     {
         Player.RpcResetAbilityCooldown();
         ResetCountdown(0);
@@ -134,7 +126,6 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
             Blinds.Add(pc.PlayerId);
             Player.DisableAction(pc);
 
-            //pc.Notify("<size=1000><color=#ffffff>●</color></size>", OptionSkillDuration.GetInt());
         }
     }
     public static void ChangeColorBlindText()
@@ -142,20 +133,6 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
         if (CustomRoles.EvilGrenadier.IsExist() && IsBlinding(PlayerControl.LocalPlayer))
             foreach (var pc in Main.AllAlivePlayerControls)
                 pc.cosmetics.colorBlindText.text = $"<size=1000><color=#ffffff>●</color></size>";
-    }
-    public override void OnUsePet()
-    {
-        ResetCountdown(0);
-        foreach (var pc in Main.AllAlivePlayerControls.Where(x => !x.IsImpTeam() ))
-        {
-
-            OnBlinding(pc);
-        }
-        SendRPC_SyncList();
-        Player.RPCPlayCustomSound("FlashBang");
-        foreach (var pc in Main.AllAlivePlayerControls.Where(x => x.IsImp() || x.Is(CustomRoles.Madmate)))
-            pc.Notify(GetString("GrenadierSkillInUse"), OptionSkillDuration.GetFloat());
-        return;
     }
     public static string GetSuffixOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {

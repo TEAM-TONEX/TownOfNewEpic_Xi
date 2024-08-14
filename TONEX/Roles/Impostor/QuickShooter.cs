@@ -13,7 +13,7 @@ public sealed class QuickShooter : RoleBase, IImpostor
             typeof(QuickShooter),
             player => new QuickShooter(player),
             CustomRoles.QuickShooter,
-       () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
+       () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             3700,
             SetupOptionItem,
@@ -84,13 +84,12 @@ public sealed class QuickShooter : RoleBase, IImpostor
         return PetUnSet();
     }
     public override int OverrideAbilityButtonUsesRemaining() => ShotLimit;
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnCheckVanish()
     {
-        var shapeshifting = !Is(target);
 
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost) return false;
 
-        if (Player.killTimer < 1 && shapeshifting)
+        if (Player.killTimer < 1)
         {
             ShotLimit++;
             SendRPC();
@@ -100,6 +99,7 @@ public sealed class QuickShooter : RoleBase, IImpostor
             Player.Notify(GetString("QuickShooterStoraging"));
             Logger.Info($"{Utils.GetPlayerById(Player.PlayerId)?.GetNameWithRole()} : 剩余子弹{ShotLimit}发", "QuickShooter.OnShapeshift");
         }
+        return false;
     }
 
     public override void OnUsePet()

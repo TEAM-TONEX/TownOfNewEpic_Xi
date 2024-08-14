@@ -87,16 +87,16 @@ public sealed class Ninja : RoleBase, IImpostor
         
     }
     private bool Shapeshifting;
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
     {
         Shapeshifting = !Is(target);
 
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost) return false;
 
         if (!Shapeshifting)
         {
             Player.SetKillCooldownV2();
-            return;
+            return false;
         }
         if (MarkedPlayer != byte.MaxValue)
         {
@@ -112,6 +112,7 @@ public sealed class Ninja : RoleBase, IImpostor
                 }
             }, 1.5f, "Ninja Ninjaate");
         }
+        return false;
     }
     public override void OnUsePet()
     {

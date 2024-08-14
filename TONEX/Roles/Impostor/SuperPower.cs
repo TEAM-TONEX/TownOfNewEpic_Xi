@@ -47,7 +47,7 @@ public sealed class SuperPower : RoleBase, IImpostor
         AURoleOptions.PhantomDuration = OptionSkillDuration.GetFloat()+1f;
     }
     public Vector2 Position;
-    public override bool OnVanish()
+    public override bool OnCheckVanish()
     {
         var pcList = Main.AllAlivePlayerControls.Where(x => x.PlayerId != Player.PlayerId && !x.GetCustomRole().IsImpostor() && x.IsAlive()).ToList();
         Position = Player.GetTruePosition();
@@ -67,7 +67,7 @@ public sealed class SuperPower : RoleBase, IImpostor
         }, OptionSkillDuration.GetFloat(), "SuperPower");
         return true ;
     }
-    public override bool OnAppear(PlayerControl player, bool animate)
+    public override bool OnAppear( bool animate)
     {
         if (target != null){
             target.RpcMurderPlayerV2(target);

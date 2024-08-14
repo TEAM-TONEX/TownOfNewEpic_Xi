@@ -131,6 +131,7 @@ public static class Options
 
     public static float DefaultKillCooldown = Main.NormalOptions?.KillCooldown ?? 20;
     public static OptionItem DefaultShapeshiftCooldown;
+    public static OptionItem DefaultVanishCooldown;
 
     public static OptionItem DeadImpCantSabotage;
     public static OptionItem ImpKnowAlliesRole;
@@ -524,7 +525,10 @@ public static class Options
             .SetGameMode(CustomGameMode.Standard)
             .SetHeader(true)
             .SetValueFormat(OptionFormat.Seconds);
-        DeadImpCantSabotage = BooleanOptionItem.Create(1_002_002, "DeadImpCantSabotage", false, TabGroup.ImpostorRoles, false)
+        DefaultVanishCooldown = FloatOptionItem.Create(1_002_002, "DefaultVanishCooldown", new(5f, 999f, 5f), 15f, TabGroup.ImpostorRoles, false)
+    .SetGameMode(CustomGameMode.Standard)
+    .SetValueFormat(OptionFormat.Seconds);
+        DeadImpCantSabotage = BooleanOptionItem.Create(1_002_003, "DeadImpCantSabotage", false, TabGroup.ImpostorRoles, false)
             .SetGameMode(CustomGameMode.Standard);
 
 #if DEBUG

@@ -14,7 +14,7 @@ public sealed class Escapist : RoleBase, IImpostor
             typeof(Escapist),
             player => new Escapist(player),
             CustomRoles.Escapist,
-       () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Shapeshifter,
+       () => Options.UsePets.GetBool() ? RoleTypes.Impostor : RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             2000,
             null,
@@ -84,9 +84,8 @@ public sealed class Escapist : RoleBase, IImpostor
         }
         return;
     }
-    public override bool OnVanish()
+    public override bool OnCheckVanish()
     {
-
         if (!AmongUsClient.Instance.AmHost) return false;
 
         if (Marked)

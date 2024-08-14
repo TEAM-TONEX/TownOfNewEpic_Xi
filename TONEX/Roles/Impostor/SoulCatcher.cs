@@ -47,11 +47,11 @@ public sealed class SoulCatcher : RoleBase, IImpostor
         return !Shapeshifting;
     }
     private bool Shapeshifting = false;
-    public override void OnShapeshift(PlayerControl target)
+    public override bool OnCheckShapeshift(PlayerControl target, ref bool s)
     {
         Shapeshifting = !Is(target);
 
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost) return false;
 
         if (Shapeshifting)
         {
@@ -65,5 +65,6 @@ public sealed class SoulCatcher : RoleBase, IImpostor
                 }
             }, 1.5f, "SoulCatcher.OnShapeshift");
         }
+        return false;
     }
 }

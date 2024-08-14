@@ -87,6 +87,7 @@ public class PlayerGameOptionsSender : GameOptionsSender
         switch (role.GetCustomRoleTypes())
         {
             case CustomRoleTypes.Impostor:
+                AURoleOptions.ShapeshifterCooldown = Options.DefaultShapeshiftCooldown.GetFloat();
                 AURoleOptions.PhantomCooldown = Options.DefaultShapeshiftCooldown.GetFloat();
                 break;
         }
