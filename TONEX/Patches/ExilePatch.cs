@@ -19,11 +19,11 @@ class ExileControllerWrapUpPatch
             if (Main.AssistivePluginMode.Value) return;
             try
             {
-                WrapUpPostfix(__instance.exiled);
+                WrapUpPostfix(__instance.initData.networkedPlayer);
             }
             finally
             {
-                WrapUpFinalizer(__instance.exiled);
+                WrapUpFinalizer(__instance.initData.networkedPlayer);
             }
         }
     }
@@ -36,11 +36,11 @@ class ExileControllerWrapUpPatch
             if (Main.AssistivePluginMode.Value) return;
             try
             {
-                WrapUpPostfix(__instance.exiled);
+                WrapUpPostfix(__instance.initData.networkedPlayer);
             }
             finally
             {
-                WrapUpFinalizer(__instance.exiled);
+                WrapUpFinalizer(__instance.initData.networkedPlayer);
             }
         }
     }
