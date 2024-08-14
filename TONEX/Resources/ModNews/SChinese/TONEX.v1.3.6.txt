@@ -1,4 +1,4 @@
-#Number:100050
+#Number:100052
 #Title:TownOfNewEpic_Xtreme v1.3
 #SubTitle:★★★★紧急适配★★★★
 #ShortTitle:★TONEX v1.3

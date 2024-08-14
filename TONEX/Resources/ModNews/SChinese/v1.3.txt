@@ -1,4 +1,4 @@
-#Number:100052
+#Number:100051
 #Title:这是一则你无法拒绝阅读的公告
 #SubTitle:★★★★致——全体TONEX玩家★★★★
 #ShortTitle:★开发者的话
