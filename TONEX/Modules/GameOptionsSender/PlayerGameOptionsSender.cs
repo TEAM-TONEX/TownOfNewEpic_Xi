@@ -123,12 +123,6 @@ public class PlayerGameOptionsSender : GameOptionsSender
         }
 
         // 为漫步者的凶手
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Rambler) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Rambler)))
-        {
-            Main.AllPlayerSpeed[player.PlayerId] = Rambler.OptionSpeed.GetFloat();
-            player.RpcSetCustomRole(CustomRoles.Rambler);
-            Utils.NotifyRoles(player);
-        }
 
         //最好的请过来
         /*if (Non_Villain.ComeAndAwayList != null)

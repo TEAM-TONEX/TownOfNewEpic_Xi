@@ -23,5 +23,23 @@ public sealed class PublicOpinionShaper : AddonBase
     )
     { }
 
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
+    {
+        if (target.Object.GetRealKiller() != null && target.Object.GetRealKiller() == Player)
+        {
+            if (Utils.IsActive(SystemTypes.Comms) 
+                || Utils.IsActive(SystemTypes.Electrical) 
+                || Utils.IsActive(SystemTypes.Reactor) 
+                || Utils.IsActive(SystemTypes.LifeSupp) 
+                || Utils.IsActive(SystemTypes.MushroomMixupSabotage))
+            {
+                return true;
+                
+            }
+            reporter.Notify(Translator.GetString("NobodyNoticed"));
+            return false;
+        }
+        return true;
+    }
 }
 
