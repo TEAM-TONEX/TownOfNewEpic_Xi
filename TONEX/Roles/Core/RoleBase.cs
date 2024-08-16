@@ -3,6 +3,7 @@ using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 using TONEX.Modules;
 using UnityEngine;
 using static TONEX.Translator;
@@ -107,12 +108,18 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 总计时列表
     /// </summary>
-    public virtual List<long> CooldownList { get; set; } = new();
+    public List<long> CooldownList { get; private set; } = new();
 
     /// <summary>
     /// 倒计时列表
     /// </summary>
-    public virtual List<long> CountdownList { get;  set; } = new();
+    public List<long> CountdownList { get; private set; } = new();
+
+    public void CreateCountdown(float cd, long now = -1)
+    {
+        CooldownList.Add((long)cd);
+        CountdownList.Add(now);
+    }
 
     /// <summary>
     /// 使用宠物总冷却时间

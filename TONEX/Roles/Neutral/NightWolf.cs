@@ -52,7 +52,6 @@ ctop:true
         NWSpeed,
     }
 
-    private long ProtectStartTime;
     private long Cooldown;
     private static void SetupOptionItem()
     {
@@ -68,11 +67,9 @@ ctop:true
     }
     public override void Add()
     {
-        ProtectStartTime = -1;
         Cooldown = Utils.GetTimeStamp();
         Speed = Main.AllPlayerSpeed[Player.PlayerId];
-        CooldownList.Add((long)OptionProtectDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionProtectDuration.GetFloat());
     }
     public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(OptionHasImpostorVision.GetBool());
