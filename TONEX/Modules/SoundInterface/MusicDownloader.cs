@@ -32,71 +32,48 @@ public class MusicDownloader
     public static string downloadUrl_website2 = "";
     public static bool succeed = false;
 
-    public static async Task StartDownload(string sound, string url = "waitToSelect")
+    public static async Task<bool> StartDownload(string sound, string url = "waitToSelect")
     {
-        succeed = false;
-        if (!Directory.Exists(@"./TONEX_Data/Sounds"))
+    retry:
+        if (!Directory.Exists(@"./FinalSuspect_Data/Sounds"))
         {
-            Directory.CreateDirectory(@"./TONEX_Data/Sounds");
+            Directory.CreateDirectory(@"./FinalSuspect_Data/Sounds");
         }
-        DownloadFileTempPath = "TONEX_Data/Sounds/{{sound}}.wav";
+        var DownloadFileTempPath = "FinalSuspect_Data/Sounds/{{sound}}.wav";
+
+        var downloadUrl_github = Url_github.Replace("{{sound}}", $"{sound}");
+        var downloadUrl_gitee = Url_gitee.Replace("{{sound}}", $"{sound}");
+        var downloadUrl_website = Url_website.Replace("{{sound}}", $"{sound}");
         if (url == "waitToSelect")
-        {
-            downloadUrl_github = Url_github.Replace("{{sound}}", $"{sound}");
-            downloadUrl_gitee = Url_gitee.Replace("{{sound}}", $"{sound}");
-            downloadUrl_website = Url_website.Replace("{{sound}}", $"{sound}");
-            downloadUrl_website2 = Url_website2.Replace("{{sound}}", $"{sound}");
             url = IsChineseLanguageUser ? downloadUrl_website : downloadUrl_github;
-        }
 
         if (!IsValidUrl(url))
         {
             Logger.Error($"Invalid URL: {url}", "DownloadSound", false);
-            return;
+            return false;
         }
-        retry:
         DownloadFileTempPath = DownloadFileTempPath.Replace("{{sound}}", $"{sound}");
         string filePath = DownloadFileTempPath + ".xwmus";
         File.Create(filePath).Close();
-       
+
 
         Logger.Msg("Start Downloading from: " + url, "DownloadSound");
         Logger.Msg("Saving file to: " + DownloadFileTempPath, "DownloadSound");
 
         try
         {
-           
-            
+
+
             using var client = new HttpClientDownloadWithProgress(url, filePath);
             client.ProgressChanged += OnDownloadProgressChanged;
             await client.StartDownload();
             Thread.Sleep(100);
-            
-            if (md5ForFiles.ContainsKey(sound))
+            if (
+                !md5ForFiles.ContainsKey(sound)
+                || GetMD5HashFromFile(filePath).ToLower() != md5ForFiles[sound].ToLower()
+                || !File.Exists(filePath))
             {
-                if (GetMD5HashFromFile(filePath).ToLower() != md5ForFiles[sound].ToLower())
-                {
-                    Logger.Error($"Md5 Wrong in {url}", "DownloadSound");
-                    File.Delete(filePath);
-                    if (url == downloadUrl_website && IsChineseLanguageUser || url == downloadUrl_github && !IsChineseLanguageUser)
-                    {
-
-                        url = downloadUrl_gitee;
-                        goto retry;
-                    }
-                    else if (url == downloadUrl_gitee && IsChineseLanguageUser)
-                    {
-                        url = downloadUrl_github;
-                        goto retry;
-                    }
-                    return;
-                }
-                File.Move(filePath, DownloadFileTempPath);
-                Logger.Info($"Md5 Currect in {url}", "DownloadSound");
-            }
-            else
-            {
-                Logger.Error($"Md5 No Found in {url}", "DownloadSound");
+                Logger.Error($"Md5 Wrong in {url}", "DownloadSound");
                 File.Delete(filePath);
                 if (url == downloadUrl_website && IsChineseLanguageUser || url == downloadUrl_github && !IsChineseLanguageUser)
                 {
@@ -109,16 +86,13 @@ public class MusicDownloader
                     url = downloadUrl_github;
                     goto retry;
                 }
-                return;
+                else
+                if (!string.IsNullOrEmpty(filePath))
+                    File.Delete(filePath);
             }
-            
-            var path = @$"{Environment.CurrentDirectory.Replace(@"\", "/")}./TONEX_Data/Sounds/{sound}.wav";
-            if (File.Exists(path))
-            {
-                AudioManager.StartLoadAC(path, sound);
-                Logger.Info($"Succeed in {url}", "DownloadSound");
-                succeed = true;
-            }
+            File.Move(filePath, DownloadFileTempPath);
+            Logger.Info($"Succeed in {url}", "DownloadSound");
+            return true;
         }
         catch (Exception ex)
         {
@@ -127,22 +101,9 @@ public class MusicDownloader
             {
                 File.Delete(filePath);
             }
+            return false;
         }
-        if (!succeed)
-        {
-            if (url == downloadUrl_website && IsChineseLanguageUser || url == downloadUrl_github && !IsChineseLanguageUser)
-            {
-                
-                url = downloadUrl_gitee;
-                goto retry;
-            }
-            else if (url == downloadUrl_gitee && IsChineseLanguageUser)
-            {
-                url = downloadUrl_github;
-                goto retry;
-            }
 
-        }
     }
     private static bool IsValidUrl(string url)
     {

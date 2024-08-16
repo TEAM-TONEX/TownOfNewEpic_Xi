@@ -41,8 +41,8 @@ public class Main : BasePlugin
     // == 版本相关设定 / Version Config ==
     public const string LowestSupportedVersion = "2024.6.18";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
-    public const string PluginVersion = "1.3.5";
-    public const string ShowVersion_Head = "1.3_20240726";
+    public const string PluginVersion = "1.3.6";
+    public const string ShowVersion_Head = "1.3_2024814";
     public const string ShowVersion_TestText = "";
     public const string ShowVersion = ShowVersion_Head + ShowVersion_TestText;
     public const int PluginCreation = 1;
