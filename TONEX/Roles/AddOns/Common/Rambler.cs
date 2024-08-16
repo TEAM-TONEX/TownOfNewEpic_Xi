@@ -40,14 +40,4 @@ public sealed class Rambler : AddonBase
          .SetValueFormat(OptionFormat.Multiplier);
     }
 
-    public override void ApplyGameOptions(IGameOptions opt)
-    {
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Rambler) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Rambler)))
-        {
-            Main.AllPlayerSpeed[player.PlayerId] = Rambler.OptionSpeed.GetFloat();
-            player.RpcSetCustomRole(CustomRoles.Rambler);
-            Utils.NotifyRoles(player);
-        }
-
-    }
 }
