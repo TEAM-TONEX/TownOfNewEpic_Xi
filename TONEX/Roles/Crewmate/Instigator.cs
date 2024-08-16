@@ -64,11 +64,9 @@ public sealed class Instigator : RoleBase
     public override bool EnablePetSkill() => true;
     public override void Add()
     {
-        ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
         ForInstigator = new();
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionSkillCooldown.GetFloat());
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {

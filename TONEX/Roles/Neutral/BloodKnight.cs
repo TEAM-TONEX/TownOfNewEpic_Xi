@@ -60,8 +60,7 @@ public sealed class BloodKnight : RoleBase, INeutralKiller
     public override void Add() 
     {
         ProtectStartTime = 0;
-        CooldownList.Add((long)OptionProtectDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionProtectDuration.GetFloat(), ProtectStartTime);
     }
     public override void CD_Update()
     {

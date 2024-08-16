@@ -40,7 +40,6 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
         NiceTimePauserSkillDuration,
     }
     private List<byte> EvilTimePauserstop;
-    private long ProtectStartTime;
     private float Cooldown;
     
     private static void SetupOptionItem()
@@ -53,10 +52,8 @@ public sealed class EvilTimePauser : RoleBase, IImpostor
     }
     public override void Add()
     {
-        ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionSkillDuration.GetFloat());
     }
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;

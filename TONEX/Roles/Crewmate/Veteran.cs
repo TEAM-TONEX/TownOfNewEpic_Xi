@@ -52,14 +52,6 @@ public sealed class Veteran : RoleBase
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
     private int SkillLimit;
-    private long ProtectStartTime;
-    public override List<long> CooldownList { get; set; } = new();
-    public override List<long> CountdownList { get; set; } = new();
-
-    public override void CD_Update()
-    {
-        ProtectStartTime = CountdownList[0];
-    }
 
     public override bool SetOffGuardProtect(out string notify, out int format_int, out float format_float)
     {
@@ -72,9 +64,7 @@ public sealed class Veteran : RoleBase
     public override void Add()
     {
         SkillLimit = OptionSkillNums.GetInt();
-        ProtectStartTime = -1;
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionSkillDuration.GetFloat());
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {

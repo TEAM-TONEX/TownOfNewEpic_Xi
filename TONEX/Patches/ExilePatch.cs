@@ -88,6 +88,14 @@ class ExileControllerWrapUpPatch
                 {
                     for (int i = 0; i < roleClass.CountdownList.Count; i++)
                     {
+                        for (int i = 0; i < roleclass.CountdownList.Count; i++)
+                        {
+                            roleclass.ResetCountdown(i);
+                        }
+                        roleclass.UsePetCooldown_Timer = now;
+                    }
+                }
+            }
                         roleClass.CountdownList[i] = now;
                     }
                     roleClass.UsePetCooldown_Timer = now;

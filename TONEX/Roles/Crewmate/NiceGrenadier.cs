@@ -66,8 +66,6 @@ public sealed class NiceGrenadier : RoleBase
         return false;
     }
 
-    private long BlindingStartTime;
-    private long MadBlindingStartTime;
     public override void OnGameStart()
     {
         Blinds = new();
@@ -84,10 +82,7 @@ public sealed class NiceGrenadier : RoleBase
     }
     public override void Add()
     {
-        BlindingStartTime = -1;
-        MadBlindingStartTime = -1;
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(Player.Is(CustomRoles.Madmate)? MadBlindingStartTime: BlindingStartTime);
+        CreateCountdown(OptionSkillDuration.GetFloat());
     }
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
