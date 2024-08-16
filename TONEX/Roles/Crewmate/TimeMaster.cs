@@ -44,7 +44,6 @@ public sealed class TimeMaster : RoleBase
         MaxCooldown,
     }
     public static Dictionary<byte, Vector2> TimeMasterbacktrack = new();
-    private long ProtectStartTime;
     private float Cooldown;
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
@@ -62,11 +61,9 @@ public sealed class TimeMaster : RoleBase
     public override void Add()
     {
         Marked = false;
-        ProtectStartTime = -1;
         Cooldown = OptionSkillCooldown.GetFloat();
         TimeMasterbacktrack = new();
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionSkillDuration.GetFloat());
 
     }
     public override void ApplyGameOptions(IGameOptions opt)

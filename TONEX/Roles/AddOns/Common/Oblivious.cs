@@ -1,4 +1,6 @@
 using TONEX.Roles.Core;
+
+namespace TONEX.Roles.AddOns.Common;
 public sealed class Oblivious : AddonBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -18,6 +20,10 @@ public sealed class Oblivious : AddonBase
     )
     { }
 
+    public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
+    {
+        return Utils.GetPlayerById(target.PlayerId).Is(CustomRoles.Bait);
+    }
 
 
 

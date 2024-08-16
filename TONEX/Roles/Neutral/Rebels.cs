@@ -36,7 +36,6 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
         RebelsSkillCooldown,
         RebelsSkillDuration
     }
-    private long ProtectStartTime;
     
     private static void SetupOptionItem()
     {
@@ -47,9 +46,7 @@ public sealed class Rebels : RoleBase, IOverrideWinner, INeutral
     }
     public override void Add()
     {
-        ProtectStartTime = -1;
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(ProtectStartTime);
+        CreateCountdown(OptionSkillDuration.GetFloat());
     }
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;

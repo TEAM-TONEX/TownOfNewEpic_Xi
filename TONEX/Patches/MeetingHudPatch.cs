@@ -231,7 +231,7 @@ public static class MeetingHudPatch
                     {
                         for (int i = 0; i < role.CountdownList.Count; i++)
                         {
-                            role.CountdownList[i] = -1;
+                            roleclass.ZeroingCountdown(i);
                         }
                         role.UsePetCooldown_Timer = -1;
                     }

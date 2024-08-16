@@ -415,18 +415,6 @@ class ReportDeadBodyPatch
             }
         }
         // 对于仅仅是报告的处理
-        if (target != null)
-        {
-            if (__instance.Is(CustomRoles.Oblivious) && !Utils.GetPlayerById(target.PlayerId).Is(CustomRoles.Bait)) return false;
-            if (target.Object.GetRealKiller() != null && target.Object.GetRealKiller().Is(CustomRoles.PublicOpinionShaper))
-            {
-                if(!(Utils.IsActive(SystemTypes.Comms) || Utils.IsActive(SystemTypes.Electrical) || Utils.IsActive(SystemTypes.Reactor) || Utils.IsActive(SystemTypes.LifeSupp) || Utils.IsActive(SystemTypes.MushroomMixupSabotage)))
-                {
-                    __instance.Notify(GetString("NobodyNoticed"));
-                    return false;
-                }
-            }
-        }
 
         foreach (var role in CustomRoleManager.AllActiveRoles.Values)
         {

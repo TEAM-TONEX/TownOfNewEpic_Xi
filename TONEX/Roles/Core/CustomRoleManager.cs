@@ -318,7 +318,7 @@ public static class CustomRoleManager
                 {
                     if (roleclass.CheckForOffGuard(i))
                     {
-                        roleclass.CountdownList[i] = -1;
+                        roleclass.ZeroingCountdown(i);
                         if (roleclass.SetOffGuardProtect(out string notify, out int format_int, out float format_float))
                         player.RpcProtectedMurderPlayer();
                         if (format_int != -255)

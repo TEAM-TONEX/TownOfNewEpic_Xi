@@ -57,9 +57,6 @@ public sealed class NiceTimePauser : RoleBase
         OptionSkillDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.NiceTimePauserSkillDuration, new(2.5f, 180f, 2.5f), 20f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    public override List<long> CooldownList { get; set; } = new();
-    public override List<long> CountdownList { get; set; } = new();
-
     public override bool SetOffGuardProtect(out string notify, out int format_int, out float format_float)
     {
         notify = GetString("NiceTimePauserOffGuard");
@@ -70,8 +67,7 @@ public sealed class NiceTimePauser : RoleBase
     public override void Add()
     {
         Cooldown = OptionSkillCooldown.GetFloat();
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CountdownList.Add(-1);
+        CreateCountdown(OptionSkillDuration.GetFloat());
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -115,7 +111,7 @@ public sealed class NiceTimePauser : RoleBase
         ReduceNowCooldown();
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
-        CountdownList[0] = Utils.GetTimeStamp();
+        ResetCountdown();
         if (!Player.IsModClient()) Player.RpcProtectedMurderPlayer(Player);
         Player.Notify(GetString("NiceTimePauserOnGuard"));
         Player.ColorFlash(Utils.GetRoleColor(CustomRoles.SchrodingerCat));

@@ -64,7 +64,6 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
             return true;
         return false;
     }
-    private long BlindingStartTime;
     
     static List<byte> Blinds;
     private static void SetupOptionItem()
@@ -82,9 +81,8 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     }
     public override void Add()
     {
-        BlindingStartTime = -1;
-        CooldownList.Add((long)OptionSkillDuration.GetFloat());
-        CooldownList.Add(BlindingStartTime);
+        CreateCountdown(OptionSkillDuration.GetFloat());
+
     }
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;

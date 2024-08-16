@@ -86,11 +86,13 @@ class ExileControllerWrapUpPatch
 
                 if (roleClass.Player.IsAlive())
                 {
+
                     for (int i = 0; i < roleClass.CountdownList.Count; i++)
                     {
-                        roleClass.CountdownList[i] = now;
+                        roleClass.ResetCountdown(i);
                     }
                     roleClass.UsePetCooldown_Timer = now;
+
                 }
 
             }
