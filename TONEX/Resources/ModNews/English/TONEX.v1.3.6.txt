@@ -1,0 +1,21 @@
+# English
+
+## Base
+- Based on AmongUs v2024.8.13
+- Based on Town Of Host v5.1.7 & Town Of Next v3.0.1
+
+## Warning
+- Create/join public lobbies in Official Servers is temporarily unavailable
+- This change is due to a server-side update that makes modded public lobbies unavailable for vanilla. Private lobbies and Private Servers are not affected.
+- Currently, this change is NOT permanent.
+
+## Summary of Updates
+- Fixed 1 bugs
+- Implemented 0 optimizations
+- Made changes to 0 elements
+- Added 0 New/Remade features (including roles, settings, etc.)
+- Temporarily removed 0 elements
+
+## Fixes
+- Resolved issues with music download confusion
+(Fixed by Slok)
