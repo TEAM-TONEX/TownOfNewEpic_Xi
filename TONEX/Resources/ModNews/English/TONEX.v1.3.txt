@@ -1,47 +1,144 @@
 #Number:100050
-#Title:TownOfNewEpic_Xtreme v1.3
-#SubTitle:★★★★Summer Holiday！★★★★
-#ShortTitle:★TONEX v1.3
-#Date:2024-07-21T00:00:00Z
-#-----------------------------
+# Title: TownOfNewEpic_Xtreme v1.3
+# SubTitle: ★★★★ Heatwave Incoming! ★★★★
+# ShortTitle: ★TONEX v1.3
+# Date: 2024-07-26T19:00:00Z
+# -----------------------------
 # English
 
-
-## Base
-- Based on AmongUs v2024.3.5
-- Based on Town Of Host v5.1.5 & Town Of Next v3.0.1
+## Corresponding Official Version
+- Based on AmongUs v2024.6.18
+- Based on Town Of Host v5.1.7 & Town Of Next v3.0.1
 
 ## Warning
-- Create/join public lobbies in Official Servers is temporarily unavailable
-- This change is due to a server-side update that makes modded public lobbies unavailable for vanilla. Private lobbies and Private Servers are not affected.
-- Currently, this change is NOT permanent.
+- Creating or joining public rooms on the official server is currently not allowed due to server updates that make modified public rooms incompatible with the original version. Private rooms or private servers are unaffected. This change is not permanent at the moment.
 
-## Summary of Updates
-- Fixed  bugs
-- Implemented  optimizations
-- Made changes to  elements
-- Added  New/Remade features (including roles, settings, etc.)
-- Temporarily removed  elements
+## Update Overview
+- Fixed 20 issues
+- Optimized 4 items
+- Changed 5 items
+- Added/Reworked 19 items (including roles, settings, etc.)
+- Temporarily removed 2 items
 
-## Fix
+## Fixes
+- Fixed the issue where the traitor’s first kill ability would fail to work
+(Fix by Slok)
+- Fixed the black screen issue after refreshing the "Audio Management" panel's scroll wheel
+(Fix by Slok)
+- Fixed the issue where the setting to prevent the Impostor from sabotaging after death would fail
+(Fix by Slok)
+- Fixed the issue where removing the mod name prefix still showed the host's name suffix instead of the mod name prefix
+(Fix by Slok)
+- Fixed the issue where changing the cooldown time for Mini Crewmates would double the cooldown time
+(Fix by Slok)
+- Completely fixed the issue where messages could be seen when they were supposed to be blocked
+(Fix by Slok)
+- Completely fixed the issue where opening the "My Music" panel in-game would force a move
+(Fix by Slok)
+- Completely fixed the issue where modded players could be kicked out for sending invalid data
+(Fix by Slok)
+- Fixed the issue where the corpse and name of a victim killed by a skin thief would not match the skin thief's color and name
+(Fix by Xi)
+- Fixed the issue where the Traitor’s opening animation would still show as Crewmate on the modded client
+(Fix by Slok)
+- Fixed the issue where "Yū Yū Ghost Shadow" displayed as "Finding Prey"
+(Fix by Slok)
+- Fixed the issue where the Ship Ghost could not complete tasks
+(Fix by Slok)
+- Fixed the issue where the first meeting skill prompt displayed incorrectly
+(Fix by Slok)
+- Fixed the issue where pets could still not be petted even if "Use Pet Button to Release Skills" was off
+(Fix by Slok)
+- Fixed the issue where the game could not end when a self-destruct truck was present
+(Fix by Slok)
+- Fixed the issue where the ransom target name would display incorrectly
+(Fix by Slok)
+- Fixed the issue where modded clients might incorrectly send RPCs and get kicked out when killing
+(Fix by Slok)
+- Fixed the missing string issue for Hot Potato
+(Fix by Xi)
+- Fixed the Hot Potato allocation issue
+(Fix by Xi)
+- Fixed the issue where the Yandere's target did not win with the Yandere upon victory
+(Fix by Slok)
 
+## Optimizations
+- Changed the "My Music" panel from scrolling to paging
+(Idea & Implementation by Slok)
+- Forcibly stops the original AmongUs music when playing music
+(Idea & Implementation by Slok)
+- Music volume is controlled by the AmongUs "Music" volume slider
+(Idea & Implementation by Slok)
+- Rewritten some logic to optimize code execution speed
+(Idea & Implementation by Slok)
 
-## Optimization
+## Changes
+- Traitor's first kill ability only works when the killer is an Impostor
+(Idea by Kong Shui Meng Bing, Change by Slok)
+- Role name change: Speculator => Speculationist
+(Idea from: The Other Roles, Change by Slok)
+- Map name change: Mushroom Island (Fungle) => Fungal World
+(Idea & Change by Slok)
+- Despairing Survivors can now win if they are the last one alive
+(Idea & Change by Slok)
+- According to settings, a Hero will unconditionally revenge if someone in their sight successfully kills after using their kill
+(Idea by tel, Change by Slok)
 
+## Removed
+- Temporarily removed and reworked v1.2 version exclusive role Meteor Judge
+(Decision by Slok)
+- Temporarily removed and reworked v1.2 version exclusive role Meteor Slayer
+(Decision by Slok)
 
-## Changing
+## Added/Reworked Roles
+Crewmates:
+- Added vanilla Crewmate role: Crewmate
+(Idea & Implementation by Slok)
+- Added vanilla Crewmate role: Engineer
+(Idea & Implementation by Slok)
+- Added vanilla Crewmate role: Scientist
+(Idea & Implementation by Slok)
+- Added vanilla Crewmate role: Guardian Angel
+(Idea & Implementation by Slok)
+- Added vanilla Crewmate role: Tracker
+(Idea & Implementation by Slok)
+- Added vanilla Crewmate role: Noisemaker
+(Idea & Implementation by Slok)
+Impostors:
+- Added vanilla Impostor role: Impostor
+(Idea & Implementation by Slok)
+- Added vanilla Impostor role: Shapeshifter
+(Idea & Implementation by Slok)
+- Added vanilla Impostor role: Phantom
+(Idea & Implementation by Slok)
+Neutral:
+- Reworked Neutral role: Revolutionary (Version Exclusive)
+(Idea from: Town Of Host Edited, Implementation by Slok)
+Additional:
+- Added Universal Additional Role: Gambler
+(Idea & Implementation by Slok)
 
+## Added/Reworked Features
+Features:
+- Added feature: Assist Plugin Mode
+(Idea & Implementation by Slok)
+Game Modes:
+- Added mode: Infection Mode
+(Idea & Implementation by Xi)
+- Added mode: Individual Combat Mode
+(Idea & Implementation by TOHE)
 
-## Deletion
+## Other:
+- Reworked Cloud Service: Cloud Fleet Princess
+(Idea by KARPED1EM, Implementation by Tianmeng LK & QingFeng & Slok)
+- Reworked Cloud Service: Cloud EAC
+(Idea by KARPED1EM, Implementation by Tianmeng LK & QingFeng)
+- Reworked Settings UI
+(Source: Town Of Host)
+- Added Game Mode: Infection Mode
+(Idea by Slok, Implementation by Xi)
+- EAC now supports detection of Yu Menu and Sicko Menu
+(Idea & Implementation by Yu)
 
-
-## New/Remade Roles
-
-
-## New/Remade Feature
-
-
-## New Others：
-
-
-## Supplement
+## Supplement:
+- TOHE's features are mostly back!
