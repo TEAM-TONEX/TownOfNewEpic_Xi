@@ -235,15 +235,13 @@ internal class SelectRolesPatch
 
             foreach (var cp in RoleResult.Where(x => x.Value == CustomRoles.CrewPostor))
             {
-                AssignDesyncRole(cp.Value, cp.Key, senders, rolesMap, BaseRole: RoleTypes.Crewmate, hostBaseRole: RoleTypes.Impostor);
+                AssignDesyncRole(cp.Value, cp.Key, senders, BaseRole: RoleTypes.Crewmate, hostBaseRole: RoleTypes.Impostor);
             }
             // 注册反职业
             foreach (var kv in RoleResult.Where(x => x.Value.GetRoleInfo().IsDesyncImpostor))
             {
-                AssignDesyncRole(kv.Value, kv.Key, senders, rolesMap, BaseRole: kv.Value.GetRoleInfo().BaseRoleType.Invoke());
+                AssignDesyncRole(kv.Value, kv.Key, senders, BaseRole: kv.Value.GetRoleInfo().BaseRoleType.Invoke());
             }
-
-            MakeDesyncSender(senders, rolesMap);
         }
         catch (Exception ex)
         {
@@ -281,7 +279,7 @@ internal class SelectRolesPatch
             RpcSetRoleReplacer.senders.Do(kvp => kvp.Value.SendMessage());
             // 删除不必要的对象
             RpcSetRoleReplacer.senders = null;
-            RpcSetRoleReplacer.OverriddenSenderList = null;
+            RpcSetRoleReplacer.DesyncImpostorList = null;
             RpcSetRoleReplacer.StoragedData = null;
 
             var rd = IRandom.Instance;
@@ -366,35 +364,28 @@ internal class SelectRolesPatch
             ex.Message.Split(@"\r\n").Do(line => Logger.Fatal(line, "Select Role Postfix"));
         }
     }
-    static void AssignDesyncRole(CustomRoles role, PlayerControl player, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
+    static void AssignDesyncRole(CustomRoles role, PlayerControl player, Dictionary<byte, CustomRpcSender> senders,  RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
     {
         if (Main.AssistivePluginMode.Value) return;
         var hostId = PlayerControl.LocalPlayer.PlayerId;
 
         PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role);
+        RpcSetRoleReplacer.DesyncImpostorList.Add(player.PlayerId);
 
-        var selfRole = player.PlayerId == hostId ? hostBaseRole : BaseRole;
-        var othersRole = player.PlayerId == hostId ? RoleTypes.Crewmate : RoleTypes.Scientist;
-
-
-        // 同时处理Desync角色视角和其他玩家角色视角
-        foreach (var target in Main.AllPlayerControls)
+        var hostRole = player.PlayerId == hostId ? hostBaseRole : RoleTypes.Crewmate;
+        foreach (var seer in Main.AllPlayerControls)
         {
-            // Desync角色视角
-            rolesMap[(player.PlayerId, target.PlayerId)] = player.PlayerId != target.PlayerId ? othersRole : selfRole;
-
-            // 其他玩家角色视角（针对不是当前玩家的玩家）
-            if (player.PlayerId != target.PlayerId)
+            if (seer.PlayerId == hostId)
             {
-                rolesMap[(target.PlayerId, player.PlayerId)] = othersRole;
+                player.SetRole(hostRole, false);
+            }
+            else
+            {
+                var assignRole = seer.PlayerId == player.PlayerId ? BaseRole : RoleTypes.Scientist;
+                senders[player.PlayerId].RpcSetRole(player, assignRole, seer.GetClientId());
             }
         }
 
-        // 将当前玩家添加到发送者列表
-        RpcSetRoleReplacer.OverriddenSenderList.Add(senders[player.PlayerId]);
-
-        //房主视角下确定角色
-        player.SetRole(othersRole, false);
         player.Data.IsDead = true;
 
         Logger.Info($"注册模组职业：{player?.Data?.PlayerName} => {role}", "AssignCustomRoles");
@@ -422,7 +413,7 @@ internal class SelectRolesPatch
         public static Dictionary<byte, CustomRpcSender> senders;
         public static List<(PlayerControl, RoleTypes)> StoragedData = new();
         // 由于角色Desync等其他处理已经写入了SetRoleRpc，因此不需要额外写入的Sender列表
-        public static List<CustomRpcSender> OverriddenSenderList;
+        public static List<byte> DesyncImpostorList;
         public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] RoleTypes roleType, [HarmonyArgument(1)] bool canOverrideRole = false)
         {
             if (Main.AssistivePluginMode.Value) return true;
@@ -436,21 +427,22 @@ internal class SelectRolesPatch
         }
         public static void Release()
         {
-            foreach (var sender in senders)
+            foreach (var (player, role) in StoragedData)
             {
-                if (OverriddenSenderList.Contains(sender.Value)) continue;
-                if (sender.Value.CurrentState != CustomRpcSender.State.InRootMessage)
-                    throw new InvalidOperationException("A CustomRpcSender had Invalid State.");
-
-                foreach (var pair in StoragedData)
+                player.SetRole(role);
+                var impostorRole = role is RoleTypes.Impostor or RoleTypes.Shapeshifter or RoleTypes.Phantom;
+                if (impostorRole && DesyncImpostorList.Count != 0)
                 {
-                    AmongUsClient.Instance.StartCoroutine(pair.Item1.CoSetRole(pair.Item2, true));
-                    sender.Value.AutoStartRpc(pair.Item1.NetId, (byte)RpcCalls.SetRole, Utils.GetPlayerById(sender.Key).GetClientId())
-                        .Write((ushort)pair.Item2)
-                        .Write(false)
-                        .EndRpc();
+                    foreach (var seer in Main.AllPlayerControls)
+                    {
+                        var assignRole = DesyncImpostorList.Contains(seer.PlayerId) ? RoleTypes.Scientist : role;
+                        senders[player.PlayerId].RpcSetRole(player, assignRole, seer.GetClientId());
+                    }
                 }
-                sender.Value.EndMessage();
+                else
+                {
+                    senders[player.PlayerId].RpcSetRole(player, role);
+                }
             }
             doReplace = false;
         }
@@ -458,7 +450,7 @@ internal class SelectRolesPatch
         {
             RpcSetRoleReplacer.senders = senders;
             StoragedData = new();
-            OverriddenSenderList = new();
+            DesyncImpostorList = new();
             doReplace = true;
         }
     }
