@@ -88,7 +88,7 @@ public sealed class Sniper : RoleBase, IImpostor
         IsAim = false;
         AimTime = 0f;
         MeetingReset = false;
-        shapeshifting = false;
+
         Snipers.Add(this);
     }
     private void SendRPC()
@@ -200,27 +200,12 @@ public sealed class Sniper : RoleBase, IImpostor
         // 返回狙击目标字典
         return targets;
     }
-    public bool shapeshifting;
     public override bool OnCheckVanish()
     {
-        shapeshifting = !shapeshifting;
+
         if (BulletCount <= 0) return false;
 
-        //弾が残ってたら
-        if (shapeshifting)
-        {
-            //Aim開始
-            MeetingReset = false;
 
-            //スナイプ地点の登録
-            SnipeBasePosition = Player.transform.position;
-
-            LastPosition = Player.transform.position;
-            IsAim = true;
-            AimTime = 0f;
-
-            return false;
-        }
 
         //エイム終了
         IsAim = false;

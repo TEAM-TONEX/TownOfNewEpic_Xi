@@ -20,7 +20,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor
             CustomRoleTypes.Impostor,
             1238687,
             SetupOptionItem,
-            "du|双杀|双刀"
+            "du|双杀|双刀",
+            experimental: true
         );
     public DoubleKiller(PlayerControl player)
     : base(

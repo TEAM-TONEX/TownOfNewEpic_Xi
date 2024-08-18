@@ -213,7 +213,7 @@ class IntroCutscenePatch
             {
                 case CustomRoleTypes.Impostor:
                     __instance.TeamTitle.text = GetString("TeamImpostor");
-                    __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}"; 
+                    __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount))}"; 
                     __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
                     __instance.TeamTitle.color = __instance.BackgroundBar.material.color =  new Color32(255, 25, 25, byte.MaxValue);
                     break;
@@ -221,13 +221,13 @@ class IntroCutscenePatch
                     if (PlayerControl.LocalPlayer.Is(CustomRoles.Madmate))
                     {
                         __instance.TeamTitle.text = GetString("TeamImpostor");
-                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumImp"), GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount))}";
                         __instance.ImpostorText.text += "\n" + GetString("ImpostorIntroText");
                         __instance.TeamTitle.color = __instance.BackgroundBar.material.color = new Color32(255, 25, 25, byte.MaxValue);
                         break;
                     }
                     __instance.TeamTitle.text = $"{GetString("TeamCrewmate")}";
-                    __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                    __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumCrew"), GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount))}";
                     __instance.ImpostorText.text += "\n" + GetString("CrewmateIntroText");
                     __instance.TeamTitle.color = new Color32(140, 255, 255, byte.MaxValue);
                     break;
@@ -237,7 +237,7 @@ class IntroCutscenePatch
                     if (!PlayerControl.LocalPlayer.IsNeutralEvil())
                     {
                         __instance.TeamTitle.text = GetString("TeamNNeutral");
-                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumNN"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumNN"), GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount))}";
                         __instance.ImpostorText.text += "\n" + GetString("NNeutralIntroText");
                         __instance.TeamTitle.color =  new Color32(255, 254, 226, byte.MaxValue);
                        
@@ -245,7 +245,7 @@ class IntroCutscenePatch
                     else
                     {
                         __instance.TeamTitle.text = GetString("TeamIndependent");
-                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumEN"), Options.SetImpNum.GetBool() ? Options.ImpNum.GetInt() : Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors))}";
+                        __instance.ImpostorText.text = $"{string.Format(GetString("ImpostorNumEN"), GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount))}";
                         __instance.ImpostorText.text += "\n" + GetString("IndependentIntroText");
                         __instance.TeamTitle.color = new Color32(187, 186, 161, byte.MaxValue);
                     }

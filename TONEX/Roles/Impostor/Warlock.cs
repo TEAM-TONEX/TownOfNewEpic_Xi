@@ -98,8 +98,7 @@ public sealed class Warlock : RoleBase, IImpostor
         if (info.IsSuicide) return true;
 
         var (killer, target) = info.AttemptTuple;
-        if (!Shapeshifting)
-        {//変身してない
+
             if (!IsCursed)
             {//まだ呪っていない
                 IsCursed = true;
@@ -114,9 +113,7 @@ public sealed class Warlock : RoleBase, IImpostor
             }
             //どちらにしてもキルは無効
             return false;
-        }
-        //変身中は通常キル
-        return true;
+
     }
     public override bool OnCheckVanish()
     {
@@ -168,6 +165,7 @@ public sealed class Warlock : RoleBase, IImpostor
             }
             Player.SetKillCooldownV2();
             CursedPlayer = null;
+            IsCursed = false;
         }
         return false;
     }

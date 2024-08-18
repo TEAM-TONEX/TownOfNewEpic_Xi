@@ -37,6 +37,8 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     static OptionItem OptionSkillCooldown;
     static OptionItem OptionSkillDuration;
     static OptionItem OptionSkillRange;
+
+    static List<byte> Blinds;
     private static void SendRPC_SyncList()
     {
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetEvilGraList, SendOption.Reliable, -1);
@@ -64,8 +66,6 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
             return true;
         return false;
     }
-    
-    static List<byte> Blinds;
     private static void SetupOptionItem()
     {
         OptionSkillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceGrenadierSkillCooldown, new(2.5f, 180f, 2.5f), 20f, false)
@@ -82,7 +82,7 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
     public override void Add()
     {
         CreateCountdown(OptionSkillDuration.GetFloat());
-
+        Blinds = new();
     }
     public override long UsePetCooldown { get; set; } = (long)OptionSkillCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
@@ -109,6 +109,11 @@ public sealed class EvilGrenadier : RoleBase, IImpostor
         foreach (var pc in Main.AllAlivePlayerControls.Where(x => x.IsImpTeam()))
             pc.Notify(GetString("GrenadierSkillInUse"), OptionSkillDuration.GetFloat());
         return false;
+    }
+    public override void AfterOffGuard()
+    {
+        Blinds = new();
+        SendRPC_SyncList();
     }
     void OnBlinding(PlayerControl pc)
     {

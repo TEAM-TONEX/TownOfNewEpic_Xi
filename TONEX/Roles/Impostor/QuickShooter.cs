@@ -54,10 +54,6 @@ public sealed class QuickShooter : RoleBase, IImpostor
         ShotLimit = 0;
         
     }
-    public override void OnGameStart()
-    {
-        
-    }
     private void SendRPC()
     {
         using var sender = CreateSender();

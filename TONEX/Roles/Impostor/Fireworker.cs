@@ -177,6 +177,7 @@ public sealed class Fireworker : RoleBase, IImpostor
         }
         return retText;
     }
+    public override bool CanUseAbilityButton() => State != FireworkerState.FireEnd;
     public override bool GetAbilityButtonText(out string text)
     {
         text = State == FireworkerState.ReadyFire

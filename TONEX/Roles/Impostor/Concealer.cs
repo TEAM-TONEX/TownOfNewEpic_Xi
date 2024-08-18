@@ -38,7 +38,10 @@ public sealed class Concealer : RoleBase, IImpostor
         OptionShapeshiftDuration = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.ShapeshiftDuration, new(2.5f, 180f, 2.5f), 10f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    
+    public override void Add()
+    {
+        CreateCountdown(OptionShapeshiftDuration.GetFloat());
+    }
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.PhantomCooldown = OptionShapeshiftCooldown.GetFloat();
@@ -48,15 +51,17 @@ public sealed class Concealer : RoleBase, IImpostor
     public override bool OnCheckVanish()
     {
         vanish = true;
+        ResetCountdown(0);
         Player.RpcResetAbilityCooldown();
         if (!AmongUsClient.Instance.AmHost) return false;
-        new LateTask(() =>
-        {
-            vanish = false;
-        }, OptionShapeshiftDuration.GetFloat());
+
         Camouflage.CheckCamouflage();
         
         return false;
+    }
+    public override void AfterOffGuard() {
+        vanish = false;
+        Camouflage.CheckCamouflage();
     }
     public override long UsePetCooldown { get; set; } = (long)OptionShapeshiftCooldown.GetFloat();
     public override bool EnablePetSkill() => true;
