@@ -9,6 +9,7 @@ using TONEX.Roles.Core;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
 using TONEX.MoreGameModes;
+using TONEX.Roles.AddOns.Common;
 namespace TONEX;
 
 [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.AddTasksFromList))]

@@ -5,7 +5,6 @@ using System.Text;
 using TONEX.Modules;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.Core;
 using TONEX.Roles.Crewmate;
 using TONEX.Roles.Neutral;
@@ -43,7 +42,7 @@ public static class MeetingHudPatch
             if (voter != null)
             {
                 if (!Madmate.CheckVoteAsVoter(srcPlayerId, suspectPlayerId, voter, ref __instance)) return false;
-                if (voter.GetRoleClass()?.CheckVoteAsVoter(voted) == false)
+                if (voter.GetRoleClass()?.CheckVoteAsVoter(voted) == false || voter.Any_Addons(x=>x.CheckVoteAsVoter(voted) == false))
                 {
                     __instance.RpcClearVote(voter.GetClientId());
                     Logger.Info($"{voter.GetNameWithRole()} 的投票被清除", nameof(CastVotePatch));
@@ -156,6 +155,7 @@ public static class MeetingHudPatch
             SoundManager.Instance.ChangeAmbienceVolume(0f);
             if (!GameStates.IsModHost) return;
             var myRole = PlayerControl.LocalPlayer.GetRoleClass();
+            var myAddons = PlayerControl.LocalPlayer.GetAddonClasses();
             foreach (var pva in __instance.playerStates)
             {
                 var pc = Utils.GetPlayerById(pva.TargetPlayerId);
@@ -175,7 +175,12 @@ public static class MeetingHudPatch
                 {
                     suffixBuilder.Append(myRole.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
                 }
+                if (myAddons != null)
+                    myAddons.Do_Addons(x => suffixBuilder.Append(x.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true)));
+
                 suffixBuilder.Append(CustomRoleManager.GetSuffixOthers(PlayerControl.LocalPlayer, pc, isForMeeting: true));
+
+
                 if (suffixBuilder.Length > 0)
                 {
                     roleTextMeeting.text = suffixBuilder.ToString();
@@ -219,21 +224,31 @@ public static class MeetingHudPatch
 
             if (AmongUsClient.Instance.AmHost)
             {
-                CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
-                foreach (var player in Main.AllPlayerControls)
-                {
-                    var roleclass = (player.GetRoleClass());
-                    if (player.IsAlive())
+                CustomRoleManager.AllActiveRoles.Values.Do(role => 
+                { 
+                    role.OnStartMeeting();
+                    if (role.Player.IsAlive())
                     {
-                        for (int i = 0; i < roleclass.CountdownList.Count; i++)
+                        for (int i = 0; i < role.CountdownList.Count; i++)
                         {
-                            roleclass.ZeroingCountdown(i);
+                            role.ZeroingCountdown(i);
                         }
-                        roleclass.UsePetCooldown_Timer = -1;
+                        role.UsePetCooldown_Timer = -1;
                     }
-                }
+                });
+                CustomRoleManager.AllActiveAddons.Values.Do(x => x.Do_Addons(role =>
+                {
+                    role.OnStartMeeting();
+                    if (role.Player.IsAlive())
+                    {
+                        for (int i = 0; i < role.CountdownList.Count; i++)
+                        {
+                            role.ZeroingCountdown(i);
+                        }
+                        role.UsePetCooldown_Timer = -1;
+                    }
+                }));
                 MeetingStartNotify.OnMeetingStart();
-                Tiebreaker.OnMeetingStart();
 
             }
 
@@ -242,7 +257,7 @@ public static class MeetingHudPatch
                 if (pva == null) continue;
                 var seer = PlayerControl.LocalPlayer;
                 var seerRole = seer.GetRoleClass();
-
+                var seerAddon = seer.GetAddonClasses();
                 var target = Utils.GetPlayerById(pva.TargetPlayerId);
                 if (target == null) continue;
 
@@ -256,16 +271,20 @@ public static class MeetingHudPatch
                 var overrideName = pva.NameText.text;
                 //调用职业类通过 seer 重写 name
                 seer.GetRoleClass()?.OverrideNameAsSeer(target, ref overrideName, true);
+                seer.Do_Addons(x => x?.OverrideNameAsSeer(target, ref overrideName, true));
                 //调用职业类通过 seen 重写 name
                 target.GetRoleClass()?.OverrideNameAsSeen(seer, ref overrideName, true);
+                target.Do_Addons(x => x?.OverrideNameAsSeen(seer, ref overrideName, true));
+
                 pva.NameText.text = overrideName;
-                Guesser.OverrideNameAsSeer(target, ref overrideName, true);
                 //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。
 
                 if (seer.KnowDeathReason(target))
                     sb.Append($"({Utils.ColorString(Utils.GetRoleColor(CustomRoles.MedicalExaminer), Utils.GetVitalText(target.PlayerId))})");
 
                 sb.Append(seerRole?.GetMark(seer, target, true));
+                seerAddon?.Do_Addons(x => sb.Append(x?.GetMark(seer, target, true)));
+
                 sb.Append(CustomRoleManager.GetMarkOthers(seer, target, true));
 
                 bool isLover = false;
@@ -307,7 +326,6 @@ public static class MeetingHudPatch
                 AkujoFakeLovers.MeetingHud(isLover, seer, target, ref sb);
                 //海王相关显示
                 Neptune.MeetingHud(isLover, seer, target, ref sb);
-                Mini.MeetingHud(isLover, seer, target, ref sb);
 
 
                 //会議画面ではインポスター自身の名前にSnitchマークはつけません。
@@ -373,7 +391,6 @@ public static class MeetingHudPatch
     }
     public static void CheckForDeathOnExile(CustomDeathReason deathReason, params byte[] playerIds)
     {
-        Lovers.CheckForDeathOnExile(deathReason, playerIds);
         AdmirerLovers.CheckForDeathOnExile(deathReason, playerIds);
         AkujoLovers.CheckForDeathOnExile(deathReason, playerIds);
         CupidLovers.CheckForDeathOnExile(deathReason, playerIds);

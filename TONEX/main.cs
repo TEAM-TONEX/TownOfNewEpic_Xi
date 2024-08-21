@@ -50,7 +50,7 @@ public class Main : BasePlugin
     public static readonly bool ShowWebsiteButton = true;
     public static readonly string WebsiteUrl = Translator.IsChineseLanguageUser ? "https://www.xtreme.net.cn" : "https://www.xtreme.net.cn";
     public static readonly bool ShowQQButton = true;
-    public static readonly string QQInviteUrl = "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=4ojpzbUU42giZZeQ-DTaal-tC5RIpL46&authKey=49OYQwsCza2x5eHGdXDHXD1M%2FvYvQcEhJBNL5h8Gq7AxOu5eMfTc6g2edtlsMuCm&noverify=0&group_code=733425569";
+    public static readonly string QQInviteUrl = "https://qm.qq.com/q/1HnCuIcFow";
     public static readonly bool ShowDiscordButton = true;
     public static readonly string DiscordInviteUrl = "https://discord.gg/kz787Zg7h8";
     public static readonly bool ShowGithubUrl = true;
@@ -260,53 +260,27 @@ public class Main : BasePlugin
                 //Add-Ons
                 {CustomRoles.NotAssigned, "#ffffff"},
                 {CustomRoles.LastImpostor, "#ff1919"},
-                {CustomRoles.Lovers, "#ff9ace"},
-                {CustomRoles.AdmirerLovers, "#FFC8EE"},
-                {CustomRoles.AkujoLovers, "#8E4593"},
-                {CustomRoles.AkujoFakeLovers, "#9C709F"},
-                {CustomRoles.CupidLovers, "#F69896"},
-                {CustomRoles.Neptune, "#00a4ff"},
                 {CustomRoles.Madmate, "#ff1919"},
-                {CustomRoles.Watcher, "#800080"},
-                {CustomRoles.Flashman, "#ff8400"},
-                {CustomRoles.Lighter, "#eee5be"},
-                {CustomRoles.Seer, "#61b26c"},
-                {CustomRoles.Tiebreaker, "#1447af"},
-                {CustomRoles.Oblivious, "#424242"},
-                {CustomRoles.Bewilder, "#c894f5"},
-                {CustomRoles.Workhorse, "#00ffff"},
-                {CustomRoles.Fool, "#e6e7ff"},
-                {CustomRoles.Avenger, "#ffab1b"},
-                {CustomRoles.YouTuber, "#fb749b"},
-                {CustomRoles.Egoist, "#5600ff"},
-                {CustomRoles.TicketsStealer, "#ff1919"},
-                {CustomRoles.Schizophrenic, "#3a648f"},
-                {CustomRoles.Mimic, "#ff1919"},
-                {CustomRoles.Reach, "#74ba43"},
                 {CustomRoles.Charmed, "#ff00ff"},
-                {CustomRoles.Bait, "#00f7ff"},
-                {CustomRoles.Beartrap, "#5a8fd0"},
                 {CustomRoles.Wolfmate,"#00b4eb" },
-                {CustomRoles.Rambler,"#ccffff" },
-                {CustomRoles.Chameleon,"#8cffff" },
-                {CustomRoles.Signal,"#F39C12" },
-                {CustomRoles.Mini,"#ffebd7" },
-                {CustomRoles.Libertarian,"#33CC99" },
-                {CustomRoles.Spiders, "#ff1919"},
-                {CustomRoles.Diseased,"#c0c0c0" },
-                {CustomRoles.Nihility,"#444444" },
-                {CustomRoles.Believer,"#007169" },
-                {CustomRoles.PublicOpinionShaper, "#ff1919"},
-                {CustomRoles.Guesser, "#DF9965" },
             };
-            var type = typeof(RoleBase);
-            var roleClassArray =
-            CustomRoleManager.AllRolesClassType = Assembly.GetAssembly(type)
+            var roletype = typeof(RoleBase);
+            var roleClassArray = Assembly.GetAssembly(roletype)
                 .GetTypes()
-                .Where(x => x.IsSubclassOf(type)).ToArray();
+                .Where(x => x.IsSubclassOf(roletype)).ToArray();
 
             foreach (var roleClassType in roleClassArray)
-                roleClassType.GetField("RoleInfo")?.GetValue(type);
+                roleClassType.GetField("RoleInfo")?.GetValue(roletype);
+
+            var addontype = typeof(AddonBase);
+            var addonClassArray = Assembly.GetAssembly(addontype)
+                .GetTypes()
+                .Where(x => x.IsSubclassOf(addontype)).ToArray();
+
+            foreach (var addonClassType in addonClassArray)
+                addonClassType.GetField("RoleInfo")?.GetValue(addontype);
+
+            CustomRoleManager.AllRolesClassType = roleClassArray.Concat(addonClassArray).ToArray();
         }
         catch (ArgumentException ex)
         {

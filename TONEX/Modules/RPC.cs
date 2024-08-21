@@ -9,7 +9,6 @@ using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
 using TONEX.Roles.Crewmate;
 using TONEX.Roles.AddOns.Common;
-using TONEX.Roles.AddOns.CanNotOpened;
 using static TONEX.Translator;
 using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
@@ -95,8 +94,6 @@ public enum CustomRPC
     SetHunterList,
     //玩家
     SetDemonHealth,
-    //患者
-    SetDiseasedList,
     //琥珀
     SetAmberProtectList,
     //正义掷弹兵
@@ -109,6 +106,8 @@ public enum CustomRPC
     SetDeputyList,
     //伪人
     SetSubstituteLimit,
+    //基因学家
+    SetGeneticistDNA2,
 
     //游戏模式
     SyncFFAPlayer,
@@ -190,6 +189,7 @@ internal class RPCHandlerPatch
     {
 
         if (Main.AssistivePluginMode.Value && (CustomRPC)callId is not CustomRPC.VersionCheck and not CustomRPC.RequestRetryVersionCheck) return;
+        
         //CustomRPC以外は処理しない
         if (callId < (byte)CustomRPC.VersionCheck) return;
 
@@ -296,7 +296,7 @@ internal class RPCHandlerPatch
                 CustomRoles role = (CustomRoles)reader.ReadPackedInt32();
                 RPC.SetCustomRole(CustomRoleTargetId, role);
                 bool IsGM = role is CustomRoles.GM;
-                if (!IsGM)
+                if (!IsGM && GameStates.IsInGame)
                 {
                     if (!Main.SetRolesList.ContainsKey(CustomRoleTargetId))
                     {
@@ -322,9 +322,6 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetNameColorData:
                 NameColorManager.ReceiveRPC(reader);
-                break;
-            case CustomRPC.SetLoversPlayers:
-                Lovers.ReceiveRPC(reader);
                 break;
             case CustomRPC.SetAdmirerLoversPlayers:
                 AdmirerLovers.ReceiveRPC(reader);
@@ -380,7 +377,7 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.OnClickMeetingButton:
                 var target = Utils.GetPlayerById(reader.ReadByte());
-                if (__instance.GetRoleClass() is IMeetingButton meetingButton) meetingButton.OnClickButton(target);
+                if (__instance.GetRoleClass() is IMeetingButton meetingButton || __instance.Contains_Addons(out meetingButton)) meetingButton.OnClickButton(target);
                 break;
             case CustomRPC.Guess:
                 GuesserHelper.ReceiveRPC(reader, __instance);
@@ -396,12 +393,6 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetProphetList:
                Prophet.ReceiveRPC_SyncList(reader);
-                break;
-            case CustomRPC.MiniAge:
-                Mini.ReceiveRPC(reader,rpcType);
-                break;
-            case CustomRPC.SignalPosition:
-                Signal.ReceiveRPC(reader, rpcType);
                 break;
             case CustomRPC.SetYangPlayer:
                 Onmyoji.ReceiveRPC_SyncYangList(reader);
@@ -430,9 +421,6 @@ internal class RPCHandlerPatch
             case CustomRPC.Swap:
                 SwapperHelper.ReceiveRPC(reader, __instance);
                 break;
-            case CustomRPC.SetDiseasedList:
-                Diseased.ReceiveRPC(reader);
-                break;
             case CustomRPC.SetAmberProtectList:
                 Amber.ReceiveRPC_SyncList(reader);
                 break;
@@ -448,12 +436,19 @@ internal class RPCHandlerPatch
             case CustomRPC.SetDeputyList:
                 Deputy.ReceiveRPC_SyncList(reader);
                 break;
+            case CustomRPC.SetGeneticistDNA2:
+                Geneticist.ReceiveRPC_DNA2(reader);
+                break;
             case CustomRPC.SyncFFAPlayer:
                 FFAManager.ReceiveRPCSyncFFAPlayer(reader);
                 break;
             case CustomRPC.SyncFFANameNotify:
                 FFAManager.ReceiveRPCSyncNameNotify(reader);
                 break;
+            default:
+                CustomRoleManager.DispatchRpc(reader, rpcType);
+                break;
+
         }
     }
 }
@@ -665,9 +660,10 @@ internal static class RPC
     }
     public static void SetCustomRole(byte targetId, CustomRoles role)
     {
+        if (Utils.GetPlayerById(targetId).Is(role)) return;
         if (role < CustomRoles.NotAssigned)
         {
-            CustomRoleManager.GetByPlayerId(targetId)?.Dispose();
+            CustomRoleManager.GetRoleBaseByPlayerId(targetId)?.Dispose();
             PlayerState.GetByPlayerId(targetId).SetMainRole(role);
         }
         else if (role >= CustomRoles.NotAssigned)   //500:NoSubRole 501~:SubRole

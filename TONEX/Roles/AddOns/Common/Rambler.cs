@@ -3,33 +3,53 @@ using System.Drawing;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
+using AmongUs.GameOptions;
+using System.Linq;
+using HarmonyLib;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Rambler
+public sealed class Rambler : AddonBase
 {
-    private static readonly int Id = 154564874;
-    private static List<byte> playerIdList = new();
-   public static OptionItem OptionSpeed;
-    public static void SetupCustomOption()
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Rambler),
+    player => new Rambler(player),
+    CustomRoles.Rambler,
+   154564874,
+    SetupOptionItem,
+    "ra|漫步",
+    "#ccffff"
+    );
+    public Rambler(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
+
+
+    public static OptionItem OptionSpeed;
+    enum OptionName
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Rambler);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Rambler, true, true, true);
-        OptionSpeed = FloatOptionItem.Create(Id + 20, "RamblerSpeed", new(0.25f, 5f, 0.25f), 0.5f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Rambler])
-    .SetValueFormat(OptionFormat.Multiplier);
+        RamblerSpeed
     }
-    [GameModuleInitializer]
-    public static void Init()
+
+    static void SetupOptionItem()
     {
-        playerIdList = new();
+        OptionSpeed = FloatOptionItem.Create(RoleInfo,20,OptionName.RamblerSpeed, new(0.25f, 5f, 0.25f), 0.5f,false)
+         .SetValueFormat(OptionFormat.Multiplier);
     }
-    public static void Add(byte playerId)
+
+    public override void ApplyGameOptions(IGameOptions opt)
     {
-        playerIdList.Add(playerId);
+        Main.AllPlayerSpeed[Player.PlayerId] = Rambler.OptionSpeed.GetFloat();
+
+        Main.AllPlayerControls.Where(x => !Player.IsAlive() && Player.GetRealKiller()?.PlayerId == x.PlayerId && !x.Is(CustomRoles.Hangman)).Do(x =>
+        {
+            x.RpcSetCustomRole(CustomRoles.Rambler);
+            Utils.NotifyRoles(x);
+        });
+
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }
-
-
-

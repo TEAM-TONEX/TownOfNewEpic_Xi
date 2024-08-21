@@ -2,29 +2,27 @@ using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
 using UnityEngine;
-using static TONEX.Options;
+using AmongUs.GameOptions;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Reach
+public sealed class Reach : AddonBase
 {
-    private static readonly int Id = 81600;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Reach);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Reach),
+    player => new Reach(player),
+    CustomRoles.Reach,
+     81600,
+    null,
+    "re|持槍|手长|长臂猿|关了吧没意思|开reach|reach开的真长",
+    "#74ba43"
+    );
+    public Reach(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Reach);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Reach, true, true, true);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetInt(Int32OptionNames.KillDistance, 2);
 }

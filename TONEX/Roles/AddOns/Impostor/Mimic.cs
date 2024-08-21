@@ -1,30 +1,43 @@
 using System.Collections.Generic;
-using TONEX.Attributes;
+using System.Linq;
+using System.Text;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
+using static TONEX.Translator;
 
-namespace TONEX.Roles.AddOns.Impostor;
-public static class Mimic
+namespace TONEX.Roles.AddOns.Common;
+public sealed class Mimic : AddonBase
 {
-    private static readonly int Id = 82000;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Mimic);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Mimic),
+    player => new Mimic(player),
+    CustomRoles.Mimic,
+    82000,
+    null,
+    "mi|åöœ‰π÷|±¶œ‰",
+    "#ff1919",
+    2
+    );
+    public Mimic(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
-    public static void SetupCustomOption()
+    public override void NotifyOnMeetingStart(ref List<(string, byte, string)> msgToSend)
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Mimic);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Mimic, false, true, false);
+        var mimicSb = new StringBuilder();
+        foreach (var vic in Main.AllPlayerControls.Where(p => !p.IsAlive()))
+        {
+            if (vic.GetRealKiller()== Player && !Player.IsAlive())
+                mimicSb.Append($"\n{vic.GetNameWithRole(true)}");
+        }
+        if (mimicSb.Length > 1)
+        {
+            string mimicMsg = GetString("MimicDeadMsg") + "\n" + mimicSb.ToString();
+            foreach (var ipc in Main.AllPlayerControls.Where(x => x.Is(CustomRoleTypes.Impostor)))
+                msgToSend.Add((mimicMsg, ipc.PlayerId, Utils.ColorString(Utils.GetRoleColor(CustomRoles.Mimic), GetString("MimicMsgTitle"))));
+        }
     }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }

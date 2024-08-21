@@ -96,28 +96,14 @@ public class PlayerGameOptionsSender : GameOptionsSender
         }
         var roleClass = player.GetRoleClass()?? null;
         roleClass?.ApplyGameOptions(opt);
+
+        player.Do_Addons(x=>x.ApplyGameOptions(opt));
         foreach (var subRole in player.GetCustomSubRoles())
         {
             switch (subRole)
             {
-                case CustomRoles.Watcher:
-                    opt.SetBool(BoolOptionNames.AnonymousVotes, false);
-                    break;
                 case CustomRoles.Flashman:
                     Main.AllPlayerSpeed[player.PlayerId] = Flashman.OptionSpeed.GetFloat();
-                    break;
-                case CustomRoles.Lighter:
-                    opt.SetVision(true);
-                    opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision + Lighter.OptionVistion.GetFloat()) > 5f?5f : Main.DefaultCrewmateVision + Lighter.OptionVistion.GetFloat());
-                    opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultImpostorVision + Lighter.OptionVistion.GetFloat()) > 5f ? 5f : Main.DefaultImpostorVision + Lighter.OptionVistion.GetFloat());
-                    break;
-                case CustomRoles.Bewilder:
-                    opt.SetVision(false);
-                    opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat()) <0f? 0f: Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat());
-                    opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat()) < 0f ? 0f : Main.DefaultCrewmateVision - Bewilder.OptionVision.GetFloat());
-                    break;
-                case CustomRoles.Reach:
-                    opt.SetInt(Int32OptionNames.KillDistance, 2);
                     break;
                 case CustomRoles.Mini:
                     
@@ -127,24 +113,6 @@ public class PlayerGameOptionsSender : GameOptionsSender
                     break;
 
             }
-        }
-
-        // 为迷幻者的凶手
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Bewilder) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Hangman)))
-        {
-            opt.SetVision(false);
-            opt.SetFloat(FloatOptionNames.CrewLightMod, Bewilder.OptionVision.GetFloat());
-            opt.SetFloat(FloatOptionNames.ImpostorLightMod, Bewilder.OptionVision.GetFloat());
-            player.RpcSetCustomRole(CustomRoles.Bewilder);
-            Utils.NotifyRoles(player);
-        }
-
-        // 为漫步者的凶手
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Rambler) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Rambler)))
-        {
-            Main.AllPlayerSpeed[player.PlayerId] = Rambler.OptionSpeed.GetFloat();
-            player.RpcSetCustomRole(CustomRoles.Rambler);
-            Utils.NotifyRoles(player);
         }
 
         //最好的请过来

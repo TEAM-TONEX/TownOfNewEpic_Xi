@@ -6,38 +6,28 @@ using UnityEngine;
 using static TONEX.Options;
 using static TONEX.Translator;
 using static TONEX.Utils;
-
 namespace TONEX.Roles.AddOns.Common;
-public static class Neptune
+public sealed class Neptune : AddonBase
 {
-    private static readonly int Id = 80600;
-    private static Color RoleColor = GetRoleColor(CustomRoles.Neptune);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Neptune),
+    player => new Neptune(player),
+    CustomRoles.Neptune,
+   80600,
+   null,
+    "np|ntr|渣男",
+    "#00a4ff"
+    );
+    public Neptune(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.OtherRoles, CustomRoles.Neptune);
-        AddOnsAssignData.Create(Id + 10, TabGroup.OtherRoles, CustomRoles.Neptune, true, true, true);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 
-    public static void MeetingngStartNotifyOthers(ref StringBuilder sb, CustomRoles role )
-    {
-        if (CustomRoles.Neptune.IsExist() && (role is not CustomRoles.GM and not CustomRoles.Neptune))
-            sb.Append($"\n\n" + GetString($"Lovers") + Utils.GetRoleDisplaySpawnMode(CustomRoles.Lovers) + GetString($"LoversInfoLong"));
-
-    }
-    public static void GetSubRolesText(bool intro, bool disableColor ,List<CustomRoles>SubRoles, ref StringBuilder sb)
+    public static void GetSubRolesText(bool intro, bool disableColor, List<CustomRoles> SubRoles, ref StringBuilder sb)
     {
         if (intro && !SubRoles.Contains(CustomRoles.Lovers) && !SubRoles.Contains(CustomRoles.Neptune) && CustomRoles.Neptune.IsExist())
         {
@@ -57,7 +47,7 @@ public static class Neptune
         if (!PlayerControl.LocalPlayer.Is(CustomRoles.Lovers) && !PlayerControl.LocalPlayer.Is(CustomRoles.Neptune) && CustomRoles.Neptune.IsExist() && !PlayerControl.LocalPlayer.Is(CustomRoles.Mini))
             __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(CustomRoles.Lovers), GetString($"{CustomRoles.Lovers}Info"));
 
-        
+
     }
     public static void MeetingHud(bool isLover, PlayerControl seer, PlayerControl target, ref StringBuilder sb)
     {

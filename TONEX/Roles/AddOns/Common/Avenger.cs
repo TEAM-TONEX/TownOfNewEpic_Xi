@@ -1,16 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
-using TONEX.Attributes;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Avenger
+public sealed class Avenger : AddonBase
 {
-    private static readonly int Id = 81400;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Avenger);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Avenger),
+    player => new Avenger(player),
+    CustomRoles.Avenger,
+    81400,
+    SetupOptionItem,
+    "av|¸´³ð",
+    "#ffab1b"
+    );
+    public Avenger(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
 
     public static OptionItem OptionRevengeMode;
     public static OptionItem OptionRevengeNums;
@@ -23,36 +33,29 @@ public static class Avenger
         "AvengerMode.Enimies",
         "AvengerMode.Teammates",
     };
+    enum OptionName
+    {
+        AvengerRevengeMode,
+        AvengerRevengeNums,
+        AvengerRevengeOnKilled,
+        AvengerRevengeOnSuicide
+    }
 
-    public static void SetupCustomOption()
+    static void SetupOptionItem()
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Avenger);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Avenger, true, true, true);
-        OptionRevengeMode = StringOptionItem.Create(Id + 20, "AvengerRevengeMode", revengeModes, 1, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Avenger]);
-        OptionRevengeNums = IntegerOptionItem.Create(Id + 21, "AvengerRevengeNums", new(1, 3, 1), 1, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Avenger])
-            .SetValueFormat(OptionFormat.Players);
-        OptionRevengeOnKilled = BooleanOptionItem.Create(Id + 22, "AvengerRevengeOnKilled", true, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Avenger]);
-        OptionRevengeOnSuicide = BooleanOptionItem.Create(Id + 23, "AvengerRevengeOnSuicide", true, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Avenger]);
+        OptionRevengeMode = StringOptionItem.Create(RoleInfo, 20, OptionName.AvengerRevengeMode, revengeModes, 0, false);
+        OptionRevengeNums = IntegerOptionItem.Create(RoleInfo, 21, OptionName.AvengerRevengeNums, new(1, 3, 1), 1, false)
+   .SetValueFormat(OptionFormat.Players);
+        OptionRevengeOnKilled = BooleanOptionItem.Create(RoleInfo, 22, OptionName.AvengerRevengeOnKilled, true, false);
+        OptionRevengeOnSuicide = BooleanOptionItem.Create(RoleInfo, 23, OptionName.AvengerRevengeOnSuicide, true, false);
+
     }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-    public static void OnMurderPlayerOthers(MurderInfo info)
+
+
+    public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (!playerIdList.Contains(target.PlayerId)) return;
-        if (info.IsSuicide
-            ? !OptionRevengeOnSuicide.GetBool()
-            : !OptionRevengeOnKilled.GetBool()
-            ) return;
+        if (info.IsSuicide ? !OptionRevengeOnSuicide.GetBool(): !OptionRevengeOnKilled.GetBool()) return;
 
         List<PlayerControl> targets = new();
         if (OptionRevengeMode.GetInt() == 0)
@@ -91,5 +94,8 @@ public static class Avenger
             target.RpcMurderPlayer(pc);
             Logger.Info($"Avenger {target.GetNameWithRole()} revenged => {pc.GetNameWithRole()}", "Avenger.OnMurderPlayerOthers");
         }
+
+        return;
     }
 }
+

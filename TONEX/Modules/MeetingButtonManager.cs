@@ -31,13 +31,10 @@ public class MeetingButtonManager
 
             // CreateMeetingButton
             ButtonCreated = false;
-            if (PlayerControl.LocalPlayer.GetRoleClass() is IMeetingButton meetingButton && meetingButton.ShouldShowButton())
+            if (PlayerControl.LocalPlayer.GetRoleClass() is IMeetingButton meetingButton && meetingButton.ShouldShowButton()
+                || PlayerControl.LocalPlayer.Contains_Addons(out meetingButton) && meetingButton.ShouldShowButton())
             {
                 CreateMeetingButton(__instance, meetingButton);
-            }
-            else if (PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && Guesser.ShouldShowButton())
-            {
-                CreateMeetingButton(__instance, null);
             }
         }
     }
@@ -56,7 +53,7 @@ public class MeetingButtonManager
         __instance.playerStates.Where(x => (!PlayerState.AllPlayerStates.TryGetValue(x.TargetPlayerId, out var ps) || ps.IsDead) && !x.AmDead).Do(x => x.SetDead(x.DidReport, true));
 
         //本地玩家并没有会议技能按钮
-        if (PlayerControl.LocalPlayer.GetRoleClass() is not IMeetingButton meetingButton) return;
+        if (PlayerControl.LocalPlayer.GetRoleClass() is not IMeetingButton meetingButton && ! PlayerControl.LocalPlayer.Contains_Addons(out meetingButton)) return;
 
         //投票结束时销毁全部技能按钮
         if (!GameStates.IsVoting && __instance.lastSecond < 1)
@@ -72,11 +69,6 @@ public class MeetingButtonManager
             ButtonCreated = false;
         }
 
-        if (ButtonCreated && Guesser.ShouldShowButton())
-        {
-            ClearMeetingButton(__instance, true);
-            ButtonCreated = false;
-        }
 
         //检查是否应该创建按钮
         if (!ButtonCreated && meetingButton.ShouldShowButton())
@@ -84,10 +76,6 @@ public class MeetingButtonManager
             CreateMeetingButton(__instance, meetingButton);
         }
 
-        if (!ButtonCreated && Guesser.ShouldShowButton())
-        {
-            CreateMeetingButton(__instance, meetingButton);
-        }
 
         //销毁死亡玩家身上的技能按钮
         ClearMeetingButton(__instance);
@@ -98,10 +86,7 @@ public class MeetingButtonManager
         foreach (var pva in __instance.playerStates)
         {
             var pc = Utils.GetPlayerById(pva.TargetPlayerId);
-            Logger.Info("Try To Create M Button", "test");
-            if (pc == null 
-                || !PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !(meetingButton?.ShouldShowButtonFor(pc) ?? false)
-                || PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !Guesser.ShouldShowButtonFor(pc)) continue;
+            if (pc == null) continue;
 
 
             GameObject template = pva.Buttons.transform.Find("CancelButton").gameObject;
@@ -110,9 +95,6 @@ public class MeetingButtonManager
             targetBox.transform.localPosition = new Vector3(-0.95f, 0.03f, -1.31f);
             SpriteRenderer renderer = targetBox.GetComponent<SpriteRenderer>();
             renderer.sprite =  CustomButton.GetSprite(meetingButton?.ButtonName ?? "");
-
-            if (PlayerControl.LocalPlayer.Is(CustomRoles.Guesser))
-                renderer.sprite = CustomButton.GetSprite("Target");
 
             var swapnicelist = (PlayerControl.LocalPlayer.GetRoleClass() as NiceSwapper)?.SwapList;
             var swapevillist = (PlayerControl.LocalPlayer.GetRoleClass() as EvilSwapper)?.SwapList;
@@ -143,16 +125,6 @@ public class MeetingButtonManager
                         
                     }
                     
-                }
-                else if (Guesser.OnClickButtonLocal(pc))
-                {
-                    if (AmongUsClient.Instance.AmHost) {}
-                    else
-                    {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.OnClickMeetingButton, SendOption.Reliable, -1);
-                        writer.Write(pc.PlayerId);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    }
                 }
                 ClearMeetingButton(__instance, true);
                 CreateMeetingButton(__instance, meetingButton);

@@ -13,10 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using TONEX.Modules;
 using TONEX.Modules.SoundInterface;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.AddOns.Crewmate;
-using TONEX.Roles.AddOns.Impostor;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using TONEX.Roles.Crewmate;
@@ -417,18 +415,6 @@ class ReportDeadBodyPatch
             }
         }
         // 对于仅仅是报告的处理
-        if (target != null)
-        {
-            if (__instance.Is(CustomRoles.Oblivious) && !Utils.GetPlayerById(target.PlayerId).Is(CustomRoles.Bait)) return false;
-            if (target.Object.GetRealKiller() != null && target.Object.GetRealKiller().Is(CustomRoles.PublicOpinionShaper))
-            {
-                if(!(Utils.IsActive(SystemTypes.Comms) || Utils.IsActive(SystemTypes.Electrical) || Utils.IsActive(SystemTypes.Reactor) || Utils.IsActive(SystemTypes.LifeSupp) || Utils.IsActive(SystemTypes.MushroomMixupSabotage)))
-                {
-                    __instance.Notify(GetString("NobodyNoticed"));
-                    return false;
-                }
-            }
-        }
 
         foreach (var role in CustomRoleManager.AllActiveRoles.Values)
         {
@@ -443,6 +429,28 @@ class ReportDeadBodyPatch
             else
             {
                 Logger.Info($" {role.Player.GetNameWithRole()} 技能被禁用", "ReportDeadBody");
+            }
+        }
+        foreach (var item in CustomRoleManager.AllActiveAddons.Values)
+        {
+            if (!item.Any_Addons(role =>
+            {
+                if (!__instance.IsDisabledAction(ExtendedPlayerControl.PlayerActionType.Report, ExtendedPlayerControl.PlayerActionInUse.Skill))
+                {
+                    if (role.OnCheckReportDeadBody(__instance, target) == false)
+                    {
+                        Logger.Info($"会议被 {role.Player.GetNameWithRole()} 取消", "ReportDeadBody");
+                        return false;
+                    }
+                }
+                else
+                {
+                    Logger.Info($" {role.Player.GetNameWithRole()} 技能被禁用", "ReportDeadBody");
+                }
+                return true;
+            }))
+            {
+                return false;
             }
         }
 
@@ -473,7 +481,6 @@ class ReportDeadBodyPatch
 
         Utils.SyncAllSettings();
         
-            Signal.AddPosi();
         if (target != null)
             if (target.Object.GetRealKiller() != null && target.Object.GetRealKiller().Is(CustomRoles.Spiders))
             {
@@ -717,6 +724,7 @@ class FixedUpdatePatch
                 //変数定義
                 var seer = PlayerControl.LocalPlayer;
                 var seerRole = seer.GetRoleClass();
+                var seerAddon = seer.GetAddonClasses();
                 var target = __instance;
                 string RealName;
                 Mark.Clear();
@@ -748,6 +756,8 @@ class FixedUpdatePatch
 
                 //seer役職が対象のMark
                 Mark.Append(seerRole?.GetMark(seer, target, false));
+                seerAddon.Do_Addons(x => Mark.Append(x?.GetMark(seer, target, false)));
+
                 //seerに関わらず発動するMark
                 Mark.Append(CustomRoleManager.GetMarkOthers(seer, target, false));
 
@@ -758,16 +768,18 @@ class FixedUpdatePatch
                 AkujoFakeLovers.Marks(__instance, ref Mark);
                 CupidLovers.Marks(__instance, ref Mark);
                 Neptune.Marks(__instance, ref Mark);
-                Mini.Marks(__instance, ref Mark);
 
                 if (!seer.IsModClient())
+                {
                     Suffix.Append(seerRole?.GetLowerText(seer, target));
-                //seerに関わらず発動するLowerText
-                if (!seer.IsModClient())
-                    Suffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target));
+                    seerAddon.Do_Addons(x => Suffix.Append(x?.GetLowerText(seer, target)));
 
+                    //seerに関わらず発動するLowerText
+                    Suffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target));
+                }
                 //seer役職が対象のSuffix
                 Suffix.Append(seerRole?.GetSuffix(seer, target));
+                seerAddon?.Do_Addons(x => Suffix.Append(x?.GetSuffix(seer, target)));
 
                 //seerに関わらず発動するSuffix
                 Suffix.Append(CustomRoleManager.GetSuffixOthers(seer, target));
@@ -1238,19 +1250,6 @@ public static class PlayerControlDiePatch
                 }
             }
 #endif
-            // Libertarian
-            if (!GameStates.IsMeeting)
-            {
-                var playerIdListCopy = Libertarian.playerIdList;
-                foreach (var player in playerIdListCopy)
-                {
-                    var li = Utils.GetPlayerById(player);
-                    if (li != null && Vector2.Distance(li.transform.position, __instance.transform.position) <= Libertarian.OptionRadius.GetFloat())
-                    {
-                        li.NoCheckStartMeeting(__instance?.Data);
-                    }
-                }
-            }
             // 死者の最終位置にペットが残るバグ対応
             __instance.SetOutFit(petId:"");
         }
@@ -1304,15 +1303,52 @@ class CheckVanishPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (__instance.GetRoleClass()?.OnVanish() == false && AmongUsClient.Instance.AmHost)
+        {
+
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.StartVanish, SendOption.Reliable, __instance.GetClientId());
+            messageWriter.WriteNetObject(__instance);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+
+
+            MessageWriter messageWriter1 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.StartAppear, SendOption.Reliable, __instance.GetClientId());
+            messageWriter1.WriteNetObject(__instance);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter1);
+
+
+            __instance.RpcResetAbilityCooldown();
+
+
+            return false;
+        }
+
+        return true;
+    }
+}
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdCheckAppear))]
+class CmdCheckAppearPatch
+{
+    public static bool Prefix([HarmonyArgument(0)] PlayerControl __instance, [HarmonyArgument(1)] bool shouldAnimate)
+    {
+        if (!__instance.IsEaten())
+        {
+            if (__instance.GetRoleClass()?.OnAppear(__instance, shouldAnimate) == false)
+                return false;
+        }
         return true;
     }
 }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckAppear))]
 class CheckAppearPatch
 {
-    public static bool Prefix(PlayerControl __instance, bool shouldAnimate)
+    public static bool Prefix([HarmonyArgument(0)] PlayerControl __instance, [HarmonyArgument(1)] bool shouldAnimate)
     {
+        if (!__instance.IsEaten())
+        {
+            if (__instance.GetRoleClass()?.OnAppear(__instance,shouldAnimate) == false)
+                return false; 
+        }
         return true;
     }
 }

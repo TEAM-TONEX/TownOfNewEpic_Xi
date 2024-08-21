@@ -4,7 +4,6 @@ using Hazel;
 using System.Collections.Generic;
 using System.Linq;
 using TONEX.MoreGameModes;
-using TONEX.Roles.AddOns.CanNotOpened;
 using TONEX.Roles.AddOns.Common;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
@@ -258,15 +257,16 @@ class GameEndChecker
                 foreach (var pc in Main.AllPlayerControls)
                 {
                     var roleClass = pc.GetRoleClass();
+                    var addonClass = pc.GetAddonClasses();
 
                     //抢夺胜利
-                    if (roleClass is IOverrideWinner overrideWinner)
+                    if (roleClass is IOverrideWinner overrideWinner || addonClass.Contains_Addons(out overrideWinner))
                     {
                         overrideWinner.CheckWin(ref CustomWinnerHolder.WinnerTeam, ref CustomWinnerHolder.WinnerIds);
                     }
 
                     //追加胜利
-                    if (roleClass is IAdditionalWinner additionalWinner)
+                    if (roleClass is IAdditionalWinner additionalWinner || addonClass.Contains_Addons(out additionalWinner))
                     {
                         var winnerRole = pc.GetCustomRole();
                         var ct = pc.GetCountTypes();

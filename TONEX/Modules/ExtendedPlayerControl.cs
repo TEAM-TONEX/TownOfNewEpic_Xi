@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TONEX.Modules;
-using TONEX.Roles.AddOns.Impostor;
 using static TONEX.PlayerControlSetRolePatch;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces;
@@ -37,7 +36,7 @@ static class ExtendedPlayerControl
 
         bool IsGM = role is CustomRoles.GM;
         var id = player.PlayerId;
-        if (!IsGM)
+        if (!IsGM && GameStates.IsInGame)
         {
             if (!Main.SetRolesList.ContainsKey(id))
             {
@@ -69,11 +68,6 @@ static class ExtendedPlayerControl
         writer.Write(player.PlayerId);
         writer.WritePacked((int)role);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
-
-
-       
-        if (Options.IsAllCrew)
-            player.RpcSetRoleInGame(role.GetRoleInfo().BaseRoleType.Invoke());
     }
     public static void RpcSetCustomRole(byte PlayerId, CustomRoles role)
     {
@@ -588,9 +582,10 @@ static class ExtendedPlayerControl
     public static void ResetKillCooldown(this PlayerControl player)
     {
         Main.AllPlayerKillCooldown[player.PlayerId] = (player.GetRoleClass() as IKiller)?.CalculateKillCooldown() ?? Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
+        Main.AllPlayerKillCooldown[player.PlayerId] = (player.As_Addons<IKiller>())?.CalculateKillCooldown() ?? Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
         if (player.PlayerId == LastImpostor.currentId)
             LastImpostor.SetKillCooldown();
-        var IsKiller = (player.GetRoleClass() as IKiller)?.IsKiller ?? false;
+        var IsKiller = ((player.GetRoleClass() as IKiller)?.IsKiller ?? false) || (player.As_Addons<IKiller>()?.IsKiller ?? false);
         if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Diseased) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Hangman)))
         {
             Main.AllPlayerKillCooldown[player.PlayerId] *= Diseased.OptionVistion.GetFloat();
@@ -598,8 +593,9 @@ static class ExtendedPlayerControl
 
         if (player.Is(CustomRoles.Mini) && IsKiller)
         {
-
-            Main.AllPlayerKillCooldown[player.PlayerId] = Mini.Age[player.PlayerId] < 18 ? Mini.OptionKidKillCoolDown.GetFloat() : Mini.OptionAdultKillCoolDown.GetFloat();
+            var miniAge = player.GetAddonClasses().Select(x => x as Mini).Where(x => x != null).Select(x => x.Age).FirstOrDefault();
+            Main.AllPlayerKillCooldown[player.PlayerId] =
+                miniAge < 18 ? Mini.OptionKidKillCoolDown.GetFloat() : Mini.OptionAdultKillCoolDown.GetFloat();
 
         }
     }
@@ -762,16 +758,16 @@ static class ExtendedPlayerControl
     public static bool IsCrewTeam(this PlayerControl player) => player.Is(CustomRoleTypes.Crewmate) 
         && !player.Is(CustomRoles.Madmate) && !player.Is(CustomRoles.Charmed) && !player.Is(CustomRoles.Wolfmate) 
         && !player.Is(CustomRoles.Lovers) && !player.Is(CustomRoles.AdmirerLovers) && !player.Is(CustomRoles.AkujoLovers) && !player.Is(CustomRoles.CupidLovers);
-    public static bool IsCrewKiller(this PlayerControl player) => player.IsCrew() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as IKiller)?.IsKiller ?? false);
+    public static bool IsCrewKiller(this PlayerControl player) => player.IsCrew() && ((CustomRoleManager.GetRoleBaseByPlayerId(player.PlayerId) as IKiller)?.IsKiller ?? false);
     public static bool IsCrewNonKiller(this PlayerControl player) => !player.IsCrewKiller();
     #endregion
     #region Neu
     public static bool IsNeutral(this PlayerControl player) => player.Is(CustomRoleTypes.Neutral);
 
-    public static bool IsNeutralKiller(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as INeutralKiller)?.IsNK ?? false);
+    public static bool IsNeutralKiller(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetRoleBaseByPlayerId(player.PlayerId) as INeutralKiller)?.IsNK ?? false);
     public static bool IsNeutralNonKiller(this PlayerControl player) => !player.IsNeutralKiller();
 
-    public static bool IsNeutralEvil(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetByPlayerId(player.PlayerId) as INeutral)?.IsNE ?? false);
+    public static bool IsNeutralEvil(this PlayerControl player) => player.IsNeutral() && ((CustomRoleManager.GetRoleBaseByPlayerId(player.PlayerId) as INeutral)?.IsNE ?? false);
     public static bool IsNeutralBenign(this PlayerControl player) => !player.IsNeutralEvil();
 
     #endregion
@@ -800,7 +796,7 @@ static class ExtendedPlayerControl
         }
 
         // 役職による仕分け
-        if (seer.GetRoleClass() is IDeathReasonSeeable deathReasonSeeable)
+        if (seer.GetRoleClass() is IDeathReasonSeeable deathReasonSeeable || seer.Contains_Addons(out deathReasonSeeable))
         {
             return deathReasonSeeable.CheckSeeDeathReason(seen);
         }
@@ -958,7 +954,7 @@ static class ExtendedPlayerControl
     public static List<byte> HasDisabledPet = new();
     public static List<byte> HasDisabledMove = new();
 
-    [PluginModuleInitializer]
+    [GameModuleInitializer]
     public static void AllActInit()
     {
         // 禁用玩家行为的字典记录

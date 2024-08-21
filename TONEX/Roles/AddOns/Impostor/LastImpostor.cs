@@ -2,22 +2,37 @@ using TONEX.Attributes;
 using TONEX.Roles.Core;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using static TONEX.Options;
-
-namespace TONEX.Roles.AddOns.Impostor;
-public static class LastImpostor
+namespace TONEX.Roles.AddOns.Common;
+public sealed class LastImpostor : AddonBase
 {
-    private static readonly int Id = 80000;
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(LastImpostor),
+    player => new LastImpostor(player),
+    CustomRoles.LastImpostor,
+   80000,
+    null,
+    "li",
+    "#ff1919",
+    2
+    );
+    public LastImpostor(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
     public static byte currentId = byte.MaxValue;
     public static OptionItem KillCooldown;
     public static void SetupCustomOption()
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.LastImpostor, RoleSpwanToggle, false);
-        KillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(0f, 180f, 1f), 15f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.LastImpostor])
+        KillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 1f), 15f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
-    [GameModuleInitializer]
-    public static void Init() => currentId = byte.MaxValue;
-    public static void Add(byte id) => currentId = id;
+    public override void Add()
+    {
+        currentId = byte.MaxValue;
+    }
     public static void SetKillCooldown()
     {
         if (currentId == byte.MaxValue) return;
@@ -48,7 +63,6 @@ public static class LastImpostor
             if (CanBeLastImpostor(pc))
             {
                 pc.RpcSetCustomRole(CustomRoles.LastImpostor);
-                Add(pc.PlayerId);
                 SetKillCooldown();
                 pc.SyncSettings();
                 Utils.NotifyRoles();

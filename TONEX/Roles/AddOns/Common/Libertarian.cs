@@ -6,27 +6,45 @@ using UnityEngine;
 using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Libertarian
+public sealed class Libertarian : AddonBase
 {
-    private static readonly int Id = 156674;
-    public static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Libertarian),
+    player => new Libertarian(player),
+    CustomRoles.Libertarian,
+    156674,
+    SetupOptionItem,
+    "li|广播|自主主义者",
+    "#33CC99"
+    );
+    public Libertarian(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
+
+
+
     public static OptionItem OptionRadius;
-    public static void SetupCustomOption()
+    enum OptionName
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Libertarian);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Libertarian, true, true, true);
-        OptionRadius = FloatOptionItem.Create(Id + 20, "LibertarianRadius", new(0.5f, 10f, 0.5f), 1f, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Libertarian])
-    .SetValueFormat(OptionFormat.Multiplier);
+        LibertarianRadius
     }
-    [GameModuleInitializer]
-    public static void Init()
+
+    static void SetupOptionItem()
     {
-        playerIdList = new();
+        OptionRadius = FloatOptionItem.Create(RoleInfo, 20, OptionName.LibertarianRadius, new(0.5f, 10f, 0.5f), 1f, false)
+            .SetValueFormat(OptionFormat.Multiplier);
     }
-    public static void Add(byte playerId)
+    public override void OnPlayerDeath(PlayerControl player, CustomDeathReason deathReason, bool isOnMeeting = false)
     {
-        playerIdList.Add(playerId);
+        var target = player;
+        if (target != null && Player!=null&& Vector2.Distance(Player.transform.position, target.transform.position) <= OptionRadius.GetFloat())
+            Player.NoCheckStartMeeting(target?.Data);
     }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }
+
+

@@ -1,35 +1,41 @@
 using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Fool
+public sealed class Fool : AddonBase
 {
-    private static readonly int Id = 81300;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Fool);
-    private static List<byte> playerIdList = new();
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Fool),
+    player => new Fool(player),
+    CustomRoles.Fool,
+    81300,
+    SetupOptionItem,
+    "fo|´Àµ°|±¿µ°|Éµ¹·|Éµ±Æ|ÖÇÕÏ",
+    "#e6e7ff"
+    );
+    public Fool(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+
+
+
 
     public static OptionItem OptionImpFoolCanNotSabotage;
     public static OptionItem OptionImpFoolCanNotOpenDoor;
+    enum OptionName
+    {
+        ImpFoolCanNotSabotage,
+            FoolCanNotOpenDoor
+    }
 
-    public static void SetupCustomOption()
+    static void SetupOptionItem()
     {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Fool);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Fool, true, true, true);
-        OptionImpFoolCanNotSabotage = BooleanOptionItem.Create(Id + 20, "ImpFoolCanNotSabotage", true, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Fool]);
-        OptionImpFoolCanNotOpenDoor = BooleanOptionItem.Create(Id + 21, "FoolCanNotOpenDoor", false, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.Fool]);
+        OptionImpFoolCanNotSabotage = BooleanOptionItem.Create(RoleInfo, 20, OptionName.ImpFoolCanNotSabotage, true, false);
+        OptionImpFoolCanNotOpenDoor = BooleanOptionItem.Create(RoleInfo, 21, OptionName.FoolCanNotOpenDoor, true, false);
     }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }

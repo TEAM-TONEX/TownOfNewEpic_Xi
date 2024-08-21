@@ -112,6 +112,7 @@ EvilGrenadier: "邪恶的掷弹兵"
 EvilSwapper: "邪恶的换票师"
 EvilTimePauser: "邪恶的时停者"
 Assaulter: "强袭者"
+SuperPower: "超能力者"
 
 ## 船员阵营 / Crewmates
 Luckey: "幸运儿"
@@ -158,6 +159,8 @@ InjusticeSpirit: "冤魂"
 Amber: "琥珀"
 Saint: "圣教徒"
 Telegrapher: "译电员"
+Geneticist: "基因学家"
+Awake: "觉醒"
 
 ## 中立阵营 / Neutrals
 Jester: "小丑"
@@ -453,6 +456,7 @@ SkinwalkerInfo: "您的皮肤真好看"
 EvilGrenadierInfo: "闪瞎他们的眼！"
 EvilTimePauserInfo: "让真理骤停于此刻！"
 AssaulterInfo: "吃我一戟"
+SuperPowerInfo: "ICU~~~"
 
 ## 船员阵营 / Crewmate Blurbs
 LuckeyInfo: "您擅长治疗内鬼的低血压"
@@ -502,6 +506,8 @@ AmberInfo: "一切献给——琥珀王！"
 SaintInfo: "吾将重获新生"
 TelegrapherInfo: "··· ···- ·· / -· --- / -· / ···- ·-· ··- ··- ·-· - 
   / -·· --- -. / -· / -·-· --- ·-· / -··· · ·-··"
+GeneticistInfo: "这就是基因的魅力"
+AwakeInfo: "睡醒了，再休息一会吧"
 
 ## 中立阵营 / Neutral Blurbs
 ArsonistInfo: "今天天气真不错..."
@@ -663,6 +669,7 @@ EvilGrenadierInfoLong: "邪恶的掷弹兵可以通过使用变形（或者摸�
 EvilTimePauserInfoLong: "邪恶的时停者使用变形（或者摸宠物）发动时停时，除了内鬼阵营玩家之外的所有人都无法进行任何行动。时停生效以及失效时全体内鬼会看到提示"
 EvilAngelInfoLong: "狼死这么早？虚~~~啊（bushi）\n邪恶天使使用保护键时有概率击杀目标，但次数有限"
 AssaulterInfoLong: "强袭者拥有X层强袭，每一次击杀或被击杀时都会消耗一层强袭。当强袭的层数小于零时死亡"
+SuperPowerInfoLong: "当超能力者使用隐身时，超能力者会附身到一位随机的非内鬼阵营的玩家身上，在技能持续时间结束时那位玩家将死亡，超能力者回到原来的位置(回来之后会留给您几秒的时间来进行躲藏，解除隐身是有特效和音效的哦)。\n您可以使用解除隐身按钮来提前结束隐身，效果如上一样"
 
 ## 船员阵营 / Crewmates Descriptions
 LuckeyInfoLong: "幸运儿被击杀时，有概率抵挡这次死亡，具体概率根据房主设定。抵挡生效时凶手会看到幸运儿的身上出现护盾破碎的效果，但幸运儿自己什么都不会知道。"
@@ -709,6 +716,8 @@ AmberInfoLong: "琥珀使用击杀按钮可以使自己和一名其他角色获�
 ScoutInfoLong: "侦察兵可以使用击杀按钮来检查一定范围内的玩家所属阵营数量"
 SaintInfoLong: "圣教徒可以通过跳管来进行救赎过程，当需要跳管数量归零时，此时有两个抉择。\n1.活下去：完成所有任务，可以获得一次免刀的机会\n2.救赎：随机挑选一位场上存活的玩家揭示身份并且自己死亡，死因为“救赎”"
 TelegrapherInfoLong: "译电员概率在开会时获得一串数字 其中包含一位随机玩家的ID 职业首字的 ASCII 值和是否拥有副职业（0为否，1为是）\n玩家ID信息可能会被混淆"
+GeneticistInfoLong: "基因学家可以使用击杀按钮来提取两个不同玩家的DNA，并在开会时得到两位玩家的DNA是否匹配(阵营是否相同)的结果"
+AwakeInfoLong: "觉醒每次完成一个任务，都会从场上随机一位船员身上抽取他的副职业/第一个副职业为自己所用（部分副职业只有下次开会后才会生效）"
 
 ## 中立阵营 / Neutrals Descriptions
 ArsonistInfoLong: "纵火犯可以通过对玩家点击击杀按钮并跟随其数秒来完成涂油，开始涂油以及涂油成功时会显示护盾破碎的动画作为提示（仅自己可见）。当所有存活玩家都被纵火犯涂油后，纵火犯可以通过跳通风管来点火，并单独获得胜利。\n玩家名显示「△」表示涂油中\n玩家名显示「▲」表示已涂油。"
@@ -764,7 +773,7 @@ SplitPersonalityInfoLong: "人格分裂者会随机变换阵营，会在10秒到
 ## 附加职业 / Add-ons Descriptions
 LastImpostorInfoLong: "这个效果在内鬼仅剩一人时赋予该内鬼。使其击杀冷却缩短。"
 LoversInfoLong: "恋人为两名玩家的组合，可以看到对方名字旁有「♡」标志。恋人其中一人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
-AdmirerLoversInfoLong: "暗恋恋人为两名玩家的组合，由暗恋者表白而成。可以看到对方名字旁有「♡」标志。恋人其中一人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
+AdmirerLoversInfoLong: "暗恋恋人为两名玩家的组合，由暗恋者表白而成。可以看到对方名字旁有「♡」标志。恋人其中一PublicOpinionShaper人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
 AkujoLoversInfoLong: "魅魔真爱由魅魔选中而成。可以看到对方名字旁有「♡」标志。恋人其中一人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
 AkujoFakeLoversInfoLong: "小丑，你看什么看！"
 CupidLoversInfoLong: "丘比特恋人为两名玩家的组合，由丘比特选择而成。可以看到对方名字旁有「♡」标志。恋人其中一人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
@@ -1459,6 +1468,7 @@ HotPotatoMaxNum: "热土豆最大数量"
 ExplosionTotalTime: "热土豆爆炸&分配倒计时"
 ProbabilityOfObtainingThePasswor: "获得密码的概率"
 PprobabilityOfPasswordError: "获得错误玩家ID的概率"
+CanGetAllTargetSubRole: "是否获得目标玩家所有副职业"
 
 # 随机出生点 / Random Spawn Locations
 Junction: "三岔路"
@@ -1824,6 +1834,11 @@ NWReady: "冷却结束"
 NothingIsWorthTheRisk: "Nothing Is Worth The Risk"
 ZombieTimeRemain: "游戏结束倒计时：{0}"
 HotPotatoTimeRemain: "热土豆分配&爆炸倒计时：{0}"
+Match: "匹配"
+MisMatch: "不匹配"
+DoNotExtractDNAAnymore: "不要再提取同一个人的DNA了\n人家都快被你抽死了((("
+DNAMatching: "DNA对比结果："
+Sample: "对象1:{0} 对象2:{1}"
 
 FFA_GameTime: 最长游戏时间
 FFA_KCD: 击杀冷却时间
@@ -2062,6 +2077,8 @@ CupidKillButtonText: "爱情之箭"
 ProsecutorsButtonText: "空包弹"
 AmberButtonText: "存护"
 PenguinTimerText: "拖拽倒计时"
+GeneticistButtonText: "提取DNA"
+SuperPowerAbilityButtonText: "附身"
 
 # 作弊 / EAC
 EAC.CheatDetected.HighLevel: "警告：EAC正在抵御炸房外挂"

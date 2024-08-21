@@ -384,41 +384,6 @@ public class ChatCommand(List<string> keywords, CommandAccess access, Func<Messa
         ConcatCommands(CustomRoleTypes.Crewmate);
         ConcatCommands(CustomRoleTypes.Neutral);
 
-        // SubRoles
-        RoleCommands.Add(CustomRoles.Lovers, new() { "lo", "情人", "愛人", "链子" });
-        RoleCommands.Add(CustomRoles.Watcher, new() { "wat", "窺視者", "窥视" });
-        RoleCommands.Add(CustomRoles.Workhorse, new() { "wh", "加班" });
-        RoleCommands.Add(CustomRoles.Avenger, new() { "av", "復仇者", "复仇" });
-        RoleCommands.Add(CustomRoles.Bait, new() { "ba", "誘餌", "大奖", "头奖" });
-        RoleCommands.Add(CustomRoles.Bewilder, new() { "bwd", "迷幻", "迷惑者" });
-        RoleCommands.Add(CustomRoles.Tiebreaker, new() { "br", "破平" });
-        RoleCommands.Add(CustomRoles.Schizophrenic, new() { "sp", "雙重人格", "双重", "双人格", "人格" });
-        RoleCommands.Add(CustomRoles.Egoist, new() { "ego", "利己主義者", "利己主义", "利己", "野心" });
-        RoleCommands.Add(CustomRoles.Flashman, new() { "fl", "閃電俠", "闪电" });
-        RoleCommands.Add(CustomRoles.Fool, new() { "fo", "蠢蛋", "笨蛋", "蠢狗", "傻逼" });
-        RoleCommands.Add(CustomRoles.Lighter, new() { "li", "執燈人", "执灯", "灯人", "小灯人" });
-        RoleCommands.Add(CustomRoles.Neptune, new() { "np", "ntr", "渣男" });
-        RoleCommands.Add(CustomRoles.Oblivious, new() { "pb", "膽小鬼", "胆小" });
-        RoleCommands.Add(CustomRoles.Reach, new() { "re", "持槍", "手长" });
-        RoleCommands.Add(CustomRoles.Seer, new() { "se", "靈媒" });
-        RoleCommands.Add(CustomRoles.Beartrap, new() { "tra", "陷阱師", "陷阱", "小奖" });
-        RoleCommands.Add(CustomRoles.YouTuber, new() { "yt", "up" });
-        RoleCommands.Add(CustomRoles.Mimic, new() { "mi", "寶箱怪", "宝箱" });
-        RoleCommands.Add(CustomRoles.TicketsStealer, new() { "ts", "竊票者", "偷票", "偷票者", "窃票师", "窃票" });
-        RoleCommands.Add(CustomRoles.Rambler, new() { "ra", "漫步者", "漫步" });
-        RoleCommands.Add(CustomRoles.Chameleon, new() { "ch", "变色龙","变色" });
-        RoleCommands.Add(CustomRoles.Mini, new() { "mini", "迷你" });
-        RoleCommands.Add(CustomRoles.Libertarian, new() { "li", "广播", "自主主义者" });
-        RoleCommands.Add(CustomRoles.Spiders, new() { "sd", "蜘蛛"});
-        RoleCommands.Add(CustomRoles.Diseased, new() { "dis", "患者", "病人" });
-        RoleCommands.Add(CustomRoles.Nihility, new() { "nihi", "虚无" });
-        RoleCommands.Add(CustomRoles.Believer, new() { "bel", "信徒" });
-        RoleCommands.Add(CustomRoles.PublicOpinionShaper, new() { "pos", "舆论缔造者" });
-        RoleCommands.Add(CustomRoles.AdmirerLovers, new() { "alo", "暗恋情人", "暗恋愛人", "暗恋链子" });
-        RoleCommands.Add(CustomRoles.AkujoLovers, new() { "aklo", "魅魔情人", "魅魔愛人", "魅魔链子" });
-        RoleCommands.Add(CustomRoles.AkujoFakeLovers, new() { "akflo", "魅魔假情人", "魅魔假愛人", "魅魔假链子" });
-        RoleCommands.Add(CustomRoles.CupidLovers, new() { "culo", "丘比特情人", "丘比特愛人", "丘比特链子" });
-        RoleCommands.Add(CustomRoles.Guesser, new() { "附加赌", "赌怪" });
     }
     public static void SendRolesInfo(string input, byte playerId, bool onlycountexists = false)
     {

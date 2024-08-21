@@ -253,15 +253,21 @@ class IntroCutscenePatch
             }
             __instance.BackgroundBar.material.color = Utils.GetRoleColor(PlayerControl.LocalPlayer.GetCustomRole());
         }
-        if (PlayerControl.LocalPlayer.GetRoleClass()?.GetGameStartSound(out var newsound) ?? false)
+        var newsound = "";
+        if (PlayerControl.LocalPlayer.GetRoleClass()?.GetGameStartSound(out newsound) == true
+            || PlayerControl.LocalPlayer.Any_Addons(x => x?.GetGameStartSound(out newsound) ==true))
         {
             if (Options.SubGameMode.GetInt() == 1)
+            {
                 newsound = "GongXiFaCai";
+            }
+
             new LateTask(() =>
             {
                 PlayerControl.LocalPlayer.RPCPlayCustomSound(newsound);
             }, 4f, "Sound");
         }
+
         else
         {
             if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)

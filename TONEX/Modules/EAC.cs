@@ -129,6 +129,10 @@ internal class EAC
                     break;
                 case RpcCalls.SetColor:
                 case RpcCalls.CheckColor:
+                    if (rpc is RpcCalls.SetColor)
+                    {
+                        sr.ReadUInt32();
+                    }
                     var color = sr.ReadByte();
                     if (pc.Data.DefaultOutfit.ColorId != -1 &&
                         (Main.AllPlayerControls.Where(x => x.Data.DefaultOutfit.ColorId == color).Count() >= 5
@@ -330,10 +334,11 @@ internal class EAC
                 Report(pc, "AUM");
                 HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
                 return true;
-            case 101:
-                Report(pc, "AUM");
-                HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
-                return true;
+            //N你个歌姬，我们RPC有101！
+            //case 101:
+            //    Report(pc, "AUM");
+            //    HandleCheat(pc, GetString("EAC.CheatDetected.EAC"));
+            //    return true;
             //Slok你个歌姬
             case unchecked((byte)520)://YuMenu
                 Report(pc, "YM");

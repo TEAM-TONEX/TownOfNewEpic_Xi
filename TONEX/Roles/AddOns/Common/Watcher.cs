@@ -1,31 +1,26 @@
 using System.Collections.Generic;
 using TONEX.Attributes;
 using TONEX.Roles.Core;
-using UnityEngine;
-using static TONEX.Options;
+using AmongUs.GameOptions;
 
 namespace TONEX.Roles.AddOns.Common;
-public static class Watcher
+public sealed class Watcher : AddonBase
 {
-    private static readonly int Id = 80300;
-    private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Watcher);
-    private static List<byte> playerIdList = new();
-
-    public static void SetupCustomOption()
-    {
-        SetupAddonOptions(Id, TabGroup.Addons, CustomRoles.Watcher);
-        AddOnsAssignData.Create(Id + 10, CustomRoles.Watcher, true, true, true);
-    }
-    [GameModuleInitializer]
-    public static void Init()
-    {
-        playerIdList = new();
-    }
-    public static void Add(byte playerId)
-    {
-        playerIdList.Add(playerId);
-    }
-    public static bool IsEnable => playerIdList.Count > 0;
-    public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
-
+    public static readonly SimpleRoleInfo RoleInfo =
+    SimpleRoleInfo.Create(
+    typeof(Watcher),
+    player => new Watcher(player),
+    CustomRoles.Watcher,
+   80300,
+    null,
+    "wat|¸QÒ•Õß|¿úÊÓ",
+    "#800080"
+    );
+    public Watcher(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    { }
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetBool(BoolOptionNames.AnonymousVotes, false);
 }
