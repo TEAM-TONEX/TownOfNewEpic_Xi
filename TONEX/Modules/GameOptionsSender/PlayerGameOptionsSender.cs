@@ -116,18 +116,6 @@ public class PlayerGameOptionsSender : GameOptionsSender
             }
         }
 
-        // 为迷幻者的凶手
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Bewilder) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Hangman)))
-        {
-            opt.SetVision(false);
-            opt.SetFloat(FloatOptionNames.CrewLightMod, Bewilder.OptionVision.GetFloat());
-            opt.SetFloat(FloatOptionNames.ImpostorLightMod, Bewilder.OptionVision.GetFloat());
-            player.RpcSetCustomRole(CustomRoles.Bewilder);
-            Utils.NotifyRoles(player);
-        }
-
-        // 为漫步者的凶手
-
         //最好的请过来
         /*if (Non_Villain.ComeAndAwayList != null)
         if (Non_Villain.ComeAndAwayList.Contains(player.PlayerId))

@@ -8,7 +8,7 @@ public sealed class YouTuber : AddonBase
     typeof(YouTuber),
     player => new YouTuber(player),
     CustomRoles.YouTuber,
-   80700,
+    80700,
     null,
     "yt|up",
     "#fb749b",

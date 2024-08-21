@@ -52,10 +52,10 @@ public sealed class Avenger : AddonBase
     }
 
 
-    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
+    public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (info.IsSuicide ? !OptionRevengeOnSuicide.GetBool(): !OptionRevengeOnKilled.GetBool()) return true;
+        if (info.IsSuicide ? !OptionRevengeOnSuicide.GetBool(): !OptionRevengeOnKilled.GetBool()) return;
 
         List<PlayerControl> targets = new();
         if (OptionRevengeMode.GetInt() == 0)
@@ -95,7 +95,7 @@ public sealed class Avenger : AddonBase
             Logger.Info($"Avenger {target.GetNameWithRole()} revenged => {pc.GetNameWithRole()}", "Avenger.OnMurderPlayerOthers");
         }
 
-        return true;
+        return;
     }
 }
 

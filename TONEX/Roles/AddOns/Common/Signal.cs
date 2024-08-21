@@ -51,7 +51,6 @@ public sealed class Signal : AddonBase
     public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
     {
         if (rpcType != CustomRPC.SignalPosition) return;
-        var pc = reader.ReadByte();
         var x = reader.ReadSingle();
         var y = reader.ReadSingle();
         Signalbacktrack = new();

@@ -86,9 +86,7 @@ public class MeetingButtonManager
         foreach (var pva in __instance.playerStates)
         {
             var pc = Utils.GetPlayerById(pva.TargetPlayerId);
-            Logger.Info("Try To Create M Button", "test");
-            if (pc == null 
-                || !PlayerControl.LocalPlayer.Is(CustomRoles.Guesser) && !(meetingButton?.ShouldShowButtonFor(pc) ?? false)) continue;
+            if (pc == null) continue;
 
 
             GameObject template = pva.Buttons.transform.Find("CancelButton").gameObject;
@@ -97,9 +95,6 @@ public class MeetingButtonManager
             targetBox.transform.localPosition = new Vector3(-0.95f, 0.03f, -1.31f);
             SpriteRenderer renderer = targetBox.GetComponent<SpriteRenderer>();
             renderer.sprite =  CustomButton.GetSprite(meetingButton?.ButtonName ?? "");
-
-            if (PlayerControl.LocalPlayer.Is(CustomRoles.Guesser))
-                renderer.sprite = CustomButton.GetSprite("Target");
 
             var swapnicelist = (PlayerControl.LocalPlayer.GetRoleClass() as NiceSwapper)?.SwapList;
             var swapevillist = (PlayerControl.LocalPlayer.GetRoleClass() as EvilSwapper)?.SwapList;

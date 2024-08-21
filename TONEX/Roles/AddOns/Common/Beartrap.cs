@@ -33,10 +33,10 @@ public sealed class Beartrap : AddonBase
         OptionBlockMoveTime = FloatOptionItem.Create(RoleInfo, 20, OptionName.BeartrapBlockMoveTime, new(1f, 180f, 1f), 5f, false)
          .SetValueFormat(OptionFormat.Seconds);
     }
-    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
+    public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (info.IsSuicide) return true;
+        if (info.IsSuicide) return;
 
         var tmpSpeed = Main.AllPlayerSpeed[killer.PlayerId];
         Main.AllPlayerSpeed[killer.PlayerId] = Main.MinSpeed;    //tmpSpeed¤Çáá¤Û¤É‚Ž¤ò‘ø¤¹¤Î¤Ç´úÈë¤·¤Æ¤¤¤Þ¤¹¡£
@@ -49,6 +49,5 @@ public sealed class Beartrap : AddonBase
             killer.MarkDirtySettings();
             RPC.PlaySoundRPC(killer.PlayerId, Sounds.TaskComplete);
         }, OptionBlockMoveTime.GetFloat(), "Beartrap BlockMove");
-        return true;
     }
 }

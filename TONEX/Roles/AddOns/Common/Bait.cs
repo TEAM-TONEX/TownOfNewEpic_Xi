@@ -47,10 +47,10 @@ public sealed class Bait : AddonBase
         OptionDelayNotifyForKiller = BooleanOptionItem.Create(RoleInfo, 22, OptionName.BaitDelayNotify, true, false);
         OptionCanSeePlayerInVent = BooleanOptionItem.Create(RoleInfo, 23, OptionName.BaitanSeePlayerInVent, true, false);
     }
-    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
+    public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (info.IsSuicide) return true;
+        if (info.IsSuicide) return;
 
         killer.RPCPlayCustomSound("Congrats");
         target.RPCPlayCustomSound("Congrats");
@@ -61,20 +61,18 @@ public sealed class Bait : AddonBase
         if (delay > 0.15f && OptionDelayNotifyForKiller.GetBool()) killer.Notify(Utils.ColorString(Utils.GetRoleColor(CustomRoles.Bait), string.Format(Translator.GetString("KillBaitNotify"), (int)delay)), delay);
         Logger.Info($"{killer.GetNameWithRole()} Killed Bait => {target.GetNameWithRole()}", "Bait.OnMurderPlayerAsTarget");
         _ = new LateTask(() => { if (GameStates.IsInTask) killer.CmdReportDeadBody(target.Data); }, delay, "Bait Self Report");
-        return true;
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (player.Is(CustomRoles.Bait) && OptionCanSeePlayerInVent.GetBool())
+        if (OptionCanSeePlayerInVent.GetBool())
         {
-            foreach (var pc in Main.AllAlivePlayerControls)
+
+            if (player.PlayerId == Player.PlayerId) return;
+            if (Vector2.Distance(Player.transform.position, player.transform.position) <= 3f && player.inVent)
             {
-                if (pc.PlayerId == player.PlayerId) continue;
-                if (Vector2.Distance(player.transform.position, pc.transform.position) <= 3f && pc.inVent)
-                {
-                    player.Notify(GetString("BaitSeeVentPlayer"));
-                }
+                Player.Notify(GetString("BaitSeeVentPlayer"));
+
             }
         }
     }
