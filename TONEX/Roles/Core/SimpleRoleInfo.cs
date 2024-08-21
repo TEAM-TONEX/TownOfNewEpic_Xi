@@ -259,73 +259,13 @@ public class SimpleRoleInfo
             );
         return roleInfo;
     }
-
-    //public static SimpleRoleInfo CreateForVanilla(
-    //    Type classType,
-    //    Func<PlayerControl, RoleBase> createInstance,
-    //    RoleTypes baseRoleType,
-    //    int configId,
-    //    string colorCode = ""
-
-    //)
-    //{
-    //    CustomRoles roleName;
-    //    CustomRoleTypes customRoleType;
-    //    CountTypes countType = CountTypes.Crew;
-
-    //    switch (baseRoleType)
-    //    {
-    //        case RoleTypes.Engineer:
-    //            roleName = CustomRoles.Engineer;
-    //            customRoleType = CustomRoleTypes.Crewmate;
-    //            break;
-    //        case RoleTypes.Scientist:
-    //            roleName = CustomRoles.Scientist;
-    //            customRoleType = CustomRoleTypes.Crewmate;
-    //            break;
-    //        case RoleTypes.GuardianAngel:
-    //            roleName = CustomRoles.GuardianAngel;
-    //            customRoleType = CustomRoleTypes.Crewmate;
-    //            break;
-    //        case RoleTypes.Impostor:
-    //            roleName = CustomRoles.Impostor;
-    //            customRoleType = CustomRoleTypes.Impostor;
-    //            countType = CountTypes.Impostor;
-    //            break;
-    //        case RoleTypes.Shapeshifter:
-    //            roleName = CustomRoles.Shapeshifter;
-    //            customRoleType = CustomRoleTypes.Impostor;
-    //            countType = CountTypes.Impostor;
-    //            break;
-    //        default:
-    //            roleName = CustomRoles.Crewmate;
-    //            customRoleType = CustomRoleTypes.Crewmate;
-    //            break;
-    //    }
-    //    var roleInfo = new SimpleRoleInfo(
-    //            classType,
-    //            createInstance,
-    //            roleName,
-    //            () => baseRoleType,
-    //            customRoleType,
-    //            countType,
-    //            configId,
-    //            null,
-    //            null,
-    //            colorCode,
-    //            false,
-    //            false,
-    //            TabGroup.ModSettings,
-    //            null,
-    //            false,
-    //            false,
-    //            false,
-    //            false,
-    //            new(1, 15, 1),
-    //            new CustomRoles[1] { roleName }
-    //        );
-    //    roleInfo.Description = new VanillaRoleDescription(roleInfo, baseRoleType);
-    //    return roleInfo;
-    //}
     public delegate void OptionCreatorDelegate();
+}
+
+enum RoleOptType
+{
+    Addons_Common,
+    Addons_Imp,
+    Addons_Crew,
+    Addons_Exp
 }

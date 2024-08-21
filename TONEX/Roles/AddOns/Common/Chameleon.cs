@@ -1,6 +1,6 @@
 ﻿using TONEX.Roles.Core;
 namespace TONEX.Roles.AddOns.Common;
-public sealed class Chameleon : AddonBase
+/*public sealed class Chameleon : AddonBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
     SimpleRoleInfo.Create(
@@ -24,4 +24,4 @@ public sealed class Chameleon : AddonBase
             var color = IRandom.Instance.Next(0, 18);
             Player.SetOutFit(color);
     }
-}
+}*/

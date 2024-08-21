@@ -62,7 +62,7 @@ public sealed class Guesser : AddonBase, IMeetingButton
     }
     public override void OverrideNameAsSeer(PlayerControl seen, ref string nameText, bool isForMeeting = false)
     => nameText = Utils.ColorString(Utils.GetRoleColor(CustomRoles.EvilGuesser), seen.PlayerId.ToString()) + " " + nameText;
-
+    public string ButtonName { get; private set; } = "Target";
     public bool ShouldShowButton() => PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.PlayerId == player;
     public bool ShouldShowButtonFor(PlayerControl target) => target.IsAlive() && PlayerControl.LocalPlayer.PlayerId == player;
     public bool OnClickButtonLocal(PlayerControl target)

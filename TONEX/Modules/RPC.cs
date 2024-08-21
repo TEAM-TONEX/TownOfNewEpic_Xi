@@ -94,8 +94,6 @@ public enum CustomRPC
     SetHunterList,
     //玩家
     SetDemonHealth,
-    //患者
-    SetDiseasedList,
     //琥珀
     SetAmberProtectList,
     //正义掷弹兵
@@ -324,9 +322,6 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetNameColorData:
                 NameColorManager.ReceiveRPC(reader);
-                break;
-            case CustomRPC.SetLoversPlayers:
-                Lovers.ReceiveRPC(reader);
                 break;
             case CustomRPC.SetAdmirerLoversPlayers:
                 AdmirerLovers.ReceiveRPC(reader);

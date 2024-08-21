@@ -231,7 +231,7 @@ public static class MeetingHudPatch
                     {
                         for (int i = 0; i < role.CountdownList.Count; i++)
                         {
-                            roleclass.ZeroingCountdown(i);
+                            role.ZeroingCountdown(i);
                         }
                         role.UsePetCooldown_Timer = -1;
                     }
@@ -243,7 +243,7 @@ public static class MeetingHudPatch
                     {
                         for (int i = 0; i < role.CountdownList.Count; i++)
                         {
-                            role.CountdownList[i] = -1;
+                            role.ZeroingCountdown(i);
                         }
                         role.UsePetCooldown_Timer = -1;
                     }
@@ -391,7 +391,6 @@ public static class MeetingHudPatch
     }
     public static void CheckForDeathOnExile(CustomDeathReason deathReason, params byte[] playerIds)
     {
-        Lovers.CheckForDeathOnExile(deathReason, playerIds);
         AdmirerLovers.CheckForDeathOnExile(deathReason, playerIds);
         AkujoLovers.CheckForDeathOnExile(deathReason, playerIds);
         CupidLovers.CheckForDeathOnExile(deathReason, playerIds);

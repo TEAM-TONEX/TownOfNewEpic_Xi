@@ -1,5 +1,7 @@
 using TONEX.Roles.Core;
 using AmongUs.GameOptions;
+using System.Linq;
+using HarmonyLib;
 
 namespace TONEX.Roles.AddOns.Common;
 public sealed class Bewilder : AddonBase
@@ -34,9 +36,16 @@ public sealed class Bewilder : AddonBase
         OptionVision = FloatOptionItem.Create(RoleInfo, 20, OptionName.BewilderVision, new(0f, 5f, 0.05f), 0.6f, false)
 .SetValueFormat(OptionFormat.Multiplier);
     }
-    public override void ApplyGameOptions(IGameOptions opt) {
+    public override void ApplyGameOptions(IGameOptions opt) 
+    {
         opt.SetVision(false);
         opt.SetFloat(FloatOptionNames.CrewLightMod, (Main.DefaultCrewmateVision - OptionVision.GetFloat()) < 0f ? 0f : Main.DefaultCrewmateVision - OptionVision.GetFloat());
         opt.SetFloat(FloatOptionNames.ImpostorLightMod, (Main.DefaultCrewmateVision - OptionVision.GetFloat()) < 0f ? 0f : Main.DefaultCrewmateVision - OptionVision.GetFloat());
+        Main.AllPlayerControls.Where(x => !Player.IsAlive() && Player.GetRealKiller()?.PlayerId == x.PlayerId && !x.Is(CustomRoles.Hangman)).Do(player =>
+        {
+
+            player.RpcSetCustomRole(CustomRoles.Bewilder);
+            Utils.NotifyRoles(player);
+        });
     }
 }

@@ -5,6 +5,7 @@ using TONEX.Roles.Core;
 using UnityEngine;
 using AmongUs.GameOptions;
 using System.Linq;
+using HarmonyLib;
 
 namespace TONEX.Roles.AddOns.Common;
 public sealed class Rambler : AddonBase
@@ -42,12 +43,13 @@ public sealed class Rambler : AddonBase
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        if (Main.AllPlayerControls.Any(x => x.Is(CustomRoles.Rambler) && !x.IsAlive() && x.GetRealKiller()?.PlayerId == player.PlayerId && !x.Is(CustomRoles.Rambler)))
+        Main.AllPlayerSpeed[Player.PlayerId] = Rambler.OptionSpeed.GetFloat();
+
+        Main.AllPlayerControls.Where(x => !Player.IsAlive() && Player.GetRealKiller()?.PlayerId == x.PlayerId && !x.Is(CustomRoles.Hangman)).Do(x =>
         {
-            Main.AllPlayerSpeed[player.PlayerId] = Rambler.OptionSpeed.GetFloat();
-            player.RpcSetCustomRole(CustomRoles.Rambler);
-            Utils.NotifyRoles(player);
-        }
+            x.RpcSetCustomRole(CustomRoles.Rambler);
+            Utils.NotifyRoles(x);
+        });
 
     }
 }

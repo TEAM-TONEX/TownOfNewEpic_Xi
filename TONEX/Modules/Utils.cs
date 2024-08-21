@@ -393,7 +393,6 @@ public static class Utils
                     || (seer.AmOwner && Main.GodMode.Value)
                     || (Main.VisibleTasksCount && !seer.IsAlive() && Options.GhostCanSeeOtherRoles.GetBool())
 
-                    || Lovers.CanKnowOthers(seer, seen)
                     || AdmirerLovers.CanKnowOthers(seer, seen)
                     || AkujoLovers.CanKnowOthers(seer, seen)
                     || AkujoFakeLovers.CanKnowOthers(seer, seen)
@@ -1265,7 +1264,7 @@ public static class Utils
 
                     //seer役職が対象のMark
                     TargetMark.Append(seerRole?.GetMark(seer, target, isForMeeting));
-                    TargetMark.Append(seerRole?.GetMark(seer, isForMeeting: isForMeeting));
+                    seerAddon.Do_Addons(x => TargetMark.Append(x?.GetMark(seer, target, isForMeeting)));
 
                     //seerに関わらず発動するMark
                     TargetMark.Append(CustomRoleManager.GetMarkOthers(seer, target, isForMeeting));
@@ -1295,7 +1294,7 @@ public static class Utils
                     }
                     //seer役職が対象のSuffix
                     TargetSuffix.Append(seerRole?.GetSuffix(seer, target, isForMeeting: isForMeeting));
-                    TargetSuffix.Append(seerRole?.GetSuffix(seer, isForMeeting: isForMeeting));
+                    seerAddon.Do_Addons(x => TargetMark.Append(x?.GetSuffix(seer, target, isForMeeting: isForMeeting)));
 
                     //seerに関わらず発動するSuffix
                     TargetSuffix.Append(CustomRoleManager.GetSuffixOthers(seer, target, isForMeeting: isForMeeting));
