@@ -21,7 +21,7 @@ public sealed class CupidLovers : AddonBase
     null,
     "culo|丘比特情人|丘比特愛人|丘比特链子",
     "#F69896",
-    ctop: false
+    ctop: true
     );
     public CupidLovers(PlayerControl player)
     : base(

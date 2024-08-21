@@ -23,7 +23,7 @@ public sealed class AkujoLovers : AddonBase
     null,
     "aklo|魅魔情人|魅魔愛人|魅魔链子",
     "#8E4593",
-    ctop: false
+    ctop: true
     );
     public AkujoLovers(PlayerControl player)
     : base(

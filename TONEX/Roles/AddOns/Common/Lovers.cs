@@ -22,7 +22,8 @@ public sealed class Lovers : AddonBase//, IOverrideWinner
     75_1_2_1400,
     SetupOptionItem,
     "lo|情人|愛人|链子",
-    "#ff9ace"
+    "#ff9ace",
+    ctop: true
     );
     public Lovers(PlayerControl player)
     : base(

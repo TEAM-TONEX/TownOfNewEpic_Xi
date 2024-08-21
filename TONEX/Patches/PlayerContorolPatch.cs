@@ -646,7 +646,7 @@ class FixedUpdatePatch
 
             if (GameStates.IsInGame)
             {
-                Lovers.LoversSuicide();
+                //Lovers.LoversSuicide();
                 AdmirerLovers.AdmirerLoversSuicide();
                 AkujoLovers.AkujoLoversSuicide();
                 CupidLovers.CupidLoversSuicide();

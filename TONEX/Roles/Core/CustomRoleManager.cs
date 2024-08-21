@@ -259,7 +259,6 @@ public static class CustomRoleManager
         }
 
         //サブロール処理ができるまではラバーズをここで処理
-        Lovers.LoversSuicide(attemptTarget.PlayerId);
 
         //以降共通処理
         var targetState = PlayerState.GetByPlayerId(attemptTarget.PlayerId);

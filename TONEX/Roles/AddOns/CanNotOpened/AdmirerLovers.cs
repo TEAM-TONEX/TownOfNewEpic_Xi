@@ -22,7 +22,7 @@ public sealed class AdmirerLovers : AddonBase
     null,
     "al",
     "#74ba43",
-        ctop:false
+        ctop: true
     );
     public AdmirerLovers(PlayerControl player)
     : base(
