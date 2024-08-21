@@ -91,7 +91,10 @@ public class PlayerGameOptionsSender : GameOptionsSender
                 AURoleOptions.PhantomCooldown = Options.DefaultShapeshiftCooldown.GetFloat();
                 break;
         }
-
+        if (!role.IsImpostor())
+        {
+            AURoleOptions.NoisemakerImpostorAlert = true;
+        }
         var roleClass = player.GetRoleClass()?? null;
         roleClass?.ApplyGameOptions(opt);
 
