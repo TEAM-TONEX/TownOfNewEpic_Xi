@@ -108,6 +108,14 @@ public enum CustomRPC
     SetSubstituteLimit,
     //基因学家
     SetGeneticistDNA2,
+    //游侠
+    SetRangerList,
+    //国王
+    SetKingList,
+    //咒术师
+    SetSorcererList,
+    //十字军
+    SetCrusaderList,
 
     //游戏模式
     SyncFFAPlayer,
@@ -438,6 +446,18 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetGeneticistDNA2:
                 Geneticist.ReceiveRPC_DNA2(reader);
+                break;
+            case CustomRPC.SetRangerList:
+                Ranger.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.SetKingList:
+                King.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.SetSorcererList:
+                Sorcerer.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.SetCrusaderList:
+                Crusader.ReceiveRPC_SyncList(reader);
                 break;
             case CustomRPC.SyncFFAPlayer:
                 FFAManager.ReceiveRPCSyncFFAPlayer(reader);

@@ -423,6 +423,8 @@ public enum CustomWinner
     Infector = CustomRoles.Infector,
     Survivor = CustomRoles.Survivor,
     Killer = CustomRoles.Killer,
+    Ranger = CustomRoles.Ranger,
+    King = CustomRoles.King,
 }
 public enum SuffixModes
 {

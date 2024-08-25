@@ -113,6 +113,10 @@ EvilSwapper: "邪恶的换票师"
 EvilTimePauser: "邪恶的时停者"
 Assaulter: "强袭者"
 SuperPower: "超能力者"
+Fisherman: "钓鱼人"
+Disguiser: "伪造师"
+Sorcerer: "咒术师"
+EvilTrapper: "设陷者"
 
 ## 船员阵营 / Crewmates
 Luckey: "幸运儿"
@@ -158,9 +162,10 @@ Scout: "侦察兵"
 InjusticeSpirit: "冤魂"
 Amber: "琥珀"
 Saint: "圣教徒"
-Telegrapher: "译电员"
+Telegrapher: "电报员"
 Geneticist: "基因学家"
 Awake: "觉醒"
+Crusader: "十字军"
 
 ## 中立阵营 / Neutrals
 Jester: "小丑"
@@ -212,6 +217,8 @@ Specterraid: "幽掠"
 Yandere: "病娇"
 Alternate: "伪人"
 SplitPersonality: "人格分裂者"
+Ranger: "游侠"
+King: "国王"
 
 ## 附加职业 / Add-ons
 LastImpostor: "绝境者"
@@ -253,6 +260,7 @@ Nihility: "虚无"
 Believer: "信徒"
 PublicOpinionShaper: "舆论缔造者"
 Guesser: "赌怪"
+Luckless: "倒霉蛋"
 
 ## 附加职业作为前缀时 / Prefixes for Add-ons
 Prefix.Neptune: "海王"
@@ -344,6 +352,8 @@ WinnerRoleText.Infector: "Brain~"
 WinnerRoleText.Survivor: "安全了，暂时..."
 WinnerRoleText.ColdPotato: "还是我技高一筹)))))"
 WinnerRoleText.Killer: "lol"
+WinnerRoleText.Ranger: "惩戒所有夺走性命的恶人！"
+WinnerRoleText.King: "清明或昏庸？朕自有选择"
 
 ## 胜利界面职业名 / Role Name for End Screen
 WinnerRoleText.InEnd.Impostor: "伪装者阵营"
@@ -394,6 +404,8 @@ WinnerRoleText.InEnd.Yandere: "病娇"
 WinnerRoleText.InEnd.Alternate: "伪人"
 WinnerRoleText.InEnd.SplitPersonality: "人格分裂者"
 WinnerRoleText.InEnd.Killer: "个人竞技胜利者"
+WinnerRoleText.InEnd.Ranger: "游侠"
+WinnerRoleText.InEnd.King: "王室成员"
 
 # 以下是职业简介（显示在开局以及任务栏的文本）/ Shows at Impostor/Crewmate Screen
 
@@ -457,6 +469,10 @@ EvilGrenadierInfo: "闪瞎他们的眼！"
 EvilTimePauserInfo: "让真理骤停于此刻！"
 AssaulterInfo: "吃我一戟"
 SuperPowerInfo: "ICU~~~"
+FishermanInfo: "好鱼？坏鱼！"
+DisguiserInfo: "最大的欺骗，就是利用没有嫌疑的人"
+SorcererInfo: "你们只是替我去死罢了！"
+EvilTrapperInfo: "出门在外，小心捕人夹哦"
 
 ## 船员阵营 / Crewmate Blurbs
 LuckeyInfo: "您擅长治疗内鬼的低血压"
@@ -504,10 +520,10 @@ ScoutInfo: "侦查骑士登场！"
 InjusticeSpiritInfo: "冤屈化作动力！"
 AmberInfo: "一切献给——琥珀王！"
 SaintInfo: "吾将重获新生"
-TelegrapherInfo: "··· ···- ·· / -· --- / -· / ···- ·-· ··- ··- ·-· - 
-  / -·· --- -. / -· / -·-· --- ·-· / -··· · ·-··"
+TelegrapherInfo: "-.-- --- ..-  .-. . / .- / ..-. --- --- .-.. / .-- .... . -. / -.-- --- ..- / - .-. .- -. ... .-.. .- - . / - .... .. ... / ... . -. - . -. -.-. ."
 GeneticistInfo: "这就是基因的魅力"
 AwakeInfo: "睡醒了，再休息一会吧"
+CrusaderInfo: "保护人民，是我的责任"
 
 ## 中立阵营 / Neutral Blurbs
 ArsonistInfo: "今天天气真不错..."
@@ -559,6 +575,8 @@ SpecterraidInfo: "哎嘿！准备好被偷家了吗！"
 YandereInfo: "❤我爱你"
 AlternateInfo: "Nothing Is Worth The Risk"
 SplitPersonalityInfo: "我是谁？我是船员吗？"
+RangerInfo: "夺走人们性命的人，不可饶恕！"
+KingInfo: "朕看中你的才华了"
 
 ## 附加职业 / Add-ons Blurbs
 LoversInfo: "最重要的是，记得照顾好您的另一半"
@@ -600,6 +618,7 @@ NihilityInfo: "于此浮世中，不独入寝可成梦，事事皆虚空"
 BelieverInfo: "以信仰之力！"
 PublicOpinionShaperInfo: "趁事情还没闹大..."
 GuesserInfo: "想来一盘吗？可别出千啊"
+LucklessInfo: "倒霉倒霉倒霉倒霉倒霉"
 
 ## 其它 / Other Blurbs
 GMInfo: "开局死的冤魂隔岸观火"
@@ -669,7 +688,11 @@ EvilGrenadierInfoLong: "邪恶的掷弹兵可以通过使用变形（或者摸�
 EvilTimePauserInfoLong: "邪恶的时停者使用变形（或者摸宠物）发动时停时，除了内鬼阵营玩家之外的所有人都无法进行任何行动。时停生效以及失效时全体内鬼会看到提示"
 EvilAngelInfoLong: "狼死这么早？虚~~~啊（bushi）\n邪恶天使使用保护键时有概率击杀目标，但次数有限"
 AssaulterInfoLong: "强袭者拥有X层强袭，每一次击杀或被击杀时都会消耗一层强袭。当强袭的层数小于零时死亡"
-SuperPowerInfoLong: "当超能力者使用隐身时，超能力者会附身到一位随机的非内鬼阵营的玩家身上，在技能持续时间结束时那位玩家将死亡，超能力者回到原来的位置(回来之后会留给您几秒的时间来进行躲藏，解除隐身是有特效和音效的哦)。\n您可以使用解除隐身按钮来提前结束隐身，效果如上一样"
+SuperPowerInfoLong: "当超能力者使用隐身时，超能力者会附身到一位随机的非内鬼阵营的玩家身上，在技能持续时间结束时那位玩家将死亡，超能力者回到原来的位置(回来之后会留给您几秒的时间来进行躲藏，解除隐身是有特效的哦)。\n您可以使用解除隐身按钮来提前结束隐身，效果如上一样"
+FishermanInfoLong: "当钓鱼人使用变形按钮时，会让被变形的目标传送到自己面前（ps：如果选择死亡的人则面板返回，不触发技能）"
+DisguiserInfoLong: "当钓鱼人使用变形按钮时，会让被变形的目标强制变形成场上存活着的非内鬼阵营的玩家，在数秒后变回（ps：如果选择死亡的人则面板返回，不触发技能）"
+SorcererInfoLong: "咒术师的前几次击杀无效，变为标记替罪羊，被标记的人在咒术师视角里名字前会有“口”符号，当咒术师被人击杀时（不包括自杀）则被标记的人其中之一替他去死（击杀顺序按照标记顺序进行，ps:击杀数算在咒术师身上）。\n标记完替罪羊后咒术师的击杀变为正常击杀"
+EvilTrapperInfoLong: "设陷者可以使用隐身在地上放置几个陷阱，当有人碰到陷阱时则被夹住，过几秒后死亡（如果在被夹住中开会则立即死亡）但是如果其他人触碰该玩家则解除陷阱"
 
 ## 船员阵营 / Crewmates Descriptions
 LuckeyInfoLong: "幸运儿被击杀时，有概率抵挡这次死亡，具体概率根据房主设定。抵挡生效时凶手会看到幸运儿的身上出现护盾破碎的效果，但幸运儿自己什么都不会知道。"
@@ -715,9 +738,10 @@ InjusticeSpiritInfoLong: "你还有用，别退！！！\n冤魂在完成任务�
 AmberInfoLong: "琥珀使用击杀按钮可以使自己和一名其他角色获得标记，该标记可以抵挡一次伤害，标记每一次被攻击都会获得一层琥珀。每一层都会提升伤害避免率，当琥珀层数累计到上限时可消耗所有层数使用一次击杀"
 ScoutInfoLong: "侦察兵可以使用击杀按钮来检查一定范围内的玩家所属阵营数量"
 SaintInfoLong: "圣教徒可以通过跳管来进行救赎过程，当需要跳管数量归零时，此时有两个抉择。\n1.活下去：完成所有任务，可以获得一次免刀的机会\n2.救赎：随机挑选一位场上存活的玩家揭示身份并且自己死亡，死因为“救赎”"
-TelegrapherInfoLong: "译电员概率在开会时获得一串数字 其中包含一位随机玩家的ID 职业首字的 ASCII 值和是否拥有副职业（0为否，1为是）\n玩家ID信息可能会被混淆"
+TelegrapherInfoLong: "电报员在会议开始时会随机获得一位玩家职业名字的字符数"
 GeneticistInfoLong: "基因学家可以使用击杀按钮来提取两个不同玩家的DNA，并在开会时得到两位玩家的DNA是否匹配(阵营是否相同)的结果"
 AwakeInfoLong: "觉醒每次完成一个任务，都会从场上随机一位船员身上抽取他的副职业/第一个副职业为自己所用（部分副职业只有下次开会后才会生效）"
+CrusaderInfoLong: "十字军可以使用他的击杀键来保护一个人，被保护的人如果被击杀则十字军无论多远都会杀死凶手（不包括目标自杀）"
 
 ## 中立阵营 / Neutrals Descriptions
 ArsonistInfoLong: "纵火犯可以通过对玩家点击击杀按钮并跟随其数秒来完成涂油，开始涂油以及涂油成功时会显示护盾破碎的动画作为提示（仅自己可见）。当所有存活玩家都被纵火犯涂油后，纵火犯可以通过跳通风管来点火，并单独获得胜利。\n玩家名显示「△」表示涂油中\n玩家名显示「▲」表示已涂油。"
@@ -768,6 +792,8 @@ SpecterraidInfoLong: "白给你这么好的职业了（bushi），不过没关�
 YandereInfoLong: "病娇开局会有一个目标，可以看到对方名字旁有「♡」标志。如果有人靠近病娇的目标太近，病娇就会拥有指向他的箭头并且可以击杀他。\n病娇只能击杀碰过目标的人，仅剩病娇阵营与船员阵营且病娇阵营人数大于船员人数，病娇和目标获得胜利"
 AlternateInfoLong: "伪人开局可以选择一个人进行替代，选中时会在名字旁边显示被替代人的名称和需要替代的次数，再次进行进行替代会减少次数，当次数归零时，伪人将和被替代者的装饰调换，不会留下尸体，并且被替代者不能胜利，如果被替代者的阵营胜利了，那么伪人将代替被替代者胜利。\n被替代者死亡时伪人需要重新选择替代目标"
 SplitPersonalityInfoLong: "人格分裂者会随机变换阵营，会在10秒到60秒之间随机变换三个阵营（船员，内鬼，中立）如果最后胜利的阵营是人格分裂者变换的阵营，则人格分裂者跟随胜利（中立阵营属性为投机者）"
+RangerInfoLong: "在有人进行击杀时，游侠会在名字上收到凶手的名字，游侠需要击杀这些人，击杀一定数量的人获胜(ps:游侠如果杀错人就会直接自杀)"
+KingInfoLong: "当国王使用击杀时，会选定一位忠臣，并且忠臣的名字在国王视角会变为黄色。\n当国王选定了一定的忠臣时，国王可以使用跳管or击杀：\n跳管：带领所有忠臣一起走向胜利。\n击杀：舍弃所有忠臣独自一人独揽大权！"
 
 
 ## 附加职业 / Add-ons Descriptions
@@ -777,7 +803,7 @@ AdmirerLoversInfoLong: "暗恋恋人为两名玩家的组合，由暗恋者表�
 AkujoLoversInfoLong: "魅魔真爱由魅魔选中而成。可以看到对方名字旁有「♡」标志。恋人其中一人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
 AkujoFakeLoversInfoLong: "小丑，你看什么看！"
 CupidLoversInfoLong: "丘比特恋人为两名玩家的组合，由丘比特选择而成。可以看到对方名字旁有「♡」标志。恋人其中一人胜利时另一人也一起胜利，恋人其中一人死亡则另一人殉情（根据房主设定）。恋人其中一人在会议中被放逐时，另一人也将死亡并变为不可以被报告的尸体。"
-MadmateInfoLong: "只有船员会成为叛徒，叛徒需要帮助内鬼阵营获得胜利，当内鬼阵营失败时叛徒也会失败。叛徒与内鬼是否互知根据房主设定。\n摆烂人不会成为叛徒，部分船员职业是否可以成为叛徒依据房主设定。此外，当以下职业成为叛徒后技能将发生变动：\n时间操控者 => 做任务减少会议时间。\n保镖 => 凶手是内鬼的时不发动技能。\n正义的掷弹兵 => 闪光弹只对船员生效。\n警长 => 默认可以击杀任何人。（具体可以击杀的阵营根据房主设定）\n正义的赌怪 => 可以猜测船员。\n告密者 => 完成任务后与内鬼互认。\n愚者 => 准确地看到所有独立阵营以及带刀船员玩家显示为红名。\n法官 => 可以随意审判。\n和平之鸽 => 歌颂只对船员生效。\n网红 => 死亡通知所有人。"
+MadmateInfoLong: "只有船员会成为叛徒，叛徒需要帮助内鬼阵营获得胜利，当内鬼阵营失败时叛徒也会失败。叛徒与内鬼是否互知根据房主设定。\n摆烂人不会成为叛徒，部分船员职业是否可以成为叛徒依据房主设定。此外，当以下职业成为叛徒后技能将发生变动：\n时间操控者 => 做任务减少会议时间。\n保镖 => 凶手是内鬼的时不发动技能。\n正义的掷弹兵 => 闪光弹只对船员生效。\n警长 => 默认可以击杀任何人。（具体可以击杀的阵营根据房主设定）\n正义的赌怪 => 可以猜测船员。\n告密者 => 完成任务后与内鬼互认。\n愚者 => 准确地看到所有独立阵营以及带刀船员玩家显示为红名。\n法官 => 可以随意审判。\n和平之鸽 => 歌颂只对船员生效。\n网红 => 死亡通知所有人。\n十字军 => 在内鬼杀死保护目标时自己杀死保护目标（不包括目标自杀）"
 NeptuneInfoLong: "当场上存在海王时，所有玩家将看到自己与海王为恋人关系，实际并不会一起殉情也不会改变胜利条件。请注意：恋人不会成为海王，海王也不会成为恋人。"
 WatcherInfoLong: "窥视者可以直接看到每个人投的票。"
 FlashmanInfoLong: "闪电侠的初始移动速度比其他人快。（具体速度看房主设定）请注意：由于技术限制，闪电侠同理增速者，在其他人眼中为正常速度，所以会以闪现的方式移动。"
@@ -810,6 +836,7 @@ NihilityInfoLong: "任何有关击杀按键的非击杀交互对虚无无效（�
 BelieverInfoLong: "信徒不可被招募，无法成为恋人"
 PublicOpinionShaperInfoLong: "被舆论缔造者杀死的玩家的尸体仅在有设备被破坏的阶段可以被报告"
 GuesserInfoLong: "赌怪可以在会议时猜测某位玩家的职业，正确则击杀目标，错误则会自杀。\n猜测指令为：/bt [玩家编号] [职业名]\n您可以在玩家名字前看到该玩家的编号，或者使用/id指令查看所有玩家的编号。"
+LucklessInfoLong: "倒霉蛋在干什么事时都有可能杀死自己（不包括击杀）"
 
 ## 其它 / Other Descriptions
 GMInfoLong: "看我干啥，我只是个开局就死的冤魂，静静地吃瓜而已。"
@@ -1469,6 +1496,9 @@ ExplosionTotalTime: "热土豆爆炸&分配倒计时"
 ProbabilityOfObtainingThePasswor: "获得密码的概率"
 PprobabilityOfPasswordError: "获得错误玩家ID的概率"
 CanGetAllTargetSubRole: "是否获得目标玩家所有副职业"
+NeedKillPlayers: "需要击杀的人数"
+NeedPlayers: "需要的人数"
+LucklessProbability: "倒霉概率"
 
 # 随机出生点 / Random Spawn Locations
 Junction: "三岔路"
@@ -1839,6 +1869,9 @@ MisMatch: "不匹配"
 DoNotExtractDNAAnymore: "不要再提取同一个人的DNA了\n人家都快被你抽死了((("
 DNAMatching: "DNA对比结果："
 Sample: "对象1:{0} 对象2:{1}"
+ReadyToWin: "跳管or击杀来决定忠臣们的去向"
+TelegrapherResult: "{0}的职业字符数为{1}！"
+ForEvilTrapper: "您被陷阱夹住了！"
 
 FFA_GameTime: 最长游戏时间
 FFA_KCD: 击杀冷却时间
@@ -2079,6 +2112,10 @@ AmberButtonText: "存护"
 PenguinTimerText: "拖拽倒计时"
 GeneticistButtonText: "提取DNA"
 SuperPowerAbilityButtonText: "附身"
+FishermanButtonText: "钓鱼"
+KingButtonText: "选定"
+CrusaderButtonText: "保护"
+EvilTrapperButtonText: "设置陷阱"
 
 # 作弊 / EAC
 EAC.CheatDetected.HighLevel: "警告：EAC正在抵御炸房外挂"
