@@ -153,7 +153,7 @@ public sealed class Fireworker : RoleBase, IImpostor
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         string retText = "";
-
+        
         if (State == FireworkerState.WaitTime && Main.AliveImpostorCount <= 1)
         {
             Logger.Info("爆破準備OK", "Fireworker");

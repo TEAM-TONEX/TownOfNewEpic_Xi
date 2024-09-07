@@ -642,6 +642,7 @@ public enum CustomRoles
     SuperPower,
     Sorcerer,
     EvilTrapper,
+    Proxy,
 
     //Crewmate(Vanilla)
     CrewmateGhost = 400,
@@ -709,6 +710,8 @@ public enum CustomRoles
     Awake,
     Crusader,
     Telegrapher,
+    SpeedSeeker,
+    Introvert,
 
     //Neutral
     Arsonist = 800,

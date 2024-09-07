@@ -23,15 +23,15 @@ public sealed class Luckless : AddonBase
     )
     { }
 
-    static OptionItem OptionProbability;
+   public  static OptionItem OptionProbability;
     enum OptionName
     {
         LucklessProbability
     }
 
-    private static void SetupOptionItem()
+    static void SetupOptionItem()
     {
-        OptionProbability = IntegerOptionItem.Create(RoleInfo, 10, OptionName.LucklessProbability, new(0, 100, 5), 50, false)
+        OptionProbability = IntegerOptionItem.Create(RoleInfo, 20, OptionName.LucklessProbability, new(0, 100, 5), 50, false)
             .SetValueFormat(OptionFormat.Percent);
     }
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
@@ -41,13 +41,6 @@ public sealed class Luckless : AddonBase
             return false;
         }
             return true;
-    }
-    public override bool OnCompleteTask(out bool cancel)
-    {
-        if (IRandom.Instance.Next(0, 100) < OptionProbability.GetInt())
-            Player.RpcMurderPlayerV2(Player);
-        cancel = false;
-        return false;
     }
     public override bool OnCheckShapeshift(PlayerControl target, ref bool animate)
     {
