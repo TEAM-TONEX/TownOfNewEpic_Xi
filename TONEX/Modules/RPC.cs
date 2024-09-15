@@ -14,6 +14,7 @@ using TONEX.Roles.Impostor;
 using TONEX.Roles.Neutral;
 using TONEX.Modules.SoundInterface;
 using TONEX.MoreGameModes;
+using InnerNet;
 namespace TONEX;
 
 public enum CustomRPC
@@ -116,6 +117,9 @@ public enum CustomRPC
     SetSorcererList,
     //十字军
     SetCrusaderList,
+
+    //特效专用RPC
+    FixModdedClientCNO,
 
     //游戏模式
     SyncFFAPlayer,
@@ -458,6 +462,12 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.SetCrusaderList:
                 Crusader.ReceiveRPC_SyncList(reader);
+                break;
+            case CustomRPC.FixModdedClientCNO:
+                var CNO = reader.ReadNetObject<PlayerControl>();
+                bool active = reader.ReadBoolean();
+                CNO.transform.FindChild("Names").FindChild("NameText_TMP").gameObject.SetActive(active);
+
                 break;
             case CustomRPC.SyncFFAPlayer:
                 FFAManager.ReceiveRPCSyncFFAPlayer(reader);

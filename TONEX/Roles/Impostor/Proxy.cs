@@ -7,6 +7,10 @@ using UnityEngine;
 using System.Linq;
 using TONEX.Roles.Core.Interfaces.GroupAndRole;
 using TONEX.Roles.GameModeRoles;
+using InnerNet;
+using TONEX.Roles.Vanilla;
+using static TONEX.Modules.HazelExtensions;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TONEX.Roles.Impostor;
 public sealed class Proxy : RoleBase, IImpostor

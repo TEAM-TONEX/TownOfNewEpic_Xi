@@ -643,6 +643,7 @@ public enum CustomRoles
     Sorcerer,
     EvilTrapper,
     Proxy,
+    AbyssBringer,
 
     //Crewmate(Vanilla)
     CrewmateGhost = 400,

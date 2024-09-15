@@ -523,6 +523,7 @@ class FixedUpdatePatch
     public static void Postfix(PlayerControl __instance)
     {
         var player = __instance;
+        if (__instance == null || __instance.PlayerId == 255) return;
         if (Main.AssistivePluginMode.Value && __instance != null)
         {
 
@@ -596,6 +597,9 @@ class FixedUpdatePatch
         }
 
         if (!GameStates.IsModHost) return;
+        bool localplayer = __instance.PlayerId == PlayerControl.LocalPlayer.PlayerId;
+        if (!GameStates.IsLobby && localplayer)
+            CustomNetObject.FixedUpdate();
 
         Zoom.OnFixedUpdate();
         NameNotifyManager.OnFixedUpdate(player);
@@ -1315,7 +1319,7 @@ class CheckVanishPatch
             messageWriter1.WriteNetObject(__instance);
             AmongUsClient.Instance.FinishRpcImmediately(messageWriter1);
 
-
+           
             __instance.RpcResetAbilityCooldown();
 
 
