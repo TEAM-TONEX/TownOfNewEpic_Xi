@@ -1,6 +1,6 @@
 <div align="center">
 	
-![XtremeWave-TONEX](Assets/XtremeWave-TONEX.png)
+![XtremeWave-TONEX](Assets/XW-TONEX.png)
 
 **TownOfNewEpic_Xtreme, an outstanding contributor to Among Us mods**
 
@@ -139,13 +139,3 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
-
-## Our Other Star Projects
- - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX, using with VuePress-reco.
- - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN, powered by 天梦LK.
-
-## :warning: Problem/bug encountered:warning:
-|                               You                                |          How to resolve          |
-|:----------------------------------------------------------------:|:--------------------------------:|
-|                        Issue a Stupid Quesion                        |    Don't even think about it     |
-|   Attitude is polite and the clear problemis and give the log    |     do our best to help you      |

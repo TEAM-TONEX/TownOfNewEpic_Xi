@@ -1,8 +1,8 @@
 <div align="center">
 	
-![XtremeWave-TONEX](Assets/XtremeWave-TONEX.png)
+![XtremeWave-TONEX](Assets/XW-TONEX.png)
 
-**TownOfNewEpic_Xtreme，Among Us Mod的出色贡献者**
+**TownOfNewEpic_Xtreme，Among Us Mod出色贡献者。**
 
 <img src="https://badgen.net/github/license/XtremeWave/TownOfNewEpic_Xtreme" alt="Licences">
 <img src="https://badgen.net/github/tag/XtremeWave/TownOfNewEpic_Xtreme" alt="LatestTag">
@@ -143,13 +143,3 @@
 
 ## 星标历史
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
-
-## 我们的其它开源项目
- - [TONEX官方网站](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) -使用了 VuePress-reco.
- - [TONEX车队姬](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - 由天梦LK提供技术支持.
-
-## :warning: 遇到问题/bug :warning:
-|      你       |      如何解决     |
-|:------------:|:---------------------------------:|
-|    提出弱智问题    | 想都别想|
-| 礼貌且问题明确并给出日志 | 尽全力帮助您|
