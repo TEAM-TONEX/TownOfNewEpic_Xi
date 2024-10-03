@@ -48,7 +48,7 @@ public class Main : BasePlugin
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==
     public static readonly bool ShowWebsiteButton = true;
-    public static readonly string WebsiteUrl = Translator.IsChineseLanguageUser ? "https://www.xtreme.net.cn" : "https://www.xtreme.net.cn";
+    public static readonly string WebsiteUrl = Translator.IsChineseLanguageUser ? "https://www.xtreme.net.cn/project/TONEX/" : "https://www.xtreme.net.cn/en/project/TONEX/";
     public static readonly bool ShowQQButton = true;
     public static readonly string QQInviteUrl = "https://qm.qq.com/q/1HnCuIcFow";
     public static readonly bool ShowDiscordButton = true;
