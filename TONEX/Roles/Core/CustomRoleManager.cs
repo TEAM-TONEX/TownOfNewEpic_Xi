@@ -713,6 +713,7 @@ public enum CustomRoles
     Telegrapher,
     SpeedSeeker,
     Introvert,
+    Eggy,
 
     //Neutral
     Arsonist = 800,

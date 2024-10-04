@@ -170,6 +170,7 @@ Awake: "觉醒"
 Crusader: "十字军"
 SpeedSeeker: "速度窃取者"
 Introvert: "内敛者"
+Eggy: "蛋仔"
 
 ## 中立阵营 / Neutrals
 Jester: "小丑"
@@ -532,6 +533,7 @@ AwakeInfo: "睡醒了，再休息一会吧"
 CrusaderInfo: "保护人民，是我的责任"
 SpeedSeekerInfo: "他们管我叫速度小偷，我记得还有一个时间小偷呢"
 IntrovertInfo: "你在哪呢？我知道你哦，红色"
+EggyInfo: "Eggy!"
 
 ## 中立阵营 / Neutral Blurbs
 ArsonistInfo: "今天天气真不错..."
@@ -754,6 +756,7 @@ AwakeInfoLong: "觉醒每次完成一个任务，都会从场上随机一位船�
 CrusaderInfoLong: "十字军可以使用他的击杀键来保护一个人，被保护的人如果被击杀则十字军无论多远都会杀死凶手（不包括目标自杀）"
 SpeedSeekerInfoLong: "速度窃取者可以使用击杀来窃取一个人的速度，会在名字旁边显示目前的速度（如果目标速度过低则不能窃取）ps：这个数值可能会很扭曲，别在意)))))"
 IntrovertInfoLong: "内敛者可以使用管道或宠物按钮来触发技能，在技能持续时间里内敛者会持续得到最近一个人的颜色箭头并指向他"
+EggyInfoLong: "蛋仔可以使用击杀按键来拖拽一个人，拖拽随时都可以结束（由于蛋仔的灵活性造就了蛋仔可以进入通风管）\n鬼知道我怎么想出来这个职业的，玩臭鸡蛋派对玩的(((("
 
 ## 中立阵营 / Neutrals Descriptions
 ArsonistInfoLong: "纵火犯可以通过对玩家点击击杀按钮并跟随其数秒来完成涂油，开始涂油以及涂油成功时会显示护盾破碎的动画作为提示（仅自己可见）。当所有存活玩家都被纵火犯涂油后，纵火犯可以通过跳通风管来点火，并单独获得胜利。\n玩家名显示「△」表示涂油中\n玩家名显示「▲」表示已涂油。"
@@ -1084,6 +1087,7 @@ FixedRole: "固定分配给指定职业"
 Role: "职业"
 Cooldown: "冷却时间"
 KillCooldown: "击杀冷却时间"
+DefaultVanishCooldown: "隐身冷却时间"
 VentCooldown: "使用通风管道冷却时间"
 SkillDuration: "技能持续时间"
 SkillCooldown: "技能冷却时间"

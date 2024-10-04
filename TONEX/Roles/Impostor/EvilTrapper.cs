@@ -46,7 +46,7 @@ public sealed class EvilTrapper : RoleBase, IImpostor
     {
         OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.SkillCooldown, new(0f, 180f, 2.5f), 25f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionLimit = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.SkillCooldown, new(1, 180, 1), 3, false)
+        OptionLimit = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.SkillLimit, new(1, 180, 1), 3, false)
             .SetValueFormat(OptionFormat.Times);
         OptionDuration = FloatOptionItem.Create(RoleInfo, 12, GeneralOption.SkillDuration, new(1f, 10f, 1f), 5f, false)
             .SetValueFormat(OptionFormat.Seconds);

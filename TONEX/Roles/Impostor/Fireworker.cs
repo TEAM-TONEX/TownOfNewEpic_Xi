@@ -58,7 +58,6 @@ public sealed class Fireworker : RoleBase, IImpostor
     int NowFireworkerCount;
     List<Vector3> FireworkerPosition = new();
     FireworkerState State = FireworkerState.Initial;
-    private readonly List<FireWorkerData> fireworks = [];
     public static void SetupCustomOption()
     {
         OptionFireworkerCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.FireworkerMaxCount, new(1, 99, 1), 3, false)
@@ -99,9 +98,6 @@ public sealed class Fireworker : RoleBase, IImpostor
                 Logger.Info("花火を一個設置", "Fireworker");
                 FireworkerPosition.Add(Player.transform.position);
                 NowFireworkerCount--;
-                var pos1 = Player.GetTruePosition();
-                fireworks.Add(new(new(pos1, Player.PlayerId) ,pos1));
-                Utils.SendRPC(CustomRPC.CustomRoleSync, Player, 1, pos1);
                 if (NowFireworkerCount == 0)
                     State = Main.AliveImpostorCount <= 1 ? FireworkerState.ReadyFire : FireworkerState.WaitTime;
                 else
@@ -147,11 +143,6 @@ public sealed class Fireworker : RoleBase, IImpostor
                     Player.MarkDirtySettings();
                 }
                 State = FireworkerState.FireEnd;
-                for(int i=0;i<fireworks.Count;i++) {
-                    fireworks.RemoveAt(i);
-                    fireworks[i].NetObject.Despawn();
-                    Utils.SendRPC(CustomRPC.CustomRoleSync, Player,2, i);
-                }
                 break;
             default:
                 break;
@@ -199,25 +190,5 @@ public sealed class Fireworker : RoleBase, IImpostor
     {
         buttonName = State == FireworkerState.ReadyFire ? "FireworkD" : "FireworkP";
         return true;
-    }
-    public override void ReceiveRPC(MessageReader reader)
-    {
-        switch (reader.ReadPackedInt32())
-        {
-            case 1:
-                var pos = reader.ReadVector2();
-                var roomName = reader.ReadString();
-                fireworks.Add(new(new(pos, Player.PlayerId), pos));
-                break;
-            case 2:
-                fireworks.RemoveAt(reader.ReadPackedInt32());
-                break;
-        }
-    }
-
-    class FireWorkerData(Fireworks NetObject, Vector2 Position)
-    {
-        public Fireworks NetObject { get; } = NetObject;
-        public Vector2 Position { get; set; } = Position;
     }
 }
