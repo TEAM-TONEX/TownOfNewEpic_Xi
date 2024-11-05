@@ -38,7 +38,7 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 
 # Source of ideas & Supports
  - [Town Of Host](https://github.com/tukasa0001/TownOfHost)
- - [Town Of Host Edited(Formerly Town Of Host Edited)](https://github.com/KARPED1EM/TownOfHostEdited)
+ - [Town Of Next(Formerly Town Of Host Edited)](https://github.com/KARPED1EM/TownOfNext)
  - [Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y)
  - [Town Of Host:The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles)
  - [Super New Roles](https://github.com/ykundesu/SuperNewRoles)
