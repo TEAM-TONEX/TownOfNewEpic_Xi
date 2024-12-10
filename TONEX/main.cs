@@ -39,11 +39,11 @@ public class Main : BasePlugin
     public const string DebugKeySalt = "59687b";
     public static ConfigEntry<string> DebugKeyInput { get; private set; }
     // == 版本相关设定 / Version Config ==
-    public const string LowestSupportedVersion = "2024.9.10";
+    public const string LowestSupportedVersion = "2024.10.29";
     public static readonly bool IsPublicAvailableOnThisVersion = true;
     public const string PluginVersion = "1.4";
-    public const string ShowVersion_Head = "1.4_20240928";
-    public const string ShowVersion_TestText = "";
+    public const string ShowVersion_Head = "1.4_20241212";
+    public const string ShowVersion_TestText = "_Scrapped";
     public const string ShowVersion = ShowVersion_Head + ShowVersion_TestText;
     public const int PluginCreation = 1;
     // == 链接相关设定 / Link Config ==

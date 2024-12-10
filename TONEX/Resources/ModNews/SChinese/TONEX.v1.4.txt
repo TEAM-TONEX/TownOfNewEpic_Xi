@@ -8,7 +8,7 @@
 
 
 ## 对应官方版本
-- 基于 AmongUs v2024.9.10
+- 基于 AmongUs v2024.10.29
 - 基于 Town Of Host v5.1.7 & Town Of Next v3.0.1
 
 ## 警告
