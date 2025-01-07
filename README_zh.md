@@ -14,8 +14,6 @@
 
 [English](README.md) [简体中文]
 
-[TONEX官方网站](https://tonex.cc) | [XtremeWave官方网站](https://www.xtreme.net.cn)
-
 </div>
 
 ## 关于我们
@@ -111,7 +109,6 @@
 ## 开发者成员
 ### XtremeWave成员
  - [喜](https://github.com/Xieiawa)- **开发组-编程 &amp; 文创组-翻译**
- - [QingFeng](https://github.com/QingFeng-awa) - **开发组-网站 &amp; 运营组-维护**
  - [Slok7565](https://github.com/Slok7565)- **开发组-编程 &amp; 文创组-音乐、翻译、宣传 &amp; 运营组-发行、交流**
  - Zeyan - **开发组-编程 &amp; 文创组-翻译**
  - 小黄117 - **文创组-美术**
@@ -134,6 +131,7 @@
  - [KARPED1EM](https://github.com/KARPED1EM) - **技术支持**
  - [Yu(原名：Night)](https://github.com/Night-GUA) - **[TOHEX](https://tohex.cc)开发者**
  - ryuk - **新功能与优秀的想法**
+ - QingFeng - **云服务提供**
  - [Amongus](https://github.com/XiezibanWrite) - **翻译与技术支持**
  - [NikoCat233](https://github.com/NikoCat233) - **技术支持**
  - [Farewell](https://github.com/ksduye) - **咨询支持**
