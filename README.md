@@ -14,8 +14,6 @@
 
 [English] [简体中文](README_zh.md)
 
-[TONEX Website](https://tonex.cc) | [XtremeWave Website](https://www.xtreme.net.cn)
-
 </div>
 
 ## About Us
@@ -111,7 +109,6 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 ## Credits
 ### Members Of XtremeWave
  - [喜](https://github.com/Xieiawa) - **Development Team - Programming &amp; Creative Team - Translation**
- - [QingFeng](https://github.com/QingFeng-awa) - **Development Team - Website &amp; Operations Team - Maintenance**
  - [Slok7565](https://github.com/Slok7565) - **Development Team - Programming &amp; Creative Team - Music, Translation, Promotion &amp; Operations Team - Distribution, Communication**
  - Zeyan - **Development Team - Programming & Creative Team - Translation**
  - 小黄117 - **Creative Team - Art**
@@ -130,6 +127,7 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
  - [KARPED1EM](https://github.com/KARPED1EM) - **Technical Support**
  - [Yu(Original Name: Night)](https://github.com/night-gua) - **Developer of [TOHEX](https://tohex.cc)**
  - ryuk - **New Features &amp; Great Ideas**
+<!-- - [QingFeng](https://github.com/QingFeng-awa) - 云服务提供-->
  - [Amongus](https://github.com/XiezibanWrite) - **Translation &amp; Technical Support**
  - [NikoCat233](https://github.com/NikoCat233) - **Technical Support**
  - [Farewell](https://github.com/ksduye) - **Consultation Support**
