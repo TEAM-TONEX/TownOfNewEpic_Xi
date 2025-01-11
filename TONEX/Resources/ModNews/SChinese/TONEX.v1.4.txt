@@ -1,6 +1,6 @@
 #Number:100053
 #Title:TownOfNewEpic_Xtreme v1.4
-#SubTitle:★★★★紧急适配★★★★
+#SubTitle:★★★★有缘再会★★★★
 #ShortTitle:★TONEX v1.4
 #Date:2024-09-16T19:00:00Z
 #-----------------------------
@@ -38,7 +38,7 @@
 - 新增内鬼职业：咒术师
 (想法&制作 By 喜)
 - 新增内鬼职业：设陷者
-(想法来源：GMH 制作 By 喜)
+(想法来源：The Other Roles GM Haoming Edition 制作 By 喜)
 - 新增内鬼职业：分散者
 (想法来源：Town Of Us 制作 By 喜)
 - 新增内鬼职业：借刀人
@@ -53,11 +53,11 @@
 - 新增船员职业：觉醒
 (想法&制作 By 喜)
 - 新增船员职业：十字军
-(想法来源：Town Of Host:The Other Roles 制作 By 喜)
+(想法来源：Town Of Host : The Other Roles 制作 By 喜)
 - 新增船员职业：速度窃取者
 (想法&制作 By 喜)
 - 新增船员职业：内敛者
-(想法来源:Las 制作 By 喜)
+(想法来源:Las Monjas 制作 By 喜)
 - 新增船员职业：？？？
 (想法&制作 By 喜)
 中立：

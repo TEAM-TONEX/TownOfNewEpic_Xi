@@ -146,7 +146,7 @@ internal class RPCHandlerPatch
         if (Main.AssistivePluginMode.Value) return true;
         var rpcType = (RpcCalls)callId;
         MessageReader subReader = MessageReader.Get(reader);
-        if (EAC.ReceiveRpc(__instance, callId, reader)) return false;
+        //if (EAC.ReceiveRpc(__instance, callId, reader)) return false;
         Logger.Info($"{__instance?.Data?.PlayerId}({(__instance?.Data?.OwnerId == AmongUsClient.Instance.HostId ? "Host" : __instance?.Data?.PlayerName)}):{callId}({RPC.GetRpcName(callId)})", "ReceiveRPC");
 
         switch (rpcType)
