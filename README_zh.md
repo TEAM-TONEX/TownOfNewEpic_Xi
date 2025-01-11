@@ -1,8 +1,8 @@
 <div align="center">
 	
-![XtremeWave-TONEX](Assets/XtremeWave-TONEX.png)
+![XtremeWave-TONEX](Assets/XW-TONEX.png)
 
-**TownOfNewEpic_Xtreme，Among Us Mod的出色贡献者**
+**TownOfNewEpic_Xtreme，Among Us Mod出色贡献者。**
 
 <img src="https://badgen.net/github/license/XtremeWave/TownOfNewEpic_Xtreme" alt="Licences">
 <img src="https://badgen.net/github/tag/XtremeWave/TownOfNewEpic_Xtreme" alt="LatestTag">
@@ -13,8 +13,6 @@
 <img src="https://badgen.net/github/prs/XtremeWave/TownOfNewEpic_Xtreme" alt="PRs">
 
 [English](README.md) [简体中文]
-
-[TONEX官方网站](https://tonex.cc) | [XtremeWave官方网站](https://www.xtreme.net.cn)
 
 </div>
 
@@ -111,7 +109,6 @@
 ## 开发者成员
 ### XtremeWave成员
  - [喜](https://github.com/Xieiawa)- **开发组-编程 &amp; 文创组-翻译**
- - [QingFeng](https://github.com/QingFeng-awa) - **开发组-网站 &amp; 运营组-维护**
  - [Slok7565](https://github.com/Slok7565)- **开发组-编程 &amp; 文创组-音乐、翻译、宣传 &amp; 运营组-发行、交流**
  - Zeyan - **开发组-编程 &amp; 文创组-翻译**
  - 小黄117 - **文创组-美术**
@@ -134,6 +131,7 @@
  - [KARPED1EM](https://github.com/KARPED1EM) - **技术支持**
  - [Yu(原名：Night)](https://github.com/Night-GUA) - **[TOHEX](https://tohex.cc)开发者**
  - ryuk - **新功能与优秀的想法**
+ - QingFeng - **云服务提供**
  - [Amongus](https://github.com/XiezibanWrite) - **翻译与技术支持**
  - [NikoCat233](https://github.com/NikoCat233) - **技术支持**
  - [Farewell](https://github.com/ksduye) - **咨询支持**
@@ -143,13 +141,3 @@
 
 ## 星标历史
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
-
-## 我们的其它开源项目
- - [TONEX官方网站](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) -使用了 VuePress-reco.
- - [TONEX车队姬](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - 由天梦LK提供技术支持.
-
-## :warning: 遇到问题/bug :warning:
-|      你       |      如何解决     |
-|:------------:|:---------------------------------:|
-|    提出弱智问题    | 想都别想|
-| 礼貌且问题明确并给出日志 | 尽全力帮助您|

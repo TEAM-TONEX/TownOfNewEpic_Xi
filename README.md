@@ -1,6 +1,6 @@
 <div align="center">
 	
-![XtremeWave-TONEX](Assets/XtremeWave-TONEX.png)
+![XtremeWave-TONEX](Assets/XW-TONEX.png)
 
 **TownOfNewEpic_Xtreme, an outstanding contributor to Among Us mods**
 
@@ -13,8 +13,6 @@
 <img src="https://badgen.net/github/prs/XtremeWave/TownOfNewEpic_Xtreme" alt="PRs">
 
 [English] [简体中文](README_zh.md)
-
-[TONEX Website](https://tonex.cc) | [XtremeWave Website](https://www.xtreme.net.cn)
 
 </div>
 
@@ -38,7 +36,7 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 
 # Source of ideas & Supports
  - [Town Of Host](https://github.com/tukasa0001/TownOfHost)
- - [Town Of Host Edited(Formerly Town Of Host Edited)](https://github.com/KARPED1EM/TownOfHostEdited)
+ - [Town Of Next(Formerly Town Of Host Edited)](https://github.com/KARPED1EM/TownOfNext)
  - [Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y)
  - [Town Of Host:The Other Roles](https://github.com/music-discussion/TownOfHost-TheOtherRoles)
  - [Super New Roles](https://github.com/ykundesu/SuperNewRoles)
@@ -111,7 +109,6 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 ## Credits
 ### Members Of XtremeWave
  - [喜](https://github.com/Xieiawa) - **Development Team - Programming &amp; Creative Team - Translation**
- - [QingFeng](https://github.com/QingFeng-awa) - **Development Team - Website &amp; Operations Team - Maintenance**
  - [Slok7565](https://github.com/Slok7565) - **Development Team - Programming &amp; Creative Team - Music, Translation, Promotion &amp; Operations Team - Distribution, Communication**
  - Zeyan - **Development Team - Programming & Creative Team - Translation**
  - 小黄117 - **Creative Team - Art**
@@ -130,6 +127,7 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
  - [KARPED1EM](https://github.com/KARPED1EM) - **Technical Support**
  - [Yu(Original Name: Night)](https://github.com/night-gua) - **Developer of [TOHEX](https://tohex.cc)**
  - ryuk - **New Features &amp; Great Ideas**
+<!-- - [QingFeng](https://github.com/QingFeng-awa) - 云服务提供-->
  - [Amongus](https://github.com/XiezibanWrite) - **Translation &amp; Technical Support**
  - [NikoCat233](https://github.com/NikoCat233) - **Technical Support**
  - [Farewell](https://github.com/ksduye) - **Consultation Support**
@@ -139,13 +137,3 @@ Portions of the materials contained herein are property of Innersloth LLC. © In
 
 ## Star History
 [![Star History Chart](https://api.star-history.com/svg?repos=XtremeWave/TownOfNewEpic_Xtreme&type=Date)](https://star-history.com/#XtremeWave/TownOfNewEpic_Xtreme&Date)
-
-## Our Other Star Projects
- - [TownOfNewEpic_XtremeSite](https://github.com/XtremeWave/TownOfNewEpic_XtremeSite) - WebSite of TONEX, using with VuePress-reco.
- - [TownOfNewEpic_Xtreme_CHAN](https://github.com/XtremeWave/TownOfNewEpic_Xtreme_CHAN) - TONEX_CHAN, powered by 天梦LK.
-
-## :warning: Problem/bug encountered:warning:
-|                               You                                |          How to resolve          |
-|:----------------------------------------------------------------:|:--------------------------------:|
-|                        Issue a Stupid Quesion                        |    Don't even think about it     |
-|   Attitude is polite and the clear problemis and give the log    |     do our best to help you      |
