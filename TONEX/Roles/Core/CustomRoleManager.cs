@@ -637,6 +637,13 @@ public enum CustomRoles
     Disperser,//TODO 分散者
     EvilPianist,//TODO 邪恶的钢琴家
     EvilGrenadier,
+    Fisherman,
+    Disguiser,
+    SuperPower,
+    Sorcerer,
+    EvilTrapper,
+    Proxy,
+    AbyssBringer,
 
     //Crewmate(Vanilla)
     CrewmateGhost = 400,
@@ -702,7 +709,11 @@ public enum CustomRoles
     Saint,
     Geneticist,
     Awake,
-    SuperPower,
+    Crusader,
+    Telegrapher,
+    SpeedSeeker,
+    Introvert,
+    Eggy,
 
     //Neutral
     Arsonist = 800,
@@ -749,7 +760,7 @@ public enum CustomRoles
     Amnesiac,//TODO 失忆者
     Plaguebearer,
     GodOfPlagues,
-    
+
     PoliticalStrategists,//TODO 纵横家
 
     Challenger,//TODO 挑战者
@@ -762,6 +773,8 @@ public enum CustomRoles
     SharpShooter,
     Alternate,
     SplitPersonality,
+    Ranger,
+    King,
     //GameMode
     HotPotato,
     ColdPotato,

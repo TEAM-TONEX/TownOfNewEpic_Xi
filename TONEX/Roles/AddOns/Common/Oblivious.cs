@@ -22,7 +22,7 @@ public sealed class Oblivious : AddonBase
 
     public override bool OnCheckReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
-        return Utils.GetPlayerById(target.PlayerId).Is(CustomRoles.Bait);
+        return Utils.GetPlayerById(target.PlayerId).Is(CustomRoles.Bait) || Utils.GetPlayerById(reporter.PlayerId).Is(CustomRoles.Mayor);
     }
 
 
