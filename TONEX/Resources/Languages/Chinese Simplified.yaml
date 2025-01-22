@@ -2329,6 +2329,8 @@ Website: "模组官网"
 NextPage: "下一页"
 PreviousPage: "上一页"
 EAC.CheatDetected.EAC: "开挂（使用AUM、YuMenu、SM等）"
+LShift: "按【左Shift】返回上一个房间"
+RShift: "按【右Shift】进入粘贴板房间"
 
 FakeTask: "假任务："
 PVP.ATK: "攻击力"
@@ -2337,7 +2339,7 @@ PVP.RCO: "恢复力"
 
 Loading: "加载中..."
 
-MainMenuCredential: "{0} © 2024"
+MainMenuCredential: "{0} © 2025"
 
 Local: "<color=#D1FA87>本地</color>"
 IPhone: "苹果"
