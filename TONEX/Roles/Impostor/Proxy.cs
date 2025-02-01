@@ -62,7 +62,11 @@ public sealed class Proxy : RoleBase, IImpostor
     {
 
         if (!AmongUsClient.Instance.AmHost) return false;
-        if (!target.IsAlive() || !target.CanUseKillButton()) return false;
+        if (!target.IsAlive() || !target.CanUseKillButton())
+        {
+            Player.SetKillCooldownV2();
+            return false;
+        }
         animate = false;
         KillCooldown = Main.AllPlayerKillCooldown[target.PlayerId];
         if (OptionResetCooldown.GetBool())

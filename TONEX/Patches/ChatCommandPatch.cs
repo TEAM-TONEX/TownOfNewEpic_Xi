@@ -168,16 +168,6 @@ internal class RpcSendChatPatch
 {
     public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
     {
-        if (__instance != null)
-        {
-            
-            //MessageWriter messageWriter1 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.SendChat, SendOption.None, -1);
-            //messageWriter1.WriteNetObject(__instance);
-            //messageWriter1.Write(chatText);
-            //AmongUsClient.Instance.FinishRpcImmediately(messageWriter1);
-
-            return false;
-        }
         if (Main.AssistivePluginMode.Value) return true;
 
         if (string.IsNullOrWhiteSpace(chatText))

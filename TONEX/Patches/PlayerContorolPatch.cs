@@ -981,10 +981,17 @@ class PlayerControlCompleteTaskPatch
         taskState.Update(pc);
 
         var roleClass = pc.GetRoleClass();
+        var addonClasses = pc.GetAddonClasses();
         bool ret = true;
         if (roleClass != null && roleClass.OnCompleteTask(out bool cancel))
         {
             ret = cancel;
+        }
+
+        bool cancel2 = true;
+        if (addonClasses != null && addonClasses.Any(x=>x.OnCompleteTask(out cancel2)))
+        {
+            ret = cancel2;
         }
         //属性クラスの扱いを決定するまで仮置き
         ret &= Workhorse.OnCompleteTask(pc);

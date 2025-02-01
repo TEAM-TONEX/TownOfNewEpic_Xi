@@ -247,10 +247,12 @@ public static class CustomRoleManager
 
         //キラーの処理
         (attemptKiller.GetRoleClass() as IKiller)?.OnMurderPlayerAsKiller(info);
+        
 
         //ターゲットの処理
         var targetRole = attemptTarget.GetRoleClass();
         targetRole?.OnMurderPlayerAsTarget(info);
+        attemptTarget.GetAddonClasses().Do(x => x.OnMurderPlayerAsTarget(info));
         
         //その他視点の処理があれば実行
         foreach (var onMurderPlayer in OnMurderPlayerOthers.ToArray())
